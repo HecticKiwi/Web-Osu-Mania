@@ -103,6 +103,8 @@ export class Game {
     mapData: BeatmapSetRecord,
     setResults: (results: Results) => void,
   ) {
+    this.resize = this.resize.bind(this);
+
     this.hitObjects = mapData.map;
 
     this.totalHitObjects = this.hitObjects.filter(
@@ -175,10 +177,29 @@ export class Game {
   public dispose() {
     this.inputSystem.dispose();
 
+    window.removeEventListener("resize", this.resize);
+
     this.app.destroy({ removeView: true });
   }
 
+  private resize() {
+    console.log(window.innerHeight);
+
+    this.app.renderer.resize(window.innerWidth, window.innerHeight);
+
+    this.scoreText.x = this.app.screen.width - 30;
+
+    this.notesContainer.x = this.app.screen.width / 2;
+
+    this.progressBarContainer.x = this.app.screen.width - 30;
+
+    this.hitError.container.x = this.app.screen.width / 2;
+    this.accuracyText.x = this.app.screen.width - 30;
+  }
+
   async main(ref: HTMLDivElement) {
+    await this.app.init({ backgroundAlpha: 0 });
+
     const iniString = await fetch("/skin/skin.ini")
       .then((response) => response.text())
       .then((text) => processIniString(text));
@@ -186,19 +207,14 @@ export class Game {
     this.skinIni = parse(iniString, { bracketedArray: true });
     this.skinManiaIni = this.skinIni[`Mania${this.beatmapConfig.columnCount}`];
 
-    console.log(this.skinManiaIni.ColumnWidth);
-
     this.skinManiaIni.ColumnWidth = scaleWidth(
       this.skinManiaIni.ColumnWidth.split(",")[0],
       this.app.screen.width,
     );
 
-    await this.app.init({
-      backgroundAlpha: 0,
-      resizeTo: ref,
-    });
-
     ref.appendChild(this.app.canvas);
+
+    window.addEventListener("resize", this.resize);
 
     await loadAssets();
 
@@ -223,6 +239,8 @@ export class Game {
     this.addProgressBar();
 
     this.addHitError();
+
+    this.resize();
 
     // Game loop
     this.app.ticker.add((time) => this.update(time));
@@ -338,7 +356,6 @@ export class Game {
     this.progressBarContainer.addChild(this.progressBar);
 
     this.progressBarContainer.pivot.set(fullWidth, 0);
-    this.progressBarContainer.x = this.app.screen.width - 30;
     this.progressBarContainer.y = 95;
 
     this.app.stage.addChild(this.progressBarContainer);
@@ -347,7 +364,6 @@ export class Game {
   private addHitError() {
     this.hitError = new ErrorBar(this);
 
-    this.hitError.container.x = this.app.screen.width / 2;
     this.hitError.container.y = this.app.screen.height;
 
     this.app.stage.addChild(this.hitError.container);
@@ -365,7 +381,6 @@ export class Game {
     });
 
     this.scoreText.anchor.set(1, 0);
-    this.scoreText.x = this.app.screen.width - 30;
     this.scoreText.y = 30;
 
     this.app.stage.addChild(this.scoreText);
@@ -402,7 +417,6 @@ export class Game {
     });
 
     this.accuracyText.anchor.set(1, 0);
-    this.accuracyText.x = this.app.screen.width - 30;
     this.accuracyText.y = 105;
 
     this.app.stage.addChild(this.accuracyText);
@@ -423,7 +437,6 @@ export class Game {
     this.notesContainer.addChild(stageRight.sprite);
 
     this.notesContainer.pivot.x = this.notesContainer.width / 2;
-    this.notesContainer.x = this.app.screen.width / 2;
 
     this.notesContainer.sortableChildren = true;
   }

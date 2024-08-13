@@ -64,7 +64,7 @@ const GameScreens = ({
 
   return (
     <>
-      <div ref={containerRef} className="h-full w-full select-none">
+      <div ref={containerRef} className="h-full w-full select-none ">
         {game && <Volume game={game} />}
         {isPaused && (
           <PauseScreen

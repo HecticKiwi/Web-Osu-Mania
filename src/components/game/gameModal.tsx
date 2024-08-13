@@ -105,7 +105,7 @@ const GameModal = () => {
         <>
           <Image
             src={mapData.backgroundUrl}
-            alt=""
+            alt="Beatmap Background"
             fill
             className="-z-[1] object-cover"
             style={{
