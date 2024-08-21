@@ -18,17 +18,21 @@ import { AudioContext } from "./providers/audioProvider";
 import { BeatmapSetContext } from "./providers/beatmapSetProvider";
 import { GameOverlayContext } from "./providers/gameOverlayProvider";
 import { Button } from "./ui/button";
+import { useToast } from "./ui/use-toast";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   const { setBeatmapSet } = useContext(BeatmapSetContext);
   const { play, stop } = useContext(AudioContext);
   const { startGame } = useContext(GameOverlayContext);
   const searchParams = useSearchParams();
+
   const stars = searchParams.get("stars") || DEFAULT_STARS;
   const [min, max] = stars.split("-").map((value) => Number(value));
-  const mode = searchParams.get("key")?.split(",") || DEFAULT_MODE;
 
-  const onSelect = (isOpen: boolean) => {
+  const mode = searchParams.get("key")?.split(",") || DEFAULT_MODE;
+  const { toast } = useToast();
+
+  const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
       play(beatmapSet.id.toString());
     } else {
@@ -37,21 +41,35 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   };
 
   const onSelectBeatmap = (beatmapId: number) => {
+    if (!("indexedDB" in window)) {
+      toast({
+        title: "Error",
+        description:
+          "The browser you are using does not support IndexedDB. Please try again in another browser.",
+      });
+
+      return;
+    }
+
     startGame(beatmapSet.id, beatmapId);
   };
 
   return (
-    <Popover onOpenChange={onSelect}>
+    <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <button
-          className="relative flex h-[150px] flex-col overflow-hidden rounded-xl border p-4 text-start"
+          className="group relative flex h-[150px] flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors focus-within:border-primary hover:border-primary"
           onClick={() => setBeatmapSet(beatmapSet)}
         >
           {/* Background cover */}
-          <span className={"absolute inset-0 -z-10 brightness-[0.3]"}>
+          <span
+            className={
+              "absolute inset-0 -z-10 brightness-[0.3] transition-transform duration-300 group-focus-within:scale-105 group-hover:scale-105"
+            }
+          >
             <Image
               src={beatmapSet.covers.cover}
-              alt="Cover"
+              alt="Beatmap Set Cover"
               fill
               priority
               className="object-cover"
@@ -64,7 +82,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
               asChild
               variant={"secondary"}
               size={"icon"}
-              className="h-8 w-8 bg-secondary/60  hover:bg-secondary"
+              className="h-8 w-8 bg-secondary/60 hover:bg-secondary"
               onClick={(e) => e.stopPropagation()}
               title="Go to osu! beatmap page"
             >
@@ -87,7 +105,11 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
               by {beatmapSet.artist}
             </span>
             <span className=" text-sm text-muted-foreground">
-              {secondsToMMSS(beatmapSet.beatmaps?.[0].total_length)}
+              {secondsToMMSS(
+                Math.max(
+                  ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
+                ),
+              )}
             </span>
           </div>
         </button>

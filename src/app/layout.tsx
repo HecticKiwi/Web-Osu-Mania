@@ -1,8 +1,10 @@
+import { Toaster } from "@/components/ui/toaster";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
@@ -19,8 +21,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={varelaRound.className}>{children}</body>
+    <html
+      lang="en"
+      className="scrollbar scrollbar-track-background scrollbar-thumb-primary"
+    >
+      <body className={`${varelaRound.className}`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

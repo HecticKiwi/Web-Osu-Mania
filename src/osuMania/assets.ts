@@ -10,6 +10,8 @@ PixiPlugin.registerPIXI(PIXI);
 
 export async function loadAssets() {
   await Assets.load("/RobotoMono.ttf");
+  await Assets.load("/VarelaRound.ttf");
+
   return await Promise.all([
     ...Object.values(TEXTURES).map((filepath) =>
       Assets.load<Texture>(filepath),

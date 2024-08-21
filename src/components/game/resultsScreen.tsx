@@ -1,4 +1,4 @@
-import { BeatmapSetRecord } from "@/lib/beatmapParser";
+import { BeatmapData } from "@/lib/beatmapParser";
 import { Results } from "@/types";
 import { useContext } from "react";
 import { GameOverlayContext } from "../providers/gameOverlayProvider";
@@ -9,7 +9,7 @@ const ResultsScreen = ({
   results,
   retry,
 }: {
-  mapData: BeatmapSetRecord;
+  mapData: BeatmapData;
   results: Results;
   retry: () => void;
 }) => {
@@ -20,10 +20,10 @@ const ResultsScreen = ({
       <div className="fixed left-0 top-0 flex min-h-[100dvh] w-full items-center bg-background duration-1000 animate-in fade-in">
         <main className="mx-auto max-w-screen-xl p-8">
           <h1 className="text-5xl font-semibold">
-            {mapData.meta.artist} - {mapData.meta.title}
+            {mapData.metadata.artist} - {mapData.metadata.title}
           </h1>
           <div className="mt-1 text-2xl text-muted-foreground">
-            Beatmap by {mapData.meta.creator}
+            Beatmap by {mapData.metadata.creator}
           </div>
 
           <div className="mt-8 grid grid-cols-2 gap-6">

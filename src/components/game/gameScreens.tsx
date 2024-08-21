@@ -1,6 +1,6 @@
 "use client";
 
-import { BeatmapSetRecord } from "@/lib/beatmapParser";
+import { BeatmapData } from "@/lib/beatmapParser";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ const GameScreens = ({
   mapData,
   retry,
 }: {
-  mapData: BeatmapSetRecord;
+  mapData: BeatmapData;
   retry: () => void;
 }) => {
   const [isPaused, setIsPaused] = useState(false);
@@ -36,7 +36,11 @@ const GameScreens = ({
     if (isPaused) {
       game?.pause();
     } else if (game?.state === "PAUSE") {
-      game?.play();
+      if (game.song.seek() === 0) {
+        game.state = "WAIT";
+      } else {
+        game?.play();
+      }
     }
   }, [isPaused, game]);
 

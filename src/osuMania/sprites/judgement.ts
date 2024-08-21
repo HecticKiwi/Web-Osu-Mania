@@ -1,14 +1,18 @@
 import { Judgement as JudgementValue } from "@/types";
 import { gsap } from "gsap";
-import { Texture } from "pixi.js";
+import { Sprite, Texture } from "pixi.js";
 import { JUDGEMENT_TEXTURES } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
 export class Judgement extends Entity {
+  public sprite: Sprite;
+
   public constructor(game: Game) {
-    super(game, JUDGEMENT_TEXTURES[300]);
+    super(game);
+    this.sprite = Sprite.from(JUDGEMENT_TEXTURES[300]);
     this.sprite.alpha = 0;
+    this.sprite.zIndex = 99;
   }
 
   public showJudgement(judgement: JudgementValue) {

@@ -1,4 +1,10 @@
+import {
+  defaultSettings,
+  Settings,
+} from "@/components/providers/settingsProvider";
+import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import { type ClassValue, clsx } from "clsx";
+import { Container } from "pixi.js";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -55,4 +61,51 @@ export function processIniString(iniStr: string) {
   }
 
   return lines.join("\r\n");
+}
+
+export function scaleEntityWidth(sprite: Container, width: number) {
+  const oldWidth = sprite.width;
+  sprite.width = width;
+  sprite.height = (width * sprite.height) / oldWidth;
+}
+export function scaleWidth(width: number, windowWidth: number) {
+  return (width / OSU_WIDTH) * 2038;
+}
+export function scaleHeight(height: number, windowHeight: number) {
+  return (height / OSU_HEIGHT) * windowHeight;
+}
+
+function parsePath(path: string): (string | number)[] {
+  return path.split(".").flatMap((part) =>
+    part
+      .split(/[\[\]]/)
+      .filter(Boolean)
+      .map((key) => (isNaN(Number(key)) ? key : Number(key))),
+  );
+}
+
+export function getNestedProperty(obj: any, path: string): any {
+  const keys = parsePath(path);
+  return keys.reduce((acc, key) => acc[key], obj);
+}
+
+export function setNestedProperty(obj: any, path: string, value: any): void {
+  const keys = parsePath(path);
+  keys.reduce((acc, key, index) => {
+    if (index === keys.length - 1) {
+      acc[key] = value;
+    }
+    return acc[key];
+  }, obj);
+}
+
+export function getSettings() {
+  const localSettings = localStorage.getItem("settings");
+  if (!localSettings) {
+    return defaultSettings;
+  }
+
+  const settings: Settings = JSON.parse(localSettings);
+
+  return settings;
 }

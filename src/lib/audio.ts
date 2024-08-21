@@ -10,7 +10,7 @@ export async function addDelay(blob: Blob, duration: number) {
 
   const offlineCtx = new OfflineAudioContext(
     audioBuffer.numberOfChannels,
-    audioBuffer.length,
+    audioBuffer.length + duration * audioBuffer.sampleRate,
     audioBuffer.sampleRate,
   );
 

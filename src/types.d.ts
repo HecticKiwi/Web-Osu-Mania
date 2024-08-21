@@ -1,4 +1,7 @@
-import { HitObject } from "./osuMania/sprites/hitObject";
+import { HitObject } from "./lib/beatmapParser";
+import { OldHold } from "./osuMania/sprites/hold";
+import { Hold } from "./osuMania/sprites/hold";
+import { Tap } from "./osuMania/sprites/tap";
 
 export type GameState = "WAIT" | "PLAY" | "PAUSE";
 
@@ -14,17 +17,7 @@ export type Results = {
   maxCombo: number;
 };
 
-export type HitObjectData = [
-  x: number,
-  y: number,
-  time: number,
-  type: number,
-  hitsound: number,
-  objectParams: string,
-  hitSample: string,
-];
-
-export type Column = HitObject[];
+export type Column = (Tap | Hold)[];
 
 export type Judgement = 320 | 300 | 200 | 100 | 50 | 0;
 
@@ -36,9 +29,3 @@ export interface HitWindows {
   50: number;
   0: number;
 }
-
-export type BeatmapConfig = {
-  columnCount: number;
-  columnKeys: string[];
-  od: number;
-};

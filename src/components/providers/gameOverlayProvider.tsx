@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ReactNode, createContext, useContext, useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ReactNode, createContext, useState } from "react";
 import GameModal from "../game/gameModal";
 
 export interface OpenGameOverlayData {

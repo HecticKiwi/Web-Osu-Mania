@@ -2,17 +2,12 @@
 
 import { Howl } from "howler";
 import { ReactNode, createContext, useContext, useState } from "react";
-
-type Url = string | null;
+import { settingsContext } from "./settingsProvider";
 
 export const AudioContext = createContext<{
-  currentSong: Url;
-  isPlaying: boolean;
   play: (beatmapSetId: string) => void;
   stop: () => void;
 }>({
-  currentSong: null,
-  isPlaying: false,
   play: () => {},
   stop: () => {},
 });
@@ -20,9 +15,9 @@ export const AudioContext = createContext<{
 export const useAudio = () => useContext(AudioContext);
 
 export const AudioProvider = ({ children }: { children: ReactNode }) => {
-  const [currentSong, setCurrentSong] = useState<Url>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<Howl | null>(null);
+  const { settings, resetSettings, updateSettings } =
+    useContext(settingsContext);
 
   const play = (beatmapSetId: string) => {
     stop();
@@ -33,22 +28,18 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       html5: true,
       preload: true,
       autoplay: true,
-      onplay: () => setIsPlaying(true),
-      onpause: () => setIsPlaying(false),
-      onstop: () => setIsPlaying(false),
-      onend: () => setIsPlaying(false),
       volume: 0,
     });
 
-    newAudio.fade(0, 1, 500);
+    newAudio.fade(0, settings.musicVolume, 500);
 
     setAudio(newAudio);
-    setCurrentSong(beatmapSetId);
   };
 
   const stop = () => {
     if (audio) {
-      audio.fade(1, 0, 500);
+      audio.fade(audio.volume(), 0, 500);
+      setAudio(null);
 
       setTimeout(() => {
         audio.unload();
@@ -57,7 +48,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AudioContext.Provider value={{ currentSong, isPlaying, play, stop }}>
+    <AudioContext.Provider value={{ play, stop }}>
       {children}
     </AudioContext.Provider>
   );

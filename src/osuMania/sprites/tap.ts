@@ -1,42 +1,113 @@
-import { HitObject as HitObjectData } from "@/lib/beatmapParser";
-import { config, SKIN_DIR } from "../constants";
-import { Game } from "../game";
-import { HitObject } from "./hitObject";
+import { SampleSet, TapData as TapData } from "@/lib/beatmapParser";
+import { scaleEntityWidth } from "@/lib/utils";
 import { Sprite } from "pixi.js";
+import { SKIN_DIR } from "../constants";
+import { Game } from "../game";
+import { Entity } from "./entity";
 
-export class Tap extends HitObject {
-  constructor(game: Game, hitObjectData: HitObjectData, src?: string) {
-    super(
-      game,
-      src ??
-        `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${hitObjectData.column}`]}.png`,
-      hitObjectData,
+export class Tap extends Entity {
+  public data: TapData;
+
+  public sampleSet: SampleSet;
+  public additionSet: SampleSet;
+  public sampleIndex: number;
+  public volume: number;
+
+  public view: Sprite;
+
+  constructor(game: Game, hitObjectData: TapData, src?: string) {
+    super(game);
+
+    this.view = Sprite.from(
+      `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${hitObjectData.column}`]}.png`,
     );
 
-    this.sprite.zIndex = 1;
-    this.sprite.anchor.set(undefined, 1);
-    this.scaleToWidth(config.columnWidth);
+    this.data = hitObjectData;
 
-    this.sprite.x = hitObjectData.column * config.columnWidth;
-    this.game.notesContainer.addChild(this.sprite);
+    this.view.zIndex = 1;
+    scaleEntityWidth(this.view, this.game.skinManiaIni.ColumnWidth);
+
+    this.game.notesContainer.addChild(this.view);
+
+    this.view.anchor.set(undefined, 1);
+
+    this.view.x = hitObjectData.column * this.game.skinManiaIni.ColumnWidth;
+
+    this.setSoundData();
   }
 
-  public isHit() {
-    return this.game.inputSystem.tappedKeys.has(
-      this.game.beatmapConfig.columnKeys[this.data.column],
+  private setSoundData() {
+    const timingPoint = this.game.timingPoints.find(
+      (timingPoint) => this.data.time >= timingPoint.time,
     );
+
+    if (!timingPoint) {
+      return new Error("No timing point for hit object");
+    }
+
+    this.sampleSet =
+      this.data.hitSample.normalSet !== "default"
+        ? this.data.hitSample.normalSet
+        : timingPoint.sampleSet;
+    this.additionSet =
+      this.data.hitSample.additionSet !== "default"
+        ? this.data.hitSample.additionSet
+        : this.sampleSet;
+    this.sampleIndex = this.data.hitSample.index
+      ? this.data.hitSample.index
+      : timingPoint.sampleIndex;
+    this.volume = this.data.hitSample.volume || timingPoint.volume;
   }
 
-  public hitFeedback() {
-    this.game.hitSound.play();
-    this.game.stageLights[this.data.column].light();
+  public playHitsounds() {
+    const hitSoundFile = this.data.hitSample.filename;
+    if (hitSoundFile && this.game.audioSystem.sounds[hitSoundFile]) {
+      this.game.audioSystem.play(hitSoundFile, this.game.settings.sfxVolume);
+    } else {
+      if (this.data.hitSound.normal) {
+        this.game.audioSystem.playHitSound(
+          this.sampleSet,
+          this.sampleIndex,
+          "normal",
+          this.volume,
+        );
+      }
 
-    this.game.keys[this.data.column].setPressed(true);
-    setTimeout(() => this.game.keys[this.data.column].setPressed(false), 100);
+      if (this.data.hitSound.whistle) {
+        this.game.audioSystem.playHitSound(
+          this.additionSet,
+          this.sampleIndex,
+          "whistle",
+          this.volume,
+        );
+      }
+
+      if (this.data.hitSound.clap) {
+        this.game.audioSystem.playHitSound(
+          this.additionSet,
+          this.sampleIndex,
+          "clap",
+          this.volume,
+        );
+      }
+
+      if (this.data.hitSound.finish) {
+        this.game.audioSystem.playHitSound(
+          this.additionSet,
+          this.sampleIndex,
+          "finish",
+          this.volume,
+        );
+      }
+    }
   }
 
-  public override update(dt: number) {
-    super.update(dt);
+  public update(dt?: number) {
+    this.view.y =
+      (this.game.timeElapsed - this.data.time) *
+        this.game.settings.scrollSpeed *
+        0.08 +
+      this.game.hitPosition;
 
     const column = this.game.columns[this.data.column];
 
@@ -49,13 +120,21 @@ export class Tap extends HitObject {
 
     if (this.game.settings.autoplay) {
       if (delta < 0) {
-        this.game.hit(320);
+        this.playHitsounds();
 
-        this.game.hitError.addTimingMark(0);
+        this.game.scoreSystem.hit(320);
+
+        this.game.hitError?.addTimingMark(0);
 
         this.shouldRemove = true;
 
-        this.hitFeedback();
+        this.game.stageLights[this.data.column].light();
+
+        this.game.keys[this.data.column].setPressed(true);
+        setTimeout(
+          () => this.game.keys[this.data.column].setPressed(false),
+          100,
+        );
       }
 
       return;
@@ -63,7 +142,7 @@ export class Tap extends HitObject {
 
     // If this has passed the late miss point
     if (delta < -this.game.hitWindows[0]) {
-      this.game.hit(0);
+      this.game.scoreSystem.hit(0);
       this.shouldRemove = true;
     }
 
@@ -73,25 +152,29 @@ export class Tap extends HitObject {
         return;
       }
 
-      this.game.hitSound.play();
-
       if (absDelta <= this.game.hitWindows[320]) {
-        this.game.hit(320);
+        this.game.scoreSystem.hit(320);
       } else if (absDelta < this.game.hitWindows[300]) {
-        this.game.hit(300);
+        this.game.scoreSystem.hit(300);
       } else if (absDelta < this.game.hitWindows[200]) {
-        this.game.hit(200);
+        this.game.scoreSystem.hit(200);
       } else if (absDelta < this.game.hitWindows[100]) {
-        this.game.hit(100);
+        this.game.scoreSystem.hit(100);
       } else if (absDelta < this.game.hitWindows[50]) {
-        this.game.hit(50);
+        this.game.scoreSystem.hit(50);
       } else {
-        this.game.hit(0);
+        this.game.scoreSystem.hit(0);
       }
 
-      this.game.hitError.addTimingMark(delta);
+      this.game.hitError?.addTimingMark(delta);
 
       this.shouldRemove = true;
     }
+  }
+
+  public isHit() {
+    return this.game.inputSystem.tappedKeys.has(
+      this.game.columnKeybinds[this.data.column],
+    );
   }
 }

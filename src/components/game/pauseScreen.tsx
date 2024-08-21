@@ -1,6 +1,6 @@
 "use client";
 
-import { BeatmapSetRecord } from "@/lib/beatmapParser";
+import { BeatmapData } from "@/lib/beatmapParser";
 import { useContext } from "react";
 import { GameOverlayContext } from "../providers/gameOverlayProvider";
 import { Button } from "../ui/button";
@@ -10,7 +10,7 @@ const PauseScreen = ({
   setIsPaused,
   retry,
 }: {
-  mapData: BeatmapSetRecord;
+  mapData: BeatmapData;
   setIsPaused: (newValue: boolean) => void;
   retry: () => void;
 }) => {
@@ -21,10 +21,10 @@ const PauseScreen = ({
       <div className="fixed inset-0 bg-background/90 duration-300 animate-in fade-in">
         <main className="mx-auto mt-16 max-w-screen-xl p-8">
           <h1 className="text-5xl font-semibold">
-            {mapData.meta.artist} - {mapData.meta.title}
+            {mapData.metadata.artist} - {mapData.metadata.title}
           </h1>
           <div className="mt-1 text-2xl text-muted-foreground">
-            Beatmap by {mapData.meta.creator}
+            Beatmap by {mapData.metadata.creator}
           </div>
 
           <div className="mt-16 space-y-12">

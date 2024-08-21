@@ -17,6 +17,21 @@ const Search = ({ className }: { className?: string }) => {
     e?.preventDefault();
 
     const params = new URLSearchParams(searchParams);
+
+    const oldQuery = params.get("q");
+
+    // If adding query, change sort by to descending relevance
+    if (query && !oldQuery) {
+      params.set("sortCriteria", "relevance");
+      params.set("sortDirection", "desc");
+    }
+
+    // If removing query, change sort by to descending ranked date
+    if (oldQuery && !query) {
+      params.set("sortCriteria", "ranked");
+      params.set("sortDirection", "desc");
+    }
+
     params.set("q", query);
 
     router.push(`/?${params.toString()}`);

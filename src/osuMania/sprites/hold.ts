@@ -1,33 +1,59 @@
-import { HoldBody } from "@/lib/beatmapParser";
-import { config, SKIN_DIR } from "../constants";
+import { HoldData } from "@/lib/beatmapParser";
+import { scaleEntityWidth } from "@/lib/utils";
+import { Container, Sprite } from "pixi.js";
+import { SKIN_DIR } from "../constants";
 import { Game } from "../game";
-import { HitObject } from "./hitObject";
 
-export class Hold extends HitObject {
-  public data: HoldBody;
+export class Hold {
+  public data: HoldData;
 
-  constructor(game: Game, hitObjectData: HoldBody) {
-    super(
-      game,
-      `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${hitObjectData.column}L`]}.png`,
-      hitObjectData,
+  protected game: Game;
+
+  public view: Container;
+  public shouldRemove: boolean;
+
+  constructor(game: Game, holdData: HoldData) {
+    this.game = game;
+    this.data = holdData;
+
+    const tail = Sprite.from(
+      `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${holdData.column}T`]}.png`,
     );
+    scaleEntityWidth(tail, this.game.skinManiaIni.ColumnWidth);
+    tail.zIndex = 1;
+    // tail.pivot.set(0.5, 0.5);
+    tail.anchor.set(1, 0.5);
 
-    this.scaleToWidth(config.columnWidth);
+    tail.angle = 180;
+
+    const body = Sprite.from(
+      `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${holdData.column}L`]}.png`,
+    );
+    scaleEntityWidth(body, this.game.skinManiaIni.ColumnWidth);
+
     const holdHeight =
-      (hitObjectData.endTime - this.data.time) *
+      (holdData.endTime - this.data.time) *
       this.game.settings.scrollSpeed *
       0.08;
-    this.sprite.height = holdHeight;
+    body.height = holdHeight;
 
-    this.sprite.x = hitObjectData.column * config.columnWidth;
-    this.game.notesContainer.addChild(this.sprite);
+    this.view = new Container();
+    this.view.addChild(tail);
+    this.view.addChild(body);
+    this.view.width;
+    this.view.x = holdData.column * this.game.skinManiaIni.ColumnWidth;
 
-    this.sprite.anchor.set(undefined, 1);
+    // this.view.pivot.set(undefined, this.view.height);
+
+    this.game.notesContainer.addChild(this.view);
   }
 
-  public override update(dt: number) {
-    super.update(dt);
+  public update(dt?: number) {
+    this.view.y =
+      (this.game.timeElapsed - this.data.endTime) *
+        this.game.settings.scrollSpeed *
+        0.08 +
+      this.game.hitPosition;
 
     const column = this.game.columns[this.data.column];
 
@@ -35,18 +61,65 @@ export class Hold extends HitObject {
       return;
     }
 
+    const delta = this.data.endTime - this.game.timeElapsed;
+
+    const absDelta = Math.abs(delta);
+
     if (this.game.settings.autoplay) {
-      this.game.stageLights[this.data.column].sprite.alpha = 1;
-      this.game.keys[this.data.column].setPressed(true);
-    }
-
-    if (this.game.timeElapsed > this.data.endTime) {
-      this.shouldRemove = true;
-
-      if (this.game.settings.autoplay) {
-        this.game.stageLights[this.data.column].light();
-        this.game.keys[this.data.column].setPressed(false);
+      if (this.game.timeElapsed > this.data.time) {
+        this.game.keys[this.data.column].setPressed(true);
+        this.game.stageLights[this.data.column].sprite.alpha = 1;
       }
+
+      if (delta < 0) {
+        this.game.scoreSystem.hit(320);
+
+        this.game.hitError?.addTimingMark(0);
+
+        this.game.keys[this.data.column].setPressed(false);
+        this.game.stageLights[this.data.column].light();
+
+        this.shouldRemove = true;
+      }
+
+      return;
     }
+
+    // If this has passed the late miss point
+    if (delta < -this.game.hitWindows[0]) {
+      this.game.scoreSystem.hit(0);
+      this.shouldRemove = true;
+    }
+
+    if (this.isHit()) {
+      // Return if you pressed way too early...
+      if (absDelta > this.game.hitWindows[0]) {
+        return;
+      }
+
+      if (absDelta <= this.game.hitWindows[320]) {
+        this.game.scoreSystem.hit(320);
+      } else if (absDelta < this.game.hitWindows[300]) {
+        this.game.scoreSystem.hit(300);
+      } else if (absDelta < this.game.hitWindows[200]) {
+        this.game.scoreSystem.hit(200);
+      } else if (absDelta < this.game.hitWindows[100]) {
+        this.game.scoreSystem.hit(100);
+      } else if (absDelta < this.game.hitWindows[50]) {
+        this.game.scoreSystem.hit(50);
+      } else {
+        this.game.scoreSystem.hit(0);
+      }
+
+      this.game.hitError?.addTimingMark(delta);
+
+      this.shouldRemove = true;
+    }
+  }
+
+  public isHit() {
+    return this.game.inputSystem.releasedKeys.has(
+      this.game.columnKeybinds[this.data.column],
+    );
   }
 }

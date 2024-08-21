@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  Category,
   DEFAULT_SORT_CRITERIA,
   DEFAULT_SORT_DIRECTION,
   SortCriteria,
@@ -108,6 +109,7 @@ type SetBeatmapsResponse = {
 
 export async function searchBeatmaps({
   query,
+  category,
   sortCriteria = DEFAULT_SORT_CRITERIA,
   sortDirection = DEFAULT_SORT_DIRECTION,
   cursorString,
@@ -115,6 +117,7 @@ export async function searchBeatmaps({
   stars = "0-10",
 }: {
   query?: string;
+  category?: Category;
   sortCriteria?: SortCriteria;
   sortDirection?: SortDirection;
   cursorString?: string;
@@ -144,6 +147,7 @@ export async function searchBeatmaps({
       m: 3, // 3 = mania mode
       sort: `${sortCriteria}_${sortDirection}`,
       cursor_string: cursorString,
+      s: category !== "hasLeaderboard" ? category : undefined,
     },
   });
 

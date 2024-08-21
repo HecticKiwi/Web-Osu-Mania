@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Slider } from "../ui/slider";
 import { DEFAULT_STARS } from "../beatmapSetsInfiniteScroll";
+import { cn } from "@/lib/utils";
 
 const DifficultySlider = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
@@ -29,7 +30,7 @@ const DifficultySlider = ({ className }: { className?: string }) => {
 
   return (
     <>
-      <div>
+      <div className={cn(className)}>
         <span className="text-muted-foreground">Difficulty</span>
 
         <div className="mt-2 flex items-center gap-4">
@@ -46,7 +47,7 @@ const DifficultySlider = ({ className }: { className?: string }) => {
             className="max-w-full"
           />
 
-          <div className="shrink-0">
+          <div className="w-[140px] shrink-0 ">
             {currentMin.toFixed(2)}★ to {currentMax.toFixed(2)}★
           </div>
         </div>

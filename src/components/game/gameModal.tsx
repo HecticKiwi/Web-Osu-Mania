@@ -1,8 +1,7 @@
 "use client";
 
-import { BeatmapSetRecord, parseOsz } from "@/lib/beatmapParser";
+import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { Idb } from "@/lib/idb";
-import { config } from "@/osuMania/constants";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -11,14 +10,18 @@ import {
 } from "../providers/gameOverlayProvider";
 import GameScreens from "./gameScreens";
 import { settingsContext } from "../providers/settingsProvider";
+import queryString from "query-string";
+import { useToast } from "../ui/use-toast";
 
 const GameModal = () => {
   const { data } = useContext(GameOverlayContext);
-  const [mapData, setMapData] = useState<BeatmapSetRecord | null>(null);
+  const [mapData, setMapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState("");
   const { settings, resetSettings, updateSettings } =
     useContext(settingsContext);
+
+  const { toast } = useToast();
 
   const { beatmapSetId, beatmapId, isOpen } = data as OpenGameOverlayData;
 
@@ -36,8 +39,17 @@ const GameModal = () => {
 
       // Otherwise download it
       if (!beatmapSetFile) {
+        // https://nerinyan.stoplight.io/docs/nerinyan-api/df11b327494c9-download-beatmapset
+        const url = queryString.stringifyUrl({
+          url: `https://api.nerinyan.moe/d/${beatmapSetId}`,
+          query: {
+            // NoStoryboard: true,
+            noVideo: true,
+          },
+        });
+
         const fetchBeatmapSet = async () =>
-          fetch(`https://api.nerinyan.moe/d/${beatmapSetId}`, {
+          fetch(url, {
             method: "GET",
           });
 
@@ -62,9 +74,20 @@ const GameModal = () => {
         }
 
         beatmapSetFile = await response.blob();
+      }
 
-        // Cache downloaded file
+      // Cache downloaded file with date accessed
+      try {
         await idb.putBeatmapSet(beatmapSetId, beatmapSetFile);
+      } catch (error: any) {
+        if (error.code === DOMException.QUOTA_EXCEEDED_ERR) {
+          toast({
+            title: "Warning",
+            description:
+              "Storage quota exceeded, cache purged. Refresh whenever you get the chance.",
+            duration: 10000,
+          });
+        }
       }
 
       const mapData = await parseOsz(beatmapSetFile, beatmapId);
@@ -73,7 +96,7 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [isOpen, beatmapSetId, beatmapId]);
+  }, [isOpen, beatmapSetId, beatmapId, toast]);
 
   // Cleanup object URLs
   useEffect(() => {

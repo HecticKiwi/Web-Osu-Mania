@@ -1,13 +1,9 @@
 "use client";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Bold, Italic, Underline } from "lucide-react";
-import { Toggle } from "../ui/toggle";
 import { DEFAULT_MODE } from "../beatmapSetsInfiniteScroll";
+import { Toggle } from "../ui/toggle";
+import { cn } from "@/lib/utils";
 
 const KeysBar = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
@@ -25,7 +21,7 @@ const KeysBar = ({ className }: { className?: string }) => {
       newModeParam = [...modeParam, key];
     }
 
-    if (newModeParam.length) {
+    if (newModeParam.length > 0) {
       params.set("key", newModeParam.join(","));
     } else {
       params.delete("key");
@@ -36,7 +32,7 @@ const KeysBar = ({ className }: { className?: string }) => {
 
   return (
     <>
-      <div>
+      <div className={cn(className)}>
         <span className="text-muted-foreground">Mode</span>
 
         <div className="mt-2 flex gap-2">

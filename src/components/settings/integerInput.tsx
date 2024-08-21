@@ -1,8 +1,8 @@
-import { ChangeEvent, useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Minus, Plus } from "lucide-react";
 import { cn, roundToPrecision } from "@/lib/utils";
+import { Minus, Plus } from "lucide-react";
+import { ChangeEvent } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const IntegerInput = ({
   label,

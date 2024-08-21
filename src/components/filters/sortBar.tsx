@@ -1,10 +1,11 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
+  DEFAULT_QUERY,
   DEFAULT_SORT_CRITERIA,
   DEFAULT_SORT_DIRECTION,
   SortCriteria,
@@ -19,10 +20,11 @@ const SortBar = ({ className }: { className?: string }) => {
   const sortDirection: SortDirection =
     (searchParams.get("sortDirection") as SortDirection) ??
     DEFAULT_SORT_DIRECTION;
+  const q = searchParams.get("q") || DEFAULT_QUERY;
 
   return (
     <>
-      <div className="">
+      <div className={cn(className)}>
         <span className="text-muted-foreground">
           Sort by <span className="font-semibold">({sortDirection})</span>
         </span>
@@ -38,6 +40,7 @@ const SortBar = ({ className }: { className?: string }) => {
                 "rating",
                 "plays",
                 "favourites",
+                ...(q ? ["relevance"] : []),
               ].map((criteria) => {
                 const newSortDirection =
                   sortCriteria === criteria && sortDirection === "desc"

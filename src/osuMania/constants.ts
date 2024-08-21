@@ -54,32 +54,14 @@ export function getHitWindows(od: number): HitWindows {
   };
 }
 
-export const COLUMN_KEYS_ARRAY = [
-  [], // Empty item at index 0 so column count matches array index
-  [" "],
-  ["f", "j"],
-  ["f", " ", "j"],
-  ["d", "f", "j", "k"],
-  ["d", "f", " ", "j", "k"],
-  ["s", "d", "f", "j", "k", "l"],
-  ["s", "d", "f", " ", "j", "k", "l"],
-  ["a", "s", "d", "f", "j", "k", "l", ";"],
-  ["a", "s", "d", "f", " ", "j", "k", "l", ";"],
-];
-
-export const config = {
-  columnWidth: 56,
-  hitPosition: 420,
-};
-
-scaleConfig(2038, 1002);
-
-export function scaleConfig(width: number, height: number) {
-  config.columnWidth = (config.columnWidth / OSU_WIDTH) * width;
-
-  config.hitPosition = (config.hitPosition / OSU_HEIGHT) * height;
-}
-
-export function scaleWidth(width: number, windowWidth: number) {
-  return (width / OSU_WIDTH) * windowWidth;
-}
+// export const COLUMN_KEYS_ARRAY = [
+//   [" "],
+//   ["f", "j"],
+//   ["f", " ", "j"],
+//   ["d", "f", "j", "k"],
+//   ["d", "f", " ", "j", "k"],
+//   ["s", "d", "f", "j", "k", "l"],
+//   ["s", "d", "f", " ", "j", "k", "l"],
+//   ["a", "s", "d", "f", "j", "k", "l", ";"],
+//   ["a", "s", "d", "f", " ", "j", "k", "l", ";"],
+// ];
