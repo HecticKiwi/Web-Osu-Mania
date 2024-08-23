@@ -18,15 +18,20 @@ export type Settings = {
   sfxVolume: number;
   scrollSpeed: number;
   backgroundDim: number;
-  autoplay: boolean;
-  playbackRate: number;
+  mods: {
+    autoplay: boolean;
+    easy: boolean;
+    playbackRate: number;
+    hardRock: boolean;
+    mirror: boolean;
+  };
   show300g: boolean;
   showErrorBar: boolean;
   audioOffset: number;
   showFpsCounter: boolean;
+  storeDownloadedBeatmaps: boolean;
   keybinds: {
     keyModes: string[][];
-    restart: string;
   };
 };
 
@@ -36,25 +41,40 @@ export const defaultSettings: Settings = {
   sfxVolume: 0.4,
   scrollSpeed: 20,
   backgroundDim: 0.75,
-  autoplay: false,
-  playbackRate: 1,
+  mods: {
+    autoplay: false,
+    easy: false,
+    playbackRate: 1,
+    hardRock: false,
+    mirror: false,
+  },
   show300g: true,
   showErrorBar: true,
   audioOffset: 0,
   showFpsCounter: false,
+  storeDownloadedBeatmaps: false,
   keybinds: {
     keyModes: [
-      [" "],
-      ["f", "j"],
-      ["f", " ", "j"],
-      ["d", "f", "j", "k"],
-      ["d", "f", " ", "j", "k"],
-      ["s", "d", "f", "j", "k", "l"],
-      ["s", "d", "f", " ", "j", "k", "l"],
-      ["a", "s", "d", "f", "j", "k", "l", ";"],
-      ["a", "s", "d", "f", " ", "j", "k", "l", ";"],
+      ["Space"],
+      ["KeyF", "KeyJ"],
+      ["KeyF", "Space", "KeyJ"],
+      ["KeyD", "KeyF", "KeyJ", "KeyK"],
+      ["KeyD", "KeyF", "Space", "KeyJ", "KeyK"],
+      ["KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL"],
+      ["KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL"],
+      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL", "Semicolon"],
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "Space",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ],
     ],
-    restart: "rshift",
   },
 };
 

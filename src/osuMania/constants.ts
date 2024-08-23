@@ -43,7 +43,11 @@ export const JUDGEMENT_TEXTURES: { [key in Judgement]: string } = {
 
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
 // https://osu.ppy.sh/wiki/en/Beatmap/Overall_difficulty#osu!mania
-export function getHitWindows(od: number): HitWindows {
+export function getHitWindows(od: number, easy: boolean): HitWindows {
+  if (easy) {
+    od = od / 2;
+  }
+
   return {
     320: 16,
     300: 64 - 3 * od,

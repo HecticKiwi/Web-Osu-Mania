@@ -193,6 +193,8 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
+  const { audioOffset, mods } = getSettings();
+
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
   const hitObjectData = lines.slice(startIndex, endIndex);
@@ -200,7 +202,11 @@ export function parseHitObjects(lines: string[], columnCount: number) {
     const [x, y, time, type, hitSoundDecimal] = hitObject
       .split(",")
       .map((number) => Number(number));
-    const column = Math.floor((x * columnCount) / 512);
+
+    let column = Math.floor((x * columnCount) / 512);
+    if (mods.mirror) {
+      column = columnCount - column - 1;
+    }
 
     const hitSoundBinaryString = hitSoundDecimal.toString(2).padStart(4, "0");
     const hitSound = {
@@ -245,7 +251,6 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   });
 
   // Ensure at least 1 second before the song starts
-  const { audioOffset } = getSettings();
   const delay = Math.max(1000 - hitObjects[0].time, 0);
 
   hitObjects.forEach((hitObject) => {

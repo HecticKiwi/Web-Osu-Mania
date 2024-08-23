@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import { useContext } from "react";
 import { settingsContext } from "../providers/settingsProvider";
+import { Separator } from "@/components/ui/separator";
 
 import {
   Sheet,
@@ -22,11 +23,13 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import BackgroundDimSlider from "./backgroundDimSlider";
-import CacheButton from "./cacheButton";
+import CacheSettings from "./cacheSettings";
 import IntegerInput from "./integerInput";
+import Keybinds from "../keybinds";
+import { produce } from "immer";
 
 const SettingsTab = () => {
-  const { settings, resetSettings, updateSettings } =
+  const { settings, resetSettings, updateSettings, setSettings } =
     useContext(settingsContext);
 
   if (!settings) {
@@ -55,8 +58,14 @@ const SettingsTab = () => {
 
         <IntegerInput
           label="Song Speed"
-          value={settings.playbackRate}
-          setValue={(value) => updateSettings({ playbackRate: value })}
+          value={settings.mods.playbackRate}
+          setValue={(value) =>
+            setSettings(
+              produce((draft) => {
+                draft.mods.playbackRate = value;
+              }),
+            )
+          }
           step={0.05}
           min={0.5}
           max={2}
@@ -248,20 +257,14 @@ const SettingsTab = () => {
         </div>
       </div>
 
-      <h3 className="mt-4 text-lg font-semibold">Beatmap Cache</h3>
+      <h3 className="mt-4 text-lg font-semibold">IndexedDB Beatmap Cache</h3>
       <p className="mt-1 text-sm text-muted-foreground">
-        To improve loading times and reduce strain on the{" "}
-        <Link
-          href={"https://nerinyan.moe/"}
-          className="text-primary hover:underline focus:underline"
-          target="_blank"
-        >
-          NeriNyan beatmap API
-        </Link>
-        , beatmaps are cached in your browser.
+        By default, downloaded beatmaps are discarded when you leave or refresh
+        the page. If you enable caching via IndexedDB, downloaded beatmaps will
+        be saved across visits.
       </p>
 
-      <CacheButton />
+      <CacheSettings />
 
       <Button
         className="mt-8 w-full"
@@ -271,6 +274,13 @@ const SettingsTab = () => {
       >
         Reset to Defaults
       </Button>
+
+      <Separator className="my-4" />
+
+      <h3 className="text-lg font-semibold">Keybinds</h3>
+      <div className="mt-1">
+        <Keybinds />
+      </div>
     </>
   );
 };

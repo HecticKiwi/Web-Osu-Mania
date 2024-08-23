@@ -14,7 +14,7 @@ export const AudioContext = createContext<{
 
 export const useAudio = () => useContext(AudioContext);
 
-export const AudioProvider = ({ children }: { children: ReactNode }) => {
+export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
   const [audio, setAudio] = useState<Howl | null>(null);
   const { settings, resetSettings, updateSettings } =
     useContext(settingsContext);
@@ -26,12 +26,12 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
       format: "mp3",
       html5: true,
-      preload: true,
       autoplay: true,
       volume: 0,
+      onplay: () => {
+        newAudio.fade(0, settings.musicVolume, 500);
+      },
     });
-
-    newAudio.fade(0, settings.musicVolume, 500);
 
     setAudio(newAudio);
   };

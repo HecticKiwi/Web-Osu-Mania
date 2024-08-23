@@ -37,7 +37,7 @@ export class Key extends Entity {
   }
 
   public update(dt: number) {
-    if (!this.game.settings.autoplay) {
+    if (!this.game.settings.mods.autoplay) {
       const keybind = this.game.columnKeybinds[this.columnId];
 
       this.setPressed(this.game.inputSystem.pressedKeys.has(keybind));

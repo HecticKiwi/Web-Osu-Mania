@@ -19,7 +19,7 @@ export class StageLight extends Entity {
   }
 
   public update(dt: number) {
-    if (this.game.settings.autoplay) {
+    if (this.game.settings.mods.autoplay) {
       return;
     }
 

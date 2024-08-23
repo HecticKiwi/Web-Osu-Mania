@@ -1,17 +1,33 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
 import { SearchIcon } from "lucide-react";
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
-const Search = ({ className }: { className?: string }) => {
+export const DEFAULT_QUERY = undefined;
+
+export function getQueryParam(searchParams: ReadonlyURLSearchParams) {
+  return searchParams.get("q") || DEFAULT_QUERY;
+}
+
+const SearchFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
+  const queryParam = getQueryParam(searchParams);
+
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(queryParam);
+
+  useEffect(() => {
+    setQuery(queryParam);
+  }, [queryParam]);
 
   const search = (e?: FormEvent) => {
     e?.preventDefault();
@@ -32,7 +48,11 @@ const Search = ({ className }: { className?: string }) => {
       params.set("sortDirection", "desc");
     }
 
-    params.set("q", query);
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
 
     router.push(`/?${params.toString()}`);
   };
@@ -47,7 +67,7 @@ const Search = ({ className }: { className?: string }) => {
           id="search"
           className="rounded-xl"
           type="text"
-          placeholder="Search..."
+          placeholder="Type in keywords..."
           value={query}
           onChange={({ target }) => setQuery(target.value)}
         />
@@ -64,4 +84,4 @@ const Search = ({ className }: { className?: string }) => {
   );
 };
 
-export default Search;
+export default SearchFilter;

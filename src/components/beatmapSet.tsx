@@ -12,9 +12,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useContext } from "react";
-import { DEFAULT_MODE, DEFAULT_STARS } from "./beatmapSetsInfiniteScroll";
+import { DEFAULT_STARS, getStarsParam } from "./filters/difficultyFilter";
+import { DEFAULT_MODE, getKeysParam } from "./filters/keysFilter";
 import ManiaIcon from "./maniaIcon";
-import { AudioContext } from "./providers/audioProvider";
+import { AudioContext } from "./providers/audioPreviewProvider";
 import { BeatmapSetContext } from "./providers/beatmapSetProvider";
 import { GameOverlayContext } from "./providers/gameOverlayProvider";
 import { Button } from "./ui/button";
@@ -26,10 +27,10 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   const { startGame } = useContext(GameOverlayContext);
   const searchParams = useSearchParams();
 
-  const stars = searchParams.get("stars") || DEFAULT_STARS;
+  const stars = getStarsParam(searchParams);
   const [min, max] = stars.split("-").map((value) => Number(value));
 
-  const mode = searchParams.get("key")?.split(",") || DEFAULT_MODE;
+  const mode = getKeysParam(searchParams);
   const { toast } = useToast();
 
   const handleOpenChange = (isOpen: boolean) => {

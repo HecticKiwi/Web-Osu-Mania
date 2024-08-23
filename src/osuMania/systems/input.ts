@@ -17,16 +17,16 @@ export class InputSystem {
   }
 
   public handleKeyDown(event: KeyboardEvent) {
-    if (this.pressedKeys.get(event.key) !== true) {
-      this.pressedKeys.set(event.key, true);
-      this.tappedKeys.set(event.key, true);
+    if (this.pressedKeys.get(event.code) !== true) {
+      this.pressedKeys.set(event.code, true);
+      this.tappedKeys.set(event.code, true);
     }
   }
 
   public handleKeyUp(event: KeyboardEvent) {
-    this.pressedKeys.delete(event.key);
-    this.tappedKeys.delete(event.key);
-    this.releasedKeys.set(event.key, true);
+    this.pressedKeys.delete(event.code);
+    this.tappedKeys.delete(event.code);
+    this.releasedKeys.set(event.code, true);
   }
 
   public clearInputs() {

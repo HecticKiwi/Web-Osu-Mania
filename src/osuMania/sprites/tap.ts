@@ -118,7 +118,7 @@ export class Tap extends Entity {
     const delta = this.data.time - this.game.timeElapsed;
     const absDelta = Math.abs(delta);
 
-    if (this.game.settings.autoplay) {
+    if (this.game.settings.mods.autoplay) {
       if (delta < 0) {
         this.playHitsounds();
 

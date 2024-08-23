@@ -7,35 +7,32 @@ import ModsTab from "./mods/modsTab";
 const SidebarContent = () => {
   return (
     <>
-      <Tabs
-        defaultValue="filters"
-        className="flex max-h-[500px] flex-grow-0 flex-col"
-      >
+      <Tabs defaultValue="filters" className="flex h-full flex-col">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="filters">Filters</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="mods">Mods</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="filters">
-          <Card>
-            <CardContent className="p-6">
+        <TabsContent value="filters" className="h-0 grow">
+          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+            <CardContent className="overflow-auto p-6 scrollbar scrollbar-track-card scrollbar-thumb-primary">
               <FiltersTab />
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="grow">
-          <Card className="h-full overflow-auto">
-            <CardContent className="p-6">
+        <TabsContent value="settings" className="h-0 grow">
+          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+            <CardContent className="overflow-auto p-6 scrollbar scrollbar-track-card scrollbar-thumb-primary">
               <SettingsTab />
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="mods">
-          <Card>
-            <CardContent className="p-6">
+        <TabsContent value="mods" className="h-0 grow">
+          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+            <CardContent className="overflow-auto p-6 scrollbar scrollbar-track-card scrollbar-thumb-primary">
               <ModsTab />
             </CardContent>
           </Card>

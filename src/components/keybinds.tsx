@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { setNestedProperty } from "@/lib/utils";
+import { keyCodeToString, setNestedProperty } from "@/lib/utils";
 import { produce } from "immer";
 import { useContext, useEffect, useState } from "react";
 import { defaultSettings, settingsContext } from "./providers/settingsProvider";
@@ -26,10 +26,10 @@ const Keybinds = () => {
         return;
       }
 
-      if (event.key !== "Escape") {
+      if (event.code !== "Escape") {
         setSettings(
           produce((draft) => {
-            setNestedProperty(draft, keyBindPath, event.key);
+            setNestedProperty(draft, keyBindPath, event.code);
           }),
         );
       }
@@ -56,7 +56,7 @@ const Keybinds = () => {
   return (
     <Dialog onOpenChange={(isOpen) => handleOpenChange(isOpen)}>
       <DialogTrigger asChild>
-        <Button>Controls</Button>
+        <Button className="w-full">Edit Keybinds</Button>
       </DialogTrigger>
 
       <DialogContent
@@ -100,7 +100,7 @@ const Keybinds = () => {
                         : "secondary"
                     }
                   >
-                    {key}
+                    {keyCodeToString(key)}
                   </Button>
                 ))}
               </div>
@@ -119,7 +119,7 @@ const Keybinds = () => {
             );
           }}
         >
-          Reset keybinds
+          Reset Keybinds
         </Button>
       </DialogContent>
     </Dialog>

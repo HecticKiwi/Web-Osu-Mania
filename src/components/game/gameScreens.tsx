@@ -46,7 +46,7 @@ const GameScreens = ({
 
   useEffect(() => {
     const handlePause = (event: KeyboardEvent) => {
-      if (!results && event.key === "Escape" && !event.repeat) {
+      if (!results && event.code === "Escape" && !event.repeat) {
         setIsPaused((prev) => !prev);
       }
     };

@@ -1,20 +1,35 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { useEffect, useState } from "react";
 import { Slider } from "../ui/slider";
-import { DEFAULT_STARS } from "../beatmapSetsInfiniteScroll";
 import { cn } from "@/lib/utils";
+import { DEFAULT_MODE } from "./keysFilter";
 
-const DifficultySlider = ({ className }: { className?: string }) => {
+export const DEFAULT_STARS = "0-10";
+
+export function getStarsParam(searchParams: ReadonlyURLSearchParams) {
+  return searchParams.get("stars") || DEFAULT_STARS;
+}
+
+const DifficultyFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const stars = searchParams.get("stars") || DEFAULT_STARS;
+  const stars = getStarsParam(searchParams);
   const [min, max] = stars.split("-").map((value) => Number(value));
 
   const [currentMin, setCurrentMin] = useState(min);
   const [currentMax, setCurrentMax] = useState(max);
+
+  useEffect(() => {
+    setCurrentMin(min);
+    setCurrentMax(max);
+  }, [min, max]);
 
   const handleValueCommit = ([min, max]: number[]) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,7 +50,8 @@ const DifficultySlider = ({ className }: { className?: string }) => {
 
         <div className="mt-2 flex items-center gap-4">
           <Slider
-            defaultValue={[min, max]}
+            // defaultValue={[min, max]}
+            value={[currentMin, currentMax]}
             min={0}
             max={10}
             step={0.01}
@@ -56,4 +72,4 @@ const DifficultySlider = ({ className }: { className?: string }) => {
   );
 };
 
-export default DifficultySlider;
+export default DifficultyFilter;

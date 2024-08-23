@@ -44,7 +44,7 @@ export class AudioSystem {
       return;
     }
 
-    if (volume) {
+    if (volume !== undefined) {
       sound.volume(volume);
     } else {
       sound.volume(1);

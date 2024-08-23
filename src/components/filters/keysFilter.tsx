@@ -1,15 +1,24 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { DEFAULT_MODE } from "../beatmapSetsInfiniteScroll";
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { Toggle } from "../ui/toggle";
 import { cn } from "@/lib/utils";
 
-const KeysBar = ({ className }: { className?: string }) => {
+export const DEFAULT_MODE = [];
+
+export function getKeysParam(searchParams: ReadonlyURLSearchParams) {
+  return searchParams.get("key")?.split(",") || DEFAULT_MODE;
+}
+
+const KeysFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const modeParam = searchParams.get("key")?.split(",") || DEFAULT_MODE;
+  const modeParam = getKeysParam(searchParams);
 
   const toggleKey = (key: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -55,4 +64,4 @@ const KeysBar = ({ className }: { className?: string }) => {
   );
 };
 
-export default KeysBar;
+export default KeysFilter;

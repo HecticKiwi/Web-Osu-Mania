@@ -5,7 +5,7 @@ export default async function Home() {
   return (
     <>
       <main className="flex items-start justify-center">
-        <div className="sticky top-[88px] max-h-[500px] w-[1000px] p-8 pt-0">
+        <div className="sticky top-[105.6px] h-[calc(100vh-105.6px)] w-[620px] shrink-0 p-8 pt-0">
           <SidebarContent />
         </div>
 

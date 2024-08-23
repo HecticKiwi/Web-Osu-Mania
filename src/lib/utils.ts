@@ -109,3 +109,39 @@ export function getSettings() {
 
   return settings;
 }
+
+export function keyCodeToString(code: string) {
+  if (code.startsWith("Key")) {
+    return code.slice(3); // KeyD => D
+  }
+
+  const keyDictionary: { [k: string]: string } = {
+    ControlLeft: "LControl",
+    ControlRight: "RControl",
+    MetaLeft: "LMeta",
+    MetaRight: "RMeta",
+    AltLeft: "LAlt",
+    AltRight: "RAlt",
+    BracketLeft: "[",
+    BracketRight: "]",
+    ShiftLeft: "LShift",
+    ShiftRight: "RShift",
+    Backslash: "\\",
+    Semicolon: ";",
+    Quote: "'",
+    Comma: ",",
+    Period: ".",
+    Slash: "/",
+    Equal: "=",
+    Minus: "-",
+  };
+
+  const key = keyDictionary[code];
+
+  if (key) {
+    return key;
+  }
+
+  return code;
+  // if (code.)
+}

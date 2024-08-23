@@ -37,6 +37,7 @@ import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
+import { Countdown } from "./sprites/countdown";
 
 export class Game {
   public app = new Application();
@@ -60,7 +61,7 @@ export class Game {
   public audioSystem: AudioSystem;
 
   // UI Components
-  private startMessage: Container;
+  private startMessage: Text;
   public scoreText: Text;
   public comboText: Text;
   public accuracyText: Text;
@@ -77,6 +78,7 @@ export class Game {
   private progressBar: Container;
   public hitError: ErrorBar;
   private fps?: Fps;
+  private countdown: Countdown;
 
   public song: Howl;
 
@@ -125,8 +127,7 @@ export class Game {
       volume: this.settings.musicVolume,
       src: [beatmapData.audio.url],
       format: "wav",
-      preload: true,
-      rate: this.settings.playbackRate,
+      rate: this.settings.mods.playbackRate,
       onloaderror: (id, error) => {
         console.log(error);
       },
@@ -163,7 +164,10 @@ export class Game {
       },
     });
 
-    this.hitWindows = getHitWindows(this.difficulty.od);
+    this.hitWindows = getHitWindows(
+      this.difficulty.od,
+      this.settings.mods.easy,
+    );
   }
 
   public dispose() {
@@ -256,6 +260,10 @@ export class Game {
 
     this.addStartMessage();
 
+    if (this.startTime > 3000) {
+      this.addCountdown();
+    }
+
     if (this.settings.showFpsCounter) {
       this.addFpsCounter();
     }
@@ -298,8 +306,13 @@ export class Game {
 
     switch (this.state) {
       case "WAIT":
-        if (this.inputSystem.tappedKeys.has(" ")) {
+        if (this.inputSystem.tappedKeys.has("Space")) {
           this.app.stage.removeChild(this.startMessage);
+
+          if (this.countdown) {
+            this.countdown.view.alpha = 1;
+          }
+
           this.play();
         }
 
@@ -307,6 +320,10 @@ export class Game {
 
       case "PLAY":
         this.timeElapsed = this.song.seek() * 1000;
+
+        if (this.countdown && this.timeElapsed < this.startTime) {
+          this.countdown.update();
+        }
 
         if (this.timeElapsed >= this.nextTimingPoint?.time) {
           this.currentTimingPoint = this.nextTimingPoint;
@@ -558,10 +575,8 @@ export class Game {
   }
 
   private addStartMessage() {
-    this.startMessage = new Container();
-
-    const text = new Text({
-      text: "Press [Spacebar] to Start",
+    this.startMessage = new Text({
+      text: "Press [Space] to Start",
       style: {
         fill: 0xdddddd,
         fontFamily: "VarelaRound",
@@ -571,8 +586,6 @@ export class Game {
       },
     });
 
-    this.startMessage.addChild(text);
-
     this.startMessage.pivot.set(
       this.startMessage.width / 2,
       this.startMessage.height / 2,
@@ -581,6 +594,11 @@ export class Game {
     this.startMessage.y = this.app.screen.height / 2;
 
     this.app.stage.addChild(this.startMessage);
+  }
+
+  private addCountdown() {
+    this.countdown = new Countdown(this);
+    this.app.stage.addChild(this.countdown.view);
   }
 
   public pause() {

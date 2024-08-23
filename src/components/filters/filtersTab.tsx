@@ -1,25 +1,30 @@
-import CategoryBar from "@/components/filters/categoryBar";
-import DifficultySlider from "@/components/filters/difficultySlider";
-import KeysBar from "@/components/filters/keysBar";
-import SortBar from "@/components/filters/sortBar";
-import Keybinds from "@/components/keybinds";
-import Search from "@/components/search";
-import Settings from "@/components/settings/settings";
+import NsfwFilter from "./nsfwFilter";
+import GenreFilter from "./genreFilter";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import LanguageFilter from "./languageFilter";
+import CategoryFilter from "./categoryFilter";
+import SortFilter from "./sortFilter";
+import KeysFilter from "./keysFilter";
+import DifficultyFilter from "./difficultyFilter";
+import SearchFilter from "./searchFilter";
 
 const FiltersTab = () => {
   return (
     <>
-      <div className="space-y-4">
-        <Search />
-        <CategoryBar />
-        <SortBar />
-        <KeysBar />
-        <DifficultySlider />
+      <div className="flex flex-col gap-4">
+        <SearchFilter />
+        <KeysFilter />
+        <DifficultyFilter />
+        <CategoryFilter />
+        <NsfwFilter />
+        <GenreFilter />
+        <LanguageFilter />
+        <SortFilter />
 
-        <div className="flex items-center gap-2">
-          <Settings />
-          <Keybinds />
-        </div>
+        <Button variant={"destructive"} className="mt-4 w-full" asChild>
+          <Link href={"/"}>Reset Filters</Link>
+        </Button>
       </div>
     </>
   );

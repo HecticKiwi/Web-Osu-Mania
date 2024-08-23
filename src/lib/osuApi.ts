@@ -1,12 +1,14 @@
 "use server";
 
-import {
-  Category,
-  DEFAULT_SORT_CRITERIA,
-  DEFAULT_SORT_DIRECTION,
-  SortCriteria,
-  SortDirection,
-} from "@/components/beatmapSetsInfiniteScroll";
+import { DEFAULT_SORT_DIRECTION } from "@/components/filters/sortFilter";
+import { DEFAULT_SORT_CRITERIA } from "@/components/filters/sortFilter";
+import { SortDirection } from "@/components/filters/sortFilter";
+import { SortCriteria } from "@/components/filters/sortFilter";
+import { DEFAULT_GENRE } from "@/components/filters/genreFilter";
+import { Genre } from "@/components/filters/genreFilter";
+import { GENRES } from "@/components/filters/genreFilter";
+import { Category } from "@/components/filters/categoryFilter";
+import { DEFAULT_CATEGORY } from "@/components/filters/categoryFilter";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import queryString from "query-string";
@@ -115,6 +117,9 @@ export async function searchBeatmaps({
   cursorString,
   mode,
   stars = "0-10",
+  nsfw = true,
+  genre,
+  language,
 }: {
   query?: string;
   category?: Category;
@@ -123,6 +128,9 @@ export async function searchBeatmaps({
   cursorString?: string;
   mode?: string[];
   stars?: string;
+  nsfw: boolean;
+  genre: number;
+  language: number;
 }) {
   const cookieStore = cookies();
   const token = cookieStore.get("osu_api_access_token")?.value;
@@ -147,7 +155,10 @@ export async function searchBeatmaps({
       m: 3, // 3 = mania mode
       sort: `${sortCriteria}_${sortDirection}`,
       cursor_string: cursorString,
-      s: category !== "hasLeaderboard" ? category : undefined,
+      s: category !== DEFAULT_CATEGORY ? category : undefined,
+      nsfw,
+      g: genre || undefined,
+      l: language || undefined,
     },
   });
 

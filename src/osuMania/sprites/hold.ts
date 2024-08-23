@@ -65,7 +65,7 @@ export class Hold {
 
     const absDelta = Math.abs(delta);
 
-    if (this.game.settings.autoplay) {
+    if (this.game.settings.mods.autoplay) {
       if (this.game.timeElapsed > this.data.time) {
         this.game.keys[this.data.column].setPressed(true);
         this.game.stageLights[this.data.column].sprite.alpha = 1;
