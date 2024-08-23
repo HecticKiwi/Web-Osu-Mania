@@ -56,7 +56,7 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [isOpen, beatmapSetId, beatmapId, toast]);
+  }, [isOpen, beatmapSetId, beatmapId, toast, getBeatmapSet]);
 
   // Cleanup object URLs
   useEffect(() => {

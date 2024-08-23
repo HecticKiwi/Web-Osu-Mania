@@ -41,7 +41,7 @@ const Keybinds = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [keyBindPath]);
+  }, [keyBindPath, setSettings]);
 
   if (!settings) {
     return null;
