@@ -1,14 +1,12 @@
 "use client";
 
 import { Slider } from "@/components/ui/slider";
-import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import { useContext, useRef } from "react";
-import { settingsContext } from "../providers/settingsProvider";
 import { cn } from "@/lib/utils";
-import { useGSAP } from "@gsap/react";
+import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
+import { useSettingsContext } from "../providers/settingsProvider";
 
 const VolumeSlider = ({ className }: { className?: string }) => {
-  const { settings, updateSettings } = useContext(settingsContext);
+  const { settings, setSettings } = useSettingsContext();
   const { volume } = settings;
 
   return (
@@ -28,7 +26,11 @@ const VolumeSlider = ({ className }: { className?: string }) => {
           value={[volume]}
           max={1}
           step={0.01}
-          onValueChange={([volume]) => updateSettings({ volume })}
+          onValueChange={([volume]) =>
+            setSettings((draft) => {
+              draft.volume = volume;
+            })
+          }
           className="w-full"
         />
       </div>

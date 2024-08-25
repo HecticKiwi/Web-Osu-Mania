@@ -1,23 +1,31 @@
 "use client";
 
-import { Idb } from "@/lib/idb";
 import { cn } from "@/lib/utils";
 import { filesize } from "filesize";
 import { Loader2Icon } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
+import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
-import { settingsContext } from "../providers/settingsProvider";
-import BeatmapSetCacheProvider, {
-  BeatmapSetCacheContext,
-} from "../providers/beatmapSetCacheProvider";
 
-const CacheSettings = ({ className }: { className?: string }) => {
-  const { settings, updateSettings } = useContext(settingsContext);
-  const { idbUsage, clearIdbCache } = useContext(BeatmapSetCacheContext);
+const IdbCacheSettings = ({ className }: { className?: string }) => {
+  const { settings, setSettings } = useSettingsContext();
+  const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
+
+  // If the browser doesn't support IDB, don't show
+  if (!("indexedDB" in window)) {
+    return null;
+  }
 
   return (
     <div>
+      <h3 className="mt-4 text-lg font-semibold">IndexedDB Beatmap Cache</h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        By default, downloaded beatmaps are discarded when you leave or refresh
+        the page. If you enable caching via IndexedDB, downloaded beatmaps will
+        be saved across visits.
+      </p>
+
       <div className="mt-4 grid grid-cols-2 items-center">
         <div className="text-sm font-semibold text-muted-foreground">
           Enable cache
@@ -26,7 +34,10 @@ const CacheSettings = ({ className }: { className?: string }) => {
         <Switch
           checked={settings.storeDownloadedBeatmaps}
           onCheckedChange={async (checked) => {
-            updateSettings({ storeDownloadedBeatmaps: checked });
+            setSettings((draft) => {
+              draft.storeDownloadedBeatmaps = checked;
+            });
+
             if (!checked && idbUsage && idbUsage > 0) {
               await clearIdbCache();
             }
@@ -52,4 +63,4 @@ const CacheSettings = ({ className }: { className?: string }) => {
   );
 };
 
-export default CacheSettings;
+export default IdbCacheSettings;

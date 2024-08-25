@@ -18,11 +18,7 @@ export class StageLight extends Entity {
     this.sprite.tint = `rgb(${game.skinManiaIni[`ColourLight${columnId + 1}`]})`;
   }
 
-  public update(dt: number) {
-    if (this.game.settings.mods.autoplay) {
-      return;
-    }
-
+  public update() {
     if (
       this.game.inputSystem.tappedKeys.has(
         this.game.columnKeybinds[this.columnId],

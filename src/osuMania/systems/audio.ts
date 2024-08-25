@@ -24,36 +24,36 @@ export class AudioSystem {
   }
 
   private load(name: string, src: string) {
-    this.sounds[name] = new Howl({
-      src: [src],
-      // src: ["/skin/normal-hitnormal.ogg"],
-      // format: "ogg",
-      preload: true,
-      onloaderror: (_, e) => {
-        // console.warn(e, src);
-      },
-    });
+    this.sounds[name] = {
+      howl: new Howl({
+        src: [src],
+        preload: true,
+        onloaderror: (_, e) => {
+          // console.warn(e, src);
+        },
+      }),
+    };
   }
 
   public play(filename: string, volume?: number) {
     const sound = this.sounds[filename];
 
     if (!sound) {
-      console.warn("Sound not found: ", filename);
+      // console.warn("Sound not found: ", filename);
 
       return;
     }
 
     if (volume !== undefined) {
-      sound.volume(volume);
+      sound.howl.volume(volume);
     } else {
-      sound.volume(1);
+      sound.howl.volume(1);
     }
 
     // Play the sound at most once per frame to avoid erratic volumes / clipping
-    if (!this.playedSounds.has(sound)) {
-      sound.play();
-      this.playedSounds.add(sound);
+    if (!this.playedSounds.has(sound.howl)) {
+      sound.howl.play();
+      this.playedSounds.add(sound.howl);
     }
   }
 
@@ -67,16 +67,14 @@ export class AudioSystem {
     const suffix = `${sampleIndex > 1 ? sampleIndex : ""}`;
     const sound = `${prefix}${name}${suffix}`;
 
-    if (sampleIndex > 0 && this.sounds[`${sound}.wav`]) {
+    if (sampleIndex > 0 && this.sounds[`${sound}`]) {
       this.play(
-        `${prefix}${name}${suffix}.wav`,
+        `${prefix}${name}${suffix}`,
         this.game.settings.sfxVolume * volume,
       );
     } else {
       this.play(`skin-${prefix}${name}`, this.game.settings.sfxVolume * volume);
     }
-
-    this.game.settings.sfxVolume;
   }
 
   public dispose() {

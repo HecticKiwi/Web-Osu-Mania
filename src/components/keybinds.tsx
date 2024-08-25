@@ -10,13 +10,15 @@ import {
 import { keyCodeToString, setNestedProperty } from "@/lib/utils";
 import { produce } from "immer";
 import { useContext, useEffect, useState } from "react";
-import { defaultSettings, settingsContext } from "./providers/settingsProvider";
+import {
+  defaultSettings,
+  useSettingsContext as useSettingsContext,
+} from "./providers/settingsProvider";
 import { Button } from "./ui/button";
 
 const Keybinds = () => {
   const [keyBindPath, setKeyBindPath] = useState<any | null>(null);
-  const { settings, resetSettings, updateSettings, setSettings } =
-    useContext(settingsContext);
+  const { settings, setSettings } = useSettingsContext();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {

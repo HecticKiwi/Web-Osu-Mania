@@ -1,6 +1,6 @@
 "use client";
 
-import { searchBeatmaps } from "@/lib/osuApi";
+import { getBeatmaps } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
@@ -33,7 +33,7 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
   const category = getCategoryParam(searchParams);
   const sortCriteria = getSortCriteriaParam(searchParams);
   const sortDirection = getSortDirectionParam(searchParams);
-  const mode = getKeysParam(searchParams);
+  const keys = getKeysParam(searchParams);
   const stars = getStarsParam(searchParams);
   const nsfw = getNsfwParam(searchParams);
   const genre = getGenreParam(searchParams);
@@ -43,21 +43,18 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
 
   const {
     data,
-    error,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isPending,
     isFetchingNextPage,
     isError,
-    status,
   } = useInfiniteQuery({
     queryKey: [
       {
         query,
         sortCriteria,
         sortDirection,
-        mode,
+        mode: keys,
         stars,
         category,
         nsfw,
@@ -66,12 +63,12 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
       },
     ],
     queryFn: ({ pageParam }) =>
-      searchBeatmaps({
+      getBeatmaps({
         query,
         sortCriteria,
         sortDirection,
         cursorString: pageParam,
-        mode,
+        keys,
         stars,
         category,
         nsfw,
@@ -154,7 +151,7 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
           {isFetchingNextPage ? (
             <Loader className="animate-spin" />
           ) : hasNextPage ? (
-            "Load more"
+            "Load More"
           ) : (
             "No more beatmaps."
           )}

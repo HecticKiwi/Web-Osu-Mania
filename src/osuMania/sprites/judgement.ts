@@ -13,6 +13,7 @@ export class Judgement extends Entity {
     this.sprite = Sprite.from(JUDGEMENT_TEXTURES[300]);
     this.sprite.alpha = 0;
     this.sprite.zIndex = 99;
+    this.sprite.anchor.set(0.5);
   }
 
   public showJudgement(judgement: JudgementValue) {

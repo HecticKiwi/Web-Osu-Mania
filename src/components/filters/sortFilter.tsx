@@ -38,12 +38,9 @@ export function getSortDirectionParam(searchParams: ReadonlyURLSearchParams) {
 const SortFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
 
-  const sortCriteria: SortCriteria =
-    (searchParams.get("sortCriteria") as SortCriteria) ?? DEFAULT_SORT_CRITERIA;
-  const sortDirection: SortDirection =
-    (searchParams.get("sortDirection") as SortDirection) ??
-    DEFAULT_SORT_DIRECTION;
-  const q = getQueryParam(searchParams);
+  const sortCriteria = getSortCriteriaParam(searchParams);
+  const sortDirection = getSortDirectionParam(searchParams);
+  const query = getQueryParam(searchParams);
 
   return (
     <>
@@ -61,7 +58,7 @@ const SortFilter = ({ className }: { className?: string }) => {
             "rating",
             "plays",
             "favourites",
-            ...(q ? ["relevance"] : []),
+            ...(query ? ["relevance"] : []),
           ].map((criteria) => {
             const newSortDirection =
               sortCriteria === criteria && sortDirection === "desc"

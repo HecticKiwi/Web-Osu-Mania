@@ -1,29 +1,23 @@
 "use client";
 
-import { useContext } from "react";
+import { Slider } from "@/components/ui/slider";
 import {
-  defaultSettings,
-  settingsContext,
-} from "../providers/settingsProvider";
-import { Switch } from "../ui/switch";
-import { produce } from "immer";
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
+import { Switch } from "../ui/switch";
+import IntegerInput from "../settings/integerInput";
 
 const ModsTab = () => {
-  const { settings, resetSettings, updateSettings, setSettings } =
-    useContext(settingsContext);
+  const { settings, setSettings, resetMods } = useSettingsContext();
 
   if (!settings) {
     return null;
   }
-
-  const resetMods = () => {
-    setSettings(
-      produce((draft) => {
-        draft.mods = defaultSettings.mods;
-      }),
-    );
-  };
 
   return (
     <>
@@ -36,15 +30,13 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.easy}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  draft.mods.easy = checked;
+              setSettings((draft) => {
+                draft.mods.easy = checked;
 
-                  if (checked) {
-                    draft.mods.hardRock = false;
-                  }
-                }),
-              )
+                if (checked) {
+                  draft.mods.hardRock = false;
+                }
+              })
             }
           />
         </div>
@@ -55,15 +47,13 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.playbackRate === 0.75}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  if (checked) {
-                    draft.mods.playbackRate = 0.75;
-                  } else {
-                    draft.mods.playbackRate = 1;
-                  }
-                }),
-              )
+              setSettings((draft) => {
+                if (checked) {
+                  draft.mods.playbackRate = 0.75;
+                } else {
+                  draft.mods.playbackRate = 1;
+                }
+              })
             }
           />
         </div>
@@ -78,15 +68,13 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.hardRock}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  draft.mods.hardRock = checked;
+              setSettings((draft) => {
+                draft.mods.hardRock = checked;
 
-                  if (checked) {
-                    draft.mods.easy = false;
-                  }
-                }),
-              )
+                if (checked) {
+                  draft.mods.easy = false;
+                }
+              })
             }
           />
         </div>
@@ -97,15 +85,13 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.playbackRate === 1.5}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  if (checked) {
-                    draft.mods.playbackRate = 1.5;
-                  } else {
-                    draft.mods.playbackRate = 1;
-                  }
-                }),
-              )
+              setSettings((draft) => {
+                if (checked) {
+                  draft.mods.playbackRate = 1.5;
+                } else {
+                  draft.mods.playbackRate = 1;
+                }
+              })
             }
           />
         </div>
@@ -120,11 +106,9 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.autoplay}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  draft.mods.autoplay = checked;
-                }),
-              )
+              setSettings((draft) => {
+                draft.mods.autoplay = checked;
+              })
             }
           />
         </div>
@@ -135,13 +119,43 @@ const ModsTab = () => {
           <Switch
             checked={settings.mods.mirror}
             onCheckedChange={(checked) =>
-              setSettings(
-                produce((draft) => {
-                  draft.mods.mirror = checked;
-                }),
-              )
+              setSettings((draft) => {
+                draft.mods.mirror = checked;
+              })
             }
           />
+        </div>
+      </div>
+
+      <h3 className="mb-1 mt-4 text-lg font-semibold">Custom</h3>
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Song Speed
+          </div>
+
+          <div className={cn("flex items-center gap-4")}>
+            <div className="group w-full">
+              <Tooltip open>
+                <TooltipTrigger asChild>
+                  <Slider
+                    value={[settings.mods.playbackRate]}
+                    min={0.5}
+                    max={2}
+                    step={0.05}
+                    onValueChange={([playbackRate]) =>
+                      setSettings((draft) => {
+                        draft.mods.playbackRate = playbackRate;
+                      })
+                    }
+                  />
+                </TooltipTrigger>
+                <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
+                  {settings.mods.playbackRate}x
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
         </div>
       </div>
 

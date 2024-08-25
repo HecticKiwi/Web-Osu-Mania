@@ -11,57 +11,37 @@ import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useContext } from "react";
-import { DEFAULT_STARS, getStarsParam } from "./filters/difficultyFilter";
-import { DEFAULT_MODE, getKeysParam } from "./filters/keysFilter";
+import { getStarsParam } from "./filters/difficultyFilter";
+import { getKeysParam } from "./filters/keysFilter";
 import ManiaIcon from "./maniaIcon";
-import { AudioContext } from "./providers/audioPreviewProvider";
-import { BeatmapSetContext } from "./providers/beatmapSetProvider";
-import { GameOverlayContext } from "./providers/gameOverlayProvider";
+import { useAudioContext } from "./providers/audioPreviewProvider";
+import { useGameContext } from "./providers/gameOverlayProvider";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
-  const { setBeatmapSet } = useContext(BeatmapSetContext);
-  const { play, stop } = useContext(AudioContext);
-  const { startGame } = useContext(GameOverlayContext);
+  const { toast } = useToast();
+  const { play, stop } = useAudioContext();
+  const { startGame } = useGameContext();
+
   const searchParams = useSearchParams();
 
-  const stars = getStarsParam(searchParams);
-  const [min, max] = stars.split("-").map((value) => Number(value));
+  const { min, max } = getStarsParam(searchParams);
 
-  const mode = getKeysParam(searchParams);
-  const { toast } = useToast();
+  const keys = getKeysParam(searchParams);
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      play(beatmapSet.id.toString());
+      play(beatmapSet.id);
     } else {
       stop();
     }
   };
 
-  const onSelectBeatmap = (beatmapId: number) => {
-    if (!("indexedDB" in window)) {
-      toast({
-        title: "Error",
-        description:
-          "The browser you are using does not support IndexedDB. Please try again in another browser.",
-      });
-
-      return;
-    }
-
-    startGame(beatmapSet.id, beatmapId);
-  };
-
   return (
     <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <button
-          className="group relative flex h-[150px] flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors focus-within:border-primary hover:border-primary"
-          onClick={() => setBeatmapSet(beatmapSet)}
-        >
+        <button className="group relative flex h-[150px] flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300 focus-within:border-primary hover:border-primary">
           {/* Background cover */}
           <span
             className={
@@ -78,34 +58,29 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
             />
           </span>
 
-          <div className="flex w-full justify-end">
-            <Button
-              asChild
-              variant={"secondary"}
-              size={"icon"}
-              className="h-8 w-8 bg-secondary/60 hover:bg-secondary"
-              onClick={(e) => e.stopPropagation()}
-              title="Go to osu! beatmap page"
+          <Button
+            asChild
+            variant={"secondary"}
+            size={"icon"}
+            className="h-8 w-8 self-end bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
+            onClick={(e) => e.stopPropagation()}
+            title="Go to osu! beatmap page"
+          >
+            <Link
+              href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
+              target="_blank"
             >
-              <Link
-                href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
-                target="_blank"
-              >
-                <ExternalLink className="h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
+              <ExternalLink className="h-5 w-5" />
+            </Link>
+          </Button>
 
           {/* Details */}
-          <div className="mt-auto line-clamp-1 text-xl font-normal">
-            {beatmapSet.title}
-          </div>
-
-          <div className="gap flex w-full items-end justify-between gap-8">
-            <span className="line-clamp-1 text-base font-normal text-primary">
+          <div className="mt-auto line-clamp-1 text-xl">{beatmapSet.title}</div>
+          <div className="flex w-full items-end justify-between gap-8">
+            <span className="line-clamp-1 text-primary">
               by {beatmapSet.artist}
             </span>
-            <span className=" text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               {secondsToMMSS(
                 Math.max(
                   ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
@@ -116,37 +91,40 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="max-h-[500px] space-y-2 overflow-auto rounded-xl p-2">
-        {beatmapSet.beatmaps
-          .filter((beatmap) => beatmap.mode === "mania")
-          .filter(
-            (beatmap) => !mode.length || mode.includes(beatmap.cs.toString()),
-          )
-          .filter(
-            (beatmap) =>
-              beatmap.difficulty_rating >= min &&
-              beatmap.difficulty_rating <= max,
-          )
-          .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-          .map((beatmap) => (
-            <button
-              key={beatmap.id}
-              className="flex w-full items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
-              onClick={() => onSelectBeatmap(beatmap.id)}
-            >
-              <ManiaIcon
-                difficultyRating={beatmap.difficulty_rating}
-                className="shrink-0"
-              />
+      <PopoverContent className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl p-0">
+        <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
+          {beatmapSet.beatmaps
+            .filter((beatmap) => beatmap.mode === "mania")
+            .filter(
+              // For mania, CS is the keycount (e.g. CS: 4 means 4K)
+              (beatmap) => !keys.length || keys.includes(beatmap.cs.toString()),
+            )
+            .filter(
+              (beatmap) =>
+                beatmap.difficulty_rating >= min &&
+                beatmap.difficulty_rating <= max,
+            )
+            .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+            .map((beatmap) => (
+              <button
+                key={beatmap.id}
+                className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
+                onClick={() => startGame(beatmapSet.id, beatmap.id)}
+              >
+                <ManiaIcon
+                  difficultyRating={beatmap.difficulty_rating}
+                  className="shrink-0"
+                />
 
-              <div>
-                <p className="line-clamp-1">{beatmap.version}</p>
-                <p className="text-muted-foreground">
-                  {beatmap.difficulty_rating}★
-                </p>
-              </div>
-            </button>
-          ))}
+                <div>
+                  <p className="line-clamp-1">{beatmap.version}</p>
+                  <p className="text-muted-foreground">
+                    {beatmap.difficulty_rating}★
+                  </p>
+                </div>
+              </button>
+            ))}
+        </div>
       </PopoverContent>
     </Popover>
   );

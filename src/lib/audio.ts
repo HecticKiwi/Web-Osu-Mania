@@ -1,12 +1,20 @@
 import toWav from "audiobuffer-to-wav";
 
 // Adds silence to the start of the audio blob, returning the result as a .wav blob
-export async function addDelay(blob: Blob, duration: number) {
+// If blob arg is null, returns a silent .wav blob
+export async function addDelay(blob: Blob | null, duration: number) {
   const audioCtx = new AudioContext();
 
-  const blobArrayBuffer = await blob.arrayBuffer();
+  let audioBuffer: AudioBuffer;
+  if (blob) {
+    const blobArrayBuffer = await blob.arrayBuffer();
 
-  const audioBuffer = await audioCtx.decodeAudioData(blobArrayBuffer);
+    audioBuffer = await audioCtx.decodeAudioData(blobArrayBuffer);
+  } else {
+    const sampleRate = 44100;
+
+    audioBuffer = audioCtx.createBuffer(2, sampleRate * duration, sampleRate);
+  }
 
   const offlineCtx = new OfflineAudioContext(
     audioBuffer.numberOfChannels,

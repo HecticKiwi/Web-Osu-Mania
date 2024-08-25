@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-import { DEFAULT_MODE } from "./keysFilter";
 
 export const GENRES = [
   "Any",

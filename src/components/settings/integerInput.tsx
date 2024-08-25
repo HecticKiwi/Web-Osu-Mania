@@ -4,6 +4,7 @@ import { ChangeEvent } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
+// Unused but maybe I might need it in the future?
 const IntegerInput = ({
   label,
   value,

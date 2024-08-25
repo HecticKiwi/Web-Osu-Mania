@@ -1,7 +1,7 @@
 import { SampleSet, TapData as TapData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
 import { Sprite } from "pixi.js";
-import { SKIN_DIR } from "../constants";
+import { SCROLL_SPEED_MULT, SKIN_DIR } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
@@ -25,13 +25,13 @@ export class Tap extends Entity {
     this.data = hitObjectData;
 
     this.view.zIndex = 1;
-    scaleEntityWidth(this.view, this.game.skinManiaIni.ColumnWidth);
+    scaleEntityWidth(this.view, this.game.scaledColumnWidth);
 
     this.game.notesContainer.addChild(this.view);
 
     this.view.anchor.set(undefined, 1);
 
-    this.view.x = hitObjectData.column * this.game.skinManiaIni.ColumnWidth;
+    this.view.x = hitObjectData.column * this.game.scaledColumnWidth;
 
     this.setSoundData();
   }
@@ -61,6 +61,7 @@ export class Tap extends Entity {
 
   public playHitsounds() {
     const hitSoundFile = this.data.hitSample.filename;
+
     if (hitSoundFile && this.game.audioSystem.sounds[hitSoundFile]) {
       this.game.audioSystem.play(hitSoundFile, this.game.settings.sfxVolume);
     } else {
@@ -102,33 +103,29 @@ export class Tap extends Entity {
     }
   }
 
-  public update(dt?: number) {
+  public update() {
+    const delta = this.data.time - this.game.timeElapsed;
+
     this.view.y =
-      (this.game.timeElapsed - this.data.time) *
-        this.game.settings.scrollSpeed *
-        0.08 +
+      (-delta * this.game.settings.scrollSpeed * SCROLL_SPEED_MULT) /
+        this.game.settings.mods.playbackRate +
       this.game.hitPosition;
 
     const column = this.game.columns[this.data.column];
-
     if (column[0] !== this) {
       return;
     }
-
-    const delta = this.data.time - this.game.timeElapsed;
-    const absDelta = Math.abs(delta);
 
     if (this.game.settings.mods.autoplay) {
       if (delta < 0) {
         this.playHitsounds();
 
         this.game.scoreSystem.hit(320);
+        this.game.stageLights[this.data.column].light();
 
         this.game.hitError?.addTimingMark(0);
 
         this.shouldRemove = true;
-
-        this.game.stageLights[this.data.column].light();
 
         this.game.keys[this.data.column].setPressed(true);
         setTimeout(
@@ -147,6 +144,8 @@ export class Tap extends Entity {
     }
 
     if (this.isHit()) {
+      const absDelta = Math.abs(delta);
+
       // Return if you pressed way too early...
       if (absDelta > this.game.hitWindows[0]) {
         return;

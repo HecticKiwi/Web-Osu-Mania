@@ -9,9 +9,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
   async headers() {
     return [
       {

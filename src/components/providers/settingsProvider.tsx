@@ -2,17 +2,11 @@
 
 import { getSettings } from "@/lib/utils";
 import { Howler } from "howler";
-import { produce } from "immer";
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useContext, useEffect } from "react";
+import { Updater, useImmer } from "use-immer";
 
 export type Settings = {
+  version: number;
   volume: number;
   musicVolume: number;
   sfxVolume: number;
@@ -30,12 +24,14 @@ export type Settings = {
   audioOffset: number;
   showFpsCounter: boolean;
   storeDownloadedBeatmaps: boolean;
+  upscroll: boolean;
   keybinds: {
     keyModes: string[][];
   };
 };
 
 export const defaultSettings: Settings = {
+  version: 1,
   volume: 1,
   musicVolume: 1,
   sfxVolume: 0.4,
@@ -53,6 +49,7 @@ export const defaultSettings: Settings = {
   audioOffset: 0,
   showFpsCounter: false,
   storeDownloadedBeatmaps: false,
+  upscroll: false,
   keybinds: {
     keyModes: [
       ["Space"],
@@ -78,20 +75,30 @@ export const defaultSettings: Settings = {
   },
 };
 
-export const settingsContext = createContext<{
+const SettingsContext = createContext<{
   settings: Settings;
-  updateSettings: (newSettings: Partial<Settings>) => void;
-  setSettings: Dispatch<SetStateAction<Settings>>;
+  setSettings: Updater<Settings>;
   resetSettings: () => void;
-}>(null!);
+  resetMods: () => void;
+} | null>(null);
+
+export const useSettingsContext = () => {
+  const settings = useContext(SettingsContext);
+
+  if (!settings) {
+    throw new Error("Using settings context outside of provider");
+  }
+
+  return settings;
+};
 
 const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<Settings>(null!);
+  const [settings, setSettings] = useImmer<Settings>(null!);
 
   // Load settings from localstorage
   useEffect(() => {
     setSettings(getSettings());
-  }, []);
+  }, [setSettings]);
 
   // Update localStorage whenever settings change
   useEffect(() => {
@@ -100,7 +107,7 @@ const SettingsProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [settings]);
 
-  // On volume change
+  // Update Howler volume from settings
   useEffect(() => {
     if (settings) {
       Howler.volume(settings.volume);
@@ -108,27 +115,27 @@ const SettingsProvider = ({ children }: { children: ReactNode }) => {
   }, [settings]);
 
   const resetSettings = () => {
-    setSettings({ ...defaultSettings, keybinds: settings.keybinds });
+    setSettings((draft) => ({
+      ...defaultSettings,
+      mods: draft.mods,
+      keybinds: draft.keybinds,
+    }));
   };
 
-  const updateSettings = (settingsPartial: Partial<Settings>) => {
-    setSettings(
-      produce((draft) => {
-        return {
-          ...settings,
-          ...settingsPartial,
-        };
-      }),
-    );
+  const resetMods = () => {
+    setSettings((draft) => ({
+      ...draft,
+      mods: defaultSettings.mods,
+    }));
   };
 
   return (
     <>
-      <settingsContext.Provider
-        value={{ settings, updateSettings, resetSettings, setSettings }}
+      <SettingsContext.Provider
+        value={{ settings, resetSettings, setSettings, resetMods }}
       >
         {children}
-      </settingsContext.Provider>
+      </SettingsContext.Provider>
     </>
   );
 };

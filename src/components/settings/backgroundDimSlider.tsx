@@ -7,11 +7,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PersonStanding } from "lucide-react";
-import { useContext } from "react";
-import { settingsContext } from "../providers/settingsProvider";
+import { useSettingsContext } from "../providers/settingsProvider";
 
 const BackgroundDimSlider = () => {
-  const { settings, updateSettings } = useContext(settingsContext);
+  const { settings, setSettings } = useSettingsContext();
   const { backgroundDim } = settings;
 
   return (
@@ -32,7 +31,9 @@ const BackgroundDimSlider = () => {
                 max={1}
                 step={0.01}
                 onValueChange={([backgroundDim]) =>
-                  updateSettings({ backgroundDim })
+                  setSettings((draft) => {
+                    draft.backgroundDim = backgroundDim;
+                  })
                 }
               />
             </TooltipTrigger>

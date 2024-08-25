@@ -1,7 +1,7 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
 import { Container, Sprite } from "pixi.js";
-import { SKIN_DIR } from "../constants";
+import { SCROLL_SPEED_MULT, SKIN_DIR } from "../constants";
 import { Game } from "../game";
 
 export class Hold {
@@ -19,9 +19,8 @@ export class Hold {
     const tail = Sprite.from(
       `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${holdData.column}T`]}.png`,
     );
-    scaleEntityWidth(tail, this.game.skinManiaIni.ColumnWidth);
+    scaleEntityWidth(tail, this.game.scaledColumnWidth);
     tail.zIndex = 1;
-    // tail.pivot.set(0.5, 0.5);
     tail.anchor.set(1, 0.5);
 
     tail.angle = 180;
@@ -29,30 +28,30 @@ export class Hold {
     const body = Sprite.from(
       `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${holdData.column}L`]}.png`,
     );
-    scaleEntityWidth(body, this.game.skinManiaIni.ColumnWidth);
+    scaleEntityWidth(body, this.game.scaledColumnWidth);
 
     const holdHeight =
-      (holdData.endTime - this.data.time) *
-      this.game.settings.scrollSpeed *
-      0.08;
+      ((holdData.endTime - this.data.time) *
+        this.game.settings.scrollSpeed *
+        SCROLL_SPEED_MULT) /
+      this.game.settings.mods.playbackRate;
     body.height = holdHeight;
 
     this.view = new Container();
     this.view.addChild(tail);
     this.view.addChild(body);
     this.view.width;
-    this.view.x = holdData.column * this.game.skinManiaIni.ColumnWidth;
-
-    // this.view.pivot.set(undefined, this.view.height);
+    this.view.x = holdData.column * this.game.scaledColumnWidth;
 
     this.game.notesContainer.addChild(this.view);
   }
 
-  public update(dt?: number) {
+  public update() {
     this.view.y =
-      (this.game.timeElapsed - this.data.endTime) *
+      ((this.game.timeElapsed - this.data.endTime) *
         this.game.settings.scrollSpeed *
-        0.08 +
+        SCROLL_SPEED_MULT) /
+        this.game.settings.mods.playbackRate +
       this.game.hitPosition;
 
     const column = this.game.columns[this.data.column];

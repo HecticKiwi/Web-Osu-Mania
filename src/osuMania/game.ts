@@ -3,6 +3,7 @@ import {
   BeatmapData,
   Difficulty,
   HitObject,
+  HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
 import {
@@ -12,21 +13,21 @@ import {
   scaleEntityWidth,
   scaleWidth,
 } from "@/lib/utils";
-import { Column, GameState, HitWindows, Results } from "@/types";
+import { Column, GameState, Results } from "@/types";
 import { Howl } from "howler";
 import { parse } from "ini";
 import {
   Application,
   Container,
   Graphics,
-  HTMLText,
   Sprite,
   Text,
   TextStyle,
   Ticker,
 } from "pixi.js";
 import { loadAssets } from "./assets";
-import { TEXTURES, getHitWindows } from "./constants";
+import { TEXTURES } from "./constants";
+import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
 import { Hold } from "./sprites/hold";
@@ -37,23 +38,21 @@ import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
-import { Countdown } from "./sprites/countdown";
 
 export class Game {
   public app = new Application();
   public state: GameState = "WAIT";
-
-  // Relative to bottom of screen
-  public hitPosition: number;
 
   public settings: Settings;
   public difficulty: Difficulty;
   public columnKeybinds: string[];
   public hitWindows: HitWindows;
 
-  // Too lazy to properly type this
+  // Too lazy to properly type the Inis
   public skinIni: any; // https://osu.ppy.sh/wiki/en/Skinning/skin.ini#[mania]
   public skinManiaIni: any;
+  public hitPosition: number;
+  public scaledColumnWidth: number;
 
   // Systems
   public scoreSystem: ScoreSystem;
@@ -67,10 +66,11 @@ export class Game {
   public accuracyText: Text;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
-  public notesContainer: Container = new Container();
+  public stageContainer: Container = new Container();
   public stageSides: Graphics;
   public stageBackground: Graphics;
   public stageLights: StageLight[] = [];
+  public notesContainer: Container = new Container();
   public keys: Key[] = [];
   public stageHint: Sprite;
   public judgement: Judgement;
@@ -82,7 +82,6 @@ export class Game {
 
   public song: Howl;
 
-  // Derived from the hitobjects, not the song file
   public startTime: number;
   public endTime: number;
 
@@ -99,19 +98,15 @@ export class Game {
     this.resize = this.resize.bind(this);
 
     this.hitObjects = beatmapData.hitObjects;
+    this.startTime = beatmapData.startTime;
+    this.endTime = beatmapData.endTime;
+
     this.difficulty = beatmapData.difficulty;
 
     this.timingPoints = beatmapData.timingPoints;
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
-
-    // Set start/end times
-    this.startTime = this.hitObjects[0].time;
-    const lastHitObject = this.hitObjects[this.hitObjects.length - 1];
-    this.endTime =
-      lastHitObject.type === "hold"
-        ? lastHitObject.endTime
-        : lastHitObject.time;
+    this.hitWindows = beatmapData.hitWindows;
 
     this.settings = getSettings();
 
@@ -125,7 +120,7 @@ export class Game {
 
     this.song = new Howl({
       volume: this.settings.musicVolume,
-      src: [beatmapData.audio.url],
+      src: [beatmapData.songUrl],
       format: "wav",
       rate: this.settings.mods.playbackRate,
       onloaderror: (id, error) => {
@@ -163,11 +158,6 @@ export class Game {
         });
       },
     });
-
-    this.hitWindows = getHitWindows(
-      this.difficulty.od,
-      this.settings.mods.easy,
-    );
   }
 
   public dispose() {
@@ -182,6 +172,11 @@ export class Game {
   private resize() {
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
 
+    this.scaledColumnWidth = scaleWidth(
+      this.skinManiaIni.ColumnWidth.split(",")[0],
+      this.app.screen.width,
+    );
+
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 
@@ -189,31 +184,49 @@ export class Game {
 
     this.scoreText.x = this.app.screen.width - 30;
 
-    this.notesContainer.x = this.app.screen.width / 2;
     this.keys.forEach((key) => (key.sprite.y = this.app.screen.height));
     this.stageHint.y = this.hitPosition;
     this.stageLights.forEach(
       (stageLight) => (stageLight.sprite.y = this.hitPosition),
     );
 
-    const width = this.difficulty.keyCount * this.skinManiaIni.ColumnWidth;
+    const notesContainerWidth =
+      this.difficulty.keyCount * this.scaledColumnWidth;
+    this.notesContainer.width = notesContainerWidth;
+
     const stageSideWidth = 10;
-    this.notesContainer.removeChild(this.stageSides);
+    this.stageContainer.removeChild(this.stageSides);
     this.stageSides = new Graphics()
-      .rect(-stageSideWidth, 0, stageSideWidth, this.app.screen.height)
-      .rect(width, 0, stageSideWidth, this.app.screen.height)
+      .rect(0, 0, stageSideWidth, this.app.screen.height)
+      .rect(
+        stageSideWidth + notesContainerWidth,
+        0,
+        stageSideWidth,
+        this.app.screen.height,
+      )
       .fill(0x7f7f7f);
-    this.notesContainer.addChild(this.stageSides);
+    this.stageContainer.addChild(this.stageSides);
     this.stageBackground.height = this.app.screen.height;
+
+    this.stageContainer.pivot.x = this.stageContainer.width / 2;
+    this.stageContainer.pivot.y = this.app.screen.height / 2;
+
+    // The left stage side has an x of -stageSideWidth, so add it here to compensate
+    this.stageContainer.x = this.app.screen.width / 2;
+    this.stageContainer.y = this.app.screen.height / 2;
 
     this.progressBarContainer.x = this.app.screen.width - 30;
 
-    this.judgement.sprite.anchor.set(0.5);
-    this.judgement.sprite.x = width / 2;
-    this.judgement.sprite.y = this.app.screen.height / 3;
+    this.judgement.sprite.x = this.app.screen.width / 2;
+    this.comboText.x = this.app.screen.width / 2;
 
-    this.comboText.x = width / 2;
-    this.comboText.y = this.app.screen.height / 3 + 50;
+    if (this.settings.upscroll) {
+      this.judgement.sprite.y = (this.app.screen.height * 2) / 3 - 50;
+      this.comboText.y = (this.app.screen.height * 2) / 3;
+    } else {
+      this.judgement.sprite.y = this.app.screen.height / 3;
+      this.comboText.y = this.app.screen.height / 3 + 50;
+    }
 
     if (this.hitError) {
       this.hitError.container.x = this.app.screen.width / 2;
@@ -228,7 +241,7 @@ export class Game {
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
-      backgroundAlpha: 0,
+      backgroundAlpha: 0.5,
       antialias: true,
     });
 
@@ -295,7 +308,7 @@ export class Game {
     this.skinIni = parse(iniString);
     this.skinManiaIni = this.skinIni[`Mania${this.difficulty.keyCount}`];
 
-    this.skinManiaIni.ColumnWidth = scaleWidth(
+    this.scaledColumnWidth = scaleWidth(
       this.skinManiaIni.ColumnWidth.split(",")[0],
       this.app.screen.width,
     );
@@ -341,35 +354,35 @@ export class Game {
             1,
           ) * 400;
 
-        this.stageLights.forEach((stageLight) =>
-          stageLight.update(time.deltaMS),
-        );
-
-        this.keys.forEach((key) => key.update(time.deltaMS));
+        if (!this.settings.mods.autoplay) {
+          this.stageLights.forEach((stageLight) => stageLight.update());
+          this.keys.forEach((key) => key.update());
+        }
 
         this.columns.forEach((column) => {
-          const itemsToRemove: (Tap | Hold)[] = [];
+          let itemsToRemove = 0;
 
-          column.forEach((hitObject) => {
-            hitObject.update(time.deltaMS);
+          for (const hitObject of column) {
+            hitObject.update();
 
             if (hitObject.shouldRemove) {
-              itemsToRemove.push(hitObject);
+              itemsToRemove++;
             }
-          });
 
-          itemsToRemove.forEach((itemToRemove) => {
-            const indexToRemove = column.indexOf(itemToRemove);
-            if (indexToRemove !== -1) {
-              column.splice(indexToRemove, 1);
-              this.notesContainer.removeChild(itemToRemove.view);
+            // If this hit object is above the top screen edge, there's no need to update the rest
+            if (hitObject.view.y < 0) {
+              break;
             }
-          });
+          }
+
+          if (itemsToRemove) {
+            const res = column.splice(0, itemsToRemove);
+
+            res.forEach((hitObject) => {
+              this.notesContainer.removeChild(hitObject.view);
+            });
+          }
         });
-
-        this.stageLights.forEach((stageLight) =>
-          stageLight.update(time.deltaTime),
-        );
 
         break;
 
@@ -450,7 +463,7 @@ export class Game {
     this.comboText.anchor.set(0.5);
     this.comboText.zIndex = 99;
 
-    this.notesContainer.addChild(this.comboText);
+    this.app.stage.addChild(this.comboText);
   }
 
   private addAccuracyText() {
@@ -480,36 +493,43 @@ export class Game {
   }
 
   private addNotesContainer() {
-    const width = this.difficulty.keyCount * this.skinManiaIni.ColumnWidth;
-
-    this.app.stage.addChild(this.notesContainer);
+    const notesContainerWidth =
+      this.difficulty.keyCount * this.scaledColumnWidth;
 
     this.stageBackground = new Graphics()
-      .rect(0, 0, width, this.app.screen.height)
+      .rect(0, 0, notesContainerWidth, this.app.screen.height)
       .fill(0x000000);
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
 
     const stageSideWidth = 10;
-
     this.stageSides = new Graphics()
-      .rect(-stageSideWidth, 0, stageSideWidth, this.app.screen.height)
-      .rect(width, 0, stageSideWidth, this.app.screen.height)
+      .rect(0, 0, stageSideWidth, this.app.screen.height)
+      .rect(
+        stageSideWidth + notesContainerWidth,
+        0,
+        stageSideWidth,
+        this.app.screen.height,
+      )
       .fill(0x7f7f7f);
-    this.notesContainer.addChild(this.stageSides);
+    this.stageContainer.addChild(this.stageSides);
 
-    this.notesContainer.pivot.x = this.notesContainer.width / 2;
+    if (this.settings.upscroll) {
+      this.notesContainer.scale.y = -1;
+    }
 
-    this.notesContainer.sortableChildren = true;
+    this.stageContainer.addChild(this.notesContainer);
+    this.app.stage.addChild(this.stageContainer);
+    this.notesContainer.x = stageSideWidth;
   }
 
   private addStageLights() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const stageLight = new StageLight(this, i);
-      scaleEntityWidth(stageLight.sprite, this.skinManiaIni.ColumnWidth);
+      scaleEntityWidth(stageLight.sprite, this.scaledColumnWidth);
       stageLight.sprite.anchor.set(0, 1);
 
-      stageLight.sprite.x = i * this.skinManiaIni.ColumnWidth;
+      stageLight.sprite.x = i * this.scaledColumnWidth;
 
       this.notesContainer.addChild(stageLight.sprite);
       this.stageLights.push(stageLight);
@@ -517,7 +537,7 @@ export class Game {
   }
 
   private addStageHint() {
-    const width = this.difficulty.keyCount * this.skinManiaIni.ColumnWidth;
+    const width = this.difficulty.keyCount * this.scaledColumnWidth;
 
     this.stageHint = Sprite.from(TEXTURES.STAGE_HINT);
     this.stageHint.width = width;
@@ -529,14 +549,14 @@ export class Game {
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const key = new Key(this, i);
-      key.sprite.width = this.skinManiaIni.ColumnWidth;
+      key.sprite.width = this.scaledColumnWidth;
 
       // No idea how the height is determined in the skin.ini so Imma hardcode it
       key.sprite.height = 600;
 
       key.sprite.anchor.set(undefined, 1);
 
-      key.sprite.x = i * this.skinManiaIni.ColumnWidth;
+      key.sprite.x = i * this.scaledColumnWidth;
 
       key.sprite.zIndex = 99;
 
@@ -566,7 +586,7 @@ export class Game {
   private addJudgement() {
     this.judgement = new Judgement(this);
 
-    this.notesContainer.addChild(this.judgement.sprite);
+    this.app.stage.addChild(this.judgement.sprite);
   }
 
   private addFpsCounter() {

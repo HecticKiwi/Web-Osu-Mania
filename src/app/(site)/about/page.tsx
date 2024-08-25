@@ -1,51 +1,79 @@
-/* eslint-disable react/no-unescaped-entities */
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
 const AboutPage = () => {
   return (
-    <main className="mx-auto mt-12 max-w-2xl">
-      <h1 className="inline-block text-2xl font-semibold tracking-tight">
-        What is this?
-      </h1>
-      <p className="mt-3">
-        <Link
-          href={"https://osu.ppy.sh/"}
-          className="text-primary focus-within:underline hover:underline"
-        >
-          Osu!
-        </Link>{" "}
-        is a popular rhythm game with 4 gameplay modes: Standard, Taiko, Catch,
-        and Mania. Web Osu! Mania aims to port the Mania gamemode to the browser
-        so that players may enjoy the game without having to download it or any
-        beatmap levels beforehand.
-      </p>
+    <main className="p-6">
+      <Card className="mx-auto max-w-2xl">
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            What is osu!mania?
+          </h2>
+          <p className="mt-3">
+            <Link
+              href={"https://osu.ppy.sh/"}
+              className="text-primary focus-within:underline hover:underline"
+              target="_blank"
+            >
+              osu!
+            </Link>{" "}
+            is a popular rhythm game with 4 gameplay modes: osu!, osu!taiko,
+            osu!catch, and osu!mania. osu!mania is a piano-like mode inspired by
+            classic rhythm games such as Dance Dance Revolution and Beatmania,
+            where players must hit scrolling notes in time with the music. Web
+            osu!mania ports this gamemode to the browser so that players may
+            enjoy the game without having to download it or any beatmap levels
+            beforehand.
+          </p>
 
-      <h1 className="mt-8 inline-block text-2xl font-semibold tracking-tight">
-        How do I play?
-      </h1>
-      <p className="mt-3">
-        In Osu Mania, notes scroll down from the top of the screen towards the
-        judgement line, which sits just above the keys at the bottom of the
-        screen. The objective is to press the corresponding key when each note
-        reaches the judgement line. For long notes, you must hold down the
-        corresponding key and release once the note's tail passes the judgement
-        line.
-      </p>
+          <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+            How do I play?
+          </h2>
+          <p className="mt-3">
+            In osu!mania, notes scroll down from the top of the screen towards
+            the judgement line. The objective is to press the corresponding key
+            when each note reaches the line. For long notes, you must hold down
+            the corresponding key and release when the note's tail passes the
+            judgement line. Points are awarded based on the accuracy of your
+            timing.
+          </p>
+          <p className="mt-3">
+            The controls can be found at the bottom of the settings tab. By
+            default, it uses the home row of the keyboard.
+          </p>
 
-      <h1 className="mt-8 inline-block text-2xl font-semibold tracking-tight">
-        What skin does this site use?
-      </h1>
-      <p className="mt-3">
-        It uses{" "}
-        <Link
-          href={"https://osu.ppy.sh/community/forums/topics/1498492"}
-          className="text-primary focus-within:underline hover:underline"
-        >
-          Azure Snowfall
-        </Link>
-        . The decision to use this skin was somewhat arbitrary as I only needed
-        something that fit the colors of the site.
-      </p>
+          <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+            What skin does this site use?
+          </h2>
+          <p className="mt-3">
+            It uses a modified version of{" "}
+            <Link
+              href={"https://osu.ppy.sh/community/forums/topics/1498492"}
+              className="text-primary focus-within:underline hover:underline"
+              target="_blank"
+            >
+              Azure Snowfall
+            </Link>
+            . The decision to use this skin was sort of arbitrary as I just
+            needed something that fit the colors of the site.
+          </p>
+
+          <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+            I found a bug / I have a suggestion!
+          </h2>
+          <p className="mt-3">
+            Please file an issue on{" "}
+            <Link
+              href={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
+              className="text-primary focus-within:underline hover:underline"
+              target="_blank"
+            >
+              GitHub
+            </Link>
+            .
+          </p>
+        </CardContent>
+      </Card>
     </main>
   );
 };

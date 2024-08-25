@@ -36,19 +36,17 @@ export class Key extends Entity {
     }
   }
 
-  public update(dt: number) {
-    if (!this.game.settings.mods.autoplay) {
-      const keybind = this.game.columnKeybinds[this.columnId];
+  public update() {
+    const keybind = this.game.columnKeybinds[this.columnId];
 
-      this.setPressed(this.game.inputSystem.pressedKeys.has(keybind));
+    this.setPressed(this.game.inputSystem.pressedKeys.has(keybind));
 
-      if (this.game.inputSystem.tappedKeys.has(keybind)) {
-        const nextTapNote = this.game.columns[this.columnId].find(
-          (hitObject): hitObject is Tap => hitObject.data.type === "tap",
-        );
+    if (this.game.inputSystem.tappedKeys.has(keybind)) {
+      const nextTapNote = this.game.columns[this.columnId].find(
+        (hitObject): hitObject is Tap => hitObject.data.type === "tap",
+      );
 
-        nextTapNote?.playHitsounds();
-      }
+      nextTapNote?.playHitsounds();
     }
   }
 }

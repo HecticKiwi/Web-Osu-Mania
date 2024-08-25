@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export const DEFAULT_QUERY = undefined;
+export const DEFAULT_QUERY = "";
 
 export function getQueryParam(searchParams: ReadonlyURLSearchParams) {
   return searchParams.get("q") || DEFAULT_QUERY;

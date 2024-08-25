@@ -2,30 +2,34 @@
 
 import { Howl } from "howler";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { settingsContext } from "./settingsProvider";
+import { useSettingsContext } from "./settingsProvider";
 
-export const AudioContext = createContext<{
-  play: (beatmapSetId: string) => void;
+const AudioContext = createContext<{
+  play: (beatmapSetId: number) => void;
   stop: () => void;
-}>({
-  play: () => {},
-  stop: () => {},
-});
+} | null>(null);
 
-export const useAudio = () => useContext(AudioContext);
+export const useAudioContext = () => {
+  const audio = useContext(AudioContext);
+
+  if (!audio) {
+    throw new Error("Using audio context outside of provider");
+  }
+
+  return audio;
+};
 
 export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
   const [audio, setAudio] = useState<Howl | null>(null);
-  const { settings, resetSettings, updateSettings } =
-    useContext(settingsContext);
+  const { settings } = useSettingsContext();
 
-  const play = (beatmapSetId: string) => {
+  const play = (beatmapSetId: number) => {
     stop();
 
     const newAudio = new Howl({
       src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
       format: "mp3",
-      html5: true,
+      html5: true, // To prevent XHR errors
       autoplay: true,
       volume: 0,
       onplay: () => {

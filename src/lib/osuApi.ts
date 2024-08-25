@@ -1,14 +1,16 @@
 "use server";
 
-import { DEFAULT_SORT_DIRECTION } from "@/components/filters/sortFilter";
-import { DEFAULT_SORT_CRITERIA } from "@/components/filters/sortFilter";
-import { SortDirection } from "@/components/filters/sortFilter";
-import { SortCriteria } from "@/components/filters/sortFilter";
-import { DEFAULT_GENRE } from "@/components/filters/genreFilter";
-import { Genre } from "@/components/filters/genreFilter";
-import { GENRES } from "@/components/filters/genreFilter";
-import { Category } from "@/components/filters/categoryFilter";
-import { DEFAULT_CATEGORY } from "@/components/filters/categoryFilter";
+import {
+  Category,
+  DEFAULT_CATEGORY,
+} from "@/components/filters/categoryFilter";
+import { Stars } from "@/components/filters/difficultyFilter";
+import {
+  DEFAULT_SORT_CRITERIA,
+  DEFAULT_SORT_DIRECTION,
+  SortCriteria,
+  SortDirection,
+} from "@/components/filters/sortFilter";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import queryString from "query-string";
@@ -19,7 +21,8 @@ type OAuthTokenData = {
   access_token: string;
 };
 
-export type Ruleset = "fruits" | "mania" | "osu" | "taiko";
+const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
+export type Ruleset = (typeof RULESETS)[number];
 type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
 
 type Beatmap = {
@@ -90,14 +93,14 @@ export async function getAccessToken(nextResponse: NextResponse) {
   const data: OAuthTokenData = await response.json();
 
   const expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + 1);
+  expiryDate.setSeconds(expiryDate.getSeconds() + data.expires_in);
 
   nextResponse.cookies.set("osu_api_access_token", data.access_token, {
     expires: expiryDate,
   });
 }
 
-type SetBeatmapsResponse = {
+type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
   search: {
     sort: string;
@@ -109,25 +112,25 @@ type SetBeatmapsResponse = {
   cursor_string: null;
 };
 
-export async function searchBeatmaps({
+export async function getBeatmaps({
   query,
   category,
   sortCriteria = DEFAULT_SORT_CRITERIA,
   sortDirection = DEFAULT_SORT_DIRECTION,
   cursorString,
-  mode,
-  stars = "0-10",
+  keys,
+  stars,
   nsfw = true,
   genre,
   language,
 }: {
-  query?: string;
-  category?: Category;
-  sortCriteria?: SortCriteria;
-  sortDirection?: SortDirection;
+  query: string;
+  category: Category;
+  sortCriteria: SortCriteria;
+  sortDirection: SortDirection;
   cursorString?: string;
-  mode?: string[];
-  stars?: string;
+  keys: string[];
+  stars: Stars;
   nsfw: boolean;
   genre: number;
   language: number;
@@ -139,10 +142,10 @@ export async function searchBeatmaps({
     throw new Error("No token?");
   }
 
-  const [min, max] = stars.split("-");
+  const { min, max } = stars;
   const q = [
     query,
-    mode && mode.map((key) => `key=${key}`).join(" "),
+    keys && keys.map((key) => `key=${key}`).join(" "),
     stars && `stars>=${min} stars<=${max}`,
   ]
     .filter(Boolean)
@@ -173,7 +176,7 @@ export async function searchBeatmaps({
     throw new Error();
   }
 
-  const data: SetBeatmapsResponse = await response.json();
+  const data: GetBeatmapsResponse = await response.json();
 
   return data;
 }

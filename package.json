@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.1",
     "@hookform/resolvers": "^3.3.4",
     "@pixi/layers": "^2.1.0",
     "@pixi/react": "^7.1.2",
@@ -74,6 +73,7 @@
     "tailwind-merge": "^2.2.2",
     "tailwind-scrollbar": "^3.1.0",
     "typed-signals": "^2.5.0",
+    "use-immer": "^0.10.0",
     "vaul": "^0.9.0",
     "zod": "^3.22.4"
   },

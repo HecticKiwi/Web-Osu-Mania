@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import {
   ReadonlyURLSearchParams,
   useRouter,
@@ -7,21 +8,33 @@ import {
 } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Slider } from "../ui/slider";
-import { cn } from "@/lib/utils";
-import { DEFAULT_MODE } from "./keysFilter";
 
-export const DEFAULT_STARS = "0-10";
+export type Stars = {
+  min: number;
+  max: number;
+};
+
+export const DEFAULT_STARS: Stars = {
+  min: 0,
+  max: 10,
+};
 
 export function getStarsParam(searchParams: ReadonlyURLSearchParams) {
-  return searchParams.get("stars") || DEFAULT_STARS;
+  const starsParam = searchParams.get("stars");
+
+  if (starsParam) {
+    const [min, max] = starsParam.split("-").map((value) => Number(value));
+    return { min, max };
+  }
+
+  return DEFAULT_STARS;
 }
 
 const DifficultyFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const stars = getStarsParam(searchParams);
-  const [min, max] = stars.split("-").map((value) => Number(value));
+  const { min, max } = getStarsParam(searchParams);
 
   const [currentMin, setCurrentMin] = useState(min);
   const [currentMax, setCurrentMax] = useState(max);
@@ -50,7 +63,6 @@ const DifficultyFilter = ({ className }: { className?: string }) => {
 
         <div className="mt-2 flex items-center gap-4">
           <Slider
-            // defaultValue={[min, max]}
             value={[currentMin, currentMax]}
             min={0}
             max={10}

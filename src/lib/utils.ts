@@ -69,7 +69,7 @@ export function scaleEntityWidth(sprite: Container, width: number) {
   sprite.height = (width * sprite.height) / oldWidth;
 }
 export function scaleWidth(width: number, windowWidth: number) {
-  return (width / OSU_WIDTH) * 2038;
+  return (width / OSU_WIDTH) * Math.max(windowWidth, 1528);
 }
 export function scaleHeight(height: number, windowHeight: number) {
   return (height / OSU_HEIGHT) * windowHeight;
@@ -144,4 +144,12 @@ export function keyCodeToString(code: string) {
 
   return code;
   // if (code.)
+}
+
+export function removeFileExtension(filename: string) {
+  if (filename) {
+    return filename.split(".").shift()!;
+  }
+
+  return "";
 }

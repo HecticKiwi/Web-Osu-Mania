@@ -15,35 +15,37 @@ const Header = () => {
         <div className="flex items-center">
           <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
 
-          <div className="flex items-center gap-5 rounded-xl border px-6 py-2">
-            <Link href={"/"} className="mr-4">
+          <nav className="flex items-center gap-8 rounded-xl border px-6 py-2">
+            <Link href={"/"}>
               <div className="flex items-center gap-2">
                 <ManiaIcon difficultyRating={4} />
                 <span className="text-xl font-semibold">Web osu!mania</span>
               </div>
             </Link>
 
-            <Link
-              href="/"
-              className={cn(
-                "transition-colors hover:text-foreground/80",
-                pathname === "/" ? "text-foreground" : "text-foreground/60",
-              )}
-            >
-              Play
-            </Link>
+            <div className="flex items-center gap-5">
+              <Link
+                href="/"
+                className={cn(
+                  "transition-colors hover:text-foreground/80",
+                  pathname === "/" ? "text-foreground" : "text-foreground/60",
+                )}
+              >
+                Play
+              </Link>
 
-            <Link
-              href="/about"
-              className={cn(
-                "transition-colors hover:text-foreground/80",
-                pathname?.startsWith("/about")
-                  ? "text-foreground"
-                  : "text-foreground/60",
-              )}
-            >
-              About
-            </Link>
+              <Link
+                href="/about"
+                className={cn(
+                  "transition-colors hover:text-foreground/80",
+                  pathname?.startsWith("/about")
+                    ? "text-foreground"
+                    : "text-foreground/60",
+                )}
+              >
+                About
+              </Link>
+            </div>
 
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
               <Link
@@ -53,7 +55,7 @@ const Header = () => {
                 <FaGithub className="h-5 w-5" />
               </Link>
             </Button>
-          </div>
+          </nav>
 
           <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
         </div>

@@ -6,22 +6,23 @@ import ResultsScreen from "./resultsScreen";
 import { useEffect, useRef, useState } from "react";
 import { Game } from "@/osuMania/game";
 import { Results } from "@/types";
-import Volume from "./volume";
+import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
-  mapData,
+  beatmapData,
   retry,
 }: {
-  mapData: BeatmapData;
+  beatmapData: BeatmapData;
   retry: () => void;
 }) => {
-  const [isPaused, setIsPaused] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null!);
   const [game, setGame] = useState<Game | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<Results | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null!);
 
+  // Game creation
   useEffect(() => {
-    const game = new Game(mapData, setResults);
+    const game = new Game(beatmapData, setResults);
     setGame(game);
     game.main(containerRef.current);
 
@@ -30,8 +31,9 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [mapData]);
+  }, [beatmapData]);
 
+  // Pause logic
   useEffect(() => {
     if (isPaused) {
       game?.pause();
@@ -39,20 +41,26 @@ const GameScreens = ({
       if (game.song.seek() === 0) {
         game.state = "WAIT";
       } else {
-        game?.play();
+        game.play();
       }
     }
   }, [isPaused, game]);
 
+  // Event listeners
   useEffect(() => {
+    // No need for listeners if on the results screen
+    if (results) {
+      return;
+    }
+
     const handlePause = (event: KeyboardEvent) => {
-      if (!results && event.code === "Escape" && !event.repeat) {
+      if (event.code === "Escape" && !event.repeat) {
         setIsPaused((prev) => !prev);
       }
     };
 
     const handleVisibilityChange = (event: Event) => {
-      if (!results && document.hidden) {
+      if (document.hidden) {
         setIsPaused(true);
       }
     };
@@ -68,17 +76,21 @@ const GameScreens = ({
 
   return (
     <>
-      <div ref={containerRef} className="h-full w-full select-none ">
-        {game && <Volume game={game} />}
+      <div ref={containerRef} className="h-full w-full">
+        {game && !results && <VolumeWidget game={game} />}
         {isPaused && (
           <PauseScreen
-            mapData={mapData}
+            beatmapData={beatmapData}
             setIsPaused={setIsPaused}
             retry={retry}
           />
         )}
         {results && (
-          <ResultsScreen mapData={mapData} results={results} retry={retry} />
+          <ResultsScreen
+            beatmapData={beatmapData}
+            results={results}
+            retry={retry}
+          />
         )}
       </div>
     </>

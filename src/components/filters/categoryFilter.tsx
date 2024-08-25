@@ -6,17 +6,17 @@ import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 
 export const CATEGORIES = [
-  "any",
-  "hasLeaderboard",
-  "ranked",
-  "qualified",
-  "loved",
-  "pending",
-  "wip",
-  "graveyard",
+  "Any",
+  "Has Leaderboard",
+  "Ranked",
+  "Qualified",
+  "Loved",
+  "Pending",
+  "WIP",
+  "Graveyard",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
-export const DEFAULT_CATEGORY: Category = "hasLeaderboard";
+export const DEFAULT_CATEGORY: Category = "Has Leaderboard";
 
 export function getCategoryParam(searchParams: ReadonlyURLSearchParams) {
   return (searchParams.get("category") as Category) ?? DEFAULT_CATEGORY;
@@ -51,7 +51,7 @@ const CategoryFilter = ({ className }: { className?: string }) => {
                     categoryParam === category && "text-white",
                   )}
                 >
-                  {capitalizeFirstLetter(category)}
+                  {category}
                 </Link>
               </Button>
             );
