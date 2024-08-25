@@ -14,8 +14,9 @@ import { Analytics } from "@vercel/analytics/react";
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://web-osu-mania.vercel.app/"),
   title: "Web osu!mania",
-  description: "Play osu!mania in your web browser.",
+  description: "Play osu!mania beatmaps in your web browser.",
 };
 
 export default function RootLayout({
