@@ -35,15 +35,15 @@ const Header = () => {
               </Link>
 
               <Link
-                href="/about"
+                href="/faq"
                 className={cn(
                   "transition-colors hover:text-foreground/80",
-                  pathname?.startsWith("/about")
+                  pathname?.startsWith("/faq")
                     ? "text-foreground"
                     : "text-foreground/60",
                 )}
               >
-                About
+                FAQ
               </Link>
             </div>
 

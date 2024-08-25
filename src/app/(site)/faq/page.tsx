@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
-const AboutPage = () => {
+const FaqPage = () => {
   return (
     <main className="p-6">
       <Card className="mx-auto max-w-2xl">
@@ -78,4 +78,4 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
+export default FaqPage;
