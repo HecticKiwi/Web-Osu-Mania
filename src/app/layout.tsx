@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
                     <Header />
                     {children}
                     <Toaster />
+                    <Analytics />
                   </AudioPreviewProvider>
                 </GameProvider>
               </BeatmapSetCacheProvider>
