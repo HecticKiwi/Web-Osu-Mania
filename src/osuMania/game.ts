@@ -81,6 +81,7 @@ export class Game {
   private countdown: Countdown;
 
   public song: Howl;
+  public timeElapsed: number = 0;
 
   public startTime: number;
   public endTime: number;
@@ -89,7 +90,8 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  public timeElapsed: number = 0;
+  private setResults: (results: Results) => void;
+  private finished = false;
 
   public constructor(
     beatmapData: BeatmapData,
@@ -107,6 +109,8 @@ export class Game {
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
     this.hitWindows = beatmapData.hitWindows;
+
+    this.setResults = setResults;
 
     this.settings = getSettings();
 
@@ -129,33 +133,6 @@ export class Game {
       onend: async () => {
         // Seek back to the end so the progress bar stays full
         this.song.seek(this.song.duration());
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        new Howl({
-          src: ["/skin/applause.mp3"],
-          format: "mp3",
-          preload: true,
-          autoplay: true,
-          onloaderror: (_, error) => {
-            console.log(error);
-          },
-          onplayerror: (_, error) => {
-            console.log(error);
-          },
-        });
-
-        setResults({
-          320: this.scoreSystem[320],
-          300: this.scoreSystem[300],
-          200: this.scoreSystem[200],
-          100: this.scoreSystem[100],
-          50: this.scoreSystem[50],
-          0: this.scoreSystem[0],
-          score: this.scoreSystem.score,
-          accuracy: this.scoreSystem.accuracy,
-          maxCombo: this.scoreSystem.maxCombo,
-        });
       },
     });
   }
@@ -253,7 +230,7 @@ export class Game {
 
     this.addScoreText();
 
-    this.addNotesContainer();
+    this.addStageContainer();
 
     this.addComboText();
 
@@ -384,6 +361,11 @@ export class Game {
           }
         });
 
+        if (this.timeElapsed > this.endTime && !this.finished) {
+          this.finished = true;
+          this.finish();
+        }
+
         break;
 
       case "PAUSE":
@@ -492,7 +474,7 @@ export class Game {
     this.app.stage.addChild(this.accuracyText);
   }
 
-  private addNotesContainer() {
+  private addStageContainer() {
     const notesContainerWidth =
       this.difficulty.keyCount * this.scaledColumnWidth;
 
@@ -515,7 +497,7 @@ export class Game {
     this.stageContainer.addChild(this.stageSides);
 
     if (this.settings.upscroll) {
-      this.notesContainer.scale.y = -1;
+      this.stageContainer.scale.y = -1;
     }
 
     this.stageContainer.addChild(this.notesContainer);
@@ -629,5 +611,34 @@ export class Game {
   public async play() {
     this.song.play();
     this.state = "PLAY";
+  }
+
+  private async finish() {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    new Howl({
+      src: ["/skin/applause.mp3"],
+      format: "mp3",
+      preload: true,
+      autoplay: true,
+      onloaderror: (_, error) => {
+        console.log(error);
+      },
+      onplayerror: (_, error) => {
+        console.log(error);
+      },
+    });
+
+    this.setResults({
+      320: this.scoreSystem[320],
+      300: this.scoreSystem[300],
+      200: this.scoreSystem[200],
+      100: this.scoreSystem[100],
+      50: this.scoreSystem[50],
+      0: this.scoreSystem[0],
+      score: this.scoreSystem.score,
+      accuracy: this.scoreSystem.accuracy,
+      maxCombo: this.scoreSystem.maxCombo,
+    });
   }
 }

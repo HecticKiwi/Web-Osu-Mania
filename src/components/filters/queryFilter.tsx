@@ -1,26 +1,17 @@
 "use client";
 
+import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import { cn } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
-import {
-  ReadonlyURLSearchParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export const DEFAULT_QUERY = "";
-
-export function getQueryParam(searchParams: ReadonlyURLSearchParams) {
-  return searchParams.get("q") || DEFAULT_QUERY;
-}
-
 const SearchFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const queryParam = getQueryParam(searchParams);
+  const queryParam = parseQueryParam(searchParams.get("q"));
 
   const router = useRouter();
   const [query, setQuery] = useState(queryParam);

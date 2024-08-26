@@ -2,56 +2,17 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-
-export const LANGUAGES = [
-  "Any",
-  "English",
-  "Chinese",
-  "French",
-  "German",
-  "Italian",
-  "Japanese",
-  "Korean",
-  "Spanish",
-  "Swedish",
-  "Russian",
-  "Polish",
-  "Instrumental",
-  "Unspecified",
-  "Other",
-] as const;
-export type Language = (typeof LANGUAGES)[number];
-
-// Idk what's up with these random indexes, I just copied the osu site's numbers
-export const LANGUAGE_INDEXES = new Map<Language, number>([
-  ["Any", 0],
-  ["English", 2],
-  ["Chinese", 4],
-  ["French", 7],
-  ["German", 8],
-  ["Italian", 11],
-  ["Japanese", 3],
-  ["Korean", 6],
-  ["Spanish", 10],
-  ["Swedish", 9],
-  ["Russian", 12],
-  ["Polish", 13],
-  ["Instrumental", 5],
-  ["Unspecified", 1],
-  ["Other", 14],
-]);
-
-export const DEFAULT_LANGUAGE: Language = "Any";
-
-export function getLanguageParam(searchParams: ReadonlyURLSearchParams) {
-  return (searchParams.get("language") as Language) ?? DEFAULT_LANGUAGE;
-}
+import {
+  parseLanguageParam,
+  LANGUAGES,
+  DEFAULT_LANGUAGE,
+} from "@/lib/searchParams/languageParam";
 
 const LanguageFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const languageParam = getLanguageParam(searchParams);
+  const languageParam = parseLanguageParam(searchParams.get("language"));
 
   return (
     <>

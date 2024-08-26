@@ -1,24 +1,15 @@
 "use client";
 
-import {
-  ReadonlyURLSearchParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { Toggle } from "../ui/toggle";
+import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-export const DEFAULT_KEYS = [];
-
-export function getKeysParam(searchParams: ReadonlyURLSearchParams) {
-  return searchParams.get("key")?.split(",") || DEFAULT_KEYS;
-}
+import { useSearchParams } from "next/navigation";
+import { Toggle } from "../ui/toggle";
 
 const KeysFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
 
-  const keysParam = getKeysParam(searchParams);
+  const keysParam = parseKeysParam(searchParams.get("keys"));
 
   return (
     <>
@@ -37,9 +28,9 @@ const KeysFilter = ({ className }: { className?: string }) => {
             }
 
             if (newKeysParam.length > 0) {
-              params.set("key", newKeysParam.join(","));
+              params.set("keys", newKeysParam.join(","));
             } else {
-              params.delete("key");
+              params.delete("keys");
             }
 
             return (

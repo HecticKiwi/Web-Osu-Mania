@@ -1,30 +1,18 @@
 "use client";
 
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import {
+  CATEGORIES,
+  DEFAULT_CATEGORY,
+  parseCategoryParam,
+} from "@/lib/searchParams/categoryParam";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-
-export const CATEGORIES = [
-  "Any",
-  "Has Leaderboard",
-  "Ranked",
-  "Qualified",
-  "Loved",
-  "Pending",
-  "WIP",
-  "Graveyard",
-] as const;
-export type Category = (typeof CATEGORIES)[number];
-export const DEFAULT_CATEGORY: Category = "Has Leaderboard";
-
-export function getCategoryParam(searchParams: ReadonlyURLSearchParams) {
-  return (searchParams.get("category") as Category) ?? DEFAULT_CATEGORY;
-}
 
 const CategoryFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const categoryParam = getCategoryParam(searchParams);
+  const categoryParam = parseCategoryParam(searchParams.get("category"));
 
   return (
     <>

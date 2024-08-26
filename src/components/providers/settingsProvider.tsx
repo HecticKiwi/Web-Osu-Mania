@@ -18,6 +18,7 @@ export type Settings = {
     playbackRate: number;
     hardRock: boolean;
     mirror: boolean;
+    random: boolean;
   };
   show300g: boolean;
   showErrorBar: boolean;
@@ -43,6 +44,7 @@ export const defaultSettings: Settings = {
     playbackRate: 1,
     hardRock: false,
     mirror: false,
+    random: false,
   },
   show300g: true,
   showErrorBar: true,

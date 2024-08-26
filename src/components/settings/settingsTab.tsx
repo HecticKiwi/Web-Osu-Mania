@@ -138,7 +138,7 @@ const SettingsTab = () => {
         size={"sm"}
         onClick={() => resetSettings()}
       >
-        Reset to Defaults
+        Reset Settings
       </Button>
 
       <Separator className="my-6" />

@@ -2,7 +2,21 @@ import BeatmapSetsInfiniteScroll from "@/components/beatmapSetsInfiniteScroll";
 import SidebarContent from "@/components/sidebar";
 import { Suspense } from "react";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: {
+    q?: string;
+    category?: string;
+    sortCriteria?: string;
+    sortDirection?: string;
+    keys?: string;
+    stars?: string;
+    nsfw?: string;
+    genre?: string;
+    language?: string;
+  };
+}) {
   return (
     <>
       <main className="flex justify-center">

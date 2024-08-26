@@ -1,36 +1,18 @@
 "use client";
 
+import {
+  DEFAULT_GENRE,
+  GENRES,
+  parseGenreParam,
+} from "@/lib/searchParams/genreParam";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-
-export const GENRES = [
-  "Any",
-  "Unspecified",
-  "Video Game",
-  "Anime",
-  "Rock",
-  "Pop",
-  "Other",
-  "Novelty",
-  "Hip Hop",
-  "Electronic",
-  "Metal",
-  "Classical",
-  "Folk",
-  "Jazz",
-] as const;
-export type Genre = (typeof GENRES)[number];
-export const DEFAULT_GENRE: Genre = "Any";
-
-export function getGenreParam(searchParams: ReadonlyURLSearchParams) {
-  return (searchParams.get("genre") as Genre) ?? DEFAULT_GENRE;
-}
 
 const GenreFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const genreParam = getGenreParam(searchParams);
+  const genreParam = parseGenreParam(searchParams.get("genre"));
 
   return (
     <>

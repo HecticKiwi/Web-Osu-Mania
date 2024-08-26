@@ -1,46 +1,25 @@
 "use client";
 
+import { parseQueryParam } from "@/lib/searchParams/queryParam";
+import {
+  DEFAULT_SORT_CRITERIA,
+  DEFAULT_SORT_DIRECTION,
+  parseSortCriteriaParam,
+  parseSortDirectionParam,
+} from "@/lib/searchParams/sortParam";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-import { getQueryParam } from "./searchFilter";
-
-export const SORT_CRITERIA = [
-  "title",
-  "artist",
-  "difficulty",
-  "ranked",
-  "rating",
-  "plays",
-  "favourites",
-  "relevance",
-] as const;
-export type SortCriteria = (typeof SORT_CRITERIA)[number];
-export const DEFAULT_SORT_CRITERIA: SortCriteria = "ranked";
-
-export function getSortCriteriaParam(searchParams: ReadonlyURLSearchParams) {
-  return (
-    (searchParams.get("sortCriteria") as SortCriteria) ?? DEFAULT_SORT_CRITERIA
-  );
-}
-
-export type SortDirection = "asc" | "desc";
-export const DEFAULT_SORT_DIRECTION: SortDirection = "desc";
-
-export function getSortDirectionParam(searchParams: ReadonlyURLSearchParams) {
-  return (
-    (searchParams.get("sortDirection") as SortDirection) ??
-    DEFAULT_SORT_DIRECTION
-  );
-}
 
 const SortFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
 
-  const sortCriteria = getSortCriteriaParam(searchParams);
-  const sortDirection = getSortDirectionParam(searchParams);
-  const query = getQueryParam(searchParams);
+  const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
+  const sortDirection = parseSortDirectionParam(
+    searchParams.get("sortDirection"),
+  );
+  const query = parseQueryParam(searchParams.get("q"));
 
   return (
     <>

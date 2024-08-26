@@ -1,19 +1,23 @@
 "use server";
 
-import {
-  Category,
-  DEFAULT_CATEGORY,
-} from "@/components/filters/categoryFilter";
-import { Stars } from "@/components/filters/difficultyFilter";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import queryString from "query-string";
+import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
 import {
   DEFAULT_SORT_CRITERIA,
   DEFAULT_SORT_DIRECTION,
   SortCriteria,
   SortDirection,
-} from "@/components/filters/sortFilter";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import queryString from "query-string";
+} from "./searchParams/sortParam";
+import { Stars } from "./searchParams/starsParam";
+import { Genre, GENRES } from "./searchParams/genreParam";
+import { url } from "inspector";
+import {
+  LANGUAGE_INDEXES,
+  DEFAULT_LANGUAGE,
+  Language,
+} from "./searchParams/languageParam";
 
 type OAuthTokenData = {
   token_type: string;
@@ -100,7 +104,7 @@ export async function getAccessToken(nextResponse: NextResponse) {
   });
 }
 
-type GetBeatmapsResponse = {
+export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
   search: {
     sort: string;
@@ -109,7 +113,7 @@ type GetBeatmapsResponse = {
   error: null;
   total: number;
   cursor: null;
-  cursor_string: null;
+  cursor_string: string;
 };
 
 export async function getBeatmaps({
@@ -132,8 +136,8 @@ export async function getBeatmaps({
   keys: string[];
   stars: Stars;
   nsfw: boolean;
-  genre: number;
-  language: number;
+  genre: Genre;
+  language: Language;
 }) {
   const cookieStore = cookies();
   const token = cookieStore.get("osu_api_access_token")?.value;
@@ -160,8 +164,8 @@ export async function getBeatmaps({
       cursor_string: cursorString,
       s: category !== DEFAULT_CATEGORY ? category : undefined,
       nsfw,
-      g: genre || undefined,
-      l: language || undefined,
+      g: GENRES.indexOf(genre) || undefined,
+      l: LANGUAGE_INDEXES.get(language),
     },
   });
 

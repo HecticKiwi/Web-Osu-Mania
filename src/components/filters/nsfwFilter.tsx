@@ -1,20 +1,14 @@
 "use client";
 
+import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
-
-export const DEFAULT_NSFW = true;
-
-export function getNsfwParam(searchParams: ReadonlyURLSearchParams) {
-  const nsfwParam = searchParams.get("nsfw");
-  return nsfwParam ? nsfwParam === "true" : DEFAULT_NSFW;
-}
 
 const NsfwFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const nsfw = getNsfwParam(searchParams);
+  const nsfw = parseNsfwParam(searchParams.get("nsfw"));
 
   const nsfwUrl = new URLSearchParams(searchParams);
   nsfwUrl.delete("nsfw");

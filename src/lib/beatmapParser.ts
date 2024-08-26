@@ -1,7 +1,7 @@
 import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
-import { getSettings, removeFileExtension } from "./utils";
+import { getSettings, removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
@@ -273,6 +273,15 @@ export function parseHitObjects(lines: string[], columnCount: number) {
       });
     }
   });
+
+  if (mods.random) {
+    const columns = Array.from({ length: columnCount }, (_, i) => i);
+    const shuffledColumns = shuffle(columns);
+
+    hitObjects.forEach((hitObject) => {
+      hitObject.column = shuffledColumns[hitObject.column];
+    });
+  }
 
   // Ensure at least 1 second before the song starts
   const delay = Math.max(1000 - hitObjects[0].time, 0);

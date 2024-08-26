@@ -11,24 +11,23 @@ import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { getStarsParam } from "./filters/difficultyFilter";
-import { getKeysParam } from "./filters/keysFilter";
 import ManiaIcon from "./maniaIcon";
 import { useAudioContext } from "./providers/audioPreviewProvider";
 import { useGameContext } from "./providers/gameOverlayProvider";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+import { parseKeysParam } from "@/lib/searchParams/keysParam";
+import { parseStarsParam } from "@/lib/searchParams/starsParam";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
-  const { toast } = useToast();
   const { play, stop } = useAudioContext();
   const { startGame } = useGameContext();
 
   const searchParams = useSearchParams();
 
-  const { min, max } = getStarsParam(searchParams);
+  const { min, max } = parseStarsParam(searchParams.get("stars"));
 
-  const keys = getKeysParam(searchParams);
+  const keys = parseKeysParam(searchParams.get("keys"));
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
@@ -45,7 +44,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
           {/* Background cover */}
           <span
             className={
-              "absolute inset-0 -z-10 brightness-[0.3] transition-transform duration-300 group-focus-within:scale-105 group-hover:scale-105"
+              "absolute inset-0 -z-10 brightness-[0.3] transition duration-300 group-focus-within:brightness-[0.5] group-hover:brightness-[0.5]"
             }
           >
             <Image

@@ -6,8 +6,8 @@ import LanguageFilter from "./languageFilter";
 import CategoryFilter from "./categoryFilter";
 import SortFilter from "./sortFilter";
 import KeysFilter from "./keysFilter";
-import DifficultyFilter from "./difficultyFilter";
-import SearchFilter from "./searchFilter";
+import DifficultyFilter from "./starsFilter";
+import SearchFilter from "./queryFilter";
 
 const FiltersTab = () => {
   return (

@@ -78,8 +78,14 @@ const GameModal = () => {
   return (
     <main className="relative grid">
       {!beatmapData && (
-        <div className="place-self-center text-center">
-          <h1 className="text-5xl font-bold text-white">{loadingMessage}</h1>
+        <div className="flex w-full items-center text-center">
+          <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+
+          <div className="rounded-xl border bg-card p-6">
+            <h1 className="text-4xl text-white">{loadingMessage}</h1>
+          </div>
+
+          <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
         </div>
       )}
       {beatmapData && (

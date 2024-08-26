@@ -1,40 +1,16 @@
 "use client";
 
+import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { cn } from "@/lib/utils";
-import {
-  ReadonlyURLSearchParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Slider } from "../ui/slider";
-
-export type Stars = {
-  min: number;
-  max: number;
-};
-
-export const DEFAULT_STARS: Stars = {
-  min: 0,
-  max: 10,
-};
-
-export function getStarsParam(searchParams: ReadonlyURLSearchParams) {
-  const starsParam = searchParams.get("stars");
-
-  if (starsParam) {
-    const [min, max] = starsParam.split("-").map((value) => Number(value));
-    return { min, max };
-  }
-
-  return DEFAULT_STARS;
-}
 
 const DifficultyFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { min, max } = getStarsParam(searchParams);
+  const { min, max } = parseStarsParam(searchParams.get("stars"));
 
   const [currentMin, setCurrentMin] = useState(min);
   const [currentMax, setCurrentMax] = useState(max);

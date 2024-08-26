@@ -1,6 +1,17 @@
 "use client";
 
-import { getBeatmaps } from "@/lib/osuApi";
+import { getBeatmaps, GetBeatmapsResponse } from "@/lib/osuApi";
+import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import { parseGenreParam } from "@/lib/searchParams/genreParam";
+import { parseKeysParam } from "@/lib/searchParams/keysParam";
+import { parseLanguageParam } from "@/lib/searchParams/languageParam";
+import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
+import { parseQueryParam } from "@/lib/searchParams/queryParam";
+import {
+  parseSortCriteriaParam,
+  parseSortDirectionParam,
+} from "@/lib/searchParams/sortParam";
+import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { cn } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
@@ -9,35 +20,28 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "./beatmapSet";
-import { getCategoryParam } from "./filters/categoryFilter";
-import { getStarsParam } from "./filters/difficultyFilter";
-import { GENRES, getGenreParam } from "./filters/genreFilter";
-import { getKeysParam } from "./filters/keysFilter";
-import {
-  DEFAULT_LANGUAGE,
-  getLanguageParam,
-  LANGUAGE_INDEXES,
-} from "./filters/languageFilter";
-import { getNsfwParam } from "./filters/nsfwFilter";
-import { getQueryParam } from "./filters/searchFilter";
-import {
-  getSortCriteriaParam,
-  getSortDirectionParam,
-} from "./filters/sortFilter";
 import { Button } from "./ui/button";
 
-const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
+const BeatmapSetsInfiniteScroll = ({
+  initialData,
+  className,
+}: {
+  initialData?: GetBeatmapsResponse;
+  className?: string;
+}) => {
   const searchParams = useSearchParams();
 
-  const query = getQueryParam(searchParams);
-  const category = getCategoryParam(searchParams);
-  const sortCriteria = getSortCriteriaParam(searchParams);
-  const sortDirection = getSortDirectionParam(searchParams);
-  const keys = getKeysParam(searchParams);
-  const stars = getStarsParam(searchParams);
-  const nsfw = getNsfwParam(searchParams);
-  const genre = getGenreParam(searchParams);
-  const language = getLanguageParam(searchParams);
+  const query = parseQueryParam(searchParams.get("q"));
+  const category = parseCategoryParam(searchParams.get("category"));
+  const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
+  const sortDirection = parseSortDirectionParam(
+    searchParams.get("sortDirection"),
+  );
+  const keys = parseKeysParam(searchParams.get("keys"));
+  const stars = parseStarsParam(searchParams.get("stars"));
+  const nsfw = parseNsfwParam(searchParams.get("nsfw"));
+  const genre = parseGenreParam(searchParams.get("genre"));
+  const language = parseLanguageParam(searchParams.get("language"));
 
   const [ref, entry] = useIntersectionObserver();
 
@@ -47,14 +51,19 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
     hasNextPage,
     isPending,
     isFetchingNextPage,
+    isFetching,
     isError,
   } = useInfiniteQuery({
+    initialData: initialData && {
+      pages: [initialData],
+      pageParams: [""],
+    },
     queryKey: [
       {
         query,
         sortCriteria,
         sortDirection,
-        mode: keys,
+        keys,
         stars,
         category,
         nsfw,
@@ -67,17 +76,15 @@ const BeatmapSetsInfiniteScroll = ({ className }: { className?: string }) => {
         query,
         sortCriteria,
         sortDirection,
-        cursorString: pageParam,
         keys,
         stars,
         category,
         nsfw,
-        genre: GENRES.indexOf(genre),
-        language:
-          LANGUAGE_INDEXES.get(language) ||
-          LANGUAGE_INDEXES.get(DEFAULT_LANGUAGE)!,
+        genre,
+        language,
+        cursorString: pageParam,
       }),
-    initialPageParam: undefined,
+    initialPageParam: "",
     getNextPageParam: (lastPage, pages) => lastPage.cursor_string,
   });
 

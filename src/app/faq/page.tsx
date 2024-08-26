@@ -39,7 +39,7 @@ const FaqPage = () => {
           </p>
           <p className="mt-3">
             The controls can be found at the bottom of the settings tab. By
-            default, it uses the home row of the keyboard.
+            default, it uses the home row of a QWERTY keyboard.
           </p>
 
           <h2 className="mt-8 text-2xl font-semibold tracking-tight">

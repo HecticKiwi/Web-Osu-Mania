@@ -101,13 +101,17 @@ const ModsTab = () => {
       <div className="space-y-4">
         <div className="grid grid-cols-2 items-center">
           <div className="text-sm font-semibold text-muted-foreground">
-            Autoplay
+            Random
           </div>
           <Switch
-            checked={settings.mods.autoplay}
+            checked={settings.mods.random}
             onCheckedChange={(checked) =>
               setSettings((draft) => {
-                draft.mods.autoplay = checked;
+                draft.mods.random = checked;
+
+                if (checked) {
+                  draft.mods.mirror = false;
+                }
               })
             }
           />
@@ -121,6 +125,23 @@ const ModsTab = () => {
             onCheckedChange={(checked) =>
               setSettings((draft) => {
                 draft.mods.mirror = checked;
+
+                if (checked) {
+                  draft.mods.random = false;
+                }
+              })
+            }
+          />
+        </div>
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Autoplay
+          </div>
+          <Switch
+            checked={settings.mods.autoplay}
+            onCheckedChange={(checked) =>
+              setSettings((draft) => {
+                draft.mods.autoplay = checked;
               })
             }
           />
