@@ -11,7 +11,9 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 
 ## Credits
 
-- Nerinyan for providing the [beatmap mirror API](https://github.com/Nerinyan/nerinyan-api-v2)
+- NeriNyan for providing their [beatmap mirror API](https://nerinyan.stoplight.io/docs/nerinyan-api)
+- SayoBot for providing their [beatmap mirror API](https://osu.sayobot.cn/home)
+- Mino for providing their [beatmap mirror API](https://dev.catboy.best/docs)
 - thetasigma for creating the [Azure Snowfall skin](https://osu.ppy.sh/community/forums/topics/1498492?n=1)
 - Peppy and the rest of the osu! team for creating [osu!](https://osu.ppy.sh/)
 
