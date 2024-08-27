@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -8,15 +9,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import Link from "next/link";
 import Keybinds from "../keybinds";
 import { useSettingsContext } from "../providers/settingsProvider";
-import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import BackgroundDimSlider from "./backgroundDimSlider";
-import IdbCacheSettings from "./cacheSettings";
-import IntegerInput from "./integerInput";
+import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
 
 const SettingsTab = () => {
@@ -130,7 +127,7 @@ const SettingsTab = () => {
 
       <VolumeSettings className="mt-4" />
 
-      <IdbCacheSettings />
+      <BeatmapSettings />
 
       <Button
         className="mt-8 w-full"

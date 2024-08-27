@@ -10,7 +10,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useSettingsContext } from "./settingsProvider";
+import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
+import { useToast } from "../ui/use-toast";
 
 const BeatmapSetCacheContext = createContext<{
   getBeatmapSet: (beatmapSetId: number) => Promise<Blob>;
@@ -34,6 +35,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
   );
   const [idbUsage, setIdbUsage] = useState(0);
   const { settings } = useSettingsContext();
+  const { toast } = useToast();
 
   const calculateCacheUsage = useCallback(async () => {
     const idb = new Idb();
@@ -77,12 +79,23 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
 
       // Otherwise download it
       if (!beatmapSetFile) {
-        // https://nerinyan.stoplight.io/docs/nerinyan-api/df11b327494c9-download-beatmapset
+        let apiUrl: string;
+        if (settings.beatmapProvider !== "Custom") {
+          apiUrl = BEATMAP_API_PROVIDERS[settings.beatmapProvider].replace(
+            "$setId",
+            beatmapSetId.toString(),
+          );
+        } else {
+          apiUrl = settings.customBeatmapProvider.replace(
+            "$setId",
+            beatmapSetId.toString(),
+          );
+        }
+
         const url = queryString.stringifyUrl({
-          url: `https://api.nerinyan.moe/d/${beatmapSetId}`,
+          url: apiUrl,
           query: {
-            // NoStoryboard: true,
-            noVideo: true,
+            noVideo: true, // For NeriNyan
           },
         });
 
@@ -91,23 +104,61 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
         });
 
         if (!response.ok || !response.body) {
-          throw new Error(response.statusText);
+          if (response.status === 404) {
+            throw new Error(
+              `Beatmap does not exist on the current beatmap provider, please switch to another.`,
+            );
+          }
+
+          if (response.status === 500) {
+            throw new Error(
+              `The beatmap provider ran into an error, try again later or switch to another provider.`,
+            );
+          }
+
+          if (response.status === 504) {
+            throw new Error(`Download request timed out.`);
+          }
+
+          throw new Error(
+            "An unknown error occurred while trying to download the beatmap.",
+          );
         }
 
         beatmapSetFile = await response.blob();
       }
 
-      // Cache downloaded file with date accessed
+      // Cache downloaded file
       if (settings.storeDownloadedBeatmaps) {
-        await idb.putBeatmapSet(beatmapSetId, beatmapSetFile);
-        calculateCacheUsage();
+        try {
+          await idb.putBeatmapSet(beatmapSetId, beatmapSetFile);
+          calculateCacheUsage();
+        } catch (error) {
+          // I wish I could delete just enough beatmaps to make room, but
+          // 1. The reported usage amount doesn't match the actual amount (security reasons)
+          // 2. For some reason the reported amount doesn't update until you refresh
+          // Sooo just purge the whole cache and get the user to refresh
+          toast({
+            title: "Warning",
+            description:
+              "IDB Storage quota exceeded, cache purged. Refresh whenever you get the chance.",
+            duration: 10000,
+          });
+        }
       } else {
         setBeatmapSetCache((prev) => prev.set(beatmapSetId, beatmapSetFile));
       }
 
       return beatmapSetFile;
     },
-    [beatmapSetCache, calculateCacheUsage, settings?.storeDownloadedBeatmaps],
+    [
+      beatmapSetCache,
+      calculateCacheUsage,
+      settings?.storeDownloadedBeatmaps,
+      settings?.beatmapProvider,
+      settings?.customBeatmapProvider,
+      toast,
+    ],
   );
 
   return (

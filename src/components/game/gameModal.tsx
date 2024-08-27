@@ -10,7 +10,7 @@ import { useToast } from "../ui/use-toast";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
-  const { data } = useGameContext();
+  const { data, closeGame } = useGameContext();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
@@ -26,34 +26,40 @@ const GameModal = () => {
     }
 
     const loadBeatmap = async () => {
+      let beatmapSetFile: Blob;
       try {
-        const beatmapSetFile = await getBeatmapSet(data.beatmapSetId);
+        beatmapSetFile = await getBeatmapSet(data.beatmapSetId);
+      } catch (error: any) {
+        toast({
+          title: "Download Error",
+          description: error.message,
+          duration: 10000,
+        });
 
+        closeGame();
+        return;
+      }
+
+      try {
         setLoadingMessage("Parsing Beatmap...");
 
         const beatmapData = await parseOsz(beatmapSetFile, data.beatmapId);
 
         setBeatmapData(beatmapData);
       } catch (error: any) {
-        // I wish I could delete just enough beatmaps to make room, but
-        // 1. The reported usage amount doesn't match the actual amount (security reasons)
-        // 2. For some reason the reported amount doesn't update until you refresh
-        // Sooo just purge the whole cache and get the user to refresh
-        if (error.code === DOMException.QUOTA_EXCEEDED_ERR) {
-          toast({
-            title: "Warning",
-            description:
-              "IDB Storage quota exceeded, cache purged. Refresh whenever you get the chance.",
-            duration: 10000,
-          });
-        } else {
-          throw error;
-        }
+        toast({
+          title: "Parsing Error",
+          description: "An error occurred while parsing the beatmap.",
+          duration: 10000,
+        });
+
+        closeGame();
+        return;
       }
     };
 
     loadBeatmap();
-  }, [data, toast, getBeatmapSet]);
+  }, [data, closeGame, toast, getBeatmapSet]);
 
   // Cleanup object URLs
   useEffect(() => {

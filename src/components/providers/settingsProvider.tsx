@@ -5,6 +5,14 @@ import { Howler } from "howler";
 import { ReactNode, createContext, useContext, useEffect } from "react";
 import { Updater, useImmer } from "use-immer";
 
+export const BEATMAP_API_PROVIDERS = {
+  NeriNyan: "https://api.nerinyan.moe/d/$setId",
+  SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
+  "Mino (catboy.best)": "https://catboy.best/d/$setIdn",
+} as const;
+
+export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
+
 export type Settings = {
   version: number;
   volume: number;
@@ -12,6 +20,17 @@ export type Settings = {
   sfxVolume: number;
   scrollSpeed: number;
   backgroundDim: number;
+  show300g: boolean;
+  showErrorBar: boolean;
+  audioOffset: number;
+  showFpsCounter: boolean;
+  storeDownloadedBeatmaps: boolean;
+  upscroll: boolean;
+  beatmapProvider: BeatmapProvider;
+  customBeatmapProvider: string;
+  keybinds: {
+    keyModes: string[][];
+  };
   mods: {
     autoplay: boolean;
     easy: boolean;
@@ -19,15 +38,6 @@ export type Settings = {
     hardRock: boolean;
     mirror: boolean;
     random: boolean;
-  };
-  show300g: boolean;
-  showErrorBar: boolean;
-  audioOffset: number;
-  showFpsCounter: boolean;
-  storeDownloadedBeatmaps: boolean;
-  upscroll: boolean;
-  keybinds: {
-    keyModes: string[][];
   };
 };
 
@@ -38,20 +48,14 @@ export const defaultSettings: Settings = {
   sfxVolume: 0.4,
   scrollSpeed: 20,
   backgroundDim: 0.75,
-  mods: {
-    autoplay: false,
-    easy: false,
-    playbackRate: 1,
-    hardRock: false,
-    mirror: false,
-    random: false,
-  },
   show300g: true,
   showErrorBar: true,
   audioOffset: 0,
   showFpsCounter: false,
   storeDownloadedBeatmaps: false,
   upscroll: false,
+  beatmapProvider: "NeriNyan",
+  customBeatmapProvider: "",
   keybinds: {
     keyModes: [
       ["Space"],
@@ -74,6 +78,14 @@ export const defaultSettings: Settings = {
         "Semicolon",
       ],
     ],
+  },
+  mods: {
+    autoplay: false,
+    easy: false,
+    playbackRate: 1,
+    hardRock: false,
+    mirror: false,
+    random: false,
   },
 };
 

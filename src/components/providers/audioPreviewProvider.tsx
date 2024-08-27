@@ -2,7 +2,7 @@
 
 import { Howl } from "howler";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { useSettingsContext } from "./settingsProvider";
+import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
 
 const AudioContext = createContext<{
   play: (beatmapSetId: number) => void;
