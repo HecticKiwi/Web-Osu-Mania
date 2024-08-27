@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useSettingsContext } from "../providers/settingsProvider";
+import { Switch } from "../ui/switch";
 
 const VolumeSettings = ({
   inWidget,
@@ -221,6 +222,21 @@ const VolumeSettings = ({
                 </Link>{" "}
                 to determine your offset.
               </p>
+
+              <div className="grid grid-cols-2 items-center">
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Ignore Beatmap Hitsounds
+                </div>
+
+                <Switch
+                  checked={settings.ignoreBeatmapHitsounds}
+                  onCheckedChange={(checked) =>
+                    setSettings((draft) => {
+                      draft.ignoreBeatmapHitsounds = checked;
+                    })
+                  }
+                />
+              </div>
             </>
           )}
         </div>

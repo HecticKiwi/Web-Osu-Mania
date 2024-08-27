@@ -28,6 +28,7 @@ export type Settings = {
   upscroll: boolean;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
+  ignoreBeatmapHitsounds: boolean;
   keybinds: {
     keyModes: string[][];
   };
@@ -56,6 +57,7 @@ export const defaultSettings: Settings = {
   upscroll: false,
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
+  ignoreBeatmapHitsounds: false,
   keybinds: {
     keyModes: [
       ["Space"],

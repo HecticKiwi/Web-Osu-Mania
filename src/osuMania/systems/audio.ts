@@ -67,7 +67,11 @@ export class AudioSystem {
     const suffix = `${sampleIndex > 1 ? sampleIndex : ""}`;
     const sound = `${prefix}${name}${suffix}`;
 
-    if (sampleIndex > 0 && this.sounds[`${sound}`]) {
+    if (
+      !this.game.settings.ignoreBeatmapHitsounds &&
+      sampleIndex > 0 &&
+      this.sounds[`${sound}`]
+    ) {
       this.play(
         `${prefix}${name}${suffix}`,
         this.game.settings.sfxVolume * volume,

@@ -62,7 +62,11 @@ export class Tap extends Entity {
   public playHitsounds() {
     const hitSoundFile = this.data.hitSample.filename;
 
-    if (hitSoundFile && this.game.audioSystem.sounds[hitSoundFile]) {
+    if (
+      !this.game.settings.ignoreBeatmapHitsounds &&
+      hitSoundFile &&
+      this.game.audioSystem.sounds[hitSoundFile]
+    ) {
       this.game.audioSystem.play(hitSoundFile, this.game.settings.sfxVolume);
     } else {
       if (this.data.hitSound.normal) {
