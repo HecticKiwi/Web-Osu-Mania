@@ -176,8 +176,6 @@ export class Tap extends Entity {
   }
 
   public isHit() {
-    return this.game.inputSystem.tappedKeys.has(
-      this.game.columnKeybinds[this.data.column],
-    );
+    return this.game.inputSystem.tappedColumns[this.data.column];
   }
 }

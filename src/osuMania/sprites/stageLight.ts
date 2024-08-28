@@ -19,20 +19,12 @@ export class StageLight extends Entity {
   }
 
   public update() {
-    if (
-      this.game.inputSystem.tappedKeys.has(
-        this.game.columnKeybinds[this.columnId],
-      )
-    ) {
+    if (this.game.inputSystem.pressedColumns[this.columnId]) {
       gsap.killTweensOf(this.sprite);
       this.sprite.alpha = 1;
     }
 
-    if (
-      this.game.inputSystem.releasedKeys.has(
-        this.game.columnKeybinds[this.columnId],
-      )
-    ) {
+    if (this.game.inputSystem.releasedColumns[this.columnId]) {
       this.light();
     }
   }

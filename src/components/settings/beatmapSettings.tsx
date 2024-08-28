@@ -21,7 +21,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
   const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
 
   // If the browser doesn't support IDB, don't show
-  if (!("indexedDB" in window)) {
+  if (!("indexedDB" in window) || !navigator.storage) {
     return null;
   }
 

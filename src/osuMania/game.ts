@@ -119,7 +119,7 @@ export class Game {
 
     // Init systems
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
-    this.inputSystem = new InputSystem();
+    this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
 
     this.song = new Howl({
@@ -294,9 +294,14 @@ export class Game {
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
 
+    if (!this.settings.mods.autoplay) {
+      this.stageLights.forEach((stageLight) => stageLight.update());
+      this.keys.forEach((key) => key.update());
+    }
+
     switch (this.state) {
       case "WAIT":
-        if (this.inputSystem.tappedKeys.has("Space")) {
+        if (this.inputSystem.tappedColumns.includes(true)) {
           this.app.stage.removeChild(this.startMessage);
 
           if (this.countdown) {
@@ -330,11 +335,6 @@ export class Game {
             0,
             1,
           ) * 400;
-
-        if (!this.settings.mods.autoplay) {
-          this.stageLights.forEach((stageLight) => stageLight.update());
-          this.keys.forEach((key) => key.update());
-        }
 
         this.columns.forEach((column) => {
           let itemsToRemove = 0;
@@ -578,7 +578,7 @@ export class Game {
 
   private addStartMessage() {
     this.startMessage = new Text({
-      text: "Press [Space] to Start",
+      text: "Press any key to Start",
       style: {
         fill: 0xdddddd,
         fontFamily: "VarelaRound",

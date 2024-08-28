@@ -91,6 +91,8 @@ export class Hold {
     }
 
     if (this.isHit()) {
+      console.log("hi");
+
       // Return if you pressed way too early...
       if (absDelta > this.game.hitWindows[0]) {
         return;
@@ -117,8 +119,6 @@ export class Hold {
   }
 
   public isHit() {
-    return this.game.inputSystem.releasedKeys.has(
-      this.game.columnKeybinds[this.data.column],
-    );
+    return this.game.inputSystem.releasedColumns[this.data.column];
   }
 }

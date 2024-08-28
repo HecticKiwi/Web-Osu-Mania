@@ -46,6 +46,12 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    if (!navigator.storage) {
+      throw new Error(
+        "This device does not support IDB cache usage estimation.",
+      );
+    }
+
     const storage = await navigator.storage.estimate();
 
     if (!storage.usage) {
