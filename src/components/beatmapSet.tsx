@@ -51,7 +51,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
               src={beatmapSet.covers.cover}
               alt="Beatmap Set Cover"
               fill
-              priority
+              // priority
               className="object-cover"
               sizes="720px"
             />
