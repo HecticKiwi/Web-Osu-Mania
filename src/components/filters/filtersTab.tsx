@@ -23,7 +23,9 @@ const FiltersTab = () => {
         <SortFilter />
 
         <Button variant={"destructive"} className="mt-4 w-full" asChild>
-          <Link href={"/"}>Reset Filters</Link>
+          <Link href={"/"} prefetch={false}>
+            Reset Filters
+          </Link>
         </Button>
       </div>
     </>

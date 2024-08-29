@@ -65,6 +65,7 @@ const SortFilter = ({ className }: { className?: string }) => {
                     "h-8",
                     sortCriteria === criteria && "text-white",
                   )}
+                  prefetch={false}
                 >
                   {capitalizeFirstLetter(criteria)}
                 </Link>

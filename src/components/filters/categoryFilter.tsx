@@ -38,6 +38,7 @@ const CategoryFilter = ({ className }: { className?: string }) => {
                     "h-8",
                     categoryParam === category && "text-white",
                   )}
+                  prefetch={false}
                 >
                   {category}
                 </Link>

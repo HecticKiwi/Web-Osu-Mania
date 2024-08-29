@@ -27,6 +27,7 @@ const NsfwFilter = ({ className }: { className?: string }) => {
               href={`/?${noNsfwUrl.toString()}`}
               scroll={false}
               className={cn("h-8", !nsfw && "text-white")}
+              prefetch={false}
             >
               Hide
             </Link>
@@ -36,6 +37,7 @@ const NsfwFilter = ({ className }: { className?: string }) => {
               href={`/?${nsfwUrl.toString()}`}
               scroll={false}
               className={cn("h-8", nsfw && "text-white")}
+              prefetch={false}
             >
               Show
             </Link>

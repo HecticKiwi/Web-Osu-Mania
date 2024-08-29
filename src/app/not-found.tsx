@@ -10,7 +10,9 @@ const NotFound = () => {
         </h1>
 
         <Button asChild className="mt-5">
-          <Link href={"/"}>Go Home</Link>
+          <Link href={"/"} prefetch={false}>
+            Go Home
+          </Link>
         </Button>
       </main>
     </>

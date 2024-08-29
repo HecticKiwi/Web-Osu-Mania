@@ -16,7 +16,7 @@ const Header = () => {
           <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
 
           <nav className="flex items-center gap-8 rounded-xl border px-6 py-2">
-            <Link href={"/"}>
+            <Link href={"/"} prefetch={false}>
               <div className="flex items-center gap-2">
                 <ManiaIcon difficultyRating={4} className="shrink-0" />
                 <span className="hidden text-xl font-semibold sm:block">
@@ -27,6 +27,7 @@ const Header = () => {
 
             <div className="flex items-center gap-5">
               <Link
+                prefetch={false}
                 href="/"
                 className={cn(
                   "transition-colors hover:text-foreground/80",
@@ -37,6 +38,7 @@ const Header = () => {
               </Link>
 
               <Link
+                prefetch={false}
                 href="/faq"
                 className={cn(
                   "transition-colors hover:text-foreground/80",
@@ -51,6 +53,7 @@ const Header = () => {
 
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
               <Link
+                prefetch={false}
                 href="https://github.com/HecticKiwi/Web-Osu-Mania"
                 target="_blank"
               >

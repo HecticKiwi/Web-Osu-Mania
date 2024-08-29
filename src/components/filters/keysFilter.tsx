@@ -41,7 +41,9 @@ const KeysFilter = ({ className }: { className?: string }) => {
                 variant={"outline"}
                 asChild
               >
-                <Link href={`/?${params.toString()}`}>{key}K</Link>
+                <Link href={`/?${params.toString()}`} prefetch={false}>
+                  {key}K
+                </Link>
               </Toggle>
             );
           })}

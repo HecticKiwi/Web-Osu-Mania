@@ -14,6 +14,7 @@ const FaqPage = () => {
               href={"https://osu.ppy.sh/"}
               className="text-primary focus-within:underline hover:underline"
               target="_blank"
+              prefetch={false}
             >
               osu!
             </Link>{" "}
@@ -51,6 +52,7 @@ const FaqPage = () => {
               href={"https://osu.ppy.sh/community/forums/topics/1498492"}
               className="text-primary focus-within:underline hover:underline"
               target="_blank"
+              prefetch={false}
             >
               Azure Snowfall
             </Link>
@@ -67,6 +69,7 @@ const FaqPage = () => {
               href={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
               className="text-primary focus-within:underline hover:underline"
               target="_blank"
+              prefetch={false}
             >
               GitHub
             </Link>

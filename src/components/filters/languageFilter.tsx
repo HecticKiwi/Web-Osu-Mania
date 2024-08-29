@@ -38,6 +38,7 @@ const LanguageFilter = ({ className }: { className?: string }) => {
                     "h-8",
                     languageParam === language && "text-white",
                   )}
+                  prefetch={false}
                 >
                   {language}
                 </Link>

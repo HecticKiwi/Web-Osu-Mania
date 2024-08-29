@@ -68,6 +68,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
             <Link
               href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
               target="_blank"
+              prefetch={false}
             >
               <ExternalLink className="h-5 w-5" />
             </Link>

@@ -217,6 +217,7 @@ const VolumeSettings = ({
                   href={"https://nullvoxpopuli.github.io/latency-tester/"}
                   className="text-primary hover:underline focus:underline"
                   target="_blank"
+                  prefetch={false}
                 >
                   latency tester
                 </Link>{" "}

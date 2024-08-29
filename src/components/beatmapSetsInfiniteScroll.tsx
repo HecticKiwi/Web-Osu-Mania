@@ -121,6 +121,7 @@ const BeatmapSetsInfiniteScroll = ({
           <Link
             href={"/"}
             className="text-primary hover:underline focus:underline"
+            prefetch={false}
           >
             reset
           </Link>{" "}

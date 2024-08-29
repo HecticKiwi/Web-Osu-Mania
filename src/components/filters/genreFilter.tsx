@@ -35,6 +35,7 @@ const GenreFilter = ({ className }: { className?: string }) => {
                   href={`/?${params.toString()}`}
                   scroll={false}
                   className={cn("h-8", genreParam === genre && "text-white")}
+                  prefetch={false}
                 >
                   {genre}
                 </Link>
