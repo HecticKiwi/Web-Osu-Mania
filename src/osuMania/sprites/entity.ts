@@ -1,4 +1,3 @@
-import { Sprite, Container } from "pixi.js";
 import { Game } from "../game";
 
 export class Entity {

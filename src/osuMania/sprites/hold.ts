@@ -91,8 +91,6 @@ export class Hold {
     }
 
     if (this.isHit()) {
-      console.log("hi");
-
       // Return if you pressed way too early...
       if (absDelta > this.game.hitWindows[0]) {
         return;

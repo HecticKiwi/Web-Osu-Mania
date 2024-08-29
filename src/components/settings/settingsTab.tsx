@@ -26,7 +26,7 @@ const SettingsTab = () => {
   return (
     <>
       <h3 className="text-lg font-semibold">General</h3>
-      <div className="mt-1 space-y-3">
+      <div className="mt-2 space-y-3">
         <div className="grid grid-cols-2 items-center">
           <div className="text-sm font-semibold text-muted-foreground">
             Background Dim
@@ -66,7 +66,7 @@ const SettingsTab = () => {
       </div>
 
       <h3 className="mt-4 text-lg font-semibold">Display</h3>
-      <div className="mt-1 space-y-4">
+      <div className="mt-2 space-y-4">
         <div className="grid grid-cols-2 items-center">
           <div className="text-sm font-semibold text-muted-foreground">
             Upscroll (DDR Style)
@@ -141,7 +141,7 @@ const SettingsTab = () => {
       <Separator className="my-6" />
 
       <h3 className="text-lg font-semibold">Keybinds</h3>
-      <div className="mt-1">
+      <div className="mt-2">
         <Keybinds />
       </div>
     </>

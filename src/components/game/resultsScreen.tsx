@@ -19,7 +19,7 @@ const ResultsScreen = ({
       {/* Top of -1px since it wasn't covering the top for some reason */}
       <div className="fixed inset-0 -top-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
         <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-5xl font-semibold">
+          <h1 className="text-3xl font-semibold md:text-5xl">
             {beatmapData.metadata.artist} - {beatmapData.metadata.title}
           </h1>
           <div className="mt-1 text-2xl text-muted-foreground">
@@ -36,7 +36,7 @@ const ResultsScreen = ({
                   <span className="text-5xl">{Math.round(results.score)}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid gap-6 sm:grid-cols-2">
                   <div className="rounded-xl">
                     <h3 className="mb-4 text-3xl font-semibold text-primary">
                       Max Combo
@@ -60,7 +60,7 @@ const ResultsScreen = ({
                   Breakdown
                 </h2>
 
-                <div className="grid grid-cols-2 gap-4 text-2xl">
+                <div className="grid gap-4 text-2xl sm:grid-cols-2">
                   <div className="flex items-center gap-4">
                     <span className="w-16 text-orange-300">300</span>
                     <span className="text-5xl">{results[300]}x</span>

@@ -14,6 +14,8 @@ export class Key extends Entity {
   constructor(game: Game, columnId: number) {
     super(game);
 
+    this.columnId = columnId;
+
     this.sprite = Sprite.from(
       `${SKIN_DIR}/${game.skinManiaIni[`KeyImage${columnId}`]}.png`,
     );
@@ -24,8 +26,6 @@ export class Key extends Entity {
     this.keyPTexture = Texture.from(
       `${SKIN_DIR}/${game.skinManiaIni[`KeyImage${columnId}D`]}.png`,
     );
-
-    this.columnId = columnId;
 
     this.sprite.eventMode = "static";
     this.sprite.cursor = "pointer";

@@ -28,7 +28,7 @@ const SortFilter = ({ className }: { className?: string }) => {
           Sort by <span className="font-semibold">({sortDirection})</span>
         </span>
 
-        <div className="flex gap-x-2">
+        <div className="flex flex-wrap gap-x-2">
           {[
             "title",
             "artist",

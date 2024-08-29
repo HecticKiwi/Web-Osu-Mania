@@ -9,7 +9,7 @@ const orange = 0xdaae46;
 
 export class ErrorBar {
   private game: Game;
-  public container: Container;
+  public view: Container;
   private background: Graphics;
   private foreground: Graphics;
   private timingMarks: Graphics[] = [];
@@ -20,18 +20,19 @@ export class ErrorBar {
   public constructor(game: Game) {
     this.game = game;
 
-    this.container = new Container();
-    this.container.pivot.set(this.width / 2, this.height);
-    this.container.scale.set(2);
+    this.view = new Container();
+    this.view.interactiveChildren = false;
+    this.view.pivot.set(this.width / 2, this.height);
+    this.view.scale.set(2);
 
     this.background = new Graphics()
       .rect(0, 0, this.width, this.height)
       .fill(0x000000);
     this.background.alpha = 0.75;
-    this.container.addChild(this.background);
+    this.view.addChild(this.background);
 
     this.foreground = new Graphics();
-    this.container.addChild(this.foreground);
+    this.view.addChild(this.foreground);
 
     this.drawJudgementSections();
 
@@ -40,7 +41,7 @@ export class ErrorBar {
       .fill(0xffffff);
     centerLine.pivot.set(1, 0);
     centerLine.zIndex = 1;
-    this.container.addChild(centerLine);
+    this.view.addChild(centerLine);
   }
 
   private drawJudgementSections() {
@@ -89,7 +90,7 @@ export class ErrorBar {
     mark.x = clamp(x, 0, this.width);
 
     this.timingMarks.push(mark);
-    this.container.addChild(mark);
+    this.view.addChild(mark);
 
     gsap.to(mark, {
       pixi: {
@@ -97,7 +98,7 @@ export class ErrorBar {
       },
       duration: 4,
       onComplete: () => {
-        this.container.removeChild(mark);
+        this.view.removeChild(mark);
         this.timingMarks = this.timingMarks.filter((m) => m !== mark);
       },
     });

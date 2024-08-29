@@ -134,7 +134,7 @@ const BeatmapSetsInfiniteScroll = ({
     <>
       <div
         className={cn(
-          "grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-6",
+          "grid grid-cols-[repeat(auto-fit,minmax(340px,1fr))] gap-6",
           className,
         )}
       >

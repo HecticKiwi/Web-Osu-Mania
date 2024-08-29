@@ -16,7 +16,7 @@ const KeysFilter = ({ className }: { className?: string }) => {
       <div className={cn(className)}>
         <span className="text-muted-foreground">Mode</span>
 
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((key) => {
             const params = new URLSearchParams(searchParams.toString());
 

@@ -62,7 +62,7 @@ const Keybinds = () => {
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-4xl"
+        className="max-w-full overflow-x-auto scrollbar"
         onEscapeKeyDown={(e) => {
           if (keyBindPath) {
             e.preventDefault();
@@ -80,7 +80,7 @@ const Keybinds = () => {
         </DialogHeader>
 
         {/* Keys */}
-        <div className="flex flex-col">
+        <div className="w-4xl flex flex-col">
           {settings.keybinds.keyModes.map((keyMode, i) => (
             <div
               key={i}

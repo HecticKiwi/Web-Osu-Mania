@@ -88,7 +88,9 @@ const GameModal = () => {
           <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
 
           <div className="rounded-xl border bg-card p-6">
-            <h1 className="text-4xl text-white">{loadingMessage}</h1>
+            <h1 className="text-2xl text-white sm:text-4xl">
+              {loadingMessage}
+            </h1>
           </div>
 
           <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>

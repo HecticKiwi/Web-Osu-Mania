@@ -4,7 +4,6 @@ import { Game } from "../game";
 
 export class Countdown {
   private game: Game;
-  private startTime: number;
 
   public view: Container;
 
@@ -57,7 +56,7 @@ export class Countdown {
     this.view.addChild(this.progressBarContainer);
 
     this.skipText = new Text({
-      text: "Press [Space] to Skip",
+      text: "Press any key to Skip",
       style: {
         fill: 0x7d7d7d,
         fontFamily: "RobotoMono",
@@ -93,10 +92,11 @@ export class Countdown {
       this.skipText.alpha = 0;
     }
 
-    // Press space to skip intro
+    // Skip intro
     if (
       remainingTime >= 2000 &&
-      this.game.inputSystem.tappedKeys.has("Space")
+      (this.game.inputSystem.tappedColumns.includes(true) ||
+        this.game.inputSystem.tappedKeys.size > 0)
     ) {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }

@@ -4,6 +4,7 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { Results } from "@/types";
 import { useEffect, useRef, useState } from "react";
+import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
 import VolumeWidget from "./volumeWidget";
@@ -78,6 +79,7 @@ const GameScreens = ({
     <>
       <div ref={containerRef} className="h-full w-full">
         {game && !results && <VolumeWidget game={game} />}
+        {game && !results && <PauseButton setIsPaused={setIsPaused} />}
 
         {isPaused && (
           <PauseScreen

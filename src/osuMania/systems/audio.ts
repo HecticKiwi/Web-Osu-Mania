@@ -39,7 +39,7 @@ export class AudioSystem {
     const sound = this.sounds[filename];
 
     if (!sound) {
-      // console.warn("Sound not found: ", filename);
+      console.warn("Sound not found: ", filename);
 
       return;
     }

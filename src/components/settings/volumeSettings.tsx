@@ -31,7 +31,7 @@ const VolumeSettings = ({
     <>
       <div className={cn(className)}>
         <h3 className="text-lg font-semibold">Volume</h3>
-        <div className="mt-1 space-y-4">
+        <div className="mt-2 space-y-4">
           <div
             className={cn(
               "grid grid-cols-2 items-center",

@@ -1,7 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
 import { Game } from "../game";
 
-const MAX_FRAMES = 30;
+const MAX_FRAMES = 1;
 
 export class Fps {
   public view: Container;
@@ -14,6 +14,7 @@ export class Fps {
     const height = 30;
 
     this.view = new Container();
+    this.view.interactiveChildren = false;
 
     const background = new Graphics().rect(0, 0, width, height).fill(0x000000);
     background.alpha = 0.5;

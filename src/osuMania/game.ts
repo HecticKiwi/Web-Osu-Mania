@@ -66,6 +66,7 @@ export class Game {
   public accuracyText: Text;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
+  private stageSideWidth = 10;
   public stageContainer: Container = new Container();
   public stageSides: Graphics;
   public stageBackground: Graphics;
@@ -128,7 +129,7 @@ export class Game {
       format: "wav",
       rate: this.settings.mods.playbackRate,
       onloaderror: (id, error) => {
-        console.log(error);
+        // console.log(error);
       },
       onend: async () => {
         // Seek back to the end so the progress bar stays full
@@ -154,31 +155,41 @@ export class Game {
       this.app.screen.width,
     );
 
+    if (
+      this.scaledColumnWidth * this.difficulty.keyCount >
+      this.app.screen.width
+    ) {
+      this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
+    }
+
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 
     this.hitPosition = this.app.screen.height - 130;
 
-    this.scoreText.x = this.app.screen.width - 30;
-
-    this.keys.forEach((key) => (key.sprite.y = this.app.screen.height));
+    this.keys.forEach((key, i) => {
+      key.sprite.width = this.scaledColumnWidth;
+      key.sprite.x = this.stageSideWidth + i * this.scaledColumnWidth;
+      key.sprite.y = this.app.screen.height;
+    });
     this.stageHint.y = this.hitPosition;
     this.stageLights.forEach(
       (stageLight) => (stageLight.sprite.y = this.hitPosition),
     );
 
-    const notesContainerWidth =
-      this.difficulty.keyCount * this.scaledColumnWidth;
+    const notesContainerWidth = Math.min(
+      this.difficulty.keyCount * this.scaledColumnWidth,
+      this.app.screen.width,
+    );
     this.notesContainer.width = notesContainerWidth;
 
-    const stageSideWidth = 10;
     this.stageContainer.removeChild(this.stageSides);
     this.stageSides = new Graphics()
-      .rect(0, 0, stageSideWidth, this.app.screen.height)
+      .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
-        stageSideWidth + notesContainerWidth,
+        this.stageSideWidth + notesContainerWidth,
         0,
-        stageSideWidth,
+        this.stageSideWidth,
         this.app.screen.height,
       )
       .fill(0x7f7f7f);
@@ -188,11 +199,8 @@ export class Game {
     this.stageContainer.pivot.x = this.stageContainer.width / 2;
     this.stageContainer.pivot.y = this.app.screen.height / 2;
 
-    // The left stage side has an x of -stageSideWidth, so add it here to compensate
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
-
-    this.progressBarContainer.x = this.app.screen.width - 30;
 
     this.judgement.sprite.x = this.app.screen.width / 2;
     this.comboText.x = this.app.screen.width / 2;
@@ -206,12 +214,21 @@ export class Game {
     }
 
     if (this.hitError) {
-      this.hitError.container.x = this.app.screen.width / 2;
+      this.hitError.view.width = Math.min(600, this.app.screen.width);
+      this.hitError.view.x = this.app.screen.width / 2;
+      this.hitError.view.y = this.app.screen.height;
     }
 
+    // Hud section
+    this.scoreText.x = this.app.screen.width - 30;
+    this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    this.progressBarContainer.x = this.app.screen.width - 30;
+    this.progressBarContainer.scale.x = Math.min(
+      (this.app.screen.width - 60) / 400,
+      1,
+    );
     this.accuracyText.x = this.app.screen.width - 30;
-
-    this.hitError.container.y = this.app.screen.height;
+    this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
   }
 
   async main(ref: HTMLDivElement) {
@@ -219,8 +236,17 @@ export class Game {
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundAlpha: 0.5,
-      antialias: true,
+      // antialias: true,
+      eventMode: "none",
+      eventFeatures: {
+        move: true,
+        globalMove: false,
+        click: true,
+        wheel: false,
+      },
     });
+
+    this.app.stage.eventMode = "passive";
 
     ref.appendChild(this.app.canvas);
 
@@ -301,7 +327,12 @@ export class Game {
 
     switch (this.state) {
       case "WAIT":
-        if (this.inputSystem.tappedColumns.includes(true)) {
+        if (this.inputSystem.tappedKeys.size) {
+        }
+        if (
+          this.inputSystem.tappedColumns.includes(true) ||
+          this.inputSystem.tappedKeys.size > 0
+        ) {
           this.app.stage.removeChild(this.startMessage);
 
           if (this.countdown) {
@@ -387,6 +418,7 @@ export class Game {
     progressBarBg.alpha = 0.1;
 
     this.progressBar = new Graphics().rect(0, 0, 0.01, 5).fill(0x71acef);
+    this.progressBar.interactiveChildren = false;
 
     this.progressBarContainer = new Container();
     this.progressBarContainer.addChild(progressBarBg);
@@ -401,7 +433,7 @@ export class Game {
   private addHitError() {
     this.hitError = new ErrorBar(this);
 
-    this.app.stage.addChild(this.hitError.container);
+    this.app.stage.addChild(this.hitError.view);
   }
 
   private addScoreText() {
@@ -475,6 +507,8 @@ export class Game {
   }
 
   private addStageContainer() {
+    this.stageContainer.eventMode = "passive";
+
     const notesContainerWidth =
       this.difficulty.keyCount * this.scaledColumnWidth;
 
@@ -484,13 +518,12 @@ export class Game {
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
 
-    const stageSideWidth = 10;
     this.stageSides = new Graphics()
-      .rect(0, 0, stageSideWidth, this.app.screen.height)
+      .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
-        stageSideWidth + notesContainerWidth,
+        this.stageSideWidth + notesContainerWidth,
         0,
-        stageSideWidth,
+        this.stageSideWidth,
         this.app.screen.height,
       )
       .fill(0x7f7f7f);
@@ -502,7 +535,9 @@ export class Game {
 
     this.stageContainer.addChild(this.notesContainer);
     this.app.stage.addChild(this.stageContainer);
-    this.notesContainer.x = stageSideWidth;
+
+    this.notesContainer.x = this.stageSideWidth;
+    this.notesContainer.interactiveChildren = false;
   }
 
   private addStageLights() {
@@ -531,18 +566,15 @@ export class Game {
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const key = new Key(this, i);
-      key.sprite.width = this.scaledColumnWidth;
 
       // No idea how the height is determined in the skin.ini so Imma hardcode it
       key.sprite.height = 600;
 
       key.sprite.anchor.set(undefined, 1);
 
-      key.sprite.x = i * this.scaledColumnWidth;
-
       key.sprite.zIndex = 99;
 
-      this.notesContainer.addChild(key.sprite);
+      this.stageContainer.addChild(key.sprite);
       this.keys.push(key);
     }
   }

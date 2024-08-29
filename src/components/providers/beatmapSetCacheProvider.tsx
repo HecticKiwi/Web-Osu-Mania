@@ -116,6 +116,12 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
             );
           }
 
+          if (response.status === 429) {
+            throw new Error(
+              `The beatmap provider is experiencing too many requests, please try again later or switch to another.`,
+            );
+          }
+
           if (response.status === 500) {
             throw new Error(
               `The beatmap provider ran into an error, try again later or switch to another provider.`,

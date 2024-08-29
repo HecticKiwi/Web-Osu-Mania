@@ -283,8 +283,10 @@ export function parseHitObjects(lines: string[], columnCount: number) {
     });
   }
 
-  // Ensure at least 1 second before the song starts
-  const delay = Math.max(1000 - hitObjects[0].time, 0);
+  // Ensure at least 1 second (unaffected by playback rate) before the song starts
+  const delay =
+    Math.max(1000 - hitObjects[0].time / mods.playbackRate, 0) *
+    mods.playbackRate;
   hitObjects.forEach((hitObject) => {
     hitObject.time += delay - audioOffset;
     if (hitObject.type === "hold") {
