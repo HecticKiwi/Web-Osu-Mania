@@ -54,7 +54,7 @@ export class Idb {
       const db = await this.db;
       db.clear("beatmapFiles");
     } catch (error: any) {
-      console.log(error.name);
+      console.warn(error.name);
     }
   }
 

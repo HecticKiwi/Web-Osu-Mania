@@ -308,7 +308,6 @@ export function parseHitObjects(lines: string[], columnCount: number) {
       endTime = currentEndTime;
     }
   });
-  console.log(endTime);
 
   return {
     hitObjects,

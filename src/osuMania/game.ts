@@ -642,10 +642,10 @@ export class Game {
       preload: true,
       autoplay: true,
       onloaderror: (_, error) => {
-        console.log(error);
+        console.warn(error);
       },
       onplayerror: (_, error) => {
-        console.log(error);
+        console.warn(error);
       },
     });
 
