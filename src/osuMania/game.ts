@@ -379,11 +379,10 @@ export class Game {
           }
 
           if (itemsToRemove) {
-            const res = column.splice(0, itemsToRemove);
-
-            res.forEach((hitObject) => {
-              this.notesContainer.removeChild(hitObject.view);
-            });
+            for (let i = 0; i < itemsToRemove; i++) {
+              this.notesContainer.removeChild(column[i].view);
+              column.shift();
+            }
           }
         });
 

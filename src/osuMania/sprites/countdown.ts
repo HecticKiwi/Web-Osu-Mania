@@ -84,7 +84,9 @@ export class Countdown {
           alpha: 0,
         },
         duration: 1,
-        onComplete: () => {},
+        onComplete: () => {
+          this.view.visible = false;
+        },
       });
     }
 
