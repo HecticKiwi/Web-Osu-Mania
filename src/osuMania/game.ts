@@ -92,12 +92,12 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: Dispatch<SetStateAction<Results>>;
+  private setResults: Dispatch<SetStateAction<Results | null>>;
   private finished: boolean = false;
 
   public constructor(
     beatmapData: BeatmapData,
-    setResults: Dispatch<SetStateAction<Results>>,
+    setResults: Dispatch<SetStateAction<Results | null>>,
   ) {
     this.resize = this.resize.bind(this);
 
