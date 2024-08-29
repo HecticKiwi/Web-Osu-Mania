@@ -86,6 +86,7 @@ const BeatmapSetsInfiniteScroll = ({
       }),
     initialPageParam: "",
     getNextPageParam: (lastPage, pages) => lastPage?.cursor_string,
+    staleTime: Infinity,
   });
 
   useEffect(() => {
