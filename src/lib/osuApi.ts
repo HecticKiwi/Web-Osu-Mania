@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import queryString from "query-string";
 import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
+import { Genre, GENRES } from "./searchParams/genreParam";
+import { Language, LANGUAGE_INDEXES } from "./searchParams/languageParam";
 import {
   DEFAULT_SORT_CRITERIA,
   DEFAULT_SORT_DIRECTION,
@@ -11,13 +13,6 @@ import {
   SortDirection,
 } from "./searchParams/sortParam";
 import { Stars } from "./searchParams/starsParam";
-import { Genre, GENRES } from "./searchParams/genreParam";
-import { url } from "inspector";
-import {
-  LANGUAGE_INDEXES,
-  DEFAULT_LANGUAGE,
-  Language,
-} from "./searchParams/languageParam";
 
 type OAuthTokenData = {
   token_type: string;

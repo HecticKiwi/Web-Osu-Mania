@@ -42,11 +42,13 @@ export class Hold {
     this.view.addChild(body);
     this.view.width;
     this.view.x = holdData.column * this.game.scaledColumnWidth;
+    this.view.visible = false;
 
     this.game.notesContainer.addChild(this.view);
   }
 
   public update() {
+    this.view.visible = true;
     this.view.y =
       ((this.game.timeElapsed - this.data.endTime) *
         this.game.settings.scrollSpeed *

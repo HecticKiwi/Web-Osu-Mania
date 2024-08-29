@@ -570,11 +570,9 @@ export class Game {
   private addHitObjects() {
     const hitObjects = this.hitObjects.map((hitObjectData) => {
       if (hitObjectData.type === "tap") {
-        const hitObject = new Tap(this, hitObjectData);
-        return hitObject;
+        return new Tap(this, hitObjectData);
       } else {
-        const hitObject = new Hold(this, hitObjectData);
-        return hitObject;
+        return new Hold(this, hitObjectData);
       }
     });
 

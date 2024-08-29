@@ -32,6 +32,7 @@ export class Tap extends Entity {
     this.view.anchor.set(undefined, 1);
 
     this.view.x = hitObjectData.column * this.game.scaledColumnWidth;
+    this.view.visible = false;
 
     this.setSoundData();
   }
@@ -110,6 +111,7 @@ export class Tap extends Entity {
   public update() {
     const delta = this.data.time - this.game.timeElapsed;
 
+    this.view.visible = true;
     this.view.y =
       (-delta * this.game.settings.scrollSpeed * SCROLL_SPEED_MULT) /
         this.game.settings.mods.playbackRate +
