@@ -93,7 +93,7 @@ const ResultsScreen = ({
                     <span className="w-16 bg-gradient-to-b text-rose-300">
                       miss!
                     </span>
-                    <span className="text-5xl">{results[200]}x</span>
+                    <span className="text-5xl">{results[0]}x</span>
                   </div>
                 </div>
               </div>
