@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Howler } from "howler";
 import { ReactNode, createContext, useContext, useState } from "react";
 import GameModal from "../game/gameModal";
 
@@ -29,6 +30,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<GameData | null>(null);
 
   const closeGame = () => {
+    Howler.unload();
     setData(null);
   };
 

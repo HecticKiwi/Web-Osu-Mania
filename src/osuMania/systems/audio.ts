@@ -81,7 +81,5 @@ export class AudioSystem {
     }
   }
 
-  public dispose() {
-    Howler.unload();
-  }
+  public dispose() {}
 }
