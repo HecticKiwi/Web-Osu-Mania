@@ -87,7 +87,7 @@ const GameModal = () => {
         <div className="flex w-full items-center text-center">
           <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
 
-          <div className="rounded-xl border bg-card p-6">
+          <div className="rounded-xl border bg-card p-3 sm:p-6">
             <h1 className="text-2xl text-white sm:text-4xl">
               {loadingMessage}
             </h1>

@@ -44,7 +44,7 @@ export class Key extends Entity {
     this.view.addChild(this.sprite);
 
     this.hitArea = new Graphics()
-      .rect(0, 0, this.game.scaledColumnWidth, this.game.app.screen.height)
+      .rect(0, 0, this.view.width, this.game.app.screen.height)
       .fill(0x000000);
     this.hitArea.alpha = 0;
     this.hitArea.pivot.y = this.game.app.screen.height;

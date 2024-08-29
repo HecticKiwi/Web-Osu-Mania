@@ -295,9 +295,20 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   });
 
   const startTime = hitObjects[0].time;
-  const lastHitObject = hitObjects[hitObjects.length - 1];
-  const endTime =
-    lastHitObject.type === "hold" ? lastHitObject.endTime : lastHitObject.time;
+
+  const lastHitObjects = hitObjects.slice(-columnCount);
+
+  let endTime = 0;
+
+  lastHitObjects.forEach((hitObject) => {
+    const currentEndTime =
+      hitObject.type === "hold" ? hitObject.endTime : hitObject.time;
+
+    if (currentEndTime > endTime) {
+      endTime = currentEndTime;
+    }
+  });
+  console.log(endTime);
 
   return {
     hitObjects,
