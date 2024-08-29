@@ -1,7 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
 import { Game } from "../game";
 
-const MAX_FRAMES = 1;
+const MAX_FRAMES = 30;
 
 export class Fps {
   public view: Container;

@@ -73,7 +73,7 @@ export class Hold {
       if (delta < 0) {
         this.game.scoreSystem.hit(320);
 
-        this.game.hitError?.addTimingMark(0);
+        this.game.errorBar?.addTimingMark(0);
 
         this.game.keys[this.data.column].setPressed(false);
         this.game.stageLights[this.data.column].light();
@@ -110,7 +110,7 @@ export class Hold {
         this.game.scoreSystem.hit(0);
       }
 
-      this.game.hitError?.addTimingMark(delta);
+      this.game.errorBar?.addTimingMark(delta);
 
       this.shouldRemove = true;
     }

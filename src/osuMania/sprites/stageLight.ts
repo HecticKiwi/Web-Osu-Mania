@@ -29,6 +29,10 @@ export class StageLight extends Entity {
     }
   }
 
+  public resize() {
+    this.sprite.y = this.game.hitPosition;
+  }
+
   public light() {
     gsap.killTweensOf(this.sprite);
     this.sprite.alpha = 1;

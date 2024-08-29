@@ -16,6 +16,16 @@ export class Judgement extends Entity {
     this.sprite.anchor.set(0.5);
   }
 
+  public resize() {
+    this.game.judgement.sprite.x = this.game.app.screen.width / 2;
+
+    if (this.game.settings.upscroll) {
+      this.sprite.y = (this.game.app.screen.height * 2) / 3 - 50;
+    } else {
+      this.sprite.y = this.game.app.screen.height / 3;
+    }
+  }
+
   public showJudgement(judgement: JudgementValue) {
     this.sprite.texture = Texture.from(JUDGEMENT_TEXTURES[judgement]);
 

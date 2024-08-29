@@ -44,6 +44,12 @@ export class ErrorBar {
     this.view.addChild(centerLine);
   }
 
+  public resize() {
+    this.view.width = Math.min(600, this.game.app.screen.width);
+    this.view.x = this.game.app.screen.width / 2;
+    this.view.y = this.game.app.screen.height;
+  }
+
   private drawJudgementSections() {
     const center = this.width / 2;
     const height = this.height / 3;

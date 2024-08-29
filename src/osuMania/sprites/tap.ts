@@ -127,7 +127,7 @@ export class Tap extends Entity {
         this.game.scoreSystem.hit(320);
         this.game.stageLights[this.data.column].light();
 
-        this.game.hitError?.addTimingMark(0);
+        this.game.errorBar?.addTimingMark(0);
 
         this.shouldRemove = true;
 
@@ -169,7 +169,7 @@ export class Tap extends Entity {
         this.game.scoreSystem.hit(0);
       }
 
-      this.game.hitError?.addTimingMark(delta);
+      this.game.errorBar?.addTimingMark(delta);
 
       this.shouldRemove = true;
     }

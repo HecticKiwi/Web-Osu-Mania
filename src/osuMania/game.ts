@@ -38,6 +38,7 @@ import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
+import { Dispatch, SetStateAction } from "react";
 
 export class Game {
   public app = new Application();
@@ -66,7 +67,7 @@ export class Game {
   public accuracyText: Text;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
-  private stageSideWidth = 10;
+  public stageSideWidth = 10;
   public stageContainer: Container = new Container();
   public stageSides: Graphics;
   public stageBackground: Graphics;
@@ -77,7 +78,7 @@ export class Game {
   public judgement: Judgement;
   private progressBarContainer: Container;
   private progressBar: Container;
-  public hitError: ErrorBar;
+  public errorBar: ErrorBar;
   private fps?: Fps;
   private countdown: Countdown;
 
@@ -91,12 +92,12 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: (results: Results) => void;
-  private finished = false;
+  private setResults: Dispatch<SetStateAction<Results>>;
+  private finished: boolean = false;
 
   public constructor(
     beatmapData: BeatmapData,
-    setResults: (results: Results) => void,
+    setResults: Dispatch<SetStateAction<Results>>,
   ) {
     this.resize = this.resize.bind(this);
 
@@ -155,6 +156,7 @@ export class Game {
       this.app.screen.width,
     );
 
+    // Cap column width on small screen widths
     if (
       this.scaledColumnWidth * this.difficulty.keyCount >
       this.app.screen.width
@@ -162,20 +164,15 @@ export class Game {
       this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
     }
 
+    this.hitPosition = this.app.screen.height - 130;
+
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 
-    this.hitPosition = this.app.screen.height - 130;
+    this.keys.forEach((key) => key.resize());
 
-    this.keys.forEach((key, i) => {
-      key.sprite.width = this.scaledColumnWidth;
-      key.sprite.x = this.stageSideWidth + i * this.scaledColumnWidth;
-      key.sprite.y = this.app.screen.height;
-    });
     this.stageHint.y = this.hitPosition;
-    this.stageLights.forEach(
-      (stageLight) => (stageLight.sprite.y = this.hitPosition),
-    );
+    this.stageLights.forEach((stageLight) => stageLight.resize());
 
     const notesContainerWidth = Math.min(
       this.difficulty.keyCount * this.scaledColumnWidth,
@@ -184,7 +181,8 @@ export class Game {
     this.notesContainer.width = notesContainerWidth;
 
     this.stageContainer.removeChild(this.stageSides);
-    this.stageSides = new Graphics()
+    this.stageSides
+      .clear()
       .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
         this.stageSideWidth + notesContainerWidth,
@@ -202,21 +200,18 @@ export class Game {
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
 
-    this.judgement.sprite.x = this.app.screen.width / 2;
+    this.judgement.resize();
+
     this.comboText.x = this.app.screen.width / 2;
 
     if (this.settings.upscroll) {
-      this.judgement.sprite.y = (this.app.screen.height * 2) / 3 - 50;
       this.comboText.y = (this.app.screen.height * 2) / 3;
     } else {
-      this.judgement.sprite.y = this.app.screen.height / 3;
       this.comboText.y = this.app.screen.height / 3 + 50;
     }
 
-    if (this.hitError) {
-      this.hitError.view.width = Math.min(600, this.app.screen.width);
-      this.hitError.view.x = this.app.screen.width / 2;
-      this.hitError.view.y = this.app.screen.height;
+    if (this.errorBar) {
+      this.errorBar.resize();
     }
 
     // Hud section
@@ -431,9 +426,9 @@ export class Game {
   }
 
   private addHitError() {
-    this.hitError = new ErrorBar(this);
+    this.errorBar = new ErrorBar(this);
 
-    this.app.stage.addChild(this.hitError.view);
+    this.app.stage.addChild(this.errorBar.view);
   }
 
   private addScoreText() {
@@ -567,14 +562,7 @@ export class Game {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const key = new Key(this, i);
 
-      // No idea how the height is determined in the skin.ini so Imma hardcode it
-      key.sprite.height = 600;
-
-      key.sprite.anchor.set(undefined, 1);
-
-      key.sprite.zIndex = 99;
-
-      this.stageContainer.addChild(key.sprite);
+      this.stageContainer.addChild(key.view);
       this.keys.push(key);
     }
   }
