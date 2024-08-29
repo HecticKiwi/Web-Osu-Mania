@@ -62,7 +62,8 @@ const Keybinds = () => {
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-full overflow-x-auto scrollbar"
+        aria-describedby={undefined}
+        className="w-fit max-w-full overflow-x-auto scrollbar"
         onEscapeKeyDown={(e) => {
           if (keyBindPath) {
             e.preventDefault();
@@ -90,7 +91,7 @@ const Keybinds = () => {
               <div className="flex grow justify-center gap-4">
                 {keyMode.map((key, j) => (
                   <Button
-                    key={`${i + 1}K: ${i}`}
+                    key={`${i + 1}K: ${j}`}
                     size={"sm"}
                     className="w-16"
                     onClick={() =>

@@ -28,7 +28,7 @@ export default async function Home({
         </div>
 
         {/* Duplicating UI like This is probably terrible practice */}
-        <MobileSidebar />
+        {/* <MobileSidebar /> */}
 
         <div className="w-full max-w-screen-xl p-4 pt-0 lg:px-8 lg:pb-8">
           <Suspense>
