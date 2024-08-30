@@ -130,7 +130,7 @@ export class Game {
       format: "wav",
       rate: this.settings.mods.playbackRate,
       onloaderror: (id, error) => {
-        // console.log(error);
+        // console.warn(error);
       },
       onend: async () => {
         // Seek back to the end so the progress bar stays full

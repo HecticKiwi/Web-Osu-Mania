@@ -71,7 +71,7 @@ export type BeatmapSet = {
   beatmaps: Beatmap[];
 };
 
-export async function getAccessToken(nextResponse: NextResponse) {
+export async function getAccessToken() {
   const response = await fetch("https://osu.ppy.sh/oauth/token", {
     method: "POST",
     headers: {
@@ -94,9 +94,10 @@ export async function getAccessToken(nextResponse: NextResponse) {
   const expiryDate = new Date();
   expiryDate.setSeconds(expiryDate.getSeconds() + data.expires_in);
 
-  nextResponse.cookies.set("osu_api_access_token", data.access_token, {
+  return {
+    token: data.access_token,
     expires: expiryDate,
-  });
+  };
 }
 
 export type GetBeatmapsResponse = {
@@ -135,10 +136,16 @@ export async function getBeatmaps({
   language: Language;
 }) {
   const cookieStore = cookies();
-  const token = cookieStore.get("osu_api_access_token")?.value;
+  let token = cookieStore.get("osu_api_access_token")?.value;
 
   if (!token) {
-    throw new Error("No token?");
+    const { token: newToken, expires } = await getAccessToken();
+
+    token = newToken;
+
+    cookieStore.set("osu_api_access_token", newToken, {
+      expires: expires,
+    });
   }
 
   const { min, max } = stars;
