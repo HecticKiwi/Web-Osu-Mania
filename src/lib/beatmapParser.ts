@@ -118,23 +118,23 @@ export const parseOsz = async (
 
   const hitWindows = getHitWindows(difficulty.od);
 
-  // Audio file
+  // Song file
 
-  const audioFilename = getLineValue(lines, "AudioFilename");
-  if (!audioFilename) {
-    throw new Error("Didn't find the audio filename");
+  const songFilename = getLineValue(lines, "AudioFilename");
+  if (!songFilename) {
+    throw new Error("Didn't find the song filename");
   }
 
-  const audioExtension = audioFilename.split(".").pop();
+  const songFileExtension = songFilename.split(".").pop();
 
-  if (!audioExtension) {
-    throw new Error("No audio extension");
+  if (!songFileExtension) {
+    throw new Error("No song file extension");
   }
 
   let songUrl: string;
-  const audioFile = findFile(zip, audioFilename);
-  if (audioFile) {
-    const audioBlob = await audioFile.async("blob");
+  const songFile = findFile(zip, songFilename);
+  if (songFile) {
+    const audioBlob = await songFile.async("blob");
 
     const delayedAudioBlob = await addDelay(audioBlob, delay / 1000);
 
@@ -157,10 +157,14 @@ export const parseOsz = async (
   });
 
   for (const fileName of audioFiles) {
+    const name = removeFileExtension(fileName);
+
+    if (fileName === songFilename) {
+      continue;
+    }
+
     const fileData = await zip.files[fileName].async("blob");
     const url = URL.createObjectURL(fileData);
-
-    const name = removeFileExtension(fileName);
 
     sounds[name] = {
       url,
