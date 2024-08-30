@@ -1,14 +1,14 @@
-import { SampleSet, Sounds } from "@/lib/beatmapParser";
+import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
 import { Howl, Howler } from "howler";
 import { Game } from "../game";
 
 export class AudioSystem {
   public game: Game;
-  public sounds: Sounds;
-  public beatmapSounds: Sounds;
+  public sounds: SoundDictionary;
+  public beatmapSounds: SoundDictionary;
   public playedSounds = new Set<Howl>();
 
-  constructor(game: Game, sounds: Sounds) {
+  constructor(game: Game, sounds: SoundDictionary) {
     this.game = game;
     this.sounds = sounds;
 

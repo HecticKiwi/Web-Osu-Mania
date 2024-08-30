@@ -12,7 +12,11 @@ export type Metadata = {
   creator: string;
 };
 
-export type Sounds = { [key: string]: { howl: Howl; url?: string } };
+export type Sound = {
+  howl: Howl;
+  url?: string;
+};
+export type SoundDictionary = { [key: string]: Sound };
 
 export type Difficulty = {
   keyCount: number;
@@ -74,11 +78,11 @@ export interface BeatmapData {
   startTime: number;
   endTime: number;
   hitWindows: HitWindows;
-  songUrl: string;
+  song: Sound;
   backgroundUrl: string;
   metadata: Metadata;
   difficulty: Difficulty;
-  sounds: Sounds;
+  sounds: SoundDictionary;
 }
 
 export const parseOsz = async (
@@ -146,9 +150,20 @@ export const parseOsz = async (
     songUrl = URL.createObjectURL(audioBlob);
   }
 
+  const song = {
+    howl: new Howl({
+      src: [songUrl],
+      format: "wav",
+      onloaderror: (id, error) => {
+        // console.warn(error);
+      },
+    }),
+    url: songUrl,
+  };
+
   // Beatmap sounds
 
-  const sounds: Sounds = {};
+  const sounds: SoundDictionary = {};
 
   const audioExtensions = ["wav", "mp3", "ogg"];
   const audioFiles = Object.keys(zip.files).filter((fileName) => {
@@ -171,7 +186,6 @@ export const parseOsz = async (
       howl: new Howl({
         src: [url],
         format: fileName.split(".").pop(),
-        preload: true,
         // onloaderror: (_, e) => console.warn(e),
       }),
     };
@@ -199,7 +213,7 @@ export const parseOsz = async (
     startTime,
     endTime,
     hitWindows,
-    songUrl,
+    song,
     backgroundUrl,
     metadata,
     difficulty,

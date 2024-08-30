@@ -66,7 +66,7 @@ const GameModal = () => {
     return () => {
       if (beatmapData) {
         URL.revokeObjectURL(beatmapData.backgroundUrl);
-        URL.revokeObjectURL(beatmapData.songUrl);
+        URL.revokeObjectURL(beatmapData.song.url!);
 
         Object.values(beatmapData.sounds).forEach((sound) => {
           if (sound.url) {

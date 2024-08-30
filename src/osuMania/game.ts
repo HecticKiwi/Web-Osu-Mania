@@ -124,18 +124,12 @@ export class Game {
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
 
-    this.song = new Howl({
-      volume: this.settings.musicVolume,
-      src: [beatmapData.songUrl],
-      format: "wav",
-      rate: this.settings.mods.playbackRate,
-      onloaderror: (id, error) => {
-        // console.warn(error);
-      },
-      onend: async () => {
-        // Seek back to the end so the progress bar stays full
-        this.song.seek(this.song.duration());
-      },
+    this.song = beatmapData.song.howl;
+    this.song.volume(this.settings.musicVolume);
+    this.song.rate(this.settings.mods.playbackRate);
+    this.song.on("end", async () => {
+      // Seek back to the end so the progress bar stays full
+      this.song.seek(this.song.duration());
     });
   }
 
