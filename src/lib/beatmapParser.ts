@@ -174,6 +174,7 @@ export const parseOsz = async (
   for (const fileName of audioFiles) {
     const name = removeFileExtension(fileName);
 
+    // Don't load the song file, that's already done
     if (fileName === songFilename) {
       continue;
     }

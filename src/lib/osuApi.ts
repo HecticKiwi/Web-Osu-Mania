@@ -144,6 +144,9 @@ export async function getBeatmaps({
     token = newToken;
 
     cookieStore.set("osu_api_access_token", newToken, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       expires: expires,
     });
   }
