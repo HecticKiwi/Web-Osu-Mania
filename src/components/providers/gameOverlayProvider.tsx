@@ -2,7 +2,13 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Howler } from "howler";
-import { ReactNode, createContext, useContext, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import GameModal from "../game/gameModal";
 
 export type GameData = {
@@ -29,17 +35,17 @@ export const useGameContext = () => {
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<GameData | null>(null);
 
-  const closeGame = () => {
+  const closeGame = useCallback(() => {
     Howler.unload();
     setData(null);
-  };
+  }, []);
 
-  const startGame = (beatmapSetId: number, beatmapId: number) => {
+  const startGame = useCallback((beatmapSetId: number, beatmapId: number) => {
     setData({
       beatmapSetId,
       beatmapId,
     });
-  };
+  }, []);
 
   return (
     <GameContext.Provider value={{ data, startGame, closeGame }}>

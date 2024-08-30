@@ -1,8 +1,14 @@
 "use client";
 
 import { Howl } from "howler";
-import { ReactNode, createContext, useContext, useState } from "react";
-import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import { useSettingsContext } from "./settingsProvider";
 
 const AudioContext = createContext<{
   play: (beatmapSetId: number) => void;
@@ -23,24 +29,7 @@ export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
   const [audio, setAudio] = useState<Howl | null>(null);
   const { settings } = useSettingsContext();
 
-  const play = (beatmapSetId: number) => {
-    stop();
-
-    const newAudio = new Howl({
-      src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
-      format: "mp3",
-      html5: true, // To prevent XHR errors
-      autoplay: true,
-      volume: 0,
-      onplay: () => {
-        newAudio.fade(0, settings.musicVolume, 500);
-      },
-    });
-
-    setAudio(newAudio);
-  };
-
-  const stop = () => {
+  const stop = useCallback(() => {
     if (audio) {
       audio.fade(audio.volume(), 0, 500);
       setAudio(null);
@@ -49,7 +38,27 @@ export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
         audio.unload();
       }, 500);
     }
-  };
+  }, [audio]);
+
+  const play = useCallback(
+    (beatmapSetId: number) => {
+      stop();
+
+      const newAudio = new Howl({
+        src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
+        format: "mp3",
+        html5: true, // To prevent XHR errors
+        autoplay: true,
+        volume: 0,
+        onplay: () => {
+          newAudio.fade(0, settings.musicVolume, 500);
+        },
+      });
+
+      setAudio(newAudio);
+    },
+    [settings?.musicVolume, stop],
+  );
 
   return (
     <AudioContext.Provider value={{ play, stop }}>
