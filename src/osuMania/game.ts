@@ -140,6 +140,7 @@ export class Game {
     window.removeEventListener("resize", this.resize);
 
     this.app.destroy({ removeView: true });
+    window.__PIXI_APP__ = null;
   }
 
   private resize() {
@@ -238,6 +239,8 @@ export class Game {
     this.app.stage.eventMode = "passive";
 
     ref.appendChild(this.app.canvas);
+    window.__PIXI_APP__ = this.app;
+    console.log("hi");
 
     await this.loadIni();
 
@@ -316,11 +319,10 @@ export class Game {
 
     switch (this.state) {
       case "WAIT":
-        if (this.inputSystem.tappedKeys.size) {
-        }
         if (
           this.inputSystem.tappedColumns.includes(true) ||
-          this.inputSystem.tappedKeys.size > 0
+          (this.inputSystem.tappedKeys.size > 0 &&
+            !this.inputSystem.tappedKeys.has("Escape"))
         ) {
           this.app.stage.removeChild(this.startMessage);
 
@@ -406,11 +408,11 @@ export class Game {
     progressBarBg.alpha = 0.1;
 
     this.progressBar = new Graphics().rect(0, 0, 0.01, 5).fill(0x71acef);
-    this.progressBar.interactiveChildren = false;
 
     this.progressBarContainer = new Container();
     this.progressBarContainer.addChild(progressBarBg);
     this.progressBarContainer.addChild(this.progressBar);
+    this.progressBarContainer.interactiveChildren = false;
 
     this.progressBarContainer.pivot.set(fullWidth, 0);
     this.progressBarContainer.y = 95;

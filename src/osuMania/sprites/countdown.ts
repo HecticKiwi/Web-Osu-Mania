@@ -98,7 +98,8 @@ export class Countdown {
     if (
       remainingTime >= 2000 &&
       (this.game.inputSystem.tappedColumns.includes(true) ||
-        this.game.inputSystem.tappedKeys.size > 0)
+        (this.game.inputSystem.tappedKeys.size > 0 &&
+          !this.game.inputSystem.tappedKeys.has("Escape")))
     ) {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }

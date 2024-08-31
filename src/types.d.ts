@@ -20,3 +20,9 @@ export type Results = {
 export type Column = (Tap | Hold)[];
 
 export type Judgement = 320 | 300 | 200 | 100 | 50 | 0;
+
+declare global {
+  interface Window {
+    __PIXI_APP__: Application;
+  }
+}
