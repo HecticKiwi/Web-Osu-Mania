@@ -3,6 +3,10 @@ import toWav from "audiobuffer-to-wav";
 // Adds silence to the start of the audio blob, returning the result as a .wav blob
 // If blob arg is null, returns a silent .wav blob
 export async function addDelay(blob: Blob | null, duration: number) {
+  if (duration === 0) {
+    return blob;
+  }
+
   const audioCtx = new AudioContext();
 
   let audioBuffer: AudioBuffer;
