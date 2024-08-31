@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <Script
         defer
-        src="https://cloud.umami.is/script.js"
+        src="/stats/script.js"
         data-website-id="745469a8-3c33-498c-9cf4-4be157d10c38"
       />
       <body className={`${varelaRound.className}`}>
