@@ -23,6 +23,7 @@ const MobileSidebar = () => {
           <DialogDescription className="sr-only">
             Edit filters, mods, and settings
           </DialogDescription>
+
           <SidebarContent />
         </SheetContent>
       </Sheet>

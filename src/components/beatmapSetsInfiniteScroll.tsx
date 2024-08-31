@@ -51,7 +51,6 @@ const BeatmapSetsInfiniteScroll = ({
     hasNextPage,
     isPending,
     isFetchingNextPage,
-    isFetching,
     isError,
   } = useInfiniteQuery({
     initialData: initialData && {

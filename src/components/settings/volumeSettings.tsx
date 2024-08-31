@@ -30,8 +30,8 @@ const VolumeSettings = ({
   return (
     <>
       <div className={cn(className)}>
-        <h3 className="text-lg font-semibold">Volume</h3>
-        <div className="mt-2 space-y-4">
+        <h3 className="mb-2 text-lg font-semibold">Volume</h3>
+        <div className="space-y-4">
           <div
             className={cn(
               "grid grid-cols-2 items-center",
@@ -42,12 +42,7 @@ const VolumeSettings = ({
               Master
             </div>
 
-            <div
-              className={cn(
-                "flex items-center gap-4",
-                inWidget && "col-span-2",
-              )}
-            >
+            <div className="col-start-2 -col-end-1 flex items-center gap-4">
               {settings.volume === 0 ? (
                 <VolumeX className="shrink-0" />
               ) : settings.volume < 0.33 ? (
@@ -91,12 +86,7 @@ const VolumeSettings = ({
               Music
             </div>
 
-            <div
-              className={cn(
-                "flex items-center gap-4",
-                inWidget && "col-span-2",
-              )}
-            >
+            <div className="col-start-2 -col-end-1 flex items-center gap-4">
               {settings.musicVolume === 0 ? (
                 <VolumeX className="shrink-0" />
               ) : settings.musicVolume < 0.33 ? (
@@ -140,12 +130,7 @@ const VolumeSettings = ({
               SFX
             </div>
 
-            <div
-              className={cn(
-                "flex items-center gap-4",
-                inWidget && "col-span-2",
-              )}
-            >
+            <div className="col-start-2 -col-end-1 flex items-center gap-4">
               {settings.sfxVolume === 0 ? (
                 <VolumeX className="shrink-0" />
               ) : settings.sfxVolume < 0.33 ? (

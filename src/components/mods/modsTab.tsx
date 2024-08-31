@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useSettingsContext } from "../providers/settingsProvider";
+import SwitchInput from "../switchInput";
 import { Button } from "../ui/button";
-import { Switch } from "../ui/switch";
-import IntegerInput from "../settings/integerInput";
 
 const ModsTab = () => {
   const { settings, setSettings, resetMods } = useSettingsContext();
@@ -21,134 +20,106 @@ const ModsTab = () => {
 
   return (
     <>
-      <h3 className="mb-1 text-lg font-semibold">Difficulty Reduction</h3>
+      <h3 className="mb-2 text-lg font-semibold">Difficulty Reduction</h3>
       <div className="space-y-4">
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Easy
-          </div>
-          <Switch
-            checked={settings.mods.easy}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                draft.mods.easy = checked;
+        <SwitchInput
+          label="Easy"
+          checked={settings.mods.easy}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.easy = checked;
 
-                if (checked) {
-                  draft.mods.hardRock = false;
-                }
-              })
-            }
-          />
-        </div>
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Half Time
-          </div>
-          <Switch
-            checked={settings.mods.playbackRate === 0.75}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                if (checked) {
-                  draft.mods.playbackRate = 0.75;
-                } else {
-                  draft.mods.playbackRate = 1;
-                }
-              })
-            }
-          />
-        </div>
+              if (checked) {
+                draft.mods.hardRock = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Half Time"
+          checked={settings.mods.playbackRate === 0.75}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.playbackRate = 0.75;
+              } else {
+                draft.mods.playbackRate = 1;
+              }
+            })
+          }
+        />
       </div>
 
-      <h3 className="mb-1 mt-4 text-lg font-semibold">Difficulty Increase</h3>
+      <h3 className="mb-2 mt-6 text-lg font-semibold">Difficulty Increase</h3>
       <div className="space-y-4">
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Hard Rock
-          </div>
-          <Switch
-            checked={settings.mods.hardRock}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                draft.mods.hardRock = checked;
+        <SwitchInput
+          label="Hard Rock"
+          checked={settings.mods.hardRock}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.hardRock = checked;
 
-                if (checked) {
-                  draft.mods.easy = false;
-                }
-              })
-            }
-          />
-        </div>
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Double Time
-          </div>
-          <Switch
-            checked={settings.mods.playbackRate === 1.5}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                if (checked) {
-                  draft.mods.playbackRate = 1.5;
-                } else {
-                  draft.mods.playbackRate = 1;
-                }
-              })
-            }
-          />
-        </div>
+              if (checked) {
+                draft.mods.easy = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Double Time"
+          checked={settings.mods.playbackRate === 1.5}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.playbackRate = 1.5;
+              } else {
+                draft.mods.playbackRate = 1;
+              }
+            })
+          }
+        />
       </div>
 
-      <h3 className="mb-1 mt-4 text-lg font-semibold">Special</h3>
+      <h3 className="mb-2 mt-6 text-lg font-semibold">Special</h3>
       <div className="space-y-4">
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Random
-          </div>
-          <Switch
-            checked={settings.mods.random}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                draft.mods.random = checked;
+        <SwitchInput
+          label="Random"
+          checked={settings.mods.random}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.random = checked;
 
-                if (checked) {
-                  draft.mods.mirror = false;
-                }
-              })
-            }
-          />
-        </div>
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Mirror
-          </div>
-          <Switch
-            checked={settings.mods.mirror}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                draft.mods.mirror = checked;
+              if (checked) {
+                draft.mods.mirror = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Mirror"
+          checked={settings.mods.mirror}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.mirror = checked;
 
-                if (checked) {
-                  draft.mods.random = false;
-                }
-              })
-            }
-          />
-        </div>
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Autoplay
-          </div>
-          <Switch
-            checked={settings.mods.autoplay}
-            onCheckedChange={(checked) =>
-              setSettings((draft) => {
-                draft.mods.autoplay = checked;
-              })
-            }
-          />
-        </div>
+              if (checked) {
+                draft.mods.random = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Autoplay"
+          checked={settings.mods.autoplay}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.autoplay = checked;
+            })
+          }
+        />
       </div>
 
-      <h3 className="mb-1 mt-4 text-lg font-semibold">Custom</h3>
+      <h3 className="mb-2 mt-6 text-lg font-semibold">Custom</h3>
       <div className="space-y-4">
         <div className="grid grid-cols-2 items-center">
           <div className="text-sm font-semibold text-muted-foreground">

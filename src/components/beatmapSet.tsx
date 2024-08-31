@@ -6,6 +6,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
+import { parseKeysParam } from "@/lib/searchParams/keysParam";
+import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { secondsToMMSS } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
@@ -15,12 +17,9 @@ import ManiaIcon from "./maniaIcon";
 import { useAudioContext } from "./providers/audioPreviewProvider";
 import { useGameContext } from "./providers/gameOverlayProvider";
 import { Button } from "./ui/button";
-import { useToast } from "./ui/use-toast";
-import { parseKeysParam } from "@/lib/searchParams/keysParam";
-import { parseStarsParam } from "@/lib/searchParams/starsParam";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
-  const { play, stop } = useAudioContext();
+  const { playAudio, stopAudio } = useAudioContext();
   const { startGame } = useGameContext();
 
   const searchParams = useSearchParams();
@@ -31,9 +30,9 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      play(beatmapSet.id);
+      playAudio(beatmapSet.id);
     } else {
-      stop();
+      stopAudio();
     }
   };
 

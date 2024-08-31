@@ -1,14 +1,10 @@
-"use client";
 import ManiaIcon from "@/components/maniaIcon";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { FaGithub } from "react-icons/fa";
+import NavLink from "./navLink";
 
 const Header = () => {
-  const pathname = usePathname();
-
   return (
     <>
       <header className="sticky top-0 z-10 bg-background py-6">
@@ -26,29 +22,9 @@ const Header = () => {
             </Link>
 
             <div className="flex items-center gap-5">
-              <Link
-                prefetch={false}
-                href="/"
-                className={cn(
-                  "transition-colors hover:text-foreground/80",
-                  pathname === "/" ? "text-foreground" : "text-foreground/60",
-                )}
-              >
-                Play
-              </Link>
+              <NavLink href="/">Play</NavLink>
 
-              <Link
-                prefetch={false}
-                href="/faq"
-                className={cn(
-                  "transition-colors hover:text-foreground/80",
-                  pathname?.startsWith("/faq")
-                    ? "text-foreground"
-                    : "text-foreground/60",
-                )}
-              >
-                FAQ
-              </Link>
+              <NavLink href="/faq">FAQ</NavLink>
             </div>
 
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">

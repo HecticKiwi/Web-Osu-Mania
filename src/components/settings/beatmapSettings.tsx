@@ -5,16 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
+import { filesize } from "filesize";
+import { Loader2Icon } from "lucide-react";
+import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import {
   BEATMAP_API_PROVIDERS,
   BeatmapProvider,
   useSettingsContext,
 } from "../providers/settingsProvider";
-import { Switch } from "../ui/switch";
-
-import { filesize } from "filesize";
-import { Loader2Icon } from "lucide-react";
-import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
+import SwitchInput from "../switchInput";
 
 const BeatmapSettings = ({ className }: { className?: string }) => {
   const { settings, setSettings } = useSettingsContext();
@@ -26,10 +25,10 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div>
-      <h3 className="mt-4 text-lg font-semibold">Beatmap Management</h3>
+    <div className={cn(className)}>
+      <h3 className="mb-2 text-lg font-semibold">Beatmap Management</h3>
 
-      <div className="mt-2 space-y-4">
+      <div className="space-y-4">
         <div className="grid grid-cols-2">
           <Label
             htmlFor="beatmapProvider"
@@ -83,24 +82,20 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           with $setId (e.g. NeriNyan uses "https://api.nerinyan.moe/d/$setId").
         </p>
 
-        <div className="mt-4 grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Enable IndexedDB cache
-          </div>
+        <SwitchInput
+          label="Enable IndexedDB Cache"
+          checked={settings.storeDownloadedBeatmaps}
+          onCheckedChange={async (checked) => {
+            setSettings((draft) => {
+              draft.storeDownloadedBeatmaps = checked;
+            });
 
-          <Switch
-            checked={settings.storeDownloadedBeatmaps}
-            onCheckedChange={async (checked) => {
-              setSettings((draft) => {
-                draft.storeDownloadedBeatmaps = checked;
-              });
+            if (!checked && idbUsage && idbUsage > 0) {
+              await clearIdbCache();
+            }
+          }}
+        />
 
-              if (!checked && idbUsage && idbUsage > 0) {
-                await clearIdbCache();
-              }
-            }}
-          />
-        </div>
         <p className="mt-1 text-sm text-muted-foreground">
           By default, downloaded beatmaps are discarded when you leave or
           refresh the page. If you enable caching via IndexedDB, downloaded

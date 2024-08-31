@@ -11,8 +11,8 @@ import {
 import { useSettingsContext } from "./settingsProvider";
 
 const AudioContext = createContext<{
-  play: (beatmapSetId: number) => void;
-  stop: () => void;
+  playAudio: (beatmapSetId: number) => void;
+  stopAudio: () => void;
 } | null>(null);
 
 export const useAudioContext = () => {
@@ -29,7 +29,7 @@ export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
   const [audio, setAudio] = useState<Howl | null>(null);
   const { settings } = useSettingsContext();
 
-  const stop = useCallback(() => {
+  const stopAudio = useCallback(() => {
     if (audio) {
       audio.fade(audio.volume(), 0, 500);
       setAudio(null);
@@ -40,9 +40,9 @@ export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [audio]);
 
-  const play = useCallback(
+  const playAudio = useCallback(
     (beatmapSetId: number) => {
-      stop();
+      stopAudio();
 
       const newAudio = new Howl({
         src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
@@ -57,11 +57,11 @@ export const AudioPreviewProvider = ({ children }: { children: ReactNode }) => {
 
       setAudio(newAudio);
     },
-    [settings?.musicVolume, stop],
+    [settings?.musicVolume, stopAudio],
   );
 
   return (
-    <AudioContext.Provider value={{ play, stop }}>
+    <AudioContext.Provider value={{ playAudio, stopAudio }}>
       {children}
     </AudioContext.Provider>
   );

@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { keyCodeToString, setNestedProperty } from "@/lib/utils";
 import { produce } from "immer";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   defaultSettings,
-  useSettingsContext as useSettingsContext,
+  useSettingsContext,
 } from "./providers/settingsProvider";
 import { Button } from "./ui/button";
 
