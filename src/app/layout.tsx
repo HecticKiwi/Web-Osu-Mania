@@ -6,7 +6,6 @@ import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import SettingsProvider from "@/components/providers/settingsProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
@@ -49,7 +48,6 @@ export default function RootLayout({
                     <Header />
                     {children}
                     <Toaster />
-                    <Analytics />
                     <SpeedInsights />
                   </AudioPreviewProvider>
                 </GameProvider>
