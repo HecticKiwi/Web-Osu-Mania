@@ -9,8 +9,9 @@ gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export async function loadAssets() {
-  await Assets.load("/RobotoMono.ttf");
-  await Assets.load("/VarelaRound.ttf");
+  const assetsUrl = process.env.NEXT_PUBLIC_ASSETS_URL!;
+  await Assets.load(`${assetsUrl}/RobotoMono.ttf`);
+  await Assets.load(`${assetsUrl}/VarelaRound.ttf`);
 
   return await Promise.all([
     ...Object.values(TEXTURES).map((filepath) =>

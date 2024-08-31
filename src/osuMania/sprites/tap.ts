@@ -1,7 +1,7 @@
 import { SampleSet, TapData as TapData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
 import { Sprite } from "pixi.js";
-import { SCROLL_SPEED_MULT, SKIN_DIR } from "../constants";
+import { SCROLL_SPEED_MULT, SKIN_URL } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
@@ -19,7 +19,7 @@ export class Tap extends Entity {
     super(game);
 
     this.view = Sprite.from(
-      `${SKIN_DIR}/${game.skinManiaIni[`NoteImage${hitObjectData.column}`]}.png`,
+      `${SKIN_URL}/${game.skinManiaIni[`NoteImage${hitObjectData.column}`]}.png`,
     );
 
     this.data = hitObjectData;

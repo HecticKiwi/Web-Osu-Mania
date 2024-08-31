@@ -1,5 +1,5 @@
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
-import { SKIN_DIR, TEXTURES } from "../constants";
+import { SKIN_URL, TEXTURES } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 import { Tap } from "./tap";
@@ -23,14 +23,14 @@ export class Key extends Entity {
     this.view.eventMode = "passive";
 
     this.sprite = Sprite.from(
-      `${SKIN_DIR}/${game.skinManiaIni[`KeyImage${columnId}`]}.png`,
+      `${SKIN_URL}/${game.skinManiaIni[`KeyImage${columnId}`]}.png`,
     );
 
     this.keyTexture = Texture.from(
-      `${SKIN_DIR}/${game.skinManiaIni[`KeyImage${columnId}`]}.png`,
+      `${SKIN_URL}/${game.skinManiaIni[`KeyImage${columnId}`]}.png`,
     );
     this.keyPTexture = Texture.from(
-      `${SKIN_DIR}/${game.skinManiaIni[`KeyImage${columnId}D`]}.png`,
+      `${SKIN_URL}/${game.skinManiaIni[`KeyImage${columnId}D`]}.png`,
     );
 
     this.view.eventMode = "static";
