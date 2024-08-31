@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
@@ -33,6 +34,11 @@ export default function RootLayout({
       lang="en"
       className="scrollbar scrollbar-track-background scrollbar-thumb-primary"
     >
+      <Script
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id="745469a8-3c33-498c-9cf4-4be157d10c38"
+      />
       <body className={`${varelaRound.className}`}>
         <TooltipProvider>
           <ReactQueryProvider>
