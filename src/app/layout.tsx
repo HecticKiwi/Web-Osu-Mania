@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <Script
         defer
-        src="/stats/script.js"
+        src="https://web-osu-mania-umami.vercel.app/script.js"
         data-website-id="1f4308a9-454f-4529-8e28-1d3cb64f58e6"
       />
       <body className={`${varelaRound.className}`}>
