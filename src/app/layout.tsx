@@ -36,7 +36,7 @@ export default function RootLayout({
       <Script
         defer
         src="/stats/script.js"
-        data-website-id="745469a8-3c33-498c-9cf4-4be157d10c38"
+        data-website-id="1f4308a9-454f-4529-8e28-1d3cb64f58e6"
       />
       <body className={`${varelaRound.className}`}>
         <TooltipProvider>
