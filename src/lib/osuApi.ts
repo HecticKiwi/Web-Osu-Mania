@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 import queryString from "query-string";
 import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
 import { Genre, GENRES } from "./searchParams/genreParam";
@@ -167,7 +166,7 @@ export async function getBeatmaps({
       m: 3, // 3 = mania mode
       sort: `${sortCriteria}_${sortDirection}`,
       cursor_string: cursorString,
-      s: category !== DEFAULT_CATEGORY ? category : undefined,
+      s: category !== DEFAULT_CATEGORY ? category.toLowerCase() : undefined,
       nsfw,
       g: GENRES.indexOf(genre) || undefined,
       l: LANGUAGE_INDEXES.get(language),
