@@ -105,7 +105,18 @@ export function getSettings() {
     return defaultSettings;
   }
 
-  const settings: Settings = JSON.parse(localSettings);
+  let settings: Settings = JSON.parse(localSettings);
+
+  // Set defaults for settings and mods that were added in recent updates
+  settings = {
+    ...defaultSettings,
+    ...settings,
+  };
+
+  settings.mods = {
+    ...defaultSettings.mods,
+    ...settings.mods,
+  };
 
   return settings;
 }

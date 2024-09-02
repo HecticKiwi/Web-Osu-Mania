@@ -1,8 +1,8 @@
 import { gsap } from "gsap";
+import { Sprite } from "pixi.js";
 import { TEXTURES } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
-import { Sprite } from "pixi.js";
 
 export class StageLight extends Entity {
   private columnId: number;
@@ -34,7 +34,6 @@ export class StageLight extends Entity {
   }
 
   public light() {
-    gsap.killTweensOf(this.sprite);
     this.sprite.alpha = 1;
 
     gsap.to(this.sprite, {
@@ -42,6 +41,7 @@ export class StageLight extends Entity {
         alpha: 0,
       },
       duration: 0.3,
+      overwrite: true,
     });
   }
 }

@@ -25,6 +25,7 @@ import {
   TextStyle,
   Ticker,
 } from "pixi.js";
+import { Dispatch, SetStateAction } from "react";
 import { loadAssets } from "./assets";
 import { TEXTURES } from "./constants";
 import { Countdown } from "./sprites/countdown";
@@ -38,7 +39,6 @@ import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
-import { Dispatch, SetStateAction } from "react";
 
 export class Game {
   public app = new Application();
@@ -104,13 +104,12 @@ export class Game {
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
-
+    this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
 
     this.timingPoints = beatmapData.timingPoints;
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
-    this.hitWindows = beatmapData.hitWindows;
 
     this.setResults = setResults;
 

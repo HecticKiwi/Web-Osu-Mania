@@ -17,7 +17,7 @@ export class Judgement extends Entity {
   }
 
   public resize() {
-    this.game.judgement.sprite.x = this.game.app.screen.width / 2;
+    this.sprite.x = this.game.app.screen.width / 2;
 
     if (this.game.settings.upscroll) {
       this.sprite.y = (this.game.app.screen.height * 2) / 3 - 50;
@@ -29,8 +29,6 @@ export class Judgement extends Entity {
   public showJudgement(judgement: JudgementValue) {
     this.sprite.texture = Texture.from(JUDGEMENT_TEXTURES[judgement]);
 
-    gsap.killTweensOf(this.sprite);
-
     this.sprite.alpha = 1;
     this.sprite.scale.set(1);
 
@@ -39,6 +37,7 @@ export class Judgement extends Entity {
         scale: 1.2,
       },
       duration: 0.3,
+      overwrite: true,
     });
 
     gsap.to(this.sprite, {

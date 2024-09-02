@@ -13,6 +13,7 @@ export class ErrorBar {
   private background: Graphics;
   private foreground: Graphics;
   private timingMarks: Graphics[] = [];
+  private averageMarker: Graphics;
 
   private readonly width = 300;
   private readonly height = 20;
@@ -42,6 +43,14 @@ export class ErrorBar {
     centerLine.pivot.set(1, 0);
     centerLine.zIndex = 1;
     this.view.addChild(centerLine);
+
+    this.averageMarker = new Graphics()
+      .poly([0, 0, 5, 5, 10, 0], true)
+      .fill(0xffffff);
+    this.averageMarker.pivot.x = 5;
+    this.averageMarker.x = this.width / 2;
+    this.averageMarker.zIndex = 99;
+    this.view.addChild(this.averageMarker);
   }
 
   public resize() {
@@ -107,6 +116,18 @@ export class ErrorBar {
         this.view.removeChild(mark);
         this.timingMarks = this.timingMarks.filter((m) => m !== mark);
       },
+    });
+
+    const averageX =
+      this.timingMarks.reduce((sum, mark) => sum + mark.x, 0) /
+      this.timingMarks.length;
+
+    gsap.to(this.averageMarker, {
+      pixi: {
+        x: averageX,
+      },
+      duration: 0.5,
+      overwrite: true,
     });
   }
 }
