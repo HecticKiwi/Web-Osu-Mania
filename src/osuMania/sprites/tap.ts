@@ -1,4 +1,4 @@
-import { SampleSet, TapData as TapData } from "@/lib/beatmapParser";
+import { SampleSet, TapData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
 import { Sprite } from "pixi.js";
 import { SCROLL_SPEED_MULT, SKIN_URL } from "../constants";

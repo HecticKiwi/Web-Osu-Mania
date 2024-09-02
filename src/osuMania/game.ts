@@ -547,7 +547,6 @@ export class Game {
     this.stageHint = Sprite.from(TEXTURES.STAGE_HINT);
     this.stageHint.width = width;
     this.stageHint.anchor.set(0, 0.5);
-    this.stageHint.zIndex = 2;
     this.notesContainer.addChild(this.stageHint);
   }
 

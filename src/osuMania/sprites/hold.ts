@@ -1,5 +1,6 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
+import { gsap } from "gsap";
 import { Container, Sprite } from "pixi.js";
 import { SCROLL_SPEED_MULT, SKIN_URL } from "../constants";
 import { Game } from "../game";
@@ -11,6 +12,7 @@ export class Hold {
 
   public view: Container;
   public shouldRemove: boolean;
+  private broken = false;
 
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
@@ -93,8 +95,15 @@ export class Hold {
     }
 
     if (this.isHit()) {
-      // Return if you pressed way too early...
+      // Return if you released way too early...
       if (absDelta > this.game.hitWindows[0]) {
+        return;
+      }
+
+      if (this.broken) {
+        this.game.scoreSystem.hit(50);
+        this.shouldRemove = true;
+
         return;
       }
 
@@ -113,8 +122,25 @@ export class Hold {
       }
 
       this.game.errorBar?.addTimingMark(delta);
-
       this.shouldRemove = true;
+
+      return;
+    }
+
+    // If released before hold was done
+    if (
+      !this.game.inputSystem.pressedColumns[this.data.column] &&
+      !this.broken
+    ) {
+      this.broken = true;
+      this.game.errorBar?.addTimingMark(delta);
+
+      gsap.to(this.view, {
+        pixi: {
+          brightness: 0.5,
+        },
+        duration: 0.3,
+      });
     }
   }
 
