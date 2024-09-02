@@ -239,7 +239,6 @@ export class Game {
 
     ref.appendChild(this.app.canvas);
     window.__PIXI_APP__ = this.app;
-    console.log("hi");
 
     await this.loadIni();
 
@@ -357,6 +356,7 @@ export class Game {
             1,
           ) * 400;
 
+        break;
         this.columns.forEach((column) => {
           let itemsToRemove = 0;
 
