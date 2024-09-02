@@ -356,7 +356,6 @@ export class Game {
             1,
           ) * 400;
 
-        break;
         this.columns.forEach((column) => {
           let itemsToRemove = 0;
 
