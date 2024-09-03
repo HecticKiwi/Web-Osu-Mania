@@ -6,7 +6,7 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import { clamp, getSettings, scaleEntityWidth, scaleWidth } from "@/lib/utils";
+import { clamp, getSettings, scaleWidth } from "@/lib/utils";
 import { Column, GameState, Results } from "@/types";
 import { Howl } from "howler";
 import { parse } from "ini";
@@ -528,7 +528,9 @@ export class Game {
   private addStageLights() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const stageLight = new StageLight(this, i);
-      scaleEntityWidth(stageLight.sprite, this.scaledColumnWidth);
+
+      stageLight.sprite.width = this.scaledColumnWidth;
+
       stageLight.sprite.anchor.set(0, 1);
 
       stageLight.sprite.x = i * this.scaledColumnWidth;

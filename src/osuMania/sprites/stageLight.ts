@@ -33,6 +33,7 @@ export class StageLight extends Entity {
   }
 
   public resize() {
+    this.sprite.height = this.game.app.screen.height * 0.35;
     this.sprite.y = this.game.hitPosition;
   }
 
