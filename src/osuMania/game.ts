@@ -6,13 +6,7 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import {
-  clamp,
-  getSettings,
-  processIniString,
-  scaleEntityWidth,
-  scaleWidth,
-} from "@/lib/utils";
+import { clamp, getSettings, scaleEntityWidth, scaleWidth } from "@/lib/utils";
 import { Column, GameState, Results } from "@/types";
 import { Howl } from "howler";
 import { parse } from "ini";
@@ -27,7 +21,8 @@ import {
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
 import { loadAssets } from "./assets";
-import { TEXTURES } from "./constants";
+import { SKIN_URL } from "./constants";
+import { processIniString, setMissingIniValues } from "./ini";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -242,7 +237,7 @@ export class Game {
 
     await this.loadIni();
 
-    await loadAssets();
+    await loadAssets(this.skinManiaIni, this.difficulty.keyCount);
 
     this.addScoreText();
 
@@ -300,6 +295,8 @@ export class Game {
 
     this.skinIni = parse(iniString);
     this.skinManiaIni = this.skinIni[`Mania${this.difficulty.keyCount}`];
+
+    setMissingIniValues(this.skinManiaIni);
 
     this.scaledColumnWidth = scaleWidth(
       this.skinManiaIni.ColumnWidth.split(",")[0],
@@ -544,7 +541,9 @@ export class Game {
   private addStageHint() {
     const width = this.difficulty.keyCount * this.scaledColumnWidth;
 
-    this.stageHint = Sprite.from(TEXTURES.STAGE_HINT);
+    this.stageHint = Sprite.from(
+      `${SKIN_URL}/${this.skinManiaIni.StageHint}.png`,
+    );
     this.stageHint.width = width;
     this.stageHint.anchor.set(0, 0.5);
     this.notesContainer.addChild(this.stageHint);

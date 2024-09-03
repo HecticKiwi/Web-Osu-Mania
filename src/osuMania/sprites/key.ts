@@ -1,5 +1,5 @@
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
-import { SKIN_URL, TEXTURES } from "../constants";
+import { SKIN_URL } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 import { Tap } from "./tap";
@@ -7,8 +7,8 @@ import { Tap } from "./tap";
 export class Key extends Entity {
   private columnId: number;
 
-  public keyTexture: Texture = Texture.from(TEXTURES.KEY1);
-  public keyPTexture: Texture = Texture.from(TEXTURES.KEY1P);
+  public keyTexture: Texture;
+  public keyPTexture: Texture;
 
   public view: Container;
   private hitArea: Graphics;

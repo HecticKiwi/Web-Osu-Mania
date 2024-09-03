@@ -1,6 +1,6 @@
 import { gsap } from "gsap";
 import { Sprite } from "pixi.js";
-import { TEXTURES } from "../constants";
+import { SKIN_URL } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
@@ -10,7 +10,10 @@ export class StageLight extends Entity {
 
   constructor(game: Game, columnId: number) {
     super(game);
-    this.sprite = Sprite.from(TEXTURES.STAGE_LIGHT);
+
+    this.sprite = Sprite.from(
+      `${SKIN_URL}/${game.skinManiaIni.StageLight}.png`,
+    );
 
     this.columnId = columnId;
 
