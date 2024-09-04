@@ -1,14 +1,12 @@
-import { gsap } from "gsap";
-import { PixiPlugin } from "gsap/PixiPlugin";
 import * as PIXI from "pixi.js";
-import { Assets, Texture } from "pixi.js";
+import { Assets } from "pixi.js";
 import { SKIN_URL } from "./constants";
 
-gsap.registerPlugin(PixiPlugin);
-
-PixiPlugin.registerPIXI(PIXI);
-
-export async function loadAssets(skinManiaIni: any, columnCount: number) {
+export async function loadAssets(
+  skinManiaIni: any,
+  columnCount: number,
+  useRetinaAssets?: boolean,
+) {
   const assetsUrl = process.env.NEXT_PUBLIC_ASSETS_URL!;
   await Assets.load(`${assetsUrl}/RobotoMono.ttf`);
   await Assets.load(`${assetsUrl}/VarelaRound.ttf`);
@@ -35,13 +33,37 @@ export async function loadAssets(skinManiaIni: any, columnCount: number) {
     skinManiaIni.Hit300g,
   ];
 
-  return await Promise.all(
-    [...columnTextures, ...stageTextures, ...judgementTextures].map(
-      (filepath) => {
-        const url = `${SKIN_URL}/${filepath}.png`;
-
-        return Assets.load<Texture>(url);
-      },
-    ),
+  // Columns likely reuse the same textures, load each one once
+  const uniqueFilenames = Array.from(
+    new Set([...columnTextures, ...stageTextures, ...judgementTextures]),
   );
+
+  const textures: PIXI.UnresolvedAsset[] = await Promise.all(
+    uniqueFilenames.map(async (filepath) => {
+      if (useRetinaAssets) {
+        // Attempt to load retina (@2x) version if it exists
+        const response = await fetch(`${SKIN_URL}/${filepath}@2x.png`, {
+          method: "HEAD",
+        });
+
+        if (response.ok) {
+          return {
+            alias: filepath,
+            src: `${SKIN_URL}/${filepath}@2x.png`,
+          };
+        }
+      }
+
+      return {
+        alias: filepath,
+        src: `${SKIN_URL}/${filepath}.png`,
+      };
+    }),
+  );
+
+  Assets.reset();
+
+  Assets.addBundle("gameTextures", textures);
+
+  await Assets.loadBundle("gameTextures");
 }

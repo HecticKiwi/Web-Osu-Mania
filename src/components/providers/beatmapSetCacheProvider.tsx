@@ -10,8 +10,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
 import { useToast } from "../ui/use-toast";
+import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
 
 const BeatmapSetCacheContext = createContext<{
   getBeatmapSet: (beatmapSetId: number) => Promise<Blob>;

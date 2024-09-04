@@ -1,3 +1,23 @@
+import { parse } from "ini";
+
+export type IniData = {
+  skinIni: any;
+  skinManiaIni: any;
+};
+
+export async function loadIni(keyCount: number) {
+  const iniString = await fetch("/skin/skin.ini")
+    .then((response) => response.text())
+    .then((text) => processIniString(text));
+
+  const skinIni = parse(iniString);
+  const skinManiaIni = skinIni[`Mania${keyCount}`];
+
+  setMissingIniValues(skinManiaIni);
+
+  return { skinIni, skinManiaIni };
+}
+
 // I have no idea what file format the skin.ini file uses,
 // but this converts it to a .ini for use with the ini NPM package
 export function processIniString(iniStr: string) {

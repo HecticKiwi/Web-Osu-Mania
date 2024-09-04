@@ -8,8 +8,11 @@ import {
 } from "@/lib/beatmapParser";
 import { clamp, getSettings, scaleWidth } from "@/lib/utils";
 import { Column, GameState, Results } from "@/types";
+import { gsap } from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
 import { parse } from "ini";
+import * as PIXI from "pixi.js";
 import {
   Application,
   Container,
@@ -20,9 +23,7 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { loadAssets } from "./assets";
-import { SKIN_URL } from "./constants";
-import { processIniString, setMissingIniValues } from "./ini";
+import { IniData, processIniString, setMissingIniValues } from "./ini";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -34,6 +35,10 @@ import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
+
+gsap.registerPlugin(PixiPlugin);
+
+PixiPlugin.registerPIXI(PIXI);
 
 export class Game {
   public app = new Application();
@@ -92,6 +97,7 @@ export class Game {
 
   public constructor(
     beatmapData: BeatmapData,
+    iniData: IniData,
     setResults: Dispatch<SetStateAction<Results | null>>,
   ) {
     this.resize = this.resize.bind(this);
@@ -105,6 +111,9 @@ export class Game {
     this.timingPoints = beatmapData.timingPoints;
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
+
+    this.skinIni = iniData.skinIni;
+    this.skinManiaIni = iniData.skinManiaIni;
 
     this.setResults = setResults;
 
@@ -235,9 +244,10 @@ export class Game {
     ref.appendChild(this.app.canvas);
     window.__PIXI_APP__ = this.app;
 
-    await this.loadIni();
-
-    await loadAssets(this.skinManiaIni, this.difficulty.keyCount);
+    this.scaledColumnWidth = scaleWidth(
+      this.skinManiaIni.ColumnWidth.split(",")[0],
+      this.app.screen.width,
+    );
 
     this.addScoreText();
 
@@ -297,11 +307,6 @@ export class Game {
     this.skinManiaIni = this.skinIni[`Mania${this.difficulty.keyCount}`];
 
     setMissingIniValues(this.skinManiaIni);
-
-    this.scaledColumnWidth = scaleWidth(
-      this.skinManiaIni.ColumnWidth.split(",")[0],
-      this.app.screen.width,
-    );
   }
 
   private update(time: Ticker) {
@@ -543,9 +548,7 @@ export class Game {
   private addStageHint() {
     const width = this.difficulty.keyCount * this.scaledColumnWidth;
 
-    this.stageHint = Sprite.from(
-      `${SKIN_URL}/${this.skinManiaIni.StageHint}.png`,
-    );
+    this.stageHint = Sprite.from(this.skinManiaIni.StageHint);
     this.stageHint.width = width;
     this.stageHint.anchor.set(0, 0.5);
     this.notesContainer.addChild(this.stageHint);

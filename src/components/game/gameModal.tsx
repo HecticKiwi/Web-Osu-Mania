@@ -1,6 +1,8 @@
 "use client";
 
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
+import { loadAssets } from "@/osuMania/assets";
+import { IniData, loadIni } from "@/osuMania/ini";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
@@ -12,6 +14,7 @@ import GameScreens from "./gameScreens";
 const GameModal = () => {
   const { data, closeGame } = useGameContext();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
+  const [iniData, setIniData] = useState<IniData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
     "Downloading Beatmap...",
@@ -44,8 +47,16 @@ const GameModal = () => {
         setLoadingMessage("Parsing Beatmap...");
 
         const beatmapData = await parseOsz(beatmapSetFile, data.beatmapId);
+        const iniData = await loadIni(beatmapData.difficulty.keyCount);
+
+        await loadAssets(
+          iniData.skinManiaIni,
+          beatmapData.difficulty.keyCount,
+          // this.app.screen.height > 800,
+        );
 
         setBeatmapData(beatmapData);
+        setIniData(iniData);
       } catch (error: any) {
         toast({
           title: "Parsing Error",
@@ -108,7 +119,12 @@ const GameModal = () => {
             }}
           />
 
-          <GameScreens key={key} beatmapData={beatmapData} retry={retry} />
+          <GameScreens
+            key={key}
+            beatmapData={beatmapData}
+            iniData={iniData!}
+            retry={retry}
+          />
         </>
       )}
     </main>

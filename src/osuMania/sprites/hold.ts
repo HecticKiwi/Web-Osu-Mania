@@ -2,7 +2,7 @@ import { HoldData } from "@/lib/beatmapParser";
 import { scaleEntityWidth } from "@/lib/utils";
 import { gsap } from "gsap";
 import { Container, Sprite } from "pixi.js";
-import { SCROLL_SPEED_MULT, SKIN_URL } from "../constants";
+import { SCROLL_SPEED_MULT } from "../constants";
 import { Game } from "../game";
 
 export class Hold {
@@ -18,18 +18,14 @@ export class Hold {
     this.game = game;
     this.data = holdData;
 
-    const tail = Sprite.from(
-      `${SKIN_URL}/${game.skinManiaIni[`NoteImage${holdData.column}T`]}.png`,
-    );
+    const tail = Sprite.from(game.skinManiaIni[`NoteImage${holdData.column}T`]);
     scaleEntityWidth(tail, this.game.scaledColumnWidth);
     tail.zIndex = 1;
     tail.anchor.set(1, 0.5);
 
     tail.angle = 180;
 
-    const body = Sprite.from(
-      `${SKIN_URL}/${game.skinManiaIni[`NoteImage${holdData.column}L`]}.png`,
-    );
+    const body = Sprite.from(game.skinManiaIni[`NoteImage${holdData.column}L`]);
     scaleEntityWidth(body, this.game.scaledColumnWidth);
 
     const holdHeight =
