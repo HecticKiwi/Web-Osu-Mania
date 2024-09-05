@@ -15,7 +15,7 @@ export class Hold {
   private head: Container;
 
   public shouldRemove: boolean;
-  private timeBroken: number | null = null;
+  private broken = false;
 
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
@@ -63,7 +63,14 @@ export class Hold {
   public update() {
     this.view.visible = true;
 
-    if (!this.timeBroken && this.game.timeElapsed >= this.data.time) {
+    this.view.y =
+      ((this.game.timeElapsed - this.data.endTime) *
+        this.game.settings.scrollSpeed *
+        SCROLL_SPEED_MULT) /
+        this.game.settings.mods.playbackRate +
+      this.game.hitPosition;
+
+    if (!this.broken && this.game.timeElapsed >= this.data.time) {
       const newHeight = Math.max(
         ((this.data.endTime - this.game.timeElapsed) *
           this.game.settings.scrollSpeed *
@@ -77,13 +84,6 @@ export class Hold {
         this.head.y = newHeight;
       }
     }
-
-    this.view.y =
-      ((this.game.timeElapsed - this.data.endTime) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-        this.game.settings.mods.playbackRate +
-      this.game.hitPosition;
 
     const column = this.game.columns[this.data.column];
 
@@ -127,7 +127,7 @@ export class Hold {
         return;
       }
 
-      if (this.timeBroken) {
+      if (this.broken) {
         this.game.scoreSystem.hit(50);
         this.shouldRemove = true;
 
@@ -157,9 +157,9 @@ export class Hold {
     // If released before hold was done
     if (
       !this.game.inputSystem.pressedColumns[this.data.column] &&
-      !this.timeBroken
+      !this.broken
     ) {
-      this.timeBroken = this.game.timeElapsed;
+      this.broken = true;
       this.game.errorBar?.addTimingMark(delta);
 
       gsap.to(this.view, {
