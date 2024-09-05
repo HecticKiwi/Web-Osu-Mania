@@ -49,7 +49,7 @@ export class Tap extends Entity {
         width,
         height,
       });
-
+      Tap.renderTexture.destroy();
       game.app.renderer.render(graphic, { renderTexture: Tap.renderTexture });
     }
 
