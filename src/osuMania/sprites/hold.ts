@@ -64,11 +64,13 @@ export class Hold {
     this.view.visible = true;
 
     if (!this.timeBroken && this.game.timeElapsed >= this.data.time) {
-      const newHeight =
+      const newHeight = Math.max(
         ((this.data.endTime - this.game.timeElapsed) *
           this.game.settings.scrollSpeed *
           SCROLL_SPEED_MULT) /
-        this.game.settings.mods.playbackRate;
+          this.game.settings.mods.playbackRate,
+        0,
+      );
       this.body.height = newHeight;
 
       if (this.head) {
