@@ -14,7 +14,7 @@ export class CircleKey extends Key {
 
       Key.bottomContainerGraphicsContext.stroke({
         width: 4,
-        color: "hsl(0,0%,30%)",
+        color: "hsl(0,0%,70%)",
       });
     }
 
@@ -43,7 +43,7 @@ export class CircleKey extends Key {
 
   public override setPressed(pressed: boolean) {
     if (pressed) {
-      this.marker.alpha = 0.5;
+      this.marker.alpha = 0.7;
     } else {
       this.marker.alpha = 0.0;
     }
