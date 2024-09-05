@@ -148,7 +148,17 @@ export class Game {
 
     window.removeEventListener("resize", this.resize);
 
-    this.app.destroy({ removeView: true });
+    this.app.destroy(
+      { removeView: true },
+      {
+        children: true,
+        // context: true,
+        style: true,
+        texture: true,
+        textureSource: true,
+      },
+    );
+
     window.__PIXI_APP__ = null;
   }
 
