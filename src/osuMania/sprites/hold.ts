@@ -78,60 +78,78 @@ export class Hold {
     const delta = this.data.endTime - this.game.timeElapsed;
     const absDelta = Math.abs(delta);
 
-    // If this has passed the late miss point
-    if (delta < -this.game.hitWindows[0]) {
-      this.game.scoreSystem.hit(0);
-      this.shouldRemove = true;
-      return;
-    }
+    if (this.game.settings.mods.autoplay) {
+      if (this.game.timeElapsed > this.data.time) {
+        this.game.keys[this.data.column].setPressed(true);
+        this.game.stageLights[this.data.column].view.alpha = 1;
+      }
 
-    if (this.isHit()) {
-      // Return if you released way too early...
-      if (absDelta > this.game.hitWindows[0]) {
+      if (delta < 0) {
+        this.game.scoreSystem.hit(320);
+
+        this.game.errorBar?.addTimingMark(0);
+
+        this.game.keys[this.data.column].setPressed(false);
+        this.game.stageLights[this.data.column].light();
+
+        this.shouldRemove = true;
+      }
+    } else {
+      // If this has passed the late miss point
+      if (delta < -this.game.hitWindows[0]) {
+        this.game.scoreSystem.hit(0);
+        this.shouldRemove = true;
         return;
       }
 
-      if (this.broken) {
-        this.game.scoreSystem.hit(50);
+      if (this.isHit()) {
+        // Return if you released way too early...
+        if (absDelta > this.game.hitWindows[0]) {
+          return;
+        }
+
+        if (this.broken) {
+          this.game.scoreSystem.hit(50);
+          this.shouldRemove = true;
+
+          return;
+        }
+
+        if (absDelta <= this.game.hitWindows[320]) {
+          this.game.scoreSystem.hit(320);
+        } else if (absDelta < this.game.hitWindows[300]) {
+          this.game.scoreSystem.hit(300);
+        } else if (absDelta < this.game.hitWindows[200]) {
+          this.game.scoreSystem.hit(200);
+        } else if (absDelta < this.game.hitWindows[100]) {
+          this.game.scoreSystem.hit(100);
+        } else if (absDelta < this.game.hitWindows[50]) {
+          this.game.scoreSystem.hit(50);
+        } else {
+          this.game.scoreSystem.hit(0);
+        }
+
+        this.game.errorBar?.addTimingMark(delta);
         this.shouldRemove = true;
 
         return;
       }
 
-      if (absDelta <= this.game.hitWindows[320]) {
-        this.game.scoreSystem.hit(320);
-      } else if (absDelta < this.game.hitWindows[300]) {
-        this.game.scoreSystem.hit(300);
-      } else if (absDelta < this.game.hitWindows[200]) {
-        this.game.scoreSystem.hit(200);
-      } else if (absDelta < this.game.hitWindows[100]) {
-        this.game.scoreSystem.hit(100);
-      } else if (absDelta < this.game.hitWindows[50]) {
-        this.game.scoreSystem.hit(50);
-      } else {
-        this.game.scoreSystem.hit(0);
+      // If released before hold was done
+      if (
+        !this.game.inputSystem.pressedColumns[this.data.column] &&
+        !this.broken
+      ) {
+        this.broken = true;
+        this.game.errorBar?.addTimingMark(delta);
+
+        gsap.to(this.view, {
+          pixi: {
+            brightness: 0.5,
+          },
+          duration: 0.3,
+        });
       }
-
-      this.game.errorBar?.addTimingMark(delta);
-      this.shouldRemove = true;
-
-      return;
-    }
-
-    // If released before hold was done
-    if (
-      !this.game.inputSystem.pressedColumns[this.data.column] &&
-      !this.broken
-    ) {
-      this.broken = true;
-      this.game.errorBar?.addTimingMark(delta);
-
-      gsap.to(this.view, {
-        pixi: {
-          brightness: 0.5,
-        },
-        duration: 0.3,
-      });
     }
 
     if (!this.broken) {
@@ -153,26 +171,6 @@ export class Hold {
       if (this.view.y > this.game.hitPosition) {
         this.view.y = this.game.hitPosition;
       }
-    }
-
-    if (this.game.settings.mods.autoplay) {
-      if (this.game.timeElapsed > this.data.time) {
-        this.game.keys[this.data.column].setPressed(true);
-        this.game.stageLights[this.data.column].view.alpha = 1;
-      }
-
-      if (delta < 0) {
-        this.game.scoreSystem.hit(320);
-
-        this.game.errorBar?.addTimingMark(0);
-
-        this.game.keys[this.data.column].setPressed(false);
-        this.game.stageLights[this.data.column].light();
-
-        this.shouldRemove = true;
-      }
-
-      return;
     }
   }
 
