@@ -1,11 +1,12 @@
 import { SampleSet, TapData } from "@/lib/beatmapParser";
-import { scaleEntityWidth } from "@/lib/utils";
-import { Sprite } from "pixi.js";
-import { SCROLL_SPEED_MULT } from "../constants";
+import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
+import { colors, SCROLL_SPEED_MULT } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
 export class Tap extends Entity {
+  static renderTexture: RenderTexture | null;
+
   public data: TapData;
 
   public sampleSet: SampleSet;
@@ -13,25 +14,37 @@ export class Tap extends Entity {
   public sampleIndex: number;
   public volume: number;
 
-  public view: Sprite;
+  public view: Container;
 
-  constructor(game: Game, hitObjectData: TapData, src?: string) {
+  constructor(game: Game, tapData: TapData) {
     super(game);
 
-    this.view = Sprite.from(
-      game.skinManiaIni[`NoteImage${hitObjectData.column}`],
-    );
+    this.data = tapData;
 
-    this.data = hitObjectData;
+    const width = game.scaledColumnWidth;
+    const height = width * 0.4;
+
+    if (!Tap.renderTexture) {
+      const graphic = new Graphics().rect(0, 0, width, height).fill("white");
+
+      Tap.renderTexture = RenderTexture.create({
+        width,
+        height,
+      });
+
+      game.app.renderer.render(graphic, { renderTexture: Tap.renderTexture });
+    }
+
+    this.view = new Sprite(Tap.renderTexture);
+    this.view.tint = colors[game.laneColors[tapData.column]];
 
     this.view.zIndex = 1;
-    scaleEntityWidth(this.view, this.game.scaledColumnWidth);
 
     this.game.notesContainer.addChild(this.view);
 
-    this.view.anchor.set(undefined, 1);
+    this.view.pivot.y = height;
 
-    this.view.x = hitObjectData.column * this.game.scaledColumnWidth;
+    this.view.x = tapData.column * this.game.scaledColumnWidth;
     this.view.visible = false;
 
     this.setSoundData();

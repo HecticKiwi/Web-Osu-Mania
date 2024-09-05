@@ -6,3 +6,35 @@ export const OSU_HEIGHT = 480;
 export const SCROLL_SPEED_MULT = 0.085;
 
 export const SKIN_URL = `${process.env.NEXT_PUBLIC_ASSETS_URL}/skin`;
+
+const colorNames = ["blue", "white", "yellow", "muted"] as const;
+export type Color = (typeof colorNames)[number];
+
+export const colors = {
+  blue: "hsl(212, 80%, 69%)",
+  white: "hsl(212, 8%, 98.45%)",
+  yellow: "hsl(62, 80%, 69%)",
+  muted: "hsl(212, 40%, 20.7%)",
+};
+
+export const laneColors: Color[][] = [
+  ["blue"],
+  ["blue", "blue"],
+  ["white", "blue", "white"],
+  ["white", "blue", "blue", "white"],
+  ["white", "blue", "yellow", "blue", "white"],
+  ["blue", "white", "blue", "blue", "white", "blue"],
+  ["blue", "white", "blue", "yellow", "blue", "white", "blue"],
+  ["white", "blue", "white", "blue", "blue", "white", "blue", "white"],
+  [
+    "white",
+    "blue",
+    "white",
+    "blue",
+    "yellow",
+    "blue",
+    "white",
+    "blue",
+    "white",
+  ],
+];

@@ -1,11 +1,12 @@
 import { HoldData } from "@/lib/beatmapParser";
-import { scaleEntityWidth } from "@/lib/utils";
 import { gsap } from "gsap";
-import { Container, Sprite } from "pixi.js";
-import { SCROLL_SPEED_MULT } from "../constants";
+import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
+import { colors, SCROLL_SPEED_MULT } from "../constants";
 import { Game } from "../game";
 
 export class Hold {
+  static renderTexture: RenderTexture | null;
+
   public data: HoldData;
 
   protected game: Game;
@@ -18,16 +19,29 @@ export class Hold {
     this.game = game;
     this.data = holdData;
 
-    const tail = Sprite.from(game.skinManiaIni[`NoteImage${holdData.column}T`]);
-    scaleEntityWidth(tail, this.game.scaledColumnWidth);
-    tail.zIndex = 1;
-    tail.anchor.set(1, 0.5);
+    // const tail = Sprite.from(game.skinManiaIni[`NoteImage${holdData.column}T`]);
+    // scaleEntityWidth(tail, this.game.scaledColumnWidth);
+    // tail.zIndex = 1;
+    // tail.anchor.set(1, 0.5);
+    // tail.angle = 180;
 
-    tail.angle = 180;
+    if (!Hold.renderTexture) {
+      const graphic = new Graphics().rect(0, 0, 10, 10).fill("white");
 
-    const body = Sprite.from(game.skinManiaIni[`NoteImage${holdData.column}L`]);
-    scaleEntityWidth(body, this.game.scaledColumnWidth);
+      Hold.renderTexture = RenderTexture.create({
+        width: 10,
+        height: 10,
+      });
 
+      game.app.renderer.render(graphic, {
+        renderTexture: Hold.renderTexture,
+      });
+    }
+
+    const body = new Sprite(Hold.renderTexture);
+    body.tint = colors[game.laneColors[holdData.column]];
+
+    body.width = this.game.scaledColumnWidth;
     const holdHeight =
       ((holdData.endTime - this.data.time) *
         this.game.settings.scrollSpeed *
@@ -36,7 +50,6 @@ export class Hold {
     body.height = holdHeight;
 
     this.view = new Container();
-    this.view.addChild(tail);
     this.view.addChild(body);
     this.view.width;
     this.view.x = holdData.column * this.game.scaledColumnWidth;
@@ -67,7 +80,7 @@ export class Hold {
     if (this.game.settings.mods.autoplay) {
       if (this.game.timeElapsed > this.data.time) {
         this.game.keys[this.data.column].setPressed(true);
-        this.game.stageLights[this.data.column].sprite.alpha = 1;
+        this.game.stageLights[this.data.column].view.alpha = 1;
       }
 
       if (delta < 0) {

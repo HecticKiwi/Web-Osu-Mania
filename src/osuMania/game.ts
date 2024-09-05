@@ -16,13 +16,14 @@ import * as PIXI from "pixi.js";
 import {
   Application,
   Container,
+  FillGradient,
   Graphics,
-  Sprite,
   Text,
   TextStyle,
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
+import { Color, laneColors } from "./constants";
 import { IniData, processIniString, setMissingIniValues } from "./ini";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -48,6 +49,7 @@ export class Game {
   public difficulty: Difficulty;
   public columnKeybinds: string[];
   public hitWindows: HitWindows;
+  public laneColors: Color[];
 
   // Too lazy to properly type the Inis
   public skinIni: any; // https://osu.ppy.sh/wiki/en/Skinning/skin.ini#[mania]
@@ -67,14 +69,16 @@ export class Game {
   public accuracyText: Text;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
-  public stageSideWidth = 10;
+  public stageSideWidth = 2;
   public stageContainer: Container = new Container();
-  public stageSides: Graphics;
+  public stageSideLeft: Graphics;
+  public stageSideRight: Graphics;
+  // public stageSide: Graphics;
   public stageBackground: Graphics;
   public stageLights: StageLight[] = [];
   public notesContainer: Container = new Container();
   public keys: Key[] = [];
-  public stageHint: Sprite;
+  public stageHint: Container;
   public judgement: Judgement;
   private progressBarContainer: Container;
   private progressBar: Container;
@@ -111,6 +115,8 @@ export class Game {
     this.timingPoints = beatmapData.timingPoints;
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
+
+    this.laneColors = laneColors[this.difficulty.keyCount - 1];
 
     this.skinIni = iniData.skinIni;
     this.skinManiaIni = iniData.skinManiaIni;
@@ -178,18 +184,24 @@ export class Game {
     );
     this.notesContainer.width = notesContainerWidth;
 
-    this.stageContainer.removeChild(this.stageSides);
-    this.stageSides
+    const gradientFill = new FillGradient(0, this.app.screen.height, 0, 0);
+    gradientFill.addColorStop(0.4, "gray");
+    gradientFill.addColorStop(1, "transparent");
+
+    this.stageContainer.removeChild(this.stageSideLeft);
+    this.stageSideLeft
       .clear()
       .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
-        this.stageSideWidth + notesContainerWidth,
+        this.stageSideWidth + this.notesContainer.width,
         0,
         this.stageSideWidth,
         this.app.screen.height,
       )
-      .fill(0x7f7f7f);
-    this.stageContainer.addChild(this.stageSides);
+      .fill(gradientFill);
+
+    this.stageContainer.addChild(this.stageSideLeft);
+    this.stageContainer.addChild(this.stageSideRight);
     this.stageBackground.height = this.app.screen.height;
 
     this.stageContainer.pivot.x = this.stageContainer.width / 2;
@@ -229,7 +241,7 @@ export class Game {
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundAlpha: 0.5,
-      // antialias: true,
+      antialias: true,
       eventMode: "none",
       eventFeatures: {
         move: true,
@@ -244,10 +256,19 @@ export class Game {
     ref.appendChild(this.app.canvas);
     window.__PIXI_APP__ = this.app;
 
+    this.hitPosition = this.app.screen.height - 130;
+
     this.scaledColumnWidth = scaleWidth(
       this.skinManiaIni.ColumnWidth.split(",")[0],
       this.app.screen.width,
     );
+
+    Tap.renderTexture = null;
+    Hold.renderTexture = null;
+    Key.bottomContainerGraphicsContext = null;
+    Key.markerGraphicsContext = null;
+    Key.hitAreaGraphicsContext = null;
+    StageLight.graphicsContext = null;
 
     this.addScoreText();
 
@@ -508,16 +529,11 @@ export class Game {
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
 
-    this.stageSides = new Graphics()
-      .rect(0, 0, this.stageSideWidth, this.app.screen.height)
-      .rect(
-        this.stageSideWidth + notesContainerWidth,
-        0,
-        this.stageSideWidth,
-        this.app.screen.height,
-      )
-      .fill(0x7f7f7f);
-    this.stageContainer.addChild(this.stageSides);
+    this.stageSideLeft = new Graphics();
+    this.stageSideRight = new Graphics();
+
+    this.stageContainer.addChild(this.stageSideLeft);
+    this.stageContainer.addChild(this.stageSideRight);
 
     if (this.settings.upscroll) {
       this.stageContainer.scale.y = -1;
@@ -534,13 +550,7 @@ export class Game {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const stageLight = new StageLight(this, i);
 
-      stageLight.sprite.width = this.scaledColumnWidth;
-
-      stageLight.sprite.anchor.set(0, 1);
-
-      stageLight.sprite.x = i * this.scaledColumnWidth;
-
-      this.notesContainer.addChild(stageLight.sprite);
+      this.notesContainer.addChild(stageLight.view);
       this.stageLights.push(stageLight);
     }
   }
@@ -548,9 +558,11 @@ export class Game {
   private addStageHint() {
     const width = this.difficulty.keyCount * this.scaledColumnWidth;
 
-    this.stageHint = Sprite.from(this.skinManiaIni.StageHint);
+    const height = 10;
+    this.stageHint = new Graphics().rect(0, 0, 5, height).fill(0xcccccc);
     this.stageHint.width = width;
-    this.stageHint.anchor.set(0, 0.5);
+    this.stageHint.pivot.y = height / 2;
+    this.stageHint.zIndex = -1;
     this.notesContainer.addChild(this.stageHint);
   }
 
