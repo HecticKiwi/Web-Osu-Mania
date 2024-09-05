@@ -8,9 +8,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import Keybinds from "../keybinds";
-import { useSettingsContext } from "../providers/settingsProvider";
+import {
+  SKIN_STYLES,
+  SkinStyle,
+  useSettingsContext,
+} from "../providers/settingsProvider";
 import SwitchInput from "../switchInput";
+import { Label } from "../ui/label";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
@@ -64,6 +71,36 @@ const SettingsTab = () => {
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
+        <div className="grid grid-cols-2">
+          <Label
+            htmlFor="beatmapProvider"
+            className="text-sm font-semibold text-muted-foreground"
+          >
+            Style
+          </Label>
+
+          <RadioGroup
+            id="style"
+            value={settings.style}
+            onValueChange={(value: SkinStyle) =>
+              setSettings((draft) => {
+                draft.style = value;
+              })
+            }
+            className="space-y-2"
+          >
+            {SKIN_STYLES.map((style) => (
+              <Label
+                key={style}
+                htmlFor={style}
+                className="flex items-center space-x-2"
+              >
+                <RadioGroupItem value={style} id={style} />
+                <span>{capitalizeFirstLetter(style)}</span>
+              </Label>
+            ))}
+          </RadioGroup>
+        </div>
         <SwitchInput
           label="Upscroll (DDR Style)"
           checked={settings.upscroll}

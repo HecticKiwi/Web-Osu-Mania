@@ -1,44 +1,31 @@
 import { Container, Graphics, GraphicsContext } from "pixi.js";
-import { colors } from "../constants";
-import { Game } from "../game";
-import { Entity } from "./entity";
-import { Tap } from "./tap";
+import { Game } from "../../game";
+import { Tap } from "../tap";
 
-export class Key extends Entity {
+export abstract class Key {
   static bottomContainerGraphicsContext: GraphicsContext | null;
   static markerGraphicsContext: GraphicsContext | null;
   static hitAreaGraphicsContext: GraphicsContext | null;
 
-  private columnId: number;
+  public game: Game;
+
+  protected columnId: number;
 
   public view: Container;
-  private hitArea: Graphics;
-  private bottomContainer: Container;
-  private marker: Container;
+  protected hitArea: Graphics;
+  protected bottomContainer: Container;
+  protected marker: Container;
+
+  protected setKeyGraphics() {}
 
   constructor(game: Game, columnId: number) {
-    super(game);
-
+    this.game = game;
     this.columnId = columnId;
 
     this.view = new Container();
     this.view.eventMode = "passive";
 
-    const height = game.app.screen.height - game.hitPosition;
-
-    const markerSize = 40;
-
-    if (!Key.bottomContainerGraphicsContext) {
-      Key.bottomContainerGraphicsContext = new GraphicsContext()
-        .rect(0, 0, game.scaledColumnWidth, height)
-        .fill("hsl(0,0%,10%)");
-    }
-
-    if (!Key.markerGraphicsContext) {
-      Key.markerGraphicsContext = new GraphicsContext()
-        .roundRect(0, 0, markerSize, markerSize, 5)
-        .fill("white");
-    }
+    this.setKeyGraphics();
 
     if (!Key.hitAreaGraphicsContext) {
       Key.hitAreaGraphicsContext = new GraphicsContext()
@@ -46,19 +33,7 @@ export class Key extends Entity {
         .fill(0x000000);
     }
 
-    this.bottomContainer = new Graphics(Key.bottomContainerGraphicsContext);
-    this.bottomContainer.pivot.y = height;
-
-    this.marker = new Graphics(Key.markerGraphicsContext);
-    this.marker.pivot = 5;
-    this.marker.x = game.scaledColumnWidth / 2;
-    this.marker.y = 40;
-    this.marker.angle = 45;
-    this.marker.tint = "hsl(0,0%,30%)";
-    this.bottomContainer.addChild(this.marker);
-
     this.view.eventMode = "static";
-
     this.view.addChild(this.bottomContainer);
 
     this.hitArea = new Graphics(Key.hitAreaGraphicsContext);
@@ -102,9 +77,11 @@ export class Key extends Entity {
 
   public setPressed(pressed: boolean) {
     if (pressed) {
-      this.marker.tint = colors[this.game.laneColors[this.columnId]];
+      // this.marker.tint = colors[this.game.laneColors[this.columnId]];
+      this.marker.alpha = 0.5;
     } else {
-      this.marker.tint = "hsl(0,0%,30%)";
+      // this.marker.tint = "hsl(0,0%,30%)";
+      this.marker.alpha = 0.0;
     }
   }
 

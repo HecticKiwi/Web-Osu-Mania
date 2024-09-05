@@ -30,7 +30,10 @@ import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
 import { Hold } from "./sprites/hold";
 import { Judgement } from "./sprites/judgement";
-import { Key } from "./sprites/key";
+import { BarKey } from "./sprites/key/barKey";
+import { CircleKey } from "./sprites/key/circleKey";
+import { Key } from "./sprites/key/key";
+import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { Tap } from "./sprites/tap";
 import { AudioSystem } from "./systems/audio";
@@ -55,6 +58,7 @@ export class Game {
   public skinIni: any; // https://osu.ppy.sh/wiki/en/Skinning/skin.ini#[mania]
   public skinManiaIni: any;
   public hitPosition: number;
+  public hitPositionOffset = 130;
   public scaledColumnWidth: number;
 
   // Systems
@@ -78,7 +82,7 @@ export class Game {
   public stageLights: StageLight[] = [];
   public notesContainer: Container = new Container();
   public keys: Key[] = [];
-  public stageHint: Container;
+  public stageHint: StageHint;
   public judgement: Judgement;
   private progressBarContainer: Container;
   private progressBar: Container;
@@ -148,7 +152,17 @@ export class Game {
 
     window.removeEventListener("resize", this.resize);
 
-    this.app.destroy({ removeView: true });
+    this.app.destroy(
+      { removeView: true },
+      {
+        children: true,
+        // context: true,
+        style: true,
+        texture: true,
+        // textureSource: true,
+      },
+    );
+
     window.__PIXI_APP__ = null;
   }
 
@@ -168,14 +182,14 @@ export class Game {
       this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
     }
 
-    this.hitPosition = this.app.screen.height - 130;
+    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 
     this.keys.forEach((key) => key.resize());
 
-    this.stageHint.y = this.hitPosition;
+    this.stageHint?.resize();
     this.stageLights.forEach((stageLight) => stageLight.resize());
 
     const notesContainerWidth = Math.min(
@@ -242,6 +256,8 @@ export class Game {
       height: window.innerHeight,
       backgroundAlpha: 0.5,
       antialias: true,
+      autoDensity: true,
+      resolution: window.devicePixelRatio,
       eventMode: "none",
       eventFeatures: {
         move: true,
@@ -256,7 +272,7 @@ export class Game {
     ref.appendChild(this.app.canvas);
     window.__PIXI_APP__ = this.app;
 
-    this.hitPosition = this.app.screen.height - 130;
+    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
     this.scaledColumnWidth = scaleWidth(
       this.skinManiaIni.ColumnWidth.split(",")[0],
@@ -264,7 +280,7 @@ export class Game {
     );
 
     Tap.renderTexture = null;
-    Hold.renderTexture = null;
+    // Hold.renderTexture = null;
     Key.bottomContainerGraphicsContext = null;
     Key.markerGraphicsContext = null;
     Key.hitAreaGraphicsContext = null;
@@ -550,25 +566,28 @@ export class Game {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const stageLight = new StageLight(this, i);
 
-      this.notesContainer.addChild(stageLight.view);
+      if (this.settings.style === "bars") {
+        this.notesContainer.addChild(stageLight.view);
+      }
       this.stageLights.push(stageLight);
     }
   }
 
   private addStageHint() {
-    const width = this.difficulty.keyCount * this.scaledColumnWidth;
-
-    const height = 10;
-    this.stageHint = new Graphics().rect(0, 0, 5, height).fill(0xcccccc);
-    this.stageHint.width = width;
-    this.stageHint.pivot.y = height / 2;
-    this.stageHint.zIndex = -1;
-    this.notesContainer.addChild(this.stageHint);
+    if (this.settings.style === "bars") {
+      this.stageHint = new StageHint(this);
+      this.notesContainer.addChild(this.stageHint.view);
+    }
   }
 
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
-      const key = new Key(this, i);
+      let key: Key;
+      if (this.settings.style === "bars") {
+        key = new BarKey(this, i);
+      } else {
+        key = new CircleKey(this, i);
+      }
 
       this.stageContainer.addChild(key.view);
       this.keys.push(key);

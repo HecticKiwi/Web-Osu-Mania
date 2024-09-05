@@ -13,6 +13,9 @@ export const BEATMAP_API_PROVIDERS = {
 
 export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 
+export const SKIN_STYLES = ["bars", "circles"] as const;
+export type SkinStyle = (typeof SKIN_STYLES)[number];
+
 export type Settings = {
   version: number;
   volume: number;
@@ -29,6 +32,7 @@ export type Settings = {
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
   ignoreBeatmapHitsounds: boolean;
+  style: SkinStyle;
   keybinds: {
     keyModes: string[][];
   };
@@ -58,6 +62,7 @@ export const defaultSettings: Settings = {
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
   ignoreBeatmapHitsounds: false,
+  style: "circles",
   keybinds: {
     keyModes: [
       ["Space"],

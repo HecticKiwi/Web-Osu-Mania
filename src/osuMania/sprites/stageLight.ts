@@ -32,7 +32,6 @@ export class StageLight extends Entity {
     this.view.tint = colors[game.laneColors[columnId]];
     this.view.x = columnId * width;
     this.view.pivot.y = height;
-    // this.view.zIndex = 1;
     this.view.alpha = 0;
   }
 
