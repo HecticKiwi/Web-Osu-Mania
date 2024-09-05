@@ -70,30 +70,50 @@ export class Hold {
         this.game.settings.mods.playbackRate +
       this.game.hitPosition;
 
-    if (!this.broken && this.game.timeElapsed >= this.data.time) {
-      const newHeight = Math.max(
-        ((this.data.endTime - this.game.timeElapsed) *
-          this.game.settings.scrollSpeed *
-          SCROLL_SPEED_MULT) /
-          this.game.settings.mods.playbackRate,
-        0,
-      );
-      this.body.height = newHeight;
-
-      if (this.head) {
-        this.head.y = newHeight;
-      }
-    }
-
     const column = this.game.columns[this.data.column];
-
     if (column[0] !== this) {
       return;
     }
 
     const delta = this.data.endTime - this.game.timeElapsed;
-
     const absDelta = Math.abs(delta);
+
+    // If released before hold was done
+    if (
+      !this.game.inputSystem.pressedColumns[this.data.column] &&
+      !this.broken
+    ) {
+      this.broken = true;
+      this.game.errorBar?.addTimingMark(delta);
+
+      gsap.to(this.view, {
+        pixi: {
+          brightness: 0.5,
+        },
+        duration: 0.3,
+      });
+    }
+
+    if (!this.broken) {
+      if (this.game.timeElapsed >= this.data.time) {
+        const newHeight = Math.max(
+          ((this.data.endTime - this.game.timeElapsed) *
+            this.game.settings.scrollSpeed *
+            SCROLL_SPEED_MULT) /
+            this.game.settings.mods.playbackRate,
+          0,
+        );
+        this.body.height = newHeight;
+
+        if (this.head) {
+          this.head.y = newHeight;
+        }
+      }
+
+      if (this.view.y > this.game.hitPosition) {
+        this.view.y = this.game.hitPosition;
+      }
+    }
 
     if (this.game.settings.mods.autoplay) {
       if (this.game.timeElapsed > this.data.time) {
@@ -152,22 +172,6 @@ export class Hold {
       this.shouldRemove = true;
 
       return;
-    }
-
-    // If released before hold was done
-    if (
-      !this.game.inputSystem.pressedColumns[this.data.column] &&
-      !this.broken
-    ) {
-      this.broken = true;
-      this.game.errorBar?.addTimingMark(delta);
-
-      gsap.to(this.view, {
-        pixi: {
-          brightness: 0.5,
-        },
-        duration: 0.3,
-      });
     }
   }
 
