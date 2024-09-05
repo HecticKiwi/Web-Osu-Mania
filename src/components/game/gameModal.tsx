@@ -49,11 +49,7 @@ const GameModal = () => {
         const beatmapData = await parseOsz(beatmapSetFile, data.beatmapId);
         const iniData = await loadIni(beatmapData.difficulty.keyCount);
 
-        await loadAssets(
-          iniData.skinManiaIni,
-          beatmapData.difficulty.keyCount,
-          // this.app.screen.height > 800,
-        );
+        await loadAssets(iniData.skinManiaIni);
 
         setBeatmapData(beatmapData);
         setIniData(iniData);
