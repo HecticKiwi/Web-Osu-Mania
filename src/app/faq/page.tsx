@@ -47,17 +47,17 @@ const FaqPage = () => {
             What skin does this site use?
           </h2>
           <p className="mt-3">
-            It uses a modified version of{" "}
+            Nearly all the graphics are drawn myself, but they are heavily
+            inspired by{" "}
             <Link
-              href={"https://osu.ppy.sh/community/forums/topics/1498492"}
+              href={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
               className="text-primary focus-within:underline hover:underline"
               target="_blank"
               prefetch={false}
             >
-              Azure Snowfall
+              Miketakular
             </Link>
-            . The decision to use this skin was sort of arbitrary as I just
-            needed something that fit the colors of the site.
+            .
           </p>
 
           <h2 className="mt-8 text-2xl font-semibold tracking-tight">
