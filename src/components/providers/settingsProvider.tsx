@@ -62,7 +62,7 @@ export const defaultSettings: Settings = {
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
   ignoreBeatmapHitsounds: false,
-  style: "circles",
+  style: "bars",
   keybinds: {
     keyModes: [
       ["Space"],
