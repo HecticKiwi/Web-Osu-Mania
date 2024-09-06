@@ -11,7 +11,6 @@ import { Column, GameState, Results } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
-import { parse } from "ini";
 import * as PIXI from "pixi.js";
 import {
   Application,
@@ -23,8 +22,7 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { Color, laneColors } from "./constants";
-import { IniData, processIniString, setMissingIniValues } from "./ini";
+import { Color, laneColors, laneWidths } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -54,9 +52,6 @@ export class Game {
   public hitWindows: HitWindows;
   public laneColors: Color[];
 
-  // Too lazy to properly type the Inis
-  public skinIni: any; // https://osu.ppy.sh/wiki/en/Skinning/skin.ini#[mania]
-  public skinManiaIni: any;
   public hitPosition: number;
   public hitPositionOffset = 130;
   public scaledColumnWidth: number;
@@ -105,7 +100,6 @@ export class Game {
 
   public constructor(
     beatmapData: BeatmapData,
-    iniData: IniData,
     setResults: Dispatch<SetStateAction<Results | null>>,
   ) {
     this.resize = this.resize.bind(this);
@@ -121,9 +115,6 @@ export class Game {
     this.nextTimingPoint = this.timingPoints[1];
 
     this.laneColors = laneColors[this.difficulty.keyCount - 1];
-
-    this.skinIni = iniData.skinIni;
-    this.skinManiaIni = iniData.skinManiaIni;
 
     this.setResults = setResults;
 
@@ -170,7 +161,7 @@ export class Game {
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
 
     this.scaledColumnWidth = scaleWidth(
-      this.skinManiaIni.ColumnWidth.split(",")[0],
+      laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,
     );
 
@@ -275,7 +266,7 @@ export class Game {
     this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
     this.scaledColumnWidth = scaleWidth(
-      this.skinManiaIni.ColumnWidth.split(",")[0],
+      laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,
     );
 
@@ -333,17 +324,6 @@ export class Game {
 
     // Game loop
     this.app.ticker.add((time) => this.update(time));
-  }
-
-  private async loadIni() {
-    const iniString = await fetch("/skin/skin.ini")
-      .then((response) => response.text())
-      .then((text) => processIniString(text));
-
-    this.skinIni = parse(iniString);
-    this.skinManiaIni = this.skinIni[`Mania${this.difficulty.keyCount}`];
-
-    setMissingIniValues(this.skinManiaIni);
   }
 
   private update(time: Ticker) {

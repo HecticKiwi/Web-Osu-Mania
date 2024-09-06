@@ -2,7 +2,6 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
-import { IniData } from "@/osuMania/ini";
 import { Results } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import PauseButton from "./pauseButton";
@@ -12,11 +11,9 @@ import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
   beatmapData,
-  iniData,
   retry,
 }: {
   beatmapData: BeatmapData;
-  iniData: IniData;
   retry: () => void;
 }) => {
   const [game, setGame] = useState<Game | null>(null);
@@ -26,7 +23,7 @@ const GameScreens = ({
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, iniData, setResults);
+    const game = new Game(beatmapData, setResults);
     setGame(game);
     game.main(containerRef.current);
 
@@ -35,7 +32,7 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [beatmapData, iniData]);
+  }, [beatmapData]);
 
   // Pause logic
   useEffect(() => {

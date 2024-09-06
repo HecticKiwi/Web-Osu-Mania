@@ -1,6 +1,7 @@
 import { Judgement as JudgementValue } from "@/types";
 import { gsap } from "gsap";
 import { Sprite, Texture } from "pixi.js";
+import { SKIN_URL } from "../constants";
 import { Game } from "../game";
 import { Entity } from "./entity";
 
@@ -27,7 +28,7 @@ export class Judgement extends Entity {
 
   public showJudgement(judgement: JudgementValue) {
     this.sprite.texture = Texture.from(
-      this.game.skinManiaIni[`Hit${judgement === 320 ? "300g" : judgement}`],
+      `${SKIN_URL}/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
     );
 
     this.sprite.alpha = 1;
