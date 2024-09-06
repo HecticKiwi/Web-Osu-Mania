@@ -33,6 +33,7 @@ export type Settings = {
   customBeatmapProvider: string;
   ignoreBeatmapHitsounds: boolean;
   style: SkinStyle;
+  errorBarScale: number;
   keybinds: {
     keyModes: string[][];
   };
@@ -63,6 +64,7 @@ export const defaultSettings: Settings = {
   customBeatmapProvider: "",
   ignoreBeatmapHitsounds: false,
   style: "bars",
+  errorBarScale: 1,
   keybinds: {
     keyModes: [
       ["Space"],

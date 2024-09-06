@@ -24,7 +24,7 @@ export class ErrorBar {
     this.view = new Container();
     this.view.interactiveChildren = false;
     this.view.pivot.set(this.width / 2, this.height);
-    this.view.scale.set(2);
+    this.view.scale.set(this.game.settings.errorBarScale);
 
     this.background = new Graphics()
       .rect(0, 0, this.width, this.height)
@@ -54,7 +54,10 @@ export class ErrorBar {
   }
 
   public resize() {
-    this.view.width = Math.min(600, this.game.app.screen.width);
+    this.view.width = Math.min(
+      this.width * this.game.settings.errorBarScale,
+      this.game.app.screen.width,
+    );
     this.view.x = this.game.app.screen.width / 2;
     this.view.y = this.game.app.screen.height;
   }

@@ -128,6 +128,32 @@ const SettingsTab = () => {
             })
           }
         />
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Error Bar Scale
+          </div>
+
+          <div className="group w-full">
+            <Tooltip open>
+              <TooltipTrigger asChild>
+                <Slider
+                  value={[settings.errorBarScale]}
+                  min={0.5}
+                  max={2}
+                  step={0.1}
+                  onValueChange={([errorBarScale]) =>
+                    setSettings((draft) => {
+                      draft.errorBarScale = errorBarScale;
+                    })
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
+                {settings.errorBarScale}x
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
         <SwitchInput
           label="Show FPS Counter"
           checked={settings.showFpsCounter}
