@@ -23,10 +23,10 @@ export class Hold {
 
     this.body = Sprite.from(Texture.WHITE);
 
-    this.body.width = this.game.scaledColumnWidth;
-
     if (this.game.settings.style === "circles") {
       this.body.width = this.game.scaledColumnWidth * 0.8;
+    } else {
+      this.body.width = this.game.scaledColumnWidth;
     }
 
     const holdHeight =
@@ -39,7 +39,6 @@ export class Hold {
     this.view = new Container();
     this.view.addChild(this.body);
     this.view.tint = colors[game.laneColors[holdData.column]];
-
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +
@@ -79,9 +78,13 @@ export class Hold {
     const absDelta = Math.abs(delta);
 
     if (this.game.settings.mods.autoplay) {
+      // Press key during hold
       if (this.game.timeElapsed > this.data.time) {
         this.game.keys[this.data.column].setPressed(true);
-        this.game.stageLights[this.data.column].view.alpha = 1;
+
+        if (this.game.stageLights[this.data.column]) {
+          this.game.stageLights[this.data.column].view.alpha = 1;
+        }
       }
 
       if (delta < 0) {
@@ -90,7 +93,7 @@ export class Hold {
         this.game.errorBar?.addTimingMark(0);
 
         this.game.keys[this.data.column].setPressed(false);
-        this.game.stageLights[this.data.column].light();
+        this.game.stageLights[this.data.column]?.light();
 
         this.shouldRemove = true;
       }
@@ -102,12 +105,7 @@ export class Hold {
         return;
       }
 
-      if (this.isHit()) {
-        // Return if you released way too early...
-        if (absDelta > this.game.hitWindows[0]) {
-          return;
-        }
-
+      if (this.isHit() && absDelta < this.game.hitWindows[0]) {
         if (this.broken) {
           this.game.scoreSystem.hit(50);
           this.shouldRemove = true;

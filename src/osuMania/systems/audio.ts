@@ -1,5 +1,5 @@
 import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
-import { Howl, Howler } from "howler";
+import { Howl } from "howler";
 import { Game } from "../game";
 
 export class AudioSystem {
@@ -39,7 +39,7 @@ export class AudioSystem {
     const sound = this.sounds[filename];
 
     if (!sound) {
-      console.warn("Sound not found: ", filename);
+      // console.warn("Sound not found: ", filename);
 
       return;
     }

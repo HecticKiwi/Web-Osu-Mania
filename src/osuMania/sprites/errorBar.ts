@@ -9,6 +9,7 @@ const orange = 0xdaae46;
 
 export class ErrorBar {
   private game: Game;
+
   public view: Container;
   private background: Graphics;
   private foreground: Graphics;
@@ -21,19 +22,12 @@ export class ErrorBar {
   public constructor(game: Game) {
     this.game = game;
 
-    this.view = new Container();
-    this.view.interactiveChildren = false;
-    this.view.pivot.set(this.width / 2, this.height);
-    this.view.scale.set(this.game.settings.errorBarScale);
-
     this.background = new Graphics()
       .rect(0, 0, this.width, this.height)
       .fill(0x000000);
     this.background.alpha = 0.75;
-    this.view.addChild(this.background);
 
     this.foreground = new Graphics();
-    this.view.addChild(this.foreground);
 
     this.drawJudgementSections();
 
@@ -42,7 +36,6 @@ export class ErrorBar {
       .fill(0xffffff);
     centerLine.pivot.set(1, 0);
     centerLine.zIndex = 1;
-    this.view.addChild(centerLine);
 
     this.averageMarker = new Graphics()
       .poly([0, 0, 5, 5, 10, 0], true)
@@ -50,7 +43,15 @@ export class ErrorBar {
     this.averageMarker.pivot.x = 5;
     this.averageMarker.x = this.width / 2;
     this.averageMarker.zIndex = 99;
+
+    this.view = new Container();
+    this.view.addChild(this.background);
+    this.view.addChild(this.foreground);
+    this.view.addChild(centerLine);
     this.view.addChild(this.averageMarker);
+    this.view.interactiveChildren = false;
+    this.view.pivot.set(this.width / 2, this.height);
+    this.view.scale.set(this.game.settings.errorBarScale);
   }
 
   public resize() {
@@ -58,6 +59,7 @@ export class ErrorBar {
       this.width * this.game.settings.errorBarScale,
       this.game.app.screen.width,
     );
+
     this.view.x = this.game.app.screen.width / 2;
     this.view.y = this.game.app.screen.height;
   }
@@ -99,12 +101,13 @@ export class ErrorBar {
         : absOffset < this.game.hitWindows["100"]
           ? green
           : orange;
+
     const mark = new Graphics().rect(0, 0, 2, 20).fill(color);
+    mark.pivot.set(1, 0);
 
     const x =
       (-offset / this.game.hitWindows["50"]) * (this.background.width / 2) +
       this.background.width / 2;
-    mark.pivot.set(1, 0);
     mark.x = clamp(x, 0, this.width);
 
     this.timingMarks.push(mark);

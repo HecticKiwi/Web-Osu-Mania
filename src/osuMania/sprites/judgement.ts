@@ -3,38 +3,40 @@ import { gsap } from "gsap";
 import { Sprite, Texture } from "pixi.js";
 import { SKIN_URL } from "../constants";
 import { Game } from "../game";
-import { Entity } from "./entity";
 
-export class Judgement extends Entity {
-  public sprite: Sprite;
+export class Judgement {
+  public game: Game;
+
+  public view: Sprite;
 
   public constructor(game: Game) {
-    super(game);
-    this.sprite = new Sprite();
-    this.sprite.alpha = 0;
-    this.sprite.zIndex = 99;
-    this.sprite.anchor.set(0.5);
+    this.game = game;
+
+    this.view = new Sprite();
+    this.view.alpha = 0;
+    this.view.zIndex = 99;
+    this.view.anchor.set(0.5);
   }
 
   public resize() {
-    this.sprite.x = this.game.app.screen.width / 2;
+    this.view.x = this.game.app.screen.width / 2;
 
     if (this.game.settings.upscroll) {
-      this.sprite.y = (this.game.app.screen.height * 2) / 3 - 50;
+      this.view.y = (this.game.app.screen.height * 2) / 3 - 50;
     } else {
-      this.sprite.y = this.game.app.screen.height / 3;
+      this.view.y = this.game.app.screen.height / 3;
     }
   }
 
   public showJudgement(judgement: JudgementValue) {
-    this.sprite.texture = Texture.from(
+    this.view.texture = Texture.from(
       `${SKIN_URL}/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
     );
 
-    this.sprite.alpha = 1;
-    this.sprite.scale.set(1);
+    this.view.alpha = 1;
+    this.view.scale.set(1);
 
-    gsap.from(this.sprite, {
+    gsap.from(this.view, {
       pixi: {
         scale: 1.2,
       },
@@ -42,7 +44,7 @@ export class Judgement extends Entity {
       overwrite: true,
     });
 
-    gsap.to(this.sprite, {
+    gsap.to(this.view, {
       pixi: {
         alpha: 0,
       },

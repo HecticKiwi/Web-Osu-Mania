@@ -15,7 +15,7 @@ export const colors = {
   white: "hsl(212, 8%, 98.45%)",
   yellow: "hsl(62, 80%, 69%)",
   muted: "hsl(212, 40%, 20.7%)",
-};
+} as const;
 
 export const laneColors: Color[][] = [
   ["blue"],
@@ -37,6 +37,6 @@ export const laneColors: Color[][] = [
     "blue",
     "white",
   ],
-];
+] as const;
 
-export const laneWidths = [56, 56, 56, 56, 50, 47, 42, 40, 38, 35];
+export const laneWidths = [56, 56, 56, 56, 50, 47, 42, 40, 38, 35] as const;

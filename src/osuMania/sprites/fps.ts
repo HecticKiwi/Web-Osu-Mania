@@ -1,27 +1,26 @@
-import { Container, Graphics, Text } from "pixi.js";
+import { BitmapText, Container, Graphics } from "pixi.js";
 import { Game } from "../game";
 
 const MAX_FRAMES = 30;
 
 export class Fps {
+  public game: Game;
+
   public view: Container;
-  public text: Text;
+  public text: BitmapText;
 
   private frameTimes: number[] = [];
 
   constructor(game: Game) {
+    this.game = game;
+
     const width = 120;
     const height = 30;
-
-    this.view = new Container();
-    this.view.interactiveChildren = false;
 
     const background = new Graphics().rect(0, 0, width, height).fill(0x000000);
     background.alpha = 0.5;
 
-    this.view.addChild(background);
-
-    this.text = new Text({
+    this.text = new BitmapText({
       text: "FPS:",
       style: {
         fill: 0xdddddd,
@@ -34,7 +33,10 @@ export class Fps {
     this.text.x = 10;
     this.text.y = height / 2;
 
+    this.view = new Container();
+    this.view.addChild(background);
     this.view.addChild(this.text);
+    this.view.interactiveChildren = false;
   }
 
   public update(fps: number) {

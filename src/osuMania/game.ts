@@ -6,7 +6,7 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import { clamp, getSettings, scaleWidth } from "@/lib/utils";
+import { getSettings, scaleWidth } from "@/lib/utils";
 import { Column, GameState, Results } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -14,10 +14,10 @@ import { Howl } from "howler";
 import * as PIXI from "pixi.js";
 import {
   Application,
+  BitmapText,
   Container,
   FillGradient,
   Graphics,
-  Text,
   TextStyle,
   Ticker,
 } from "pixi.js";
@@ -31,6 +31,7 @@ import { Judgement } from "./sprites/judgement";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
 import { Key } from "./sprites/key/key";
+import { ProgressBar } from "./sprites/progressBar";
 import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { Tap } from "./sprites/tap";
@@ -62,28 +63,25 @@ export class Game {
   public audioSystem: AudioSystem;
 
   // UI Components
-  private startMessage: Text;
-  public scoreText: Text;
-  public comboText: Text;
-  public accuracyText: Text;
+  private startMessage: BitmapText;
+  public scoreText: BitmapText;
+  public comboText: BitmapText;
+  public accuracyText: BitmapText;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
   public stageSideWidth = 2;
   public stageContainer: Container = new Container();
-  public stageSideLeft: Graphics;
-  public stageSideRight: Graphics;
-  // public stageSide: Graphics;
-  public stageBackground: Graphics;
+  public stageSides: Graphics;
+  public stageBackground: Container;
   public stageLights: StageLight[] = [];
   public notesContainer: Container = new Container();
   public keys: Key[] = [];
   public stageHint: StageHint;
   public judgement: Judgement;
-  private progressBarContainer: Container;
-  private progressBar: Container;
+  private progressBar: ProgressBar;
   public errorBar: ErrorBar;
   private fps?: Fps;
-  private countdown: Countdown;
+  private countdown?: Countdown;
 
   public song: Howl;
   public timeElapsed: number = 0;
@@ -143,16 +141,7 @@ export class Game {
 
     window.removeEventListener("resize", this.resize);
 
-    this.app.destroy(
-      { removeView: true },
-      {
-        children: true,
-        // context: true,
-        style: true,
-        texture: true,
-        // textureSource: true,
-      },
-    );
+    this.app.destroy({ removeView: true });
 
     window.__PIXI_APP__ = null;
   }
@@ -193,8 +182,8 @@ export class Game {
     gradientFill.addColorStop(0.4, "gray");
     gradientFill.addColorStop(1, "transparent");
 
-    this.stageContainer.removeChild(this.stageSideLeft);
-    this.stageSideLeft
+    this.stageContainer.removeChild(this.stageSides);
+    this.stageSides
       .clear()
       .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
@@ -205,8 +194,7 @@ export class Game {
       )
       .fill(gradientFill);
 
-    this.stageContainer.addChild(this.stageSideLeft);
-    this.stageContainer.addChild(this.stageSideRight);
+    this.stageContainer.addChild(this.stageSides);
     this.stageBackground.height = this.app.screen.height;
 
     this.stageContainer.pivot.x = this.stageContainer.width / 2;
@@ -232,11 +220,7 @@ export class Game {
     // Hud section
     this.scoreText.x = this.app.screen.width - 30;
     this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
-    this.progressBarContainer.x = this.app.screen.width - 30;
-    this.progressBarContainer.scale.x = Math.min(
-      (this.app.screen.width - 60) / 400,
-      1,
-    );
+    this.progressBar.resize();
     this.accuracyText.x = this.app.screen.width - 30;
     this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
   }
@@ -261,9 +245,9 @@ export class Game {
     this.app.stage.eventMode = "passive";
 
     ref.appendChild(this.app.canvas);
-    window.__PIXI_APP__ = this.app;
 
-    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
+    // For the debugger extension to detect the app
+    window.__PIXI_APP__ = this.app;
 
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
@@ -271,7 +255,6 @@ export class Game {
     );
 
     Tap.renderTexture = null;
-    // Hold.renderTexture = null;
     Key.bottomContainerGraphicsContext = null;
     Key.markerGraphicsContext = null;
     Key.hitAreaGraphicsContext = null;
@@ -285,9 +268,11 @@ export class Game {
 
     this.addAccuracyText();
 
-    this.addStageLights();
+    if (this.settings.style === "bars") {
+      this.addStageHint();
 
-    this.addStageHint();
+      this.addStageLights();
+    }
 
     this.addKeys();
 
@@ -336,11 +321,7 @@ export class Game {
 
     switch (this.state) {
       case "WAIT":
-        if (
-          this.inputSystem.tappedColumns.includes(true) ||
-          (this.inputSystem.tappedKeys.size > 0 &&
-            !this.inputSystem.tappedKeys.has("Escape"))
-        ) {
+        if (this.inputSystem.anyKeyTapped()) {
           this.app.stage.removeChild(this.startMessage);
 
           if (this.countdown) {
@@ -367,13 +348,7 @@ export class Game {
             ];
         }
 
-        this.progressBar.width =
-          clamp(
-            (this.timeElapsed - this.startTime) /
-              (this.endTime - this.startTime),
-            0,
-            1,
-          ) * 400;
+        this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
 
         this.columns.forEach((column) => {
           let itemsToRemove = 0;
@@ -418,23 +393,9 @@ export class Game {
   }
 
   private addProgressBar() {
-    const fullWidth = 400;
-    const progressBarBg = new Graphics()
-      .rect(0, 0, fullWidth, 5)
-      .fill(0xffffff);
-    progressBarBg.alpha = 0.1;
+    this.progressBar = new ProgressBar(this);
 
-    this.progressBar = new Graphics().rect(0, 0, 0.01, 5).fill(0x71acef);
-
-    this.progressBarContainer = new Container();
-    this.progressBarContainer.addChild(progressBarBg);
-    this.progressBarContainer.addChild(this.progressBar);
-    this.progressBarContainer.interactiveChildren = false;
-
-    this.progressBarContainer.pivot.set(fullWidth, 0);
-    this.progressBarContainer.y = 95;
-
-    this.app.stage.addChild(this.progressBarContainer);
+    this.app.stage.addChild(this.progressBar.view);
   }
 
   private addHitError() {
@@ -458,7 +419,7 @@ export class Game {
       },
     });
 
-    this.scoreText = new Text({
+    this.scoreText = new BitmapText({
       text: "00000000",
       style,
     });
@@ -471,13 +432,13 @@ export class Game {
   }
 
   private addComboText() {
-    this.comboText = new Text({
+    this.comboText = new BitmapText({
       text: "",
       style: {
         fill: 0xdddddd,
         fontFamily: "RobotoMono",
         fontSize: 30,
-        fontWeight: "700",
+        fontWeight: "800",
       },
     });
 
@@ -502,7 +463,7 @@ export class Game {
       },
     });
 
-    this.accuracyText = new Text({
+    this.accuracyText = new BitmapText({
       text: "100.00%",
       style,
     });
@@ -514,8 +475,6 @@ export class Game {
   }
 
   private addStageContainer() {
-    this.stageContainer.eventMode = "passive";
-
     const notesContainerWidth =
       this.difficulty.keyCount * this.scaledColumnWidth;
 
@@ -525,39 +484,36 @@ export class Game {
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
 
-    this.stageSideLeft = new Graphics();
-    this.stageSideRight = new Graphics();
+    this.stageSides = new Graphics();
+    this.stageContainer.addChild(this.stageSides);
 
-    this.stageContainer.addChild(this.stageSideLeft);
-    this.stageContainer.addChild(this.stageSideRight);
+    this.notesContainer.x = this.stageSideWidth;
+    this.notesContainer.interactiveChildren = false;
+
+    this.stageContainer.eventMode = "passive";
+    this.stageContainer.addChild(this.notesContainer);
 
     if (this.settings.upscroll) {
       this.stageContainer.scale.y = -1;
     }
 
-    this.stageContainer.addChild(this.notesContainer);
     this.app.stage.addChild(this.stageContainer);
-
-    this.notesContainer.x = this.stageSideWidth;
-    this.notesContainer.interactiveChildren = false;
   }
 
   private addStageLights() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       const stageLight = new StageLight(this, i);
 
-      if (this.settings.style === "bars") {
-        this.notesContainer.addChild(stageLight.view);
-      }
+      this.notesContainer.addChild(stageLight.view);
+
       this.stageLights.push(stageLight);
     }
   }
 
   private addStageHint() {
-    if (this.settings.style === "bars") {
-      this.stageHint = new StageHint(this);
-      this.notesContainer.addChild(this.stageHint.view);
-    }
+    this.stageHint = new StageHint(this);
+
+    this.notesContainer.addChild(this.stageHint.view);
   }
 
   private addKeys() {
@@ -593,7 +549,7 @@ export class Game {
   private addJudgement() {
     this.judgement = new Judgement(this);
 
-    this.app.stage.addChild(this.judgement.sprite);
+    this.app.stage.addChild(this.judgement.view);
   }
 
   private addFpsCounter() {
@@ -602,7 +558,7 @@ export class Game {
   }
 
   private addStartMessage() {
-    this.startMessage = new Text({
+    this.startMessage = new BitmapText({
       text: "Press any key to Start",
       style: {
         fill: 0xdddddd,
@@ -617,6 +573,7 @@ export class Game {
       this.startMessage.width / 2,
       this.startMessage.height / 2,
     );
+
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 

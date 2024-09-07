@@ -58,6 +58,13 @@ export class InputSystem {
     }
   }
 
+  public anyKeyTapped() {
+    return (
+      this.tappedColumns.includes(true) ||
+      (this.tappedKeys.size > 0 && !this.tappedKeys.has("Escape"))
+    );
+  }
+
   public clearInputs() {
     this.tappedKeys.clear();
     this.releasedKeys.clear();

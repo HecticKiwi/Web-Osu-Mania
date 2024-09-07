@@ -2,16 +2,17 @@ import { gsap } from "gsap";
 import { Container, FillGradient, Graphics, GraphicsContext } from "pixi.js";
 import { colors } from "../constants";
 import { Game } from "../game";
-import { Entity } from "./entity";
 
-export class StageLight extends Entity {
+export class StageLight {
   static graphicsContext: GraphicsContext | null;
+
+  public game: Game;
 
   private columnId: number;
   public view: Container;
 
   constructor(game: Game, columnId: number) {
-    super(game);
+    this.game = game;
 
     this.columnId = columnId;
 

@@ -1,5 +1,5 @@
 import { gsap } from "gsap";
-import { Container, Graphics, Text } from "pixi.js";
+import { BitmapText, Container, Graphics } from "pixi.js";
 import { Game } from "../game";
 
 export class Countdown {
@@ -7,8 +7,8 @@ export class Countdown {
 
   public view: Container;
 
-  public text: Text;
-  public skipText: Text;
+  public text: BitmapText;
+  public skipText: BitmapText;
 
   private progressBar: Container;
   private progressBarContainer: Container;
@@ -18,10 +18,8 @@ export class Countdown {
   constructor(game: Game) {
     this.game = game;
 
-    this.view = new Container();
-
     const remainingTime = this.game.startTime - this.game.timeElapsed;
-    this.text = new Text({
+    this.text = new BitmapText({
       text: Math.round(remainingTime / 1000),
       style: {
         fill: 0xdddddd,
@@ -31,9 +29,7 @@ export class Countdown {
       },
     });
     this.text.anchor.set(0.5);
-    this.text.x = 200;
-
-    this.view.addChild(this.text);
+    this.text.x = this.fullWidth / 2;
 
     const progressBarBg = new Graphics()
       .rect(0, 0, this.fullWidth, 5)
@@ -43,19 +39,15 @@ export class Countdown {
     this.progressBar = new Graphics()
       .rect(0, 0, this.fullWidth, 5)
       .fill(0x71acef);
-    this.progressBar.width = this.fullWidth;
     this.progressBar.x = this.fullWidth / 2 - this.progressBar.width / 2;
 
     this.progressBarContainer = new Container();
     this.progressBarContainer.addChild(progressBarBg);
     this.progressBarContainer.addChild(this.progressBar);
-
     this.progressBarContainer.pivot.set(0.5, 0);
     this.progressBarContainer.y = 40;
 
-    this.view.addChild(this.progressBarContainer);
-
-    this.skipText = new Text({
+    this.skipText = new BitmapText({
       text: "Press any key to Skip",
       style: {
         fill: 0x7d7d7d,
@@ -67,8 +59,11 @@ export class Countdown {
     this.skipText.anchor.set(0.5, 0);
     this.skipText.x = this.fullWidth / 2;
     this.skipText.y = 60;
-    this.view.addChild(this.skipText);
 
+    this.view = new Container();
+    this.view.addChild(this.text);
+    this.view.addChild(this.progressBarContainer);
+    this.view.addChild(this.skipText);
     this.view.pivot.set(this.view.width / 2, this.view.height / 2);
     this.view.x = this.game.app.screen.width / 2;
     this.view.y = this.game.app.screen.height / 2;
@@ -95,12 +90,7 @@ export class Countdown {
     }
 
     // Skip intro
-    if (
-      remainingTime >= 2000 &&
-      (this.game.inputSystem.tappedColumns.includes(true) ||
-        (this.game.inputSystem.tappedKeys.size > 0 &&
-          !this.game.inputSystem.tappedKeys.has("Escape")))
-    ) {
+    if (remainingTime >= 2000 && this.game.inputSystem.anyKeyTapped()) {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }
 

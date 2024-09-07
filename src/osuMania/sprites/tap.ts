@@ -8,23 +8,24 @@ import {
 } from "pixi.js";
 import { colors, SCROLL_SPEED_MULT } from "../constants";
 import { Game } from "../game";
-import { Entity } from "./entity";
 
-export class Tap extends Entity {
+export class Tap {
   static renderTexture: RenderTexture | null;
   static graphicsContext: GraphicsContext | null;
 
-  public data: TapData;
+  public game: Game;
 
+  public view: Container;
+
+  public data: TapData;
   public sampleSet: SampleSet;
   public additionSet: SampleSet;
   public sampleIndex: number;
   public volume: number;
-
-  public view: Container;
+  public shouldRemove: boolean = false;
 
   constructor(game: Game, tapData: TapData) {
-    super(game);
+    this.game = game;
 
     this.data = tapData;
 
@@ -55,21 +56,18 @@ export class Tap extends Entity {
 
     this.view = new Sprite(Tap.renderTexture);
     this.view.tint = colors[game.laneColors[tapData.column]];
-
     this.view.zIndex = 1;
-
-    this.game.notesContainer.addChild(this.view);
-
     this.view.pivot.x = width / 2;
     this.view.pivot.y = height;
+    this.view.x =
+      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
+    this.view.visible = false;
 
     if (this.game.settings.style === "circles") {
       this.view.pivot.y = height / 2;
     }
 
-    this.view.x =
-      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
-    this.view.visible = false;
+    this.game.notesContainer.addChild(this.view);
 
     this.setSoundData();
   }
@@ -164,7 +162,7 @@ export class Tap extends Entity {
         this.playHitsounds();
 
         this.game.scoreSystem.hit(320);
-        this.game.stageLights[this.data.column].light();
+        this.game.stageLights[this.data.column]?.light();
 
         this.game.errorBar?.addTimingMark(0);
 

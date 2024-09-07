@@ -5,7 +5,7 @@ import { Key } from "./key";
 export class BarKey extends Key {
   protected override setKeyGraphics() {
     if (!Key.bottomContainerGraphicsContext) {
-      const height = this.game.app.screen.height - this.game.hitPosition;
+      const height = this.game.hitPositionOffset;
       Key.bottomContainerGraphicsContext = new GraphicsContext()
         .rect(0, 0, this.game.scaledColumnWidth, height)
         .fill("hsl(0,0%,10%)");
@@ -21,7 +21,7 @@ export class BarKey extends Key {
 
     this.bottomContainer = new Graphics(Key.bottomContainerGraphicsContext);
 
-    const height = this.game.app.screen.height - this.game.hitPosition;
+    const height = this.game.hitPositionOffset;
     this.bottomContainer.pivot.y = height;
 
     this.marker = new Graphics(Key.markerGraphicsContext);
