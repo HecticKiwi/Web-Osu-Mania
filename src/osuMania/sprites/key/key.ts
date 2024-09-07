@@ -3,7 +3,7 @@ import { Game } from "../../game";
 import { Tap } from "../tap";
 
 export abstract class Key {
-  static bottomContainerGraphicsContext: GraphicsContext | null;
+  static bottomContainerBgGraphicsContext: GraphicsContext | null;
   static markerGraphicsContext: GraphicsContext | null;
   static hitAreaGraphicsContext: GraphicsContext | null;
 

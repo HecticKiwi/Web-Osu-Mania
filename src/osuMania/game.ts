@@ -255,7 +255,7 @@ export class Game {
     );
 
     Tap.renderTexture = null;
-    Key.bottomContainerGraphicsContext = null;
+    Key.bottomContainerBgGraphicsContext = null;
     Key.markerGraphicsContext = null;
     Key.hitAreaGraphicsContext = null;
     StageLight.graphicsContext = null;

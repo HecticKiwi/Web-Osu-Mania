@@ -1,10 +1,10 @@
-import { Graphics, GraphicsContext } from "pixi.js";
+import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { Key } from "./key";
 
 export class CircleKey extends Key {
   protected override setKeyGraphics() {
-    if (!Key.bottomContainerGraphicsContext) {
-      Key.bottomContainerGraphicsContext = new GraphicsContext().roundRect(
+    if (!Key.bottomContainerBgGraphicsContext) {
+      Key.bottomContainerBgGraphicsContext = new GraphicsContext().roundRect(
         this.game.scaledColumnWidth * 0.1,
         0,
         this.game.scaledColumnWidth * 0.8,
@@ -12,7 +12,7 @@ export class CircleKey extends Key {
         this.game.scaledColumnWidth,
       );
 
-      Key.bottomContainerGraphicsContext.stroke({
+      Key.bottomContainerBgGraphicsContext.stroke({
         width: 4,
         color: "hsl(0,0%,70%)",
       });
@@ -26,8 +26,11 @@ export class CircleKey extends Key {
         .fill("white");
     }
 
-    this.bottomContainer = new Graphics(Key.bottomContainerGraphicsContext);
+    const bg = new Graphics(Key.bottomContainerBgGraphicsContext);
+
+    this.bottomContainer = new Container();
     this.bottomContainer.pivot.y = this.game.hitPositionOffset + markerSize / 2;
+    this.bottomContainer.addChild(bg);
 
     this.marker = new Graphics(Key.markerGraphicsContext);
     this.marker.pivot = 5;

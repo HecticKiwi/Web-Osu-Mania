@@ -51,7 +51,11 @@ export class Tap {
         height,
       });
       Tap.renderTexture.destroy();
-      game.app.renderer.render(graphic, { renderTexture: Tap.renderTexture });
+
+      game.app.renderer.render({
+        container: graphic,
+        target: Tap.renderTexture,
+      });
     }
 
     this.view = new Sprite(Tap.renderTexture);

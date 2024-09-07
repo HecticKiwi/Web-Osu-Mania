@@ -1,12 +1,12 @@
 import { colors } from "@/osuMania/constants";
-import { Graphics, GraphicsContext } from "pixi.js";
+import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { Key } from "./key";
 
 export class BarKey extends Key {
   protected override setKeyGraphics() {
-    if (!Key.bottomContainerGraphicsContext) {
+    if (!Key.bottomContainerBgGraphicsContext) {
       const height = this.game.hitPositionOffset;
-      Key.bottomContainerGraphicsContext = new GraphicsContext()
+      Key.bottomContainerBgGraphicsContext = new GraphicsContext()
         .rect(0, 0, this.game.scaledColumnWidth, height)
         .fill("hsl(0,0%,10%)");
     }
@@ -19,10 +19,11 @@ export class BarKey extends Key {
         .fill("white");
     }
 
-    this.bottomContainer = new Graphics(Key.bottomContainerGraphicsContext);
+    this.bottomContainer = new Container();
+    this.bottomContainer.pivot.y = this.game.hitPositionOffset;
 
-    const height = this.game.hitPositionOffset;
-    this.bottomContainer.pivot.y = height;
+    const bg = new Graphics(Key.bottomContainerBgGraphicsContext);
+    this.bottomContainer.addChild(bg);
 
     this.marker = new Graphics(Key.markerGraphicsContext);
     this.marker.pivot = 5;
