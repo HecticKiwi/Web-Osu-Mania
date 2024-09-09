@@ -1,7 +1,7 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { gsap } from "gsap";
 import { Container, Sprite, Texture } from "pixi.js";
-import { colors, SCROLL_SPEED_MULT } from "../constants";
+import { colors, MAX_TIME_RANGE } from "../constants";
 import { Game } from "../game";
 import { Tap } from "./tap";
 
@@ -29,11 +29,7 @@ export class Hold {
       this.body.width = this.game.scaledColumnWidth;
     }
 
-    const holdHeight =
-      ((holdData.endTime - this.data.time) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-      this.game.settings.mods.playbackRate;
+    const holdHeight = ((holdData.endTime - this.data.time) * (MAX_TIME_RANGE / this.game.settings.scrollSpeed)) / this.game.settings.mods.playbackRate;
     this.body.height = holdHeight;
 
     this.view = new Container();
@@ -64,8 +60,7 @@ export class Hold {
 
     this.view.y =
       ((this.game.timeElapsed - this.data.endTime) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
+      (MAX_TIME_RANGE / this.game.settings.scrollSpeed)) /
         this.game.settings.mods.playbackRate +
       this.game.hitPosition;
 
@@ -154,8 +149,7 @@ export class Hold {
       if (this.game.timeElapsed >= this.data.time) {
         const newHeight = Math.max(
           ((this.data.endTime - this.game.timeElapsed) *
-            this.game.settings.scrollSpeed *
-            SCROLL_SPEED_MULT) /
+          (MAX_TIME_RANGE / this.game.settings.scrollSpeed)) /
             this.game.settings.mods.playbackRate,
           0,
         );

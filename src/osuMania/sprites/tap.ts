@@ -6,7 +6,7 @@ import {
   RenderTexture,
   Sprite,
 } from "pixi.js";
-import { colors, SCROLL_SPEED_MULT } from "../constants";
+import { colors, MAX_TIME_RANGE } from "../constants";
 import { Game } from "../game";
 
 export class Tap {
@@ -152,7 +152,7 @@ export class Tap {
 
     this.view.visible = true;
     this.view.y =
-      (-delta * this.game.settings.scrollSpeed * SCROLL_SPEED_MULT) /
+      (-delta * (MAX_TIME_RANGE / this.game.settings.scrollSpeed)) /
         this.game.settings.mods.playbackRate +
       this.game.hitPosition;
 
