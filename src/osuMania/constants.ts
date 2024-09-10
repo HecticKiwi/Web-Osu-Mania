@@ -4,7 +4,7 @@ export const OSU_HEIGHT = 480;
 
 // This value is gathered from here:
 // https://github.com/ppy/osu/blob/f0e2b803ded7a3f7a826c05a0138bcc923dde9a9/osu.Game.Rulesets.Mania/UI/DrawableManiaRuleset.cs#L46
-export const MAX_TIME_RANGE = 11485
+export const MAX_TIME_RANGE = 11485;
 
 export const SKIN_URL = `${process.env.NEXT_PUBLIC_ASSETS_URL}/skin`;
 
