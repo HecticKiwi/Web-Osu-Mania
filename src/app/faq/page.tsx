@@ -44,23 +44,6 @@ const FaqPage = () => {
           </p>
 
           <h2 className="mt-8 text-2xl font-semibold tracking-tight">
-            What skin does this site use?
-          </h2>
-          <p className="mt-3">
-            Nearly all the graphics are drawn myself, but the bars skin is
-            heavily inspired by{" "}
-            <Link
-              href={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
-              className="text-primary focus-within:underline hover:underline"
-              target="_blank"
-              prefetch={false}
-            >
-              Miketakular
-            </Link>
-            .
-          </p>
-
-          <h2 className="mt-8 text-2xl font-semibold tracking-tight">
             I found a bug / I have a suggestion!
           </h2>
           <p className="mt-3">
