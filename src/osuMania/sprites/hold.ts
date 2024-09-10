@@ -12,9 +12,10 @@ export class Hold {
 
   public view: Container;
   private body: Container;
-  private head: Container;
+  private head?: Container;
 
   public shouldRemove: boolean;
+  private height: number;
   private broken = false;
 
   constructor(game: Game, holdData: HoldData) {
@@ -29,10 +30,9 @@ export class Hold {
       this.body.width = this.game.scaledColumnWidth;
     }
 
-    const holdHeight = this.game.getHitObjectOffset(
+    this.height = this.game.getHitObjectOffset(
       holdData.endTime - holdData.time,
     );
-    this.body.height = holdHeight;
 
     this.view = new Container();
     this.view.addChild(this.body);
@@ -50,19 +50,15 @@ export class Hold {
 
       this.head = new Sprite(Tap.renderTexture!);
       this.head.pivot.y = tail.height / 2;
-      this.head.y = holdHeight;
       this.view.addChild(this.head);
     }
 
+    this.setViewHeight();
     this.game.notesContainer.addChild(this.view);
   }
 
   public update() {
     this.view.visible = true;
-
-    const holdDuration = this.data.endTime - this.data.time;
-    const holdHeight = this.game.getHitObjectOffset(holdDuration);
-    this.body.height = holdHeight;
 
     this.view.y =
       this.game.hitPosition -
@@ -70,6 +66,15 @@ export class Hold {
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {
+      // Set height again in case of resize
+      if (this.game.timeElapsed < this.data.time) {
+        this.height = this.game.getHitObjectOffset(
+          this.data.endTime - this.data.time,
+        );
+      }
+
+      this.setViewHeight();
+
       return;
     }
 
@@ -152,24 +157,29 @@ export class Hold {
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
         const remainingDuration = this.data.endTime - this.game.timeElapsed;
-        const newHeight = Math.max(
+        this.height = Math.max(
           this.game.getHitObjectOffset(remainingDuration),
           0,
         );
-        this.body.height = newHeight;
-
-        if (this.head) {
-          this.head.y = newHeight;
-        }
       }
 
       if (this.view.y > this.game.hitPosition) {
         this.view.y = this.game.hitPosition;
       }
     }
+
+    this.setViewHeight();
   }
 
   public isHit() {
     return this.game.inputSystem.releasedColumns[this.data.column];
+  }
+
+  private setViewHeight() {
+    this.body.height = this.height;
+
+    if (this.head) {
+      this.head.y = this.height;
+    }
   }
 }

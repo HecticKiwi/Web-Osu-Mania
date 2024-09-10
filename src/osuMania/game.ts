@@ -299,11 +299,7 @@ export class Game {
     }
 
     // Set initial Y positions
-    this.columns.forEach((column) => {
-      column.forEach((hitObject) => {
-        hitObject.update();
-      });
-    });
+    this.updateHitObjects();
 
     this.resize();
 
@@ -352,29 +348,7 @@ export class Game {
 
         this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
 
-        this.columns.forEach((column) => {
-          let itemsToRemove = 0;
-
-          for (const hitObject of column) {
-            hitObject.update();
-
-            if (hitObject.shouldRemove) {
-              itemsToRemove++;
-            }
-
-            // If this hit object is above the top screen edge, there's no need to update the rest
-            if (hitObject.view.y < 0) {
-              break;
-            }
-          }
-
-          if (itemsToRemove) {
-            for (let i = 0; i < itemsToRemove; i++) {
-              this.notesContainer.removeChild(column[i].view);
-              column.shift();
-            }
-          }
-        });
+        this.updateHitObjects();
 
         if (this.timeElapsed > this.endTime && !this.finished) {
           this.finished = true;
@@ -633,5 +607,29 @@ export class Game {
       this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
 
     return (time * speed) / this.settings.mods.playbackRate;
+  }
+
+  public updateHitObjects() {
+    this.columns.forEach((column) => {
+      let itemsToRemove = 0;
+
+      for (const hitObject of column) {
+        hitObject.update();
+
+        if (hitObject.shouldRemove) {
+          itemsToRemove++;
+        }
+
+        // If this hit object is above the top screen edge, there's no need to update the rest
+        if (hitObject.view.y < 0) {
+          break;
+        }
+      }
+
+      for (let i = 0; i < itemsToRemove; i++) {
+        this.notesContainer.removeChild(column[i].view);
+        column.shift();
+      }
+    });
   }
 }
