@@ -22,7 +22,13 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { Color, laneColors, laneWidths, MAX_TIME_RANGE } from "./constants";
+import {
+  Color,
+  laneColors,
+  laneWidths,
+  MAX_TIME_RANGE,
+  SKIN_URL,
+} from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -575,7 +581,7 @@ export class Game {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     new Howl({
-      src: ["/skin/applause.mp3"],
+      src: [`${SKIN_URL}/applause.mp3`],
       format: "mp3",
       preload: true,
       autoplay: true,
