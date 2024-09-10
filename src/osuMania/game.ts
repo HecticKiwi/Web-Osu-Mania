@@ -22,7 +22,7 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { Color, laneColors, laneWidths } from "./constants";
+import { Color, laneColors, laneWidths, MAX_TIME_RANGE } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -248,6 +248,8 @@ export class Game {
 
     // For the debugger extension to detect the app
     window.__PIXI_APP__ = this.app;
+
+    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
@@ -622,5 +624,14 @@ export class Game {
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
     });
+  }
+
+  // Returns the px offset of the hit object from the judgement line based on
+  // how long it should take to reach the line
+  public getHitObjectOffset(time: number) {
+    const speed =
+      this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
+
+    return (time * speed) / this.settings.mods.playbackRate;
   }
 }

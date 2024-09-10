@@ -1,7 +1,7 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { gsap } from "gsap";
 import { Container, Sprite, Texture } from "pixi.js";
-import { colors, SCROLL_SPEED_MULT } from "../constants";
+import { colors } from "../constants";
 import { Game } from "../game";
 import { Tap } from "./tap";
 
@@ -29,11 +29,9 @@ export class Hold {
       this.body.width = this.game.scaledColumnWidth;
     }
 
-    const holdHeight =
-      ((holdData.endTime - this.data.time) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-      this.game.settings.mods.playbackRate;
+    const holdHeight = this.game.getHitObjectOffset(
+      holdData.endTime - holdData.time,
+    );
     this.body.height = holdHeight;
 
     this.view = new Container();
@@ -62,12 +60,13 @@ export class Hold {
   public update() {
     this.view.visible = true;
 
+    const holdDuration = this.data.endTime - this.data.time;
+    const holdHeight = this.game.getHitObjectOffset(holdDuration);
+    this.body.height = holdHeight;
+
     this.view.y =
-      ((this.game.timeElapsed - this.data.endTime) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-        this.game.settings.mods.playbackRate +
-      this.game.hitPosition;
+      this.game.hitPosition -
+      this.game.getHitObjectOffset(this.data.endTime - this.game.timeElapsed);
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {
@@ -152,11 +151,9 @@ export class Hold {
 
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
+        const remainingDuration = this.data.endTime - this.game.timeElapsed;
         const newHeight = Math.max(
-          ((this.data.endTime - this.game.timeElapsed) *
-            this.game.settings.scrollSpeed *
-            SCROLL_SPEED_MULT) /
-            this.game.settings.mods.playbackRate,
+          this.game.getHitObjectOffset(remainingDuration),
           0,
         );
         this.body.height = newHeight;
