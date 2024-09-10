@@ -1,5 +1,6 @@
 import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
 import { Howl } from "howler";
+import { SKIN_URL } from "../constants";
 import { Game } from "../game";
 
 export class AudioSystem {
@@ -17,7 +18,7 @@ export class AudioSystem {
       ["normal", "whistle", "finish", "clap"].forEach((sound) => {
         this.load(
           `skin-${sampleSet}-hit${sound}`,
-          `/skin/${sampleSet}-hit${sound}.ogg`,
+          `${SKIN_URL}/${sampleSet}-hit${sound}.ogg`,
         );
       });
     });
