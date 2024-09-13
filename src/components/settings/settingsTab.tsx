@@ -67,6 +67,16 @@ const SettingsTab = () => {
             </Tooltip>
           </div>
         </div>
+
+        <SwitchInput
+          label="Prefer Metadata in Original Language"
+          checked={settings.preferMetadataInOriginalLanguage}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.preferMetadataInOriginalLanguage = checked;
+            })
+          }
+        />
       </div>
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>

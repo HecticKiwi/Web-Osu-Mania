@@ -34,6 +34,7 @@ export type Settings = {
   ignoreBeatmapHitsounds: boolean;
   style: SkinStyle;
   errorBarScale: number;
+  preferMetadataInOriginalLanguage: boolean;
   keybinds: {
     keyModes: string[][];
   };
@@ -65,6 +66,7 @@ export const defaultSettings: Settings = {
   ignoreBeatmapHitsounds: false,
   style: "bars",
   errorBarScale: 1,
+  preferMetadataInOriginalLanguage: false,
   keybinds: {
     keyModes: [
       ["Space"],

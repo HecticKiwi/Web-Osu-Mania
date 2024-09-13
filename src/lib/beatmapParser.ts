@@ -7,7 +7,9 @@ export type HitObject = TapData | HoldData;
 
 export type Metadata = {
   title: string;
+  titleUnicode: string;
   artist: string;
+  artistUnicode: string;
   version: string;
   creator: string;
 };
@@ -338,11 +340,13 @@ export function parseHitObjects(lines: string[], columnCount: number) {
 
 export function parseMetadata(lines: string[]): Metadata {
   const title = getLineValue(lines, "Title");
+  const titleUnicode = getLineValue(lines, "TitleUnicode");
   const artist = getLineValue(lines, "Artist");
+  const artistUnicode = getLineValue(lines, "ArtistUnicode");
   const version = getLineValue(lines, "Version");
   const creator = getLineValue(lines, "Creator");
 
-  return { title, artist, version, creator };
+  return { title, titleUnicode, artist, artistUnicode, version, creator };
 }
 
 export function parseDifficulty(lines: string[]): Difficulty {

@@ -2,6 +2,7 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { useGameContext } from "../providers/gameOverlayProvider";
+import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
 
 const PauseScreen = ({
@@ -14,6 +15,15 @@ const PauseScreen = ({
   retry: () => void;
 }) => {
   const { closeGame } = useGameContext();
+  const { settings } = useSettingsContext();
+
+  const artist = settings.preferMetadataInOriginalLanguage
+    ? beatmapData.metadata.artistUnicode
+    : beatmapData.metadata.artist;
+
+  const title = settings.preferMetadataInOriginalLanguage
+    ? beatmapData.metadata.titleUnicode
+    : beatmapData.metadata.title;
 
   return (
     <>
@@ -21,7 +31,7 @@ const PauseScreen = ({
       <div className="fixed -top-[1px] left-0 h-[calc(100dvh+1px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
         <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
           <h1 className="text-3xl font-semibold md:text-5xl">
-            {beatmapData.metadata.artist} - {beatmapData.metadata.title}
+            {artist} - {title}
           </h1>
           <div className="mt-1 text-2xl text-muted-foreground">
             Beatmap by {beatmapData.metadata.creator}

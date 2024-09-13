@@ -8,7 +8,7 @@ const SwitchInput = ({
   return (
     <>
       <div className="grid grid-cols-2 items-center">
-        <div className="text-sm font-semibold text-muted-foreground">
+        <div className="pr-2 text-sm font-semibold text-muted-foreground">
           {label}
         </div>
         <Switch {...props} />
