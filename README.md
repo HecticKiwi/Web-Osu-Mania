@@ -20,8 +20,9 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 ## Development
 
 - Add a `.env` to the project's root:
+
 ```
-NEXT_PUBLIC_BASE_URL=https://web-osu-mania.vercel.app
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # I set this to my CDN in production, but for local dev this is left blank
 NEXT_PUBLIC_ASSETS_URL=
