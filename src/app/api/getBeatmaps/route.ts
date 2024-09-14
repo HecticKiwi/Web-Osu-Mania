@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(data, {
     headers: {
-      "Cache-Control": "public, max-age=1800",
+      "Cache-Control": "public, max-age=3600",
     },
   });
 }
