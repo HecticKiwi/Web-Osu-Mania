@@ -151,7 +151,9 @@ export class Tap {
     const delta = this.data.time - this.game.timeElapsed;
 
     this.view.visible = true;
-    this.view.y = this.game.hitPosition - this.game.getHitObjectOffset(delta);
+    this.view.y =
+      this.game.hitPosition -
+      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.time);
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {

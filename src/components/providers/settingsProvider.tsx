@@ -45,6 +45,7 @@ export type Settings = {
     hardRock: boolean;
     mirror: boolean;
     random: boolean;
+    constantSpeed: boolean;
   };
 };
 
@@ -97,6 +98,7 @@ export const defaultSettings: Settings = {
     hardRock: false,
     mirror: false,
     random: false,
+    constantSpeed: false,
   },
 };
 

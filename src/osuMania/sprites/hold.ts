@@ -30,9 +30,7 @@ export class Hold {
       this.body.width = this.game.scaledColumnWidth;
     }
 
-    this.height = this.game.getHitObjectOffset(
-      holdData.endTime - holdData.time,
-    );
+    this.height = this.game.getHitObjectOffset(holdData.time, holdData.endTime);
 
     this.view = new Container();
     this.view.addChild(this.body);
@@ -62,14 +60,15 @@ export class Hold {
 
     this.view.y =
       this.game.hitPosition -
-      this.game.getHitObjectOffset(this.data.endTime - this.game.timeElapsed);
+      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.endTime);
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {
       // Set height again in case of resize
       if (this.game.timeElapsed < this.data.time) {
         this.height = this.game.getHitObjectOffset(
-          this.data.endTime - this.data.time,
+          this.data.time,
+          this.data.endTime,
         );
       }
 
@@ -156,9 +155,11 @@ export class Hold {
 
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
-        const remainingDuration = this.data.endTime - this.game.timeElapsed;
         this.height = Math.max(
-          this.game.getHitObjectOffset(remainingDuration),
+          this.game.getHitObjectOffset(
+            this.game.timeElapsed,
+            this.data.endTime,
+          ),
           0,
         );
       }

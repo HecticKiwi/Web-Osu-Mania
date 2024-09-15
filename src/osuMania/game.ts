@@ -608,11 +608,36 @@ export class Game {
 
   // Returns the px offset of the hit object from the judgement line based on
   // how long it should take to reach the line
-  public getHitObjectOffset(time: number) {
-    const speed =
-      this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
+  public getHitObjectOffset(startTime: number, endTime: number) {
+    const flipped = startTime > endTime;
+    if (flipped) {
+      [startTime, endTime] = [endTime, startTime];
+    }
 
-    return (time * speed) / this.settings.mods.playbackRate;
+    const currentTimingPointIndex = this.timingPoints.findIndex(
+      (timingPoint) => startTime >= timingPoint.time,
+    );
+
+    let totalOffset = 0;
+    for (let i = currentTimingPointIndex; i < this.timingPoints.length; i++) {
+      const currentTimingPoint = this.timingPoints[i];
+      const nextTimingPoint = this.timingPoints[i + 1];
+
+      const intervalStart = Math.max(currentTimingPoint.time, startTime);
+      const intervalEnd = nextTimingPoint
+        ? Math.min(nextTimingPoint.time, endTime)
+        : endTime;
+
+      if (intervalStart < intervalEnd) {
+        const duration = intervalEnd - intervalStart;
+        const speed =
+          this.hitPosition / (MAX_TIME_RANGE / currentTimingPoint.scrollSpeed);
+
+        totalOffset += (duration * speed) / this.settings.mods.playbackRate;
+      }
+    }
+
+    return flipped ? -totalOffset : totalOffset;
   }
 
   public updateHitObjects() {

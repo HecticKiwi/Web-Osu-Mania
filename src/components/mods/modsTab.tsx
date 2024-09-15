@@ -83,6 +83,19 @@ const ModsTab = () => {
       <h3 className="mb-2 mt-6 text-lg font-semibold">Special</h3>
       <div className="space-y-4">
         <SwitchInput
+          label="Autoplay"
+          checked={settings.mods.autoplay}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.autoplay = checked;
+            })
+          }
+        />
+      </div>
+
+      <h3 className="mb-2 mt-6 text-lg font-semibold">Conversion</h3>
+      <div className="space-y-4">
+        <SwitchInput
           label="Random"
           checked={settings.mods.random}
           onCheckedChange={(checked) =>
@@ -109,11 +122,11 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
-          label="Autoplay"
-          checked={settings.mods.autoplay}
+          label="Constant Speed"
+          checked={settings.mods.constantSpeed}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
-              draft.mods.autoplay = checked;
+              draft.mods.constantSpeed = checked;
             })
           }
         />

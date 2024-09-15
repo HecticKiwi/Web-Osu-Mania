@@ -30,9 +30,13 @@ export type SampleSet = (typeof sampleSets)[number];
 
 export type TimingPoint = {
   time: number;
+  beatLength: number;
+  meter: number;
   sampleSet: SampleSet;
   sampleIndex: number;
+  uninherited: boolean;
   volume: number;
+  scrollSpeed: number;
 };
 
 export type HitSound = {
@@ -120,7 +124,7 @@ export const parseOsz = async (
     lines,
     difficulty.keyCount,
   );
-  const timingPoints = parseTimingPoints(lines, delay);
+  const timingPoints = parseTimingPoints(lines, delay, startTime, endTime);
 
   const hitWindows = getHitWindows(difficulty.od);
 
@@ -359,13 +363,19 @@ export function parseDifficulty(lines: string[]): Difficulty {
 export function parseTimingPoints(
   lines: string[],
   delay: number,
+  startTime: number,
+  endTime: number,
 ): TimingPoint[] {
   const startIndex = lines.indexOf("[TimingPoints]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
   const timingPointLines = lines.slice(startIndex, endIndex);
 
-  const timingPoints: TimingPoint[] = timingPointLines.map((line) => {
+  const settings = getSettings();
+  const baseScrollSpeed = settings.scrollSpeed;
+
+  // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
+  const timingPoints: TimingPoint[] = timingPointLines.map((line, i) => {
     const [
       time,
       beatLength,
@@ -377,15 +387,82 @@ export function parseTimingPoints(
       effects,
     ] = line.split(",").map((value) => Number(value));
 
-    return {
-      time: time + delay,
+    const timingPoint: TimingPoint = {
+      time: i === 0 ? 0 : time + delay,
+      beatLength,
+      meter,
       sampleSet: sampleSets[sampleSet],
       sampleIndex,
+      uninherited: !!uninherited,
       volume: volume / 100,
+      scrollSpeed: baseScrollSpeed,
     };
+
+    return timingPoint;
   });
 
+  if (!settings.mods.constantSpeed) {
+    const mostCommonBeatLength = getMostCommonBeatLength(
+      timingPoints.filter((timingPoint) => timingPoint.uninherited),
+      startTime,
+      endTime,
+    );
+
+    let lastUninheritedTimingPoint: TimingPoint | undefined;
+    timingPoints.forEach((timingPoint: TimingPoint) => {
+      if (timingPoint.uninherited) {
+        // Set uninherited timing point scroll speeds proportional to the most common beatLength
+        // e.g. If beatLength is half of the most common beatLength then BPM = 2 * most common BPM, so double scroll speed
+        timingPoint.scrollSpeed =
+          baseScrollSpeed * (mostCommonBeatLength / timingPoint.beatLength);
+
+        lastUninheritedTimingPoint = timingPoint;
+      } else {
+        // The beatLength of inherited timing points indicate their scrollSpeed relative to the last uninherited timing point
+        // e.g. If beatLength is -50, scrollSpeed is double the last uninherited timing point's scroll speed
+        timingPoint.scrollSpeed =
+          lastUninheritedTimingPoint!.scrollSpeed *
+          (100 / -timingPoint.beatLength);
+      }
+    });
+  }
+
   return timingPoints;
+}
+
+function getMostCommonBeatLength(
+  uninheritedTimingPoints: TimingPoint[],
+  startTime: number,
+  endTime: number,
+) {
+  const beatLengthDurations = new Map<number, number>();
+
+  for (let i = 0; i < uninheritedTimingPoints.length; i++) {
+    const current = uninheritedTimingPoints[i];
+    const next = uninheritedTimingPoints[i + 1];
+
+    const intervalStart = Math.max(current.time, startTime);
+    const intervalEnd = next ? Math.min(next.time, endTime) : endTime;
+
+    const duration = intervalEnd - intervalStart;
+
+    beatLengthDurations.set(
+      current.beatLength,
+      (beatLengthDurations.get(current.beatLength) || 0) + duration,
+    );
+  }
+
+  let mostCommonBeatLength = 0;
+  let maxDuration = 0;
+
+  beatLengthDurations.forEach((duration, beatLength) => {
+    if (duration > maxDuration) {
+      mostCommonBeatLength = beatLength;
+      maxDuration = duration;
+    }
+  });
+
+  return mostCommonBeatLength;
 }
 
 function getLineValue(lines: string[], key: string) {
