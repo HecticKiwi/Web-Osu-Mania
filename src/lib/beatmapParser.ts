@@ -287,7 +287,7 @@ export function parseHitObjects(lines: string[], columnCount: number) {
       hitSample,
     });
 
-    if (isHoldNote) {
+    if (isHoldNote && !mods.holdOff) {
       const endTime = parseInt(sampleSet[0]);
 
       hitObjects.push({

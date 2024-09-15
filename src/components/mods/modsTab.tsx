@@ -130,6 +130,15 @@ const ModsTab = () => {
             })
           }
         />
+        <SwitchInput
+          label="Hold Off"
+          checked={settings.mods.holdOff}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.holdOff = checked;
+            })
+          }
+        />
       </div>
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Custom</h3>

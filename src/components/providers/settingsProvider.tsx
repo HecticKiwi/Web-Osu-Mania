@@ -47,6 +47,7 @@ export type Settings = {
     mirror: boolean;
     random: boolean;
     constantSpeed: boolean;
+    holdOff: boolean;
   };
 };
 
@@ -101,6 +102,7 @@ export const defaultSettings: Settings = {
     mirror: false,
     random: false,
     constantSpeed: false,
+    holdOff: false,
   },
 };
 
