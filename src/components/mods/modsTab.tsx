@@ -24,6 +24,7 @@ const ModsTab = () => {
       <div className="space-y-4">
         <SwitchInput
           label="Easy"
+          tooltip="Larger timing windows."
           checked={settings.mods.easy}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -37,6 +38,7 @@ const ModsTab = () => {
         />
         <SwitchInput
           label="Half Time"
+          tooltip="0.75x speed (don't ask me why it's called half time)."
           checked={settings.mods.playbackRate === 0.75}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -54,6 +56,7 @@ const ModsTab = () => {
       <div className="space-y-4">
         <SwitchInput
           label="Hard Rock"
+          tooltip="Smaller timing windows."
           checked={settings.mods.hardRock}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -67,6 +70,7 @@ const ModsTab = () => {
         />
         <SwitchInput
           label="Double Time"
+          tooltip="1.5x speed (don't ask me why it's called double time)."
           checked={settings.mods.playbackRate === 1.5}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -84,6 +88,7 @@ const ModsTab = () => {
       <div className="space-y-4">
         <SwitchInput
           label="Autoplay"
+          tooltip="Watch a perfect automated play."
           checked={settings.mods.autoplay}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -97,6 +102,7 @@ const ModsTab = () => {
       <div className="space-y-4">
         <SwitchInput
           label="Random"
+          tooltip="Shuffle around the notes."
           checked={settings.mods.random}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -110,6 +116,7 @@ const ModsTab = () => {
         />
         <SwitchInput
           label="Mirror"
+          tooltip="Notes are flipped horizontally."
           checked={settings.mods.mirror}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -123,6 +130,7 @@ const ModsTab = () => {
         />
         <SwitchInput
           label="Constant Speed"
+          tooltip="No more scroll speed changes during a song."
           checked={settings.mods.constantSpeed}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
@@ -132,6 +140,7 @@ const ModsTab = () => {
         />
         <SwitchInput
           label="Hold Off"
+          tooltip="All hold notes become normal notes."
           checked={settings.mods.holdOff}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
