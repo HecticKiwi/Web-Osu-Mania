@@ -23,6 +23,7 @@ export type Settings = {
   sfxVolume: number;
   scrollSpeed: number;
   backgroundDim: number;
+  backgroundBlur: number;
   show300g: boolean;
   showErrorBar: boolean;
   audioOffset: number;
@@ -56,6 +57,7 @@ export const defaultSettings: Settings = {
   sfxVolume: 0.4,
   scrollSpeed: 20,
   backgroundDim: 0.75,
+  backgroundBlur: 0,
   show300g: true,
   showErrorBar: true,
   audioOffset: 0,

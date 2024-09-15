@@ -107,7 +107,7 @@ const GameModal = () => {
             fill
             className="-z-[1] select-none object-cover"
             style={{
-              filter: `brightness(${1 - settings.backgroundDim})`,
+              filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
             }}
           />
 

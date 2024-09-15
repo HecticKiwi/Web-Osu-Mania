@@ -18,6 +18,7 @@ import {
 import SwitchInput from "../switchInput";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import BackgroundBlurSlider from "./backgroundBlurSlider";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
@@ -39,6 +40,13 @@ const SettingsTab = () => {
           </div>
 
           <BackgroundDimSlider />
+        </div>
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Background Blur
+          </div>
+
+          <BackgroundBlurSlider />
         </div>
 
         <div className="grid grid-cols-2 items-center">
@@ -67,7 +75,10 @@ const SettingsTab = () => {
             </Tooltip>
           </div>
         </div>
+      </div>
 
+      <h3 className="mt-6 text-lg font-semibold">Language</h3>
+      <div className="mt-2 space-y-3">
         <SwitchInput
           label="Prefer Metadata in Original Language"
           checked={settings.preferMetadataInOriginalLanguage}
