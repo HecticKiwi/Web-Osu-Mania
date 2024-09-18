@@ -28,10 +28,6 @@ NEXT_PUBLIC_BASE_URL=https://web-osu-mania.vercel.app
 NEXT_PUBLIC_ASSETS_URL=
 
 NEXT_PUBLIC_API_URL=http://localhost:8787
-
-# Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
-OSU_API_CLIENT_ID=
-OSU_API_CLIENT_SECRET=
 ```
 
 - Install NPM packages with `npm install`
