@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
-    "@next/bundle-analyzer": "^14.2.7",
     "@pixi/layers": "^2.1.0",
     "@pixi/react": "^7.1.2",
     "@pixi/sound": "^6.0.0",

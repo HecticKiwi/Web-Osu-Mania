@@ -140,9 +140,8 @@ export async function getBeatmaps({
     .filter(Boolean)
     .join(" ");
 
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const url = queryString.stringifyUrl({
-    url: `${baseUrl}/api/getBeatmaps`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}/getBeatmaps`,
     query: {
       q,
       m: 3, // 3 = mania mode

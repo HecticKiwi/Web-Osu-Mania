@@ -27,6 +27,8 @@ NEXT_PUBLIC_BASE_URL=https://web-osu-mania.vercel.app
 # I set this to my CDN in production, but for local dev this is left blank
 NEXT_PUBLIC_ASSETS_URL=
 
+NEXT_PUBLIC_API_URL=http://localhost:8787
+
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
 OSU_API_CLIENT_SECRET=
@@ -34,6 +36,16 @@ OSU_API_CLIENT_SECRET=
 
 - Install NPM packages with `npm install`
 - Run with `npm run dev`
+
+- In another terminal, cd into `workers` and add a `.dev.vars` file with the following:
+
+```
+# Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
+OSU_API_CLIENT_ID=
+OSU_API_CLIENT_SECRET=
+```
+
+- Run workers with `npm run dev`
 
 ## Disclaimer
 
