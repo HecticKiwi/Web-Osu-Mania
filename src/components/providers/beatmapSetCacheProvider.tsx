@@ -92,6 +92,10 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
             beatmapSetId.toString(),
           );
         } else {
+          if (!settings.customBeatmapProvider.includes("$setId")) {
+            throw new Error("Custom beatmap provider URL is missing $setId.");
+          }
+
           apiUrl = settings.customBeatmapProvider.replace(
             "$setId",
             beatmapSetId.toString(),
