@@ -421,7 +421,7 @@ export function parseTimingPoints(
         // The beatLength of inherited timing points indicate their scrollSpeed relative to the last uninherited timing point
         // e.g. If beatLength is -50, scrollSpeed is double the last uninherited timing point's scroll speed
         timingPoint.scrollSpeed =
-          lastUninheritedTimingPoint!.scrollSpeed *
+          (lastUninheritedTimingPoint?.scrollSpeed ?? baseScrollSpeed) *
           (100 / -timingPoint.beatLength);
       }
     });
