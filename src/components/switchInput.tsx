@@ -21,8 +21,10 @@ const SwitchInput = ({
         {tooltip ? (
           <div className="group flex">
             <Tooltip open>
-              <TooltipTrigger>
-                <Switch className="block" {...props} />
+              <TooltipTrigger asChild>
+                <div>
+                  <Switch className="block" {...props} />
+                </div>
               </TooltipTrigger>
               <TooltipContent className="sr-only group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
                 <p>{tooltip}</p>
