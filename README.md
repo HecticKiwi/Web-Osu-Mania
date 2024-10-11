@@ -4,7 +4,7 @@ Web osu!mania is an unofficial web port of osu!'s piano-style gamemode, osu!mani
 
 Game mechanics attempt to match (if not come close to) the official osu!mania's V2 scoring system.
 
-[Visit the site](https://web-osu-mania.vercel.app/)
+[Visit the site](https://web-osu-mania.pages.dev/)
 
 ## Demo
 
@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 - Add a `.env` to the project's root:
 
 ```
-NEXT_PUBLIC_BASE_URL=https://web-osu-mania.vercel.app
+NEXT_PUBLIC_BASE_URL=https://web-osu-mania.pages.dev/
 
 # I set this to my CDN in production, but for local dev this is left blank
 NEXT_PUBLIC_ASSETS_URL=
