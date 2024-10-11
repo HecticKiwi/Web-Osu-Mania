@@ -12,6 +12,8 @@ import { Varela_Round } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
+export const runtime = "edge";
+
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
