@@ -1,6 +1,7 @@
 import BeatmapSetsInfiniteScroll from "@/components/beatmapSetsInfiniteScroll";
 import MobileSidebar from "@/components/mobileSidebar";
 import SidebarContent from "@/components/sidebar";
+import UrlWarning from "@/components/urlWarning";
 import { Suspense } from "react";
 
 export default async function Home({
@@ -29,6 +30,8 @@ export default async function Home({
 
         {/* Duplicating UI like This is probably terrible practice */}
         <MobileSidebar />
+
+        <UrlWarning />
 
         <div className="w-full max-w-screen-xl p-4 pt-0 lg:px-8 lg:pb-8">
           <Suspense>
