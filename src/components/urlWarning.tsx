@@ -9,11 +9,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useIsClient } from "@uidotdev/usehooks";
 import { CircleAlert } from "lucide-react";
 import Link from "next/link";
 
 const UrlWarning = () => {
-  if (window.location.host !== "web-osu-mania.vercel.app") {
+  const isClient = useIsClient();
+
+  if (!isClient || window.location.host !== "web-osu-mania.vercel.app") {
     return null;
   }
 
