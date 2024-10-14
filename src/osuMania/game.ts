@@ -235,7 +235,7 @@ export class Game {
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
-      backgroundAlpha: 0.5,
+      backgroundAlpha: 0,
       antialias: true,
       autoDensity: true,
       resolution: window.devicePixelRatio,
