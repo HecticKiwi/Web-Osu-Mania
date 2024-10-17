@@ -28,6 +28,35 @@ export class InputSystem {
     document.addEventListener("keyup", this.handleKeyUp);
   }
 
+  public updateGamepadInputs() {
+    const gamepad = navigator.getGamepads()[0];
+
+    if (!gamepad) {
+      return;
+    }
+
+    for (let i = 0; i < gamepad.buttons.length; i++) {
+      const column = this.keybinds.indexOf(`🎮Btn${i}`);
+
+      if (column === -1) {
+        continue;
+      }
+
+      const button = gamepad.buttons[i];
+
+      if (button.pressed && !this.pressedColumns[column]) {
+        this.tappedColumns[column] = true;
+        this.pressedColumns[column] = true;
+      }
+
+      if (!button.pressed && this.pressedColumns[column]) {
+        this.tappedColumns[column] = false;
+        this.pressedColumns[column] = false;
+        this.releasedColumns[column] = true;
+      }
+    }
+  }
+
   public dispose() {
     document.removeEventListener("keydown", this.handleKeyDown);
     document.removeEventListener("keyup", this.handleKeyUp);

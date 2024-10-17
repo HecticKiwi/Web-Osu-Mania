@@ -317,6 +317,7 @@ export class Game {
 
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
+    this.inputSystem.updateGamepadInputs();
 
     if (!this.settings.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());

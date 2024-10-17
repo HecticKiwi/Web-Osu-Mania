@@ -97,6 +97,10 @@ export function keyCodeToString(code: string) {
     return code.slice(3); // KeyD => D
   }
 
+  if (code.startsWith("Digit")) {
+    return code.slice(5); // Digit6 => 6
+  }
+
   const keyDictionary: { [k: string]: string } = {
     ControlLeft: "LControl",
     ControlRight: "RControl",
@@ -125,7 +129,6 @@ export function keyCodeToString(code: string) {
   }
 
   return code;
-  // if (code.)
 }
 
 export function removeFileExtension(filename: string) {
