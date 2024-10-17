@@ -8,6 +8,8 @@ export class InputSystem {
   public pressedKeys: Map<string, boolean> = new Map();
   public releasedKeys: Map<string, boolean> = new Map();
 
+  public gamepadState: GamepadButton[] = [];
+
   public tappedColumns: boolean[];
   public pressedColumns: boolean[];
   public releasedColumns: boolean[];
@@ -44,17 +46,19 @@ export class InputSystem {
 
       const button = gamepad.buttons[i];
 
-      if (button.pressed && !this.pressedColumns[column]) {
+      if (button.pressed && !this.gamepadState[i]?.pressed) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
       }
 
-      if (!button.pressed && this.pressedColumns[column]) {
+      if (!button.pressed && this.gamepadState[i]?.pressed) {
         this.tappedColumns[column] = false;
         this.pressedColumns[column] = false;
         this.releasedColumns[column] = true;
       }
     }
+
+    this.gamepadState = [...gamepad.buttons];
   }
 
   public dispose() {
