@@ -8,7 +8,7 @@ Features:
 
 - Search & filter beatmaps just like on the osu! site
 - Gameplay mods + custom song speed
-- A variety of settings which includes:
+- A variety of settings which include:
   - Scroll speed
   - Bar and circle skins
   - Upscroll
