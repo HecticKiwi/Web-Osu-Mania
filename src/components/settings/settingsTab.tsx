@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import Keybinds from "../keybinds";
 import {
   SKIN_STYLES,
@@ -70,7 +71,8 @@ const SettingsTab = () => {
                 />
               </TooltipTrigger>
               <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {settings.scrollSpeed}
+                {Math.round(MAX_TIME_RANGE / settings.scrollSpeed)} (speed{" "}
+                {settings.scrollSpeed})
               </TooltipContent>
             </Tooltip>
           </div>
