@@ -71,7 +71,7 @@ const SettingsTab = () => {
                 />
               </TooltipTrigger>
               <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {Math.round(MAX_TIME_RANGE / settings.scrollSpeed)} (speed{" "}
+                {Math.round(MAX_TIME_RANGE / settings.scrollSpeed)}ms (speed{" "}
                 {settings.scrollSpeed})
               </TooltipContent>
             </Tooltip>
