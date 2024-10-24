@@ -1,7 +1,7 @@
 {
   "redirects": [
     {
-      "source": "https://web-osu-mania.vercel.app/(.*)",
+      "source": "/(.*)",
       "destination": "https://web-osu-mania.pages.dev/$1",
       "permanent": true
     }
