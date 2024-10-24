@@ -1,4 +1,10 @@
 {
   "version": 1,
-  "exclude": ["/favicon.ico", "/RobotoMono.ttf", "/VarelaRound.ttf", "/skin/*"]
+  "exclude": [
+    "/favicon.ico",
+    "/RobotoMono.ttf",
+    "/VarelaRound.ttf",
+    "/googlefaaf0b4ff174ffa6.html",
+    "/skin/*"
+  ]
 }
