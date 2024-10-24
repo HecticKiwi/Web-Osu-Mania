@@ -1,8 +1,8 @@
 {
   "redirects": [
     {
-      "source": "/(.*)",
-      "destination": "https://web-osu-mania.pages.dev/$1",
+      "source": "/",
+      "destination": "https://web-osu-mania.pages.dev/",
       "permanent": true
     }
   ]
