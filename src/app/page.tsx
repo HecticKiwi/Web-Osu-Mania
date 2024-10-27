@@ -1,7 +1,14 @@
 import BeatmapSetsInfiniteScroll from "@/components/beatmapSetsInfiniteScroll";
 import MobileSidebar from "@/components/mobileSidebar";
 import SidebarContent from "@/components/sidebar";
+import { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default async function Home({
   searchParams,
