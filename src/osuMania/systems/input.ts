@@ -42,8 +42,6 @@ export class InputSystem {
 
     if (!gamepad) return;
 
-    const updatedPressed = new Set<number>();
-
     gamepad.buttons.forEach((button, i) => {
       const column = this.keybindsMap.get(`🎮Btn${i}`);
       if (column === undefined) return;
@@ -51,18 +49,12 @@ export class InputSystem {
       if (button.pressed && !this.gamepadState[i]?.pressed) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
-        updatedPressed.add(column);
       } else if (!button.pressed && this.gamepadState[i]?.pressed) {
-        this.releasedColumns[column] = true;
-        updatedPressed.delete(column);
+        this.pressedColumns[column] = false;
       }
     });
 
     this.gamepadState = [...gamepad.buttons];
-
-    this.pressedColumns.forEach((_, i) => {
-      if (!updatedPressed.has(i)) this.pressedColumns[i] = false;
-    });
   }
 
   public dispose() {
