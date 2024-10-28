@@ -2,11 +2,11 @@ import { Game } from "../game";
 
 export class InputSystem {
   private game: Game;
-  private keybinds: string[];
+  private keybindsMap: Map<string, number>;
 
-  public tappedKeys: Map<string, boolean> = new Map();
-  public pressedKeys: Map<string, boolean> = new Map();
-  public releasedKeys: Map<string, boolean> = new Map();
+  public tappedKeys: Set<string> = new Set();
+  public pressedKeys: Set<string> = new Set();
+  public releasedKeys: Set<string> = new Set();
 
   public gamepadState: GamepadButton[] = [];
 
@@ -16,8 +16,8 @@ export class InputSystem {
 
   constructor(game: Game) {
     this.game = game;
-    this.keybinds =
-      this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
+    this.keybindsMap = new Map();
+    this.initKeybindsMap();
 
     this.tappedColumns = new Array(this.game.difficulty.keyCount).fill(false);
     this.pressedColumns = new Array(this.game.difficulty.keyCount).fill(false);
@@ -30,33 +30,30 @@ export class InputSystem {
     document.addEventListener("keyup", this.handleKeyUp);
   }
 
+  private initKeybindsMap() {
+    const keybinds = this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
+    keybinds.forEach((key, index) => {
+      this.keybindsMap.set(key, index);
+    });
+  }
+
   public updateGamepadInputs() {
     const gamepad = navigator.getGamepads()[0];
 
-    if (!gamepad) {
-      return;
-    }
+    if (!gamepad) return;
 
-    for (let i = 0; i < gamepad.buttons.length; i++) {
-      const column = this.keybinds.indexOf(`🎮Btn${i}`);
-
-      if (column === -1) {
-        continue;
-      }
-
-      const button = gamepad.buttons[i];
+    gamepad.buttons.forEach((button, i) => {
+      const column = this.keybindsMap.get(`🎮Btn${i}`);
+      if (column === undefined) return;
 
       if (button.pressed && !this.gamepadState[i]?.pressed) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
-      }
-
-      if (!button.pressed && this.gamepadState[i]?.pressed) {
-        this.tappedColumns[column] = false;
+      } else if (!button.pressed && this.gamepadState[i]?.pressed) {
         this.pressedColumns[column] = false;
         this.releasedColumns[column] = true;
       }
-    }
+    });
 
     this.gamepadState = [...gamepad.buttons];
   }
@@ -68,11 +65,11 @@ export class InputSystem {
 
   public handleKeyDown(event: KeyboardEvent) {
     if (!this.pressedKeys.has(event.code)) {
-      this.tappedKeys.set(event.code, true);
-      this.pressedKeys.set(event.code, true);
+      this.tappedKeys.add(event.code);
+      this.pressedKeys.add(event.code);
 
-      const column = this.keybinds.indexOf(event.code);
-      if (column !== -1) {
+      const column = this.keybindsMap.get(event.code);
+      if (column !== undefined) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
       }
@@ -81,10 +78,10 @@ export class InputSystem {
 
   public handleKeyUp(event: KeyboardEvent) {
     this.pressedKeys.delete(event.code);
-    this.releasedKeys.set(event.code, true);
+    this.releasedKeys.add(event.code);
 
-    const column = this.keybinds.indexOf(event.code);
-    if (column !== -1) {
+    const column = this.keybindsMap.get(event.code);
+    if (column !== undefined) {
       this.tappedColumns[column] = false;
       this.pressedColumns[column] = false;
       this.releasedColumns[column] = true;
@@ -92,10 +89,7 @@ export class InputSystem {
   }
 
   public anyKeyTapped() {
-    return (
-      this.tappedColumns.includes(true) ||
-      (this.tappedKeys.size > 0 && !this.tappedKeys.has("Escape"))
-    );
+    return this.tappedColumns.some((value) => value);
   }
 
   public clearInputs() {
