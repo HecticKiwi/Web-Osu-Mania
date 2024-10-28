@@ -51,6 +51,7 @@ export class InputSystem {
         this.pressedColumns[column] = true;
       } else if (!button.pressed && this.gamepadState[i]?.pressed) {
         this.pressedColumns[column] = false;
+        this.releasedColumns[column] = true;
       }
     });
 
