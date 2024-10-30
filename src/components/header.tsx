@@ -14,7 +14,7 @@ const Header = () => {
           <nav className="flex items-center gap-8 rounded-xl border px-6 py-2">
             <Link href={"/"} prefetch={false}>
               <div className="flex items-center gap-2">
-                <ManiaIcon difficultyRating={4} className="shrink-0" />
+                <ManiaIcon difficultyRating={6} className="shrink-0" />
                 <span className="hidden text-xl font-semibold sm:block">
                   Web osu!mania
                 </span>
