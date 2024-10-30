@@ -126,7 +126,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
                 <div>
                   <p className="line-clamp-1">{beatmap.version}</p>
                   <p className="text-muted-foreground">
-                    {beatmap.difficulty_rating}★
+                    {beatmap.difficulty_rating.toFixed(2)}★
                   </p>
                 </div>
               </button>
