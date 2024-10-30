@@ -4,6 +4,11 @@
       "source": "/",
       "destination": "https://web-osu-mania.pages.dev/",
       "permanent": true
+    },
+    {
+      "source": "/faq",
+      "destination": "https://web-osu-mania.pages.dev/faq",
+      "permanent": true
     }
   ]
 }
