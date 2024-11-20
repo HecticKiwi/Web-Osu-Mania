@@ -84,7 +84,7 @@ export interface BeatmapData {
   startTime: number;
   endTime: number;
   hitWindows: HitWindows;
-  song: Sound;
+  song: Required<Sound>;
   backgroundUrl: string;
   metadata: Metadata;
   difficulty: Difficulty;
