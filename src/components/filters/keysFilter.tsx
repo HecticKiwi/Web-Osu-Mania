@@ -16,8 +16,8 @@ const KeysFilter = ({ className }: { className?: string }) => {
       <div className={cn(className)}>
         <span className="text-muted-foreground">Mode</span>
 
-        <div className="mt-2 flex flex-wrap gap-2">
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((key) => {
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].map((key) => {
             const params = new URLSearchParams(searchParams.toString());
 
             let newKeysParam: string[] = [];
@@ -41,7 +41,11 @@ const KeysFilter = ({ className }: { className?: string }) => {
                 variant={"outline"}
                 asChild
               >
-                <Link href={`/?${params.toString()}`} prefetch={false}>
+                <Link
+                  href={`/?${params.toString()}`}
+                  prefetch={false}
+                  className="w-[44px] px-0"
+                >
                   {key}K
                 </Link>
               </Toggle>

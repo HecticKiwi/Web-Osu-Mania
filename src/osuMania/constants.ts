@@ -38,6 +38,18 @@ export const laneColors: Color[][] = [
     "blue",
     "white",
   ],
+  [
+    "white",
+    "blue",
+    "white",
+    "blue",
+    "white",
+    "white",
+    "blue",
+    "white",
+    "blue",
+    "white",
+  ],
 ] as const;
 
 export const laneWidths = [56, 56, 56, 56, 50, 47, 42, 40, 38, 35] as const;

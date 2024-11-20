@@ -92,6 +92,18 @@ export const defaultSettings: Settings = {
         "KeyL",
         "Semicolon",
       ],
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyV",
+        "KeyN",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ],
     ],
   },
   mods: {
