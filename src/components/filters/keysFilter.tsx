@@ -44,7 +44,7 @@ const KeysFilter = ({ className }: { className?: string }) => {
                 <Link
                   href={`/?${params.toString()}`}
                   prefetch={false}
-                  className="w-[44px] px-0"
+                  className="w-[43px] px-0"
                 >
                   {key}K
                 </Link>
