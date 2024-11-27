@@ -34,26 +34,16 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 - Add a `.env` to the project's root:
 
 ```
-NEXT_PUBLIC_BASE_URL=https://web-osu-mania.pages.dev/
+NEXT_PUBLIC_BASE_URL=https://web-osu-mania.pages.dev
 
-# I set this to my CDN in production, but for local dev this is left blank
-NEXT_PUBLIC_ASSETS_URL=
-
-NEXT_PUBLIC_API_URL=http://localhost:8787
-```
-
-- Install NPM packages with `npm install`
-- Run with `npm run dev`
-
-- In another terminal, cd into `workers` and add a `.dev.vars` file with the following:
-
-```
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
 OSU_API_CLIENT_SECRET=
 ```
 
-- Run workers with `npm run dev`
+- Install NPM packages with `npm install`
+- Run with `npm run dev`
+- Open in browser at [http://localhost:3000](http://localhost:3000)
 
 ## Disclaimer
 
