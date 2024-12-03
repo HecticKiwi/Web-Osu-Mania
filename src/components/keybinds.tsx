@@ -20,6 +20,46 @@ const Keybinds = () => {
   const [keyBindPath, setKeyBindPath] = useState<any | null>(null);
   const { settings, setSettings } = useSettingsContext();
 
+  // Listen for gamepad events
+  useEffect(() => {
+    let animationFrameId: number;
+
+    const checkGamepad = () => {
+      const gamepads = navigator.getGamepads();
+      const gamepad = gamepads[0];
+
+      if (gamepad) {
+        const pressedButtonIndex = gamepad.buttons.findIndex(
+          (button) => button.pressed,
+        );
+
+        if (pressedButtonIndex !== -1) {
+          setSettings(
+            produce((draft) => {
+              setNestedProperty(
+                draft,
+                keyBindPath,
+                `🎮Btn${pressedButtonIndex}`,
+              );
+            }),
+          );
+          setKeyBindPath(null);
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(checkGamepad);
+    };
+
+    if (keyBindPath) {
+      animationFrameId = requestAnimationFrame(checkGamepad);
+    }
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [keyBindPath, setSettings]);
+
+  // Listen for keyboard events
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       event.stopPropagation();
@@ -63,15 +103,15 @@ const Keybinds = () => {
 
       <DialogContent
         aria-describedby={undefined}
-        className="w-fit max-w-full overflow-x-auto scrollbar"
+        className="w-fit max-w-full gap-0 overflow-x-auto scrollbar"
         onEscapeKeyDown={(e) => {
           if (keyBindPath) {
             e.preventDefault();
           }
         }}
       >
-        <DialogHeader>
-          <div className="mb-6 flex items-center gap-5">
+        <DialogHeader className="mb-4">
+          <div className="flex items-center gap-5">
             <span className="grow border-t border-border "></span>
             <DialogTitle className="text-2xl font-bold text-muted-foreground">
               Keybinds
@@ -80,8 +120,13 @@ const Keybinds = () => {
           </div>
         </DialogHeader>
 
+        <p className="text-muted-foreground">
+          Supports keyboard and gamepad inputs. If you're using touch controls,
+          you don't need to do anything here - just tap on the lanes (´• ω •`)
+        </p>
+
         {/* Keys */}
-        <div className="w-4xl flex flex-col">
+        <div className="w-4xl mt-4 flex flex-col">
           {settings.keybinds.keyModes.map((keyMode, i) => (
             <div
               key={i}
@@ -121,6 +166,7 @@ const Keybinds = () => {
               }),
             );
           }}
+          className="mt-4"
         >
           Reset Keybinds
         </Button>

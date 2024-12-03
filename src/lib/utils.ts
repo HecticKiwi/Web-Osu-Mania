@@ -89,12 +89,19 @@ export function getSettings() {
     ...settings.mods,
   };
 
+  // Set default 10K keybinds
+  settings.keybinds.keyModes[9] = [...defaultSettings.keybinds.keyModes[9]];
+
   return settings;
 }
 
 export function keyCodeToString(code: string) {
   if (code.startsWith("Key")) {
     return code.slice(3); // KeyD => D
+  }
+
+  if (code.startsWith("Digit")) {
+    return code.slice(5); // Digit6 => 6
   }
 
   const keyDictionary: { [k: string]: string } = {
@@ -125,7 +132,6 @@ export function keyCodeToString(code: string) {
   }
 
   return code;
-  // if (code.)
 }
 
 export function removeFileExtension(filename: string) {

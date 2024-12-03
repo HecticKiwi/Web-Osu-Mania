@@ -1,5 +1,3 @@
-import { HitObject } from "./lib/beatmapParser";
-import { OldHold } from "./osuMania/sprites/hold";
 import { Hold } from "./osuMania/sprites/hold";
 import { Tap } from "./osuMania/sprites/tap";
 

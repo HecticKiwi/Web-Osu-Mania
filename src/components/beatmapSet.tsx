@@ -16,11 +16,13 @@ import { useSearchParams } from "next/navigation";
 import ManiaIcon from "./maniaIcon";
 import { useAudioContext } from "./providers/audioPreviewProvider";
 import { useGameContext } from "./providers/gameOverlayProvider";
+import { useSettingsContext } from "./providers/settingsProvider";
 import { Button } from "./ui/button";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   const { playAudio, stopAudio } = useAudioContext();
   const { startGame } = useGameContext();
+  const { settings } = useSettingsContext();
 
   const searchParams = useSearchParams();
 
@@ -35,6 +37,14 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
       stopAudio();
     }
   };
+
+  const artist = settings.preferMetadataInOriginalLanguage
+    ? beatmapSet.artist_unicode
+    : beatmapSet.artist;
+
+  const title = settings.preferMetadataInOriginalLanguage
+    ? beatmapSet.title_unicode
+    : beatmapSet.title;
 
   return (
     <Popover onOpenChange={handleOpenChange}>
@@ -74,11 +84,9 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
           </Button>
 
           {/* Details */}
-          <div className="mt-auto line-clamp-1 text-xl">{beatmapSet.title}</div>
+          <div className="mt-auto line-clamp-1 text-xl">{title}</div>
           <div className="flex w-full items-end justify-between gap-8">
-            <span className="line-clamp-1 text-primary">
-              by {beatmapSet.artist}
-            </span>
+            <span className="line-clamp-1 text-primary">by {artist}</span>
             <span className="text-sm text-muted-foreground">
               {secondsToMMSS(
                 Math.max(
@@ -118,7 +126,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
                 <div>
                   <p className="line-clamp-1">{beatmap.version}</p>
                   <p className="text-muted-foreground">
-                    {beatmap.difficulty_rating}★
+                    {beatmap.difficulty_rating.toFixed(2)}★
                   </p>
                 </div>
               </button>

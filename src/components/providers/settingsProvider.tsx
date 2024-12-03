@@ -23,6 +23,7 @@ export type Settings = {
   sfxVolume: number;
   scrollSpeed: number;
   backgroundDim: number;
+  backgroundBlur: number;
   show300g: boolean;
   showErrorBar: boolean;
   audioOffset: number;
@@ -34,6 +35,7 @@ export type Settings = {
   ignoreBeatmapHitsounds: boolean;
   style: SkinStyle;
   errorBarScale: number;
+  preferMetadataInOriginalLanguage: boolean;
   keybinds: {
     keyModes: string[][];
   };
@@ -44,6 +46,8 @@ export type Settings = {
     hardRock: boolean;
     mirror: boolean;
     random: boolean;
+    constantSpeed: boolean;
+    holdOff: boolean;
   };
 };
 
@@ -54,6 +58,7 @@ export const defaultSettings: Settings = {
   sfxVolume: 0.4,
   scrollSpeed: 20,
   backgroundDim: 0.75,
+  backgroundBlur: 0,
   show300g: true,
   showErrorBar: true,
   audioOffset: 0,
@@ -65,6 +70,7 @@ export const defaultSettings: Settings = {
   ignoreBeatmapHitsounds: false,
   style: "bars",
   errorBarScale: 1,
+  preferMetadataInOriginalLanguage: false,
   keybinds: {
     keyModes: [
       ["Space"],
@@ -86,6 +92,18 @@ export const defaultSettings: Settings = {
         "KeyL",
         "Semicolon",
       ],
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyV",
+        "KeyN",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ],
     ],
   },
   mods: {
@@ -95,6 +113,8 @@ export const defaultSettings: Settings = {
     hardRock: false,
     mirror: false,
     random: false,
+    constantSpeed: false,
+    holdOff: false,
   },
 };
 

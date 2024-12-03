@@ -22,7 +22,7 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { Color, laneColors, laneWidths } from "./constants";
+import { Color, laneColors, laneWidths, MAX_TIME_RANGE } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
@@ -141,7 +141,16 @@ export class Game {
 
     window.removeEventListener("resize", this.resize);
 
-    this.app.destroy({ removeView: true });
+    this.app.destroy(
+      { removeView: true },
+      {
+        children: true,
+        // context: true,
+        style: true,
+        texture: true,
+        textureSource: true,
+      },
+    );
 
     window.__PIXI_APP__ = null;
   }
@@ -229,7 +238,7 @@ export class Game {
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
-      backgroundAlpha: 0.5,
+      backgroundAlpha: 0,
       antialias: true,
       autoDensity: true,
       resolution: window.devicePixelRatio,
@@ -248,6 +257,8 @@ export class Game {
 
     // For the debugger extension to detect the app
     window.__PIXI_APP__ = this.app;
+
+    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
@@ -297,11 +308,7 @@ export class Game {
     }
 
     // Set initial Y positions
-    this.columns.forEach((column) => {
-      column.forEach((hitObject) => {
-        hitObject.update();
-      });
-    });
+    this.updateHitObjects();
 
     this.resize();
 
@@ -313,6 +320,7 @@ export class Game {
 
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
+    this.inputSystem.updateGamepadInputs();
 
     if (!this.settings.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());
@@ -350,29 +358,7 @@ export class Game {
 
         this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
 
-        this.columns.forEach((column) => {
-          let itemsToRemove = 0;
-
-          for (const hitObject of column) {
-            hitObject.update();
-
-            if (hitObject.shouldRemove) {
-              itemsToRemove++;
-            }
-
-            // If this hit object is above the top screen edge, there's no need to update the rest
-            if (hitObject.view.y < 0) {
-              break;
-            }
-          }
-
-          if (itemsToRemove) {
-            for (let i = 0; i < itemsToRemove; i++) {
-              this.notesContainer.removeChild(column[i].view);
-              column.shift();
-            }
-          }
-        });
+        this.updateHitObjects();
 
         if (this.timeElapsed > this.endTime && !this.finished) {
           this.finished = true;
@@ -599,7 +585,7 @@ export class Game {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     new Howl({
-      src: ["/skin/applause.mp3"],
+      src: [`/skin/applause.mp3`],
       format: "mp3",
       preload: true,
       autoplay: true,
@@ -621,6 +607,74 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+    });
+  }
+
+  // Returns the px offset of the hit object from the judgement line based on
+  // how long it should take to reach the line
+  public getHitObjectOffset(startTime: number, endTime: number) {
+    if (this.settings.mods.constantSpeed) {
+      const speed =
+        this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
+
+      const offset =
+        ((endTime - startTime) * speed) / this.settings.mods.playbackRate;
+
+      return offset;
+    }
+
+    const flipped = startTime > endTime;
+    if (flipped) {
+      [startTime, endTime] = [endTime, startTime];
+    }
+
+    const currentTimingPointIndex = this.timingPoints.findIndex(
+      (timingPoint) => startTime >= timingPoint.time,
+    );
+
+    let totalOffset = 0;
+    for (let i = currentTimingPointIndex; i < this.timingPoints.length; i++) {
+      const currentTimingPoint = this.timingPoints[i];
+      const nextTimingPoint = this.timingPoints[i + 1];
+
+      const intervalStart = Math.max(currentTimingPoint.time, startTime);
+      const intervalEnd = nextTimingPoint
+        ? Math.min(nextTimingPoint.time, endTime)
+        : endTime;
+
+      if (intervalStart < intervalEnd) {
+        const duration = intervalEnd - intervalStart;
+        const speed =
+          this.hitPosition / (MAX_TIME_RANGE / currentTimingPoint.scrollSpeed);
+
+        totalOffset += (duration * speed) / this.settings.mods.playbackRate;
+      }
+    }
+
+    return flipped ? -totalOffset : totalOffset;
+  }
+
+  public updateHitObjects() {
+    this.columns.forEach((column) => {
+      let itemsToRemove = 0;
+
+      for (const hitObject of column) {
+        hitObject.update();
+
+        if (hitObject.shouldRemove) {
+          itemsToRemove++;
+        }
+
+        // If this hit object is above the top screen edge, there's no need to update the rest
+        if (hitObject.view.y < 0) {
+          break;
+        }
+      }
+
+      for (let i = 0; i < itemsToRemove; i++) {
+        this.notesContainer.removeChild(column[i].view);
+        column.shift();
+      }
     });
   }
 }

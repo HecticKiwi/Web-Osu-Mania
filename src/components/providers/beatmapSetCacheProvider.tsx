@@ -3,7 +3,9 @@
 import { Idb } from "@/lib/idb";
 import queryString from "query-string";
 import {
+  Dispatch,
   ReactNode,
+  SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -14,7 +16,10 @@ import { useToast } from "../ui/use-toast";
 import { BEATMAP_API_PROVIDERS, useSettingsContext } from "./settingsProvider";
 
 const BeatmapSetCacheContext = createContext<{
-  getBeatmapSet: (beatmapSetId: number) => Promise<Blob>;
+  getBeatmapSet: (
+    beatmapSetId: number,
+    setDownloadPercent: Dispatch<SetStateAction<number>>,
+  ) => Promise<Blob>;
   idbUsage: number;
   clearIdbCache: () => Promise<void>;
 }>(null!);
@@ -73,7 +78,10 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
   }, [calculateCacheUsage]);
 
   const getBeatmapSet = useCallback(
-    async (beatmapSetId: number) => {
+    async (
+      beatmapSetId: number,
+      setDownloadPercent: Dispatch<SetStateAction<number>>,
+    ) => {
       const idb = new Idb();
 
       // Try to get beatmap set from cache
@@ -92,6 +100,10 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
             beatmapSetId.toString(),
           );
         } else {
+          if (!settings.customBeatmapProvider.includes("$setId")) {
+            throw new Error("Custom beatmap provider URL is missing $setId.");
+          }
+
           apiUrl = settings.customBeatmapProvider.replace(
             "$setId",
             beatmapSetId.toString(),
@@ -137,7 +149,26 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
           );
         }
 
-        beatmapSetFile = await response.blob();
+        const reader = response.body.getReader();
+        const chunks: Uint8Array[] = [];
+
+        const contentLength = +response.headers.get("Content-Length")!;
+        let receivedLength = 0;
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          chunks.push(value);
+          receivedLength += value.length;
+
+          setDownloadPercent((receivedLength / contentLength) * 100);
+        }
+
+        beatmapSetFile = new Blob(chunks);
       }
 
       // Cache downloaded file

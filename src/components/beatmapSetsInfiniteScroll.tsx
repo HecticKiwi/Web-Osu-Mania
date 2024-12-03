@@ -1,6 +1,7 @@
 "use client";
 
-import { getBeatmaps, GetBeatmapsResponse } from "@/lib/osuApi";
+import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
+import { getBeatmaps } from "@/lib/osuApi";
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { parseGenreParam } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";

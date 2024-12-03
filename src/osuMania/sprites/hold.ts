@@ -1,7 +1,7 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { gsap } from "gsap";
 import { Container, Sprite, Texture } from "pixi.js";
-import { colors, SCROLL_SPEED_MULT } from "../constants";
+import { colors } from "../constants";
 import { Game } from "../game";
 import { Tap } from "./tap";
 
@@ -12,9 +12,10 @@ export class Hold {
 
   public view: Container;
   private body: Container;
-  private head: Container;
+  private head?: Container;
 
   public shouldRemove: boolean;
+  private height: number;
   private broken = false;
 
   constructor(game: Game, holdData: HoldData) {
@@ -29,12 +30,7 @@ export class Hold {
       this.body.width = this.game.scaledColumnWidth;
     }
 
-    const holdHeight =
-      ((holdData.endTime - this.data.time) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-      this.game.settings.mods.playbackRate;
-    this.body.height = holdHeight;
+    this.height = this.game.getHitObjectOffset(holdData.time, holdData.endTime);
 
     this.view = new Container();
     this.view.addChild(this.body);
@@ -52,10 +48,10 @@ export class Hold {
 
       this.head = new Sprite(Tap.renderTexture!);
       this.head.pivot.y = tail.height / 2;
-      this.head.y = holdHeight;
       this.view.addChild(this.head);
     }
 
+    this.setViewHeight();
     this.game.notesContainer.addChild(this.view);
   }
 
@@ -63,14 +59,21 @@ export class Hold {
     this.view.visible = true;
 
     this.view.y =
-      ((this.game.timeElapsed - this.data.endTime) *
-        this.game.settings.scrollSpeed *
-        SCROLL_SPEED_MULT) /
-        this.game.settings.mods.playbackRate +
-      this.game.hitPosition;
+      this.game.hitPosition -
+      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.endTime);
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {
+      // Set height again in case of resize
+      if (this.game.timeElapsed < this.data.time) {
+        this.height = this.game.getHitObjectOffset(
+          this.data.time,
+          this.data.endTime,
+        );
+      }
+
+      this.setViewHeight();
+
       return;
     }
 
@@ -152,27 +155,32 @@ export class Hold {
 
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
-        const newHeight = Math.max(
-          ((this.data.endTime - this.game.timeElapsed) *
-            this.game.settings.scrollSpeed *
-            SCROLL_SPEED_MULT) /
-            this.game.settings.mods.playbackRate,
+        this.height = Math.max(
+          this.game.getHitObjectOffset(
+            this.game.timeElapsed,
+            this.data.endTime,
+          ),
           0,
         );
-        this.body.height = newHeight;
-
-        if (this.head) {
-          this.head.y = newHeight;
-        }
       }
 
       if (this.view.y > this.game.hitPosition) {
         this.view.y = this.game.hitPosition;
       }
     }
+
+    this.setViewHeight();
   }
 
   public isHit() {
     return this.game.inputSystem.releasedColumns[this.data.column];
+  }
+
+  private setViewHeight() {
+    this.body.height = this.height;
+
+    if (this.head) {
+      this.head.y = this.height;
+    }
   }
 }

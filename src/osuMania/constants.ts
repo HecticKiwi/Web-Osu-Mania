@@ -2,10 +2,9 @@
 export const OSU_WIDTH = 854;
 export const OSU_HEIGHT = 480;
 
-// The scroll speed calcs aren't documented anywhere so I eyeballed this constant
-export const SCROLL_SPEED_MULT = 0.085;
-
-export const SKIN_URL = `${process.env.NEXT_PUBLIC_ASSETS_URL}/skin`;
+// This value is gathered from here:
+// https://github.com/ppy/osu/blob/f0e2b803ded7a3f7a826c05a0138bcc923dde9a9/osu.Game.Rulesets.Mania/UI/DrawableManiaRuleset.cs#L46
+export const MAX_TIME_RANGE = 11485;
 
 const colorNames = ["blue", "white", "yellow", "muted"] as const;
 export type Color = (typeof colorNames)[number];
@@ -32,6 +31,18 @@ export const laneColors: Color[][] = [
     "white",
     "blue",
     "yellow",
+    "blue",
+    "white",
+    "blue",
+    "white",
+  ],
+  [
+    "white",
+    "blue",
+    "white",
+    "blue",
+    "white",
+    "white",
     "blue",
     "white",
     "blue",

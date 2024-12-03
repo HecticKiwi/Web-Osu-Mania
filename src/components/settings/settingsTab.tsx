@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import Keybinds from "../keybinds";
 import {
   SKIN_STYLES,
@@ -18,6 +19,7 @@ import {
 import SwitchInput from "../switchInput";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import BackgroundBlurSlider from "./backgroundBlurSlider";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
@@ -39,6 +41,13 @@ const SettingsTab = () => {
           </div>
 
           <BackgroundDimSlider />
+        </div>
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Background Blur
+          </div>
+
+          <BackgroundBlurSlider />
         </div>
 
         <div className="grid grid-cols-2 items-center">
@@ -62,11 +71,25 @@ const SettingsTab = () => {
                 />
               </TooltipTrigger>
               <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {settings.scrollSpeed}
+                {Math.round(MAX_TIME_RANGE / settings.scrollSpeed)}ms (speed{" "}
+                {settings.scrollSpeed})
               </TooltipContent>
             </Tooltip>
           </div>
         </div>
+      </div>
+
+      <h3 className="mt-6 text-lg font-semibold">Language</h3>
+      <div className="mt-2 space-y-3">
+        <SwitchInput
+          label="Prefer Metadata in Original Language"
+          checked={settings.preferMetadataInOriginalLanguage}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.preferMetadataInOriginalLanguage = checked;
+            })
+          }
+        />
       </div>
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>

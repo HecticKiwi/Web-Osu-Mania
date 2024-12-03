@@ -1,6 +1,4 @@
-"use server";
-
-import { cookies } from "next/headers";
+import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
 import queryString from "query-string";
 import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
 import { Genre, GENRES } from "./searchParams/genreParam";
@@ -12,12 +10,6 @@ import {
   SortDirection,
 } from "./searchParams/sortParam";
 import { Stars } from "./searchParams/starsParam";
-
-type OAuthTokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-};
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
@@ -70,47 +62,6 @@ export type BeatmapSet = {
   beatmaps: Beatmap[];
 };
 
-export async function getAccessToken() {
-  const response = await fetch("https://osu.ppy.sh/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      client_id: process.env.OSU_API_CLIENT_ID,
-      client_secret: process.env.OSU_API_CLIENT_SECRET,
-      grant_type: "client_credentials",
-      scope: "public",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error();
-  }
-
-  const data: OAuthTokenData = await response.json();
-
-  const expiryDate = new Date();
-  expiryDate.setSeconds(expiryDate.getSeconds() + data.expires_in);
-
-  return {
-    token: data.access_token,
-    expires: expiryDate,
-  };
-}
-
-export type GetBeatmapsResponse = {
-  beatmapsets: BeatmapSet[];
-  search: {
-    sort: string;
-  };
-  recommended_difficulty: null;
-  error: null;
-  total: number;
-  cursor: null;
-  cursor_string: string;
-};
-
 export async function getBeatmaps({
   query,
   category,
@@ -134,22 +85,6 @@ export async function getBeatmaps({
   genre: Genre;
   language: Language;
 }) {
-  const cookieStore = cookies();
-  let token = cookieStore.get("osu_api_access_token")?.value;
-
-  if (!token) {
-    const { token: newToken, expires } = await getAccessToken();
-
-    token = newToken;
-
-    cookieStore.set("osu_api_access_token", newToken, {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      expires: expires,
-    });
-  }
-
   const { min, max } = stars;
   const q = [
     query,
@@ -160,7 +95,7 @@ export async function getBeatmaps({
     .join(" ");
 
   const url = queryString.stringifyUrl({
-    url: "https://osu.ppy.sh/api/v2/beatmapsets/search",
+    url: `/api/getBeatmaps`,
     query: {
       q,
       m: 3, // 3 = mania mode
@@ -173,20 +108,7 @@ export async function getBeatmaps({
     },
   });
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error();
-  }
-
-  const data: GetBeatmapsResponse = await response.json();
+  const data: GetBeatmapsResponse = await fetch(url).then((res) => res.json());
 
   return data;
 }
-
-export async function getBeatmap() {}

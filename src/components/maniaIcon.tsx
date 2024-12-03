@@ -7,16 +7,19 @@ const ManiaIcon = ({
   className?: string;
   difficultyRating: number;
 }) => {
+  // https://osu.ppy.sh/wiki/en/Beatmap/Difficulty#difficulty-and-star-rating
   const bg =
     difficultyRating < 2
-      ? "bg-[rgba(136,179,0,0.8)]"
-      : difficultyRating < 3
-        ? "bg-[rgba(102,204,255,0.8)]"
+      ? "bg-[rgba(102,204,255,0.8)]" // Blue
+      : difficultyRating < 2.7
+        ? "bg-[rgba(136,179,0,0.8)]" // Green
         : difficultyRating < 4
-          ? "bg-[rgba(255,204,34,0.8)]"
-          : difficultyRating < 5
-            ? "bg-[rgba(255,102,170,0.8)]"
-            : "bg-[rgba(136,102,238,0.8)]";
+          ? "bg-[rgba(255,204,34,0.8)]" // Yellow
+          : difficultyRating < 5.3
+            ? "bg-[rgba(255,78,111,0.8)]" // Orange
+            : difficultyRating < 6.5
+              ? "bg-[rgba(255,102,170,0.8)]" // Magenta
+              : "bg-[rgba(101,99,212,0.8)]"; // Purple
 
   return (
     <>

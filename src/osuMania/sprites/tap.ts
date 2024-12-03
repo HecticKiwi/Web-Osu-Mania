@@ -6,7 +6,7 @@ import {
   RenderTexture,
   Sprite,
 } from "pixi.js";
-import { colors, SCROLL_SPEED_MULT } from "../constants";
+import { colors } from "../constants";
 import { Game } from "../game";
 
 export class Tap {
@@ -152,9 +152,8 @@ export class Tap {
 
     this.view.visible = true;
     this.view.y =
-      (-delta * this.game.settings.scrollSpeed * SCROLL_SPEED_MULT) /
-        this.game.settings.mods.playbackRate +
-      this.game.hitPosition;
+      this.game.hitPosition -
+      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.time);
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {

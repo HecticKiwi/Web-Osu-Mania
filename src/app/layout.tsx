@@ -6,7 +6,6 @@ import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import SettingsProvider from "@/components/providers/settingsProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
 import Script from "next/script";
@@ -20,6 +19,9 @@ export const metadata: Metadata = {
   description: "Play osu!mania beatmaps in your web browser.",
   twitter: {
     card: "summary_large_image",
+  },
+  other: {
+    "google-site-verification": "ewJX1E1zwNcx0NgBxQfHwOkQduww8reYJX3rIZZyb40",
   },
 };
 
@@ -48,7 +50,6 @@ export default function RootLayout({
                     <Header />
                     {children}
                     <Toaster />
-                    <SpeedInsights />
                   </AudioPreviewProvider>
                 </GameProvider>
               </BeatmapSetCacheProvider>

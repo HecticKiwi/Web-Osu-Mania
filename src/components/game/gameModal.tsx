@@ -1,5 +1,6 @@
 "use client";
 
+import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
@@ -20,6 +21,7 @@ const GameModal = () => {
   const { settings } = useSettingsContext();
   const { getBeatmapSet } = useBeatmapSetCacheContext();
   const { toast } = useToast();
+  const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
     if (!data) {
@@ -29,7 +31,10 @@ const GameModal = () => {
     const loadBeatmap = async () => {
       let beatmapSetFile: Blob;
       try {
-        beatmapSetFile = await getBeatmapSet(data.beatmapSetId);
+        beatmapSetFile = await getBeatmapSet(
+          data.beatmapSetId,
+          setDownloadPercent,
+        );
       } catch (error: any) {
         toast({
           title: "Download Error",
@@ -69,7 +74,7 @@ const GameModal = () => {
     return () => {
       if (beatmapData) {
         URL.revokeObjectURL(beatmapData.backgroundUrl);
-        URL.revokeObjectURL(beatmapData.song.url!);
+        URL.revokeObjectURL(beatmapData.song.url);
 
         Object.values(beatmapData.sounds).forEach((sound) => {
           if (sound.url) {
@@ -94,6 +99,10 @@ const GameModal = () => {
             <h1 className="text-2xl text-white sm:text-4xl">
               {loadingMessage}
             </h1>
+
+            {loadingMessage.includes("Downloading") && (
+              <Progress value={downloadPercent} className="mt-3 h-2" />
+            )}
           </div>
 
           <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
@@ -107,7 +116,7 @@ const GameModal = () => {
             fill
             className="-z-[1] select-none object-cover"
             style={{
-              filter: `brightness(${1 - settings.backgroundDim})`,
+              filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
             }}
           />
 
