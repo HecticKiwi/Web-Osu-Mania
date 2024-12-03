@@ -24,13 +24,13 @@ export class InputSystem {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
 
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("keyup", this.handleKeyUp);
+    document.addEventListener("keydown", this.handleKeyDown, { passive: true });
+    document.addEventListener("keyup", this.handleKeyUp, { passive: true });
   }
 
   public dispose() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("keydown", this.handleKeyDown, { passive: true });
+    document.removeEventListener("keyup", this.handleKeyUp, { passive: true });
   }
 
   public handleKeyDown(event: KeyboardEvent) {
@@ -59,10 +59,10 @@ export class InputSystem {
   }
 
   public anyKeyTapped() {
-    return (
-      this.tappedColumns.includes(true) ||
-      (this.tappedKeys.size > 0 && !this.tappedKeys.has("Escape"))
-    );
+    for (const tapped of this.tappedColumns) {
+      if (tapped) return true;
+    }
+    return this.tappedKeys.size > 0 && !this.tappedKeys.has("Escape");
   }
 
   public clearInputs() {
