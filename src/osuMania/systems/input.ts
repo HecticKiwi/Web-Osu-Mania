@@ -26,8 +26,8 @@ export class InputSystem {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
 
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("keyup", this.handleKeyUp);
+    document.addEventListener("keydown", this.handleKeyDown, { passive: true });
+    document.addEventListener("keyup", this.handleKeyUp, { passive: true });
   }
 
   private initKeybindsMap() {
@@ -59,8 +59,8 @@ export class InputSystem {
   }
 
   public dispose() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("keydown", this.handleKeyDown, { passive: true });
+    document.removeEventListener("keyup", this.handleKeyUp, { passive: true });
   }
 
   public handleKeyDown(event: KeyboardEvent) {
