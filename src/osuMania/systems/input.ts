@@ -31,7 +31,8 @@ export class InputSystem {
   }
 
   private initKeybindsMap() {
-    const keybinds = this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
+    const keybinds =
+      this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
     keybinds.forEach((key, index) => {
       this.keybindsMap.set(key, index);
     });
@@ -59,8 +60,8 @@ export class InputSystem {
   }
 
   public dispose() {
-    document.removeEventListener("keydown", this.handleKeyDown, { passive: true });
-    document.removeEventListener("keyup", this.handleKeyUp, { passive: true });
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
   }
 
   public handleKeyDown(event: KeyboardEvent) {
