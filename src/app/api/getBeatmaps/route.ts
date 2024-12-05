@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 }
 
 async function getAccessToken() {
-  const response = await fetch("https://osu.ppy.sh/oauth/token", {
+  const response: Response = await fetch("https://osu.ppy.sh/oauth/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -81,7 +81,9 @@ async function getAccessToken() {
   });
 
   if (!response.ok) {
-    throw new Error(`Access token error: ${response.status}`);
+    throw new Error(
+      `getAccessToken error: ${response.status} - ${response.statusText}`,
+    );
   }
 
   const data: OAuthTokenData = await response.json();
