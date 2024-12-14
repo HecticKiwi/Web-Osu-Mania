@@ -212,6 +212,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
       settings?.storeDownloadedBeatmaps,
       settings?.beatmapProvider,
       settings?.customBeatmapProvider,
+      settings?.proxyBeatmapDownloads,
       toast,
     ],
   );
