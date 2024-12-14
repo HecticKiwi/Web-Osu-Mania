@@ -1,7 +1,6 @@
 import Header from "@/components/header";
-import { AudioPreviewProvider } from "@/components/providers/audioPreviewProvider";
 import BeatmapSetCacheProvider from "@/components/providers/beatmapSetCacheProvider";
-import { GameProvider } from "@/components/providers/gameOverlayProvider";
+import { GameProvider } from "@/components/providers/gameProvider";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import SettingsProvider from "@/components/providers/settingsProvider";
 import { Toaster } from "@/components/ui/toaster";
@@ -46,11 +45,9 @@ export default function RootLayout({
             <SettingsProvider>
               <BeatmapSetCacheProvider>
                 <GameProvider>
-                  <AudioPreviewProvider>
-                    <Header />
-                    {children}
-                    <Toaster />
-                  </AudioPreviewProvider>
+                  <Header />
+                  {children}
+                  <Toaster />
                 </GameProvider>
               </BeatmapSetCacheProvider>
             </SettingsProvider>

@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { filesize } from "filesize";
 import { Loader2Icon } from "lucide-react";
+import BeatmapSetUpload from "../beatmapSetUpload";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import {
   BEATMAP_API_PROVIDERS,
@@ -77,9 +78,47 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
             </Label>
           </RadioGroup>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Custom provider URLs should replace the beatmap set ID route segment
-          with $setId (e.g. NeriNyan uses "https://api.nerinyan.moe/d/$setId").
+
+        {settings.beatmapProvider === "Custom" && (
+          <p className="mt-1 text-sm text-orange-400">
+            Custom provider URLs should replace the beatmap set ID route segment
+            with $setId (e.g. NeriNyan uses
+            "https://api.nerinyan.moe/d/$setId").
+          </p>
+        )}
+
+        <SwitchInput
+          label="Proxy Downloads"
+          checked={settings.proxyBeatmapDownloads}
+          onCheckedChange={async (checked) => {
+            setSettings((draft) => {
+              draft.proxyBeatmapDownloads = checked;
+            });
+
+            if (!checked && idbUsage && idbUsage > 0) {
+              await clearIdbCache();
+            }
+          }}
+        />
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          If the beatmap providers are blocked on your network, bypass it by
+          proxying beatmap downloads through this website's server. ONLY ENABLE
+          IF YOU HAVE TO; may result in delayed downloads or rate limiting.
+        </p>
+
+        <div className="mt-8 grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Upload Beatmap
+          </div>
+
+          <BeatmapSetUpload />
+        </div>
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          If you have beatmap files (.osz format) downloaded already, you can
+          load them directly. Click the dashed box or drag a beatmap file into
+          it.
         </p>
 
         <SwitchInput
@@ -99,7 +138,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
         <p className="mt-1 text-sm text-muted-foreground">
           By default, downloaded beatmaps are discarded when you leave or
           refresh the page. If you enable caching via IndexedDB, downloaded
-          beatmaps will be saved across visits.
+          beatmaps will be saved in the browser across visits.
         </p>
       </div>
 

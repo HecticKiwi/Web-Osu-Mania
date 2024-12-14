@@ -110,16 +110,26 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
           );
         }
 
-        const url = queryString.stringifyUrl({
+        const destinationUrl = queryString.stringifyUrl({
           url: apiUrl,
           query: {
             noVideo: true, // For NeriNyan
           },
         });
 
-        const response = await fetch(url, {
-          method: "GET",
+        const url = queryString.stringifyUrl({
+          url: "/api/downloadBeatmap",
+          query: {
+            destinationUrl,
+          },
         });
+
+        const response = await fetch(
+          settings.proxyBeatmapDownloads ? url : destinationUrl,
+          {
+            method: "GET",
+          },
+        );
 
         if (!response.ok || !response.body) {
           if (response.status === 404) {
@@ -153,6 +163,8 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
         const chunks: Uint8Array[] = [];
 
         const contentLength = +response.headers.get("Content-Length")!;
+        console.log(contentLength);
+
         let receivedLength = 0;
 
         while (true) {
@@ -200,6 +212,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
       settings?.storeDownloadedBeatmaps,
       settings?.beatmapProvider,
       settings?.customBeatmapProvider,
+      settings?.proxyBeatmapDownloads,
       toast,
     ],
   );

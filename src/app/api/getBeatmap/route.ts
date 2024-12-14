@@ -25,12 +25,15 @@ export type GetBeatmapsResponse = {
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
-  // Params are forwarded to the osu API endpoint
-  const params = new URLSearchParams(requestUrl.search);
+  const beatmapSetId = requestUrl.searchParams.get("beatmapSetId");
+
+  if (!beatmapSetId) {
+    throw new Error("URL missing beatmapSetId");
+  }
 
   const accessToken = await getAccessToken();
 
-  const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
+  const url = `https://osu.ppy.sh/api/v2/beatmapsets/${beatmapSetId}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -41,11 +44,11 @@ export async function GET(request: NextRequest) {
 
   if (!response.ok) {
     throw new Error(
-      `GET getBeatmaps error: ${response.status} - ${response.statusText}`,
+      `GET getBeatmap error: ${response.status} - ${response.statusText}`,
     );
   }
 
-  const data: GetBeatmapsResponse = await response.json();
+  const data: BeatmapSet = await response.json();
 
   return NextResponse.json(data, {
     headers: {
