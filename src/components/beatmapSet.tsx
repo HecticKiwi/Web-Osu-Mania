@@ -10,6 +10,7 @@ import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { useState } from "react";
 import BeatmapList from "./beatmapList";
 import BeatmapSetCover from "./beatmapSetCover";
+import PreviewProgressBar from "./previewProgressBar";
 import { useGameContext } from "./providers/gameProvider";
 import { useSettingsContext } from "./providers/settingsProvider";
 
@@ -50,6 +51,11 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
       <PopoverTrigger asChild>
         <button className="group relative flex h-[150px] flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300 focus-within:border-primary hover:border-primary">
           <BeatmapSetCover beatmapSet={beatmapSet} />
+          {preview && (
+            <div className="absolute inset-x-0 bottom-0">
+              <PreviewProgressBar preview={preview} />
+            </div>
+          )}
         </button>
       </PopoverTrigger>
 

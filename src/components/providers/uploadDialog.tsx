@@ -4,6 +4,7 @@ import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import BeatmapList from "../beatmapList";
 import BeatmapSetCover from "../beatmapSetCover";
+import PreviewProgressBar from "../previewProgressBar";
 import { useGameContext } from "./gameProvider";
 import { useSettingsContext } from "./settingsProvider";
 
@@ -11,19 +12,19 @@ const UploadDialog = () => {
   const { uploadedBeatmapSet, beatmapId, setUploadedBeatmapSet, beatmapSet } =
     useGameContext();
   const { settings } = useSettingsContext();
-  const [audio, setAudio] = useState<Howl | null>(null);
+  const [preview, setPreview] = useState<Howl | null>(null);
 
   const stopPreview = () => {
-    if (audio) {
-      stopAudioPreview(audio);
-      setAudio(null);
+    if (preview) {
+      stopAudioPreview(preview);
+      setPreview(null);
     }
   };
 
   useEffect(() => {
     if (uploadedBeatmapSet && beatmapSet) {
       const audio = playAudioPreview(beatmapSet.id, settings.musicVolume);
-      setAudio(audio);
+      setPreview(audio);
     }
   }, [beatmapSet, settings.musicVolume, uploadedBeatmapSet]);
 
@@ -55,6 +56,11 @@ const UploadDialog = () => {
             <>
               <div className="relative flex h-[150px] flex-col p-4 text-start">
                 <BeatmapSetCover beatmapSet={beatmapSet} />
+                {preview && (
+                  <div className="absolute inset-x-0 bottom-0">
+                    <PreviewProgressBar preview={preview} />
+                  </div>
+                )}
               </div>
 
               <BeatmapList beatmapSet={beatmapSet} stopPreview={stopPreview} />
