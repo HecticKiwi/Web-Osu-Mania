@@ -19,8 +19,23 @@ const BeatmapList = ({
   const { min, max } = parseStarsParam(searchParams.get("stars"));
   const keys = parseKeysParam(searchParams.get("keys"));
 
-  const filteredBeatmaps = beatmapSet.beatmaps
-    .filter((beatmap) => beatmap.mode === "mania")
+  const maniaBeatmaps = beatmapSet.beatmaps.filter(
+    (beatmap) => beatmap.mode === "mania",
+  );
+
+  if (maniaBeatmaps.length === 0) {
+    return (
+      <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
+        <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
+          <p className="text-balance p-4 text-center text-muted-foreground">
+            This beatmap set doesn't have any osu!mania beatmaps.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const filteredBeatmaps = maniaBeatmaps
     .filter(
       // For mania, CS is the keycount (e.g. CS: 4 means 4K)
       (beatmap) => !keys.length || keys.includes(beatmap.cs.toString()),

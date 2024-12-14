@@ -60,7 +60,7 @@ const BeatmapSetUpload = () => {
       <label
         htmlFor="beatmapSetUpload"
         className={cn(
-          "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 hover:bg-accent",
+          "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors hover:bg-accent",
           isDraggingOver && "bg-accent",
         )}
       >
