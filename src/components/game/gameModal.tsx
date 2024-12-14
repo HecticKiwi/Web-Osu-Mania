@@ -6,13 +6,14 @@ import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
-import { useGameContext } from "../providers/gameOverlayProvider";
+import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { useToast } from "../ui/use-toast";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
-  const { data, closeGame } = useGameContext();
+  const { beatmapId, beatmapSet, closeGame, uploadedBeatmapSet } =
+    useGameContext();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
@@ -24,32 +25,41 @@ const GameModal = () => {
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
-    if (!data) {
+    if (!beatmapId) {
       return;
     }
 
     const loadBeatmap = async () => {
       let beatmapSetFile: Blob;
-      try {
-        beatmapSetFile = await getBeatmapSet(
-          data.beatmapSetId,
-          setDownloadPercent,
-        );
-      } catch (error: any) {
-        toast({
-          title: "Download Error",
-          description: error.message,
-          duration: 10000,
-        });
 
-        closeGame();
-        return;
+      if (!beatmapSet) {
+        throw new Error("beatmapSet is null (this shouldn't happen)");
+      }
+
+      if (uploadedBeatmapSet) {
+        beatmapSetFile = uploadedBeatmapSet;
+      } else {
+        try {
+          beatmapSetFile = await getBeatmapSet(
+            beatmapSet.id,
+            setDownloadPercent,
+          );
+        } catch (error: any) {
+          toast({
+            title: "Download Error",
+            description: error.message,
+            duration: 10000,
+          });
+
+          closeGame();
+          return;
+        }
       }
 
       try {
         setLoadingMessage("Parsing Beatmap...");
 
-        const beatmapData = await parseOsz(beatmapSetFile, data.beatmapId);
+        const beatmapData = await parseOsz(beatmapSetFile, beatmapId);
 
         await loadAssets();
 
@@ -57,7 +67,7 @@ const GameModal = () => {
       } catch (error: any) {
         toast({
           title: "Parsing Error",
-          description: "An error occurred while parsing the beatmap.",
+          description: error.message,
           duration: 10000,
         });
 
@@ -67,7 +77,14 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [data, closeGame, toast, getBeatmapSet]);
+  }, [
+    beatmapId,
+    closeGame,
+    toast,
+    getBeatmapSet,
+    uploadedBeatmapSet,
+    beatmapSet,
+  ]);
 
   // Cleanup object URLs
   useEffect(() => {

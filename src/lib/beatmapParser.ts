@@ -496,3 +496,23 @@ export function getHitWindows(od: number): HitWindows {
     0: 188 - 3 * od,
   };
 }
+
+export async function getBeatmapSetIdFromOsz(blob: Blob) {
+  const zip = await JSZip.loadAsync(blob);
+
+  // Locate any .osu file
+  const osuFile = Object.keys(zip.files).find((filename) =>
+    filename.endsWith(".osu"),
+  );
+
+  if (!osuFile) {
+    throw new Error("No .osu files found.");
+  }
+
+  const fileData = await zip.files[osuFile].async("text");
+  const lines = fileData?.split(/\r\n|\n\r|\n/);
+
+  const beatmapSetId = getLineValue(lines, "BeatmapSetID");
+
+  return beatmapSetId;
+}

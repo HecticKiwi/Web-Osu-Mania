@@ -1,6 +1,6 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Results } from "@/types";
-import { useGameContext } from "../providers/gameOverlayProvider";
+import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
 

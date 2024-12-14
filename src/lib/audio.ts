@@ -41,3 +41,26 @@ export async function addDelay(blob: Blob | null, duration: number) {
 
   return newBlob;
 }
+
+export function playAudioPreview(beatmapSetId: number, volume: number) {
+  const audio = new Howl({
+    src: [`https://b.ppy.sh/preview/${beatmapSetId}.mp3`],
+    format: "mp3",
+    html5: true, // To prevent XHR errors
+    autoplay: true,
+    volume: 0,
+    onplay: () => {
+      audio.fade(0, volume, 500);
+    },
+  });
+
+  return audio;
+}
+
+export function stopAudioPreview(audio: Howl) {
+  audio.fade(audio.volume(), 0, 500);
+
+  setTimeout(() => {
+    audio.unload();
+  }, 500);
+}

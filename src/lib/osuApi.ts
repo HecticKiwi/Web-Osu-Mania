@@ -15,7 +15,7 @@ const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
 type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
 
-type Beatmap = {
+export type Beatmap = {
   beatmapset_id: number;
   difficulty_rating: number;
   id: number;

@@ -32,6 +32,7 @@ export type Settings = {
   upscroll: boolean;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
+  proxyBeatmapDownloads: boolean;
   ignoreBeatmapHitsounds: boolean;
   style: SkinStyle;
   errorBarScale: number;
@@ -67,6 +68,7 @@ export const defaultSettings: Settings = {
   upscroll: false,
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
+  proxyBeatmapDownloads: false,
   ignoreBeatmapHitsounds: false,
   style: "bars",
   errorBarScale: 1,
@@ -171,6 +173,10 @@ const SettingsProvider = ({ children }: { children: ReactNode }) => {
       mods: defaultSettings.mods,
     }));
   };
+
+  if (!settings) {
+    return null;
+  }
 
   return (
     <>
