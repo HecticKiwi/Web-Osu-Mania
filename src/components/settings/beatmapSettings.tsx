@@ -104,7 +104,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
         <p className="mt-4 text-sm text-muted-foreground">
           If the beatmap providers are blocked on your network, bypass it by
           proxying beatmap downloads through this website's server. ONLY ENABLE
-          IF YOU HAVE TO; may result in delayed downloads or rate-limiting.
+          IF YOU HAVE TO; may result in delayed downloads or rate limiting.
         </p>
 
         <div className="mt-8 grid grid-cols-2 items-center">
@@ -138,7 +138,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
         <p className="mt-1 text-sm text-muted-foreground">
           By default, downloaded beatmaps are discarded when you leave or
           refresh the page. If you enable caching via IndexedDB, downloaded
-          beatmaps will be saved across visits.
+          beatmaps will be saved in the browser across visits.
         </p>
       </div>
 
