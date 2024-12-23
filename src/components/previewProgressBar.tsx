@@ -26,7 +26,10 @@ const PreviewProgressBar = ({ preview }: { preview: Howl }) => {
   }, [preview]);
 
   return (
-    <div className="h-1 bg-primary" style={{ width: `${progress * 100}%` }} />
+    <div
+      className="h-1 origin-left bg-primary"
+      style={{ transform: `scaleX(${progress})` }}
+    />
   );
 };
 
