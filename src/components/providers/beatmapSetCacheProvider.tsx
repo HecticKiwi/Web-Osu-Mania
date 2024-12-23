@@ -134,13 +134,15 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
         if (!response.ok || !response.body) {
           if (response.status === 404) {
             throw new Error(
-              `Beatmap does not exist on the current beatmap provider, please switch to another.`,
+              `Beatmap does not exist on the current beatmap provider, please switch to another provider.`,
             );
           }
 
           if (response.status === 429) {
+            const retryAfter = response.headers.get("Retry-After");
+
             throw new Error(
-              `The beatmap provider is experiencing too many requests, please try again later or switch to another.`,
+              `The beatmap provider is experiencing too many requests, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"} or switch to another provider.`,
             );
           }
 
