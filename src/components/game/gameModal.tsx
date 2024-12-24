@@ -86,7 +86,7 @@ const GameModal = () => {
     beatmapSet,
   ]);
 
-  // Cleanup object URLs
+  // Clean up object URLs
   useEffect(() => {
     return () => {
       if (beatmapData) {

@@ -31,7 +31,6 @@ export async function addDelay(blob: Blob | null, duration: number) {
   });
 
   source.connect(offlineCtx.destination);
-
   source.start(offlineCtx.currentTime + duration);
 
   const renderedBuffer = await offlineCtx.startRendering();

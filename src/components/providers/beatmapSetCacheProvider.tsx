@@ -165,7 +165,6 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
         const chunks: Uint8Array[] = [];
 
         const contentLength = +response.headers.get("Content-Length")!;
-        console.log(contentLength);
 
         let receivedLength = 0;
 

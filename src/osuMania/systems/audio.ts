@@ -23,6 +23,8 @@ export class AudioSystem {
     });
   }
 
+  public dispose() {}
+
   private load(name: string, src: string) {
     this.sounds[name] = {
       howl: new Howl({
@@ -80,6 +82,4 @@ export class AudioSystem {
       this.play(`skin-${prefix}${name}`, this.game.settings.sfxVolume * volume);
     }
   }
-
-  public dispose() {}
 }

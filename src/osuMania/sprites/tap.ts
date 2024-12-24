@@ -50,7 +50,6 @@ export class Tap {
         width,
         height,
       });
-      Tap.renderTexture.destroy();
 
       game.app.renderer.render({
         container: graphic,

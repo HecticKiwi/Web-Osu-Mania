@@ -54,7 +54,7 @@ export class Game {
   public laneColors: Color[];
 
   public hitPosition: number;
-  public hitPositionOffset = 130;
+  public readonly hitPositionOffset = 130;
   public scaledColumnWidth: number;
 
   // Systems
@@ -145,7 +145,6 @@ export class Game {
       { removeView: true },
       {
         children: true,
-        // context: true,
         style: true,
         texture: true,
         textureSource: true,

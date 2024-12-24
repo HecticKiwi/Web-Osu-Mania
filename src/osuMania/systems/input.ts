@@ -30,6 +30,11 @@ export class InputSystem {
     document.addEventListener("keyup", this.handleKeyUp, { passive: true });
   }
 
+  public dispose() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
+  }
+
   private initKeybindsMap() {
     const keybinds =
       this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
@@ -57,11 +62,6 @@ export class InputSystem {
     });
 
     this.gamepadState = [...gamepad.buttons];
-  }
-
-  public dispose() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
   }
 
   public handleKeyDown(event: KeyboardEvent) {
