@@ -85,7 +85,7 @@ export interface BeatmapData {
   endTime: number;
   hitWindows: HitWindows;
   song: Required<Sound>;
-  backgroundUrl: string;
+  backgroundUrl: string | null;
   metadata: Metadata;
   difficulty: Difficulty;
   sounds: SoundDictionary;
@@ -132,7 +132,7 @@ export const parseOsz = async (
 
   const songFilename = getLineValue(lines, "AudioFilename");
   if (!songFilename) {
-    throw new Error("Didn't find the song filename");
+    throw new Error("Could not find the song filename");
   }
 
   const songFileExtension = songFilename.split(".").pop();
@@ -200,19 +200,19 @@ export const parseOsz = async (
 
   // Background image
 
+  let backgroundUrl = null;
+
   const backgroundFilename = lines
     .find((line) => line.startsWith("0,0,"))
     ?.split(",")[2]
     .replaceAll('"', "");
 
-  if (!backgroundFilename) {
-    throw new Error("Didn't find the bg filename");
+  if (backgroundFilename) {
+    const backgroundFile = findFile(zip, backgroundFilename);
+
+    const backgroundBlob = await backgroundFile.async("blob");
+    backgroundUrl = URL.createObjectURL(backgroundBlob);
   }
-
-  const backgroundFile = findFile(zip, backgroundFilename);
-
-  const backgroundBlob = await backgroundFile.async("blob");
-  const backgroundUrl = URL.createObjectURL(backgroundBlob);
 
   return {
     timingPoints,

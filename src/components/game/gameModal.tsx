@@ -88,17 +88,22 @@ const GameModal = () => {
 
   // Clean up object URLs
   useEffect(() => {
-    return () => {
-      if (beatmapData) {
-        URL.revokeObjectURL(beatmapData.backgroundUrl);
-        URL.revokeObjectURL(beatmapData.song.url);
+    if (!beatmapData) {
+      return;
+    }
 
-        Object.values(beatmapData.sounds).forEach((sound) => {
-          if (sound.url) {
-            URL.revokeObjectURL(sound.url);
-          }
-        });
+    return () => {
+      if (beatmapData.backgroundUrl) {
+        URL.revokeObjectURL(beatmapData.backgroundUrl);
       }
+
+      URL.revokeObjectURL(beatmapData.song.url);
+
+      Object.values(beatmapData.sounds).forEach((sound) => {
+        if (sound.url) {
+          URL.revokeObjectURL(sound.url);
+        }
+      });
     };
   }, [beatmapData]);
 
@@ -127,15 +132,17 @@ const GameModal = () => {
       )}
       {beatmapData && (
         <>
-          <Image
-            src={beatmapData.backgroundUrl}
-            alt="Beatmap Background"
-            fill
-            className="-z-[1] select-none object-cover"
-            style={{
-              filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
-            }}
-          />
+          {beatmapData.backgroundUrl && (
+            <Image
+              src={beatmapData.backgroundUrl}
+              alt="Beatmap Background"
+              fill
+              className="-z-[1] select-none object-cover"
+              style={{
+                filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
+              }}
+            />
+          )}
 
           <GameScreens key={key} beatmapData={beatmapData} retry={retry} />
         </>
