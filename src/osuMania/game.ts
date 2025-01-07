@@ -147,7 +147,7 @@ export class Game {
         children: true,
         style: true,
         texture: true,
-        textureSource: true,
+        // textureSource: true,
       },
     );
 
