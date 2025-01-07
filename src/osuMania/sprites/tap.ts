@@ -55,6 +55,8 @@ export class Tap {
         container: graphic,
         target: Tap.renderTexture,
       });
+
+      graphic.destroy();
     }
 
     this.view = new Sprite(Tap.renderTexture);
