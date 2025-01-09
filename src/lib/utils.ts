@@ -4,7 +4,6 @@ import {
 } from "@/components/providers/settingsProvider";
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import { type ClassValue, clsx } from "clsx";
-import { Container } from "pixi.js";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -34,14 +33,10 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-export function scaleEntityWidth(sprite: Container, width: number) {
-  const oldWidth = sprite.width;
-  sprite.width = width;
-  sprite.height = (width * sprite.height) / oldWidth;
-}
 export function scaleWidth(width: number, windowWidth: number) {
   return (width / OSU_WIDTH) * Math.max(windowWidth, 1528);
 }
+
 export function scaleHeight(height: number, windowHeight: number) {
   return (height / OSU_HEIGHT) * windowHeight;
 }

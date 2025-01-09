@@ -1,17 +1,10 @@
 import { SampleSet, TapData } from "@/lib/beatmapParser";
-import {
-  Container,
-  Graphics,
-  GraphicsContext,
-  RenderTexture,
-  Sprite,
-} from "pixi.js";
+import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
 import { colors } from "../constants";
 import { Game } from "../game";
 
 export class Tap {
   static renderTexture: RenderTexture | null;
-  static graphicsContext: GraphicsContext | null;
 
   public game: Game;
 
@@ -40,15 +33,14 @@ export class Tap {
     }
 
     if (!Tap.renderTexture) {
-      Tap.graphicsContext = new GraphicsContext()
+      const graphic = new Graphics()
         .roundRect(0, 0, width, height, radius)
         .fill("white");
-
-      const graphic = new Graphics(Tap.graphicsContext);
 
       Tap.renderTexture = RenderTexture.create({
         width,
         height,
+        antialias: true,
       });
 
       game.app.renderer.render({
