@@ -53,9 +53,9 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       </Button>
 
       {/* Details */}
-      <div className="mt-auto line-clamp-1 text-xl">{title}</div>
+      <div className="mt-auto w-full truncate text-xl">{title}</div>
       <div className="flex w-full items-end justify-between gap-8">
-        <span className="line-clamp-1 text-primary">by {artist}</span>
+        <span className="truncate text-primary">by {artist}</span>
         <span className="text-sm text-muted-foreground">
           {secondsToMMSS(
             Math.max(
