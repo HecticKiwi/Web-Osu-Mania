@@ -1,4 +1,8 @@
-# Web osu!mania
+<p align="center">
+  <img height="80" src="https://github.com/user-attachments/assets/d09ccf61-003a-40e0-8d32-b57843133ad6" style={{objectFit: "contain"}}>
+</p>
+
+---
 
 Web osu!mania is an unofficial web port of osu!'s piano-style gamemode, osu!mania. Play beatmaps directly in your browser, without the need to download the desktop application.
 
