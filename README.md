@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="80" src="https://github.com/user-attachments/assets/d09ccf61-003a-40e0-8d32-b57843133ad6" style={{objectFit: "contain"}}>
+  <img height="75" src="https://github.com/user-attachments/assets/d09ccf61-003a-40e0-8d32-b57843133ad6">
 </p>
 
 ---
