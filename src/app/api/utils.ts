@@ -1,5 +1,10 @@
-import { OAuthTokenData } from "@/app/api/getBeatmaps/route";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+
+type OAuthTokenData = {
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+};
 
 export async function getAccessToken() {
   const TOKENS = getRequestContext().env.TOKENS;

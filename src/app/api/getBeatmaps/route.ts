@@ -4,12 +4,6 @@ import { getAccessToken } from "../utils";
 
 export const runtime = "edge";
 
-export type OAuthTokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-};
-
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
   search: {

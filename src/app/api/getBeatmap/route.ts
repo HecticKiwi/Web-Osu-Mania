@@ -4,24 +4,6 @@ import { getAccessToken } from "../utils";
 
 export const runtime = "edge";
 
-export type OAuthTokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-};
-
-export type GetBeatmapsResponse = {
-  beatmapsets: BeatmapSet[];
-  search: {
-    sort: string;
-  };
-  recommended_difficulty: null;
-  error: null;
-  total: number;
-  cursor: null;
-  cursor_string: string;
-};
-
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
