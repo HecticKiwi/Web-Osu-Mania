@@ -30,7 +30,7 @@ const ResultsScreen = ({
       <div className="fixed inset-0 -top-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
         <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
           <h1 className="text-3xl font-semibold md:text-5xl">
-            {artist} - {title}
+            {artist} - {title} [{beatmapData.metadata.version}]
           </h1>
           <div className="mt-1 text-2xl text-muted-foreground">
             Beatmap by {beatmapData.metadata.creator}
