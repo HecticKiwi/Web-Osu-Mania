@@ -20,11 +20,6 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
   const { settings, setSettings } = useSettingsContext();
   const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
 
-  // If the browser doesn't support IDB, don't show
-  if (!("indexedDB" in window) || !navigator.storage) {
-    return null;
-  }
-
   return (
     <div className={cn(className)}>
       <h3 className="mb-2 text-lg font-semibold">Beatmap Management</h3>
@@ -121,41 +116,45 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           it.
         </p>
 
-        <SwitchInput
-          label="Enable IndexedDB Cache"
-          checked={settings.storeDownloadedBeatmaps}
-          onCheckedChange={async (checked) => {
-            setSettings((draft) => {
-              draft.storeDownloadedBeatmaps = checked;
-            });
-
-            if (!checked && idbUsage && idbUsage > 0) {
-              await clearIdbCache();
-            }
-          }}
-        />
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          By default, downloaded beatmaps are discarded when you leave or
-          refresh the page. If you enable caching via IndexedDB, downloaded
-          beatmaps will be saved in the browser across visits.
-        </p>
-      </div>
-
-      <Button
-        className={cn("mt-8 w-full", className)}
-        size={"sm"}
-        onClick={() => clearIdbCache()}
-        disabled={!idbUsage}
-      >
-        {idbUsage !== null ? (
-          <>Clear Cache ({filesize(idbUsage)})</>
-        ) : (
+        {"indexedDB" in window && navigator.storage && (
           <>
-            <Loader2Icon className="animate-spin" />
+            <SwitchInput
+              label="Enable IndexedDB Cache"
+              checked={settings.storeDownloadedBeatmaps}
+              onCheckedChange={async (checked) => {
+                setSettings((draft) => {
+                  draft.storeDownloadedBeatmaps = checked;
+                });
+
+                if (!checked && idbUsage && idbUsage > 0) {
+                  await clearIdbCache();
+                }
+              }}
+            />
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              By default, downloaded beatmaps are discarded when you leave or
+              refresh the page. If you enable caching via IndexedDB, downloaded
+              beatmaps will be saved in the browser across visits.
+            </p>
+
+            <Button
+              className={cn("mt-8 w-full", className)}
+              size={"sm"}
+              onClick={() => clearIdbCache()}
+              disabled={!idbUsage}
+            >
+              {idbUsage !== null ? (
+                <>Clear Cache ({filesize(idbUsage)})</>
+              ) : (
+                <>
+                  <Loader2Icon className="animate-spin" />
+                </>
+              )}
+            </Button>
           </>
         )}
-      </Button>
+      </div>
     </div>
   );
 };

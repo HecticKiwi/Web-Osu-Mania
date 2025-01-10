@@ -1,6 +1,6 @@
 import { clamp } from "@/lib/utils";
 import { gsap } from "gsap";
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { Game } from "../game";
 
 const blue = 0x32bce7;
@@ -13,7 +13,7 @@ export class ErrorBar {
   public view: Container;
   private background: Graphics;
   private foreground: Graphics;
-  private timingMarks: Graphics[] = [];
+  private timingMarks: Sprite[] = [];
   private averageMarker: Graphics;
 
   private readonly width = 300;
@@ -44,12 +44,16 @@ export class ErrorBar {
     this.averageMarker.x = this.width / 2;
     this.averageMarker.zIndex = 99;
 
+    const staticView = new Container();
+    staticView.addChild(this.background);
+    staticView.addChild(this.foreground);
+    staticView.addChild(centerLine);
+    staticView.cacheAsTexture(true);
+
     this.view = new Container();
-    this.view.addChild(this.background);
-    this.view.addChild(this.foreground);
-    this.view.addChild(centerLine);
-    this.view.addChild(this.averageMarker);
     this.view.interactiveChildren = false;
+    this.view.addChild(staticView);
+    this.view.addChild(this.averageMarker);
     this.view.pivot.set(this.width / 2, this.height);
     this.view.scale.set(this.game.settings.errorBarScale);
   }
@@ -102,7 +106,10 @@ export class ErrorBar {
           ? green
           : orange;
 
-    const mark = new Graphics().rect(0, 0, 2, 20).fill(color);
+    const mark = Sprite.from(Texture.WHITE);
+    mark.width = 2;
+    mark.height = 20;
+    mark.tint = color;
     mark.pivot.set(1, 0);
 
     const x =
