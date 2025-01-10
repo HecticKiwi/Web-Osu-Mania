@@ -30,11 +30,15 @@ const PauseScreen = ({
       {/* Inset of -1px since it wasn't covering the top for some reason */}
       <div className="fixed -top-[1px] left-0 h-[calc(100dvh+1px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
         <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-3xl font-semibold md:text-5xl">
-            {artist} - {title} [{beatmapData.metadata.version}]
-          </h1>
-          <div className="mt-1 text-2xl text-muted-foreground">
+          <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
+
+          <div className="text-xl text-muted-foreground">
             Beatmap by {beatmapData.metadata.creator}
+          </div>
+
+          <div className="mt-3 flex w-fit items-center gap-2 rounded border bg-card p-1.5">
+            <p className="text-yellow-400">{1.24}★</p>
+            <p className="line-clamp-1">{beatmapData.metadata.version}</p>
           </div>
 
           <div className="mt-16 flex flex-col gap-12">

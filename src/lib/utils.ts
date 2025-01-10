@@ -144,3 +144,18 @@ export function shuffle<T>(array: T[]) {
   }
   return array;
 }
+
+// https://osu.ppy.sh/wiki/en/Beatmap/Difficulty#difficulty-and-star-rating
+export function difficultyRatingToRgba(rating: number) {
+  return rating < 2
+    ? "rgba(102,204,255,0.8)" // Blue
+    : rating < 2.7
+      ? "rgba(136,179,0,0.8)" // Green
+      : rating < 4
+        ? "rgba(255,204,34,0.8)" // Yellow
+        : rating < 5.3
+          ? "rgba(255,78,111,0.8)" // Orange
+          : rating < 6.5
+            ? "rgba(255,102,170,0.8)" // Magenta
+            : "rgba(101,99,212,0.8)"; // Purple
+}

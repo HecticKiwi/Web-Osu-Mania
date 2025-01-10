@@ -29,11 +29,15 @@ const ResultsScreen = ({
       {/* Top of -1px since it wasn't covering the top for some reason */}
       <div className="fixed inset-0 -top-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
         <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-3xl font-semibold md:text-5xl">
-            {artist} - {title} [{beatmapData.metadata.version}]
-          </h1>
-          <div className="mt-1 text-2xl text-muted-foreground">
+          <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
+
+          <div className="text-xl text-muted-foreground">
             Beatmap by {beatmapData.metadata.creator}
+          </div>
+
+          <div className="mt-3 flex w-fit items-center gap-2 rounded border bg-card p-1.5">
+            <p className="text-yellow-400">{1.24}★</p>
+            <p className="line-clamp-1">{beatmapData.metadata.version}</p>
           </div>
 
           <div className="mt-8">
