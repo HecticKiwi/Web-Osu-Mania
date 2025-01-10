@@ -77,8 +77,8 @@ export class Hold {
       return;
     }
 
-    const delta = this.data.endTime - this.game.timeElapsed;
-    const absDelta = Math.abs(delta);
+    const endTimeDelta = this.data.endTime - this.game.timeElapsed;
+    const absDelta = Math.abs(endTimeDelta);
 
     if (this.game.settings.mods.autoplay) {
       // Press key during hold
@@ -90,7 +90,8 @@ export class Hold {
         }
       }
 
-      if (delta < 0) {
+      // If hold is completed
+      if (endTimeDelta < 0) {
         this.game.scoreSystem.hit(320);
 
         this.game.errorBar?.addTimingMark(0);
@@ -102,7 +103,7 @@ export class Hold {
       }
     } else {
       // If this has passed the late miss point
-      if (delta < -this.game.hitWindows[0]) {
+      if (endTimeDelta < -this.game.hitWindows[0]) {
         this.game.scoreSystem.hit(0);
         this.shouldRemove = true;
         return;
@@ -130,7 +131,7 @@ export class Hold {
           this.game.scoreSystem.hit(0);
         }
 
-        this.game.errorBar?.addTimingMark(delta);
+        this.game.errorBar?.addTimingMark(endTimeDelta);
         this.shouldRemove = true;
 
         return;
@@ -142,7 +143,7 @@ export class Hold {
         !this.broken
       ) {
         this.broken = true;
-        this.game.errorBar?.addTimingMark(delta);
+        this.game.errorBar?.addTimingMark(endTimeDelta);
 
         gsap.to(this.view, {
           pixi: {

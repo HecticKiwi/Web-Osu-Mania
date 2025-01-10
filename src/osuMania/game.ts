@@ -655,24 +655,23 @@ export class Game {
 
   public updateHitObjects() {
     this.columns.forEach((column) => {
-      let itemsToRemove = 0;
-
-      for (const hitObject of column) {
+      let i = 0;
+      while (i < column.length) {
+        const hitObject = column[i];
         hitObject.update();
 
         if (hitObject.shouldRemove) {
-          itemsToRemove++;
+          this.notesContainer.removeChild(hitObject.view);
+          column.shift();
+          i = 0;
         }
 
         // If this hit object is above the top screen edge, there's no need to update the rest
         if (hitObject.view.y < 0) {
           break;
         }
-      }
 
-      for (let i = 0; i < itemsToRemove; i++) {
-        this.notesContainer.removeChild(column[i].view);
-        column.shift();
+        i++;
       }
     });
   }
