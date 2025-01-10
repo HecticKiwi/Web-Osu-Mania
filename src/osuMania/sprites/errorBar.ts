@@ -47,12 +47,12 @@ export class ErrorBar {
     const staticView = new Container();
     staticView.addChild(this.background);
     staticView.addChild(this.foreground);
-    staticView.addChild(centerLine);
     staticView.cacheAsTexture(true);
 
     this.view = new Container();
     this.view.interactiveChildren = false;
     this.view.addChild(staticView);
+    this.view.addChild(centerLine);
     this.view.addChild(this.averageMarker);
     this.view.pivot.set(this.width / 2, this.height);
     this.view.scale.set(this.game.settings.errorBarScale);
@@ -110,7 +110,7 @@ export class ErrorBar {
     mark.width = 2;
     mark.height = 20;
     mark.tint = color;
-    mark.pivot.set(1, 0);
+    mark.pivot.set(0.5, 0);
 
     const x =
       (-offset / this.game.hitWindows["50"]) * (this.background.width / 2) +
