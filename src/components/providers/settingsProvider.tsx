@@ -16,6 +16,13 @@ export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
 
+export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
+  bars: "▬",
+  circles: "⬤",
+  arrows: "↗",
+  diamonds: "◆",
+};
+
 export type Settings = {
   version: number;
   volume: number;

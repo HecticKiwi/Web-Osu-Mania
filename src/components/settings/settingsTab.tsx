@@ -12,6 +12,7 @@ import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import Keybinds from "../keybinds";
 import {
+  SKIN_STYLE_ICONS,
   SKIN_STYLES,
   SkinStyle,
   useSettingsContext,
@@ -119,7 +120,12 @@ const SettingsTab = () => {
                 className="flex items-center space-x-2"
               >
                 <RadioGroupItem value={style} id={style} />
-                <span>{capitalizeFirstLetter(style)}</span>
+                <span className="flex gap-2">
+                  <span className="w-4 text-center">
+                    {SKIN_STYLE_ICONS[style]}
+                  </span>
+                  {capitalizeFirstLetter(style)}
+                </span>
               </Label>
             ))}
           </RadioGroup>
