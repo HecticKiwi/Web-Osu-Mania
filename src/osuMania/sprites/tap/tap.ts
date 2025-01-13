@@ -1,10 +1,9 @@
 import { SampleSet, TapData } from "@/lib/beatmapParser";
-import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
-import { colors } from "../constants";
-import { Game } from "../game";
+import { Container, Texture } from "pixi.js";
+import { Game } from "../../game";
 
-export class Tap {
-  static renderTexture: RenderTexture | null;
+export abstract class Tap {
+  static renderTexture: Texture | null;
 
   public game: Game;
 
@@ -21,50 +20,6 @@ export class Tap {
     this.game = game;
 
     this.data = tapData;
-
-    let width = game.scaledColumnWidth;
-    let height = width * 0.4;
-    let radius = 0;
-
-    if (this.game.settings.style === "circles") {
-      width = game.scaledColumnWidth * 0.8;
-      height = game.scaledColumnWidth * 0.8;
-      radius = game.scaledColumnWidth * 0.8;
-    }
-
-    if (!Tap.renderTexture) {
-      const graphic = new Graphics()
-        .roundRect(0, 0, width, height, radius)
-        .fill("white");
-
-      Tap.renderTexture = RenderTexture.create({
-        width,
-        height,
-        antialias: true,
-      });
-
-      game.app.renderer.render({
-        container: graphic,
-        target: Tap.renderTexture,
-      });
-
-      graphic.destroy();
-    }
-
-    this.view = new Sprite(Tap.renderTexture);
-    this.view.tint = colors[game.laneColors[tapData.column]];
-    this.view.zIndex = 1;
-    this.view.pivot.x = width / 2;
-    this.view.pivot.y = height;
-    this.view.x =
-      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
-    this.view.visible = false;
-
-    if (this.game.settings.style === "circles") {
-      this.view.pivot.y = height / 2;
-    }
-
-    this.game.notesContainer.addChild(this.view);
 
     this.setSoundData();
   }

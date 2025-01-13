@@ -11,5 +11,7 @@ export async function loadAssets() {
     await Assets.load(`/skin/mania-hit200-0.png`),
     await Assets.load(`/skin/mania-hit300-0.png`),
     await Assets.load(`/skin/mania-hit300g-0.png`),
+    await Assets.load(`/skin/arrow.svg`),
+    await Assets.load(`/skin/arrowOutline.svg`),
   ]);
 }

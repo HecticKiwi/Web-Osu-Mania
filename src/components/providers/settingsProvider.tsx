@@ -13,7 +13,7 @@ export const BEATMAP_API_PROVIDERS = {
 
 export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 
-export const SKIN_STYLES = ["bars", "circles"] as const;
+export const SKIN_STYLES = ["bars", "circles", "arrows"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
 
 export type Settings = {
@@ -30,6 +30,7 @@ export type Settings = {
   showFpsCounter: boolean;
   storeDownloadedBeatmaps: boolean;
   upscroll: boolean;
+  darkerHoldNotes: boolean;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
   proxyBeatmapDownloads: boolean;
@@ -66,6 +67,7 @@ export const defaultSettings: Settings = {
   showFpsCounter: false,
   storeDownloadedBeatmaps: false,
   upscroll: false,
+  darkerHoldNotes: true,
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
   proxyBeatmapDownloads: false,

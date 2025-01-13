@@ -125,6 +125,15 @@ const SettingsTab = () => {
           </RadioGroup>
         </div>
         <SwitchInput
+          label="Darker Hold Notes"
+          checked={settings.darkerHoldNotes}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.darkerHoldNotes = checked;
+            })
+          }
+        />
+        <SwitchInput
           label="Upscroll (DDR Style)"
           checked={settings.upscroll}
           onCheckedChange={(checked) =>

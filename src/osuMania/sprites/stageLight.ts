@@ -1,6 +1,5 @@
 import { gsap } from "gsap";
 import { Container, FillGradient, Graphics, GraphicsContext } from "pixi.js";
-import { colors } from "../constants";
 import { Game } from "../game";
 
 export class StageLight {
@@ -30,7 +29,7 @@ export class StageLight {
     }
 
     this.view = new Graphics(StageLight.graphicsContext);
-    this.view.tint = colors[game.laneColors[columnId]];
+    this.view.tint = game.laneColors[columnId];
     this.view.x = columnId * width;
     this.view.pivot.y = height;
     this.view.alpha = 0;
@@ -39,7 +38,7 @@ export class StageLight {
   public update() {
     if (this.game.inputSystem.pressedColumns[this.columnId]) {
       gsap.killTweensOf(this.view);
-      this.view.alpha = 1;
+      this.view.alpha = 0.5;
     }
 
     if (this.game.inputSystem.releasedColumns[this.columnId]) {
@@ -53,7 +52,7 @@ export class StageLight {
   }
 
   public light() {
-    this.view.alpha = 1;
+    this.view.alpha = 0.5;
 
     gsap.to(this.view, {
       pixi: {

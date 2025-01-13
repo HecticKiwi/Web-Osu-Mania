@@ -22,19 +22,30 @@ import {
   Ticker,
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
-import { Color, laneColors, laneWidths, MAX_TIME_RANGE } from "./constants";
+import {
+  laneArrowDirections,
+  laneColors,
+  laneWidths,
+  MAX_TIME_RANGE,
+} from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
-import { Hold } from "./sprites/hold";
+import { ArrowHold } from "./sprites/hold/arrowHold";
+import { BarHold } from "./sprites/hold/barHold";
+import { CircleHold } from "./sprites/hold/circleHold";
 import { Judgement } from "./sprites/judgement";
+import { ArrowKey } from "./sprites/key/arrowKey";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
 import { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
 import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
-import { Tap } from "./sprites/tap";
+import { ArrowTap } from "./sprites/tap/arrowTap";
+import { BarTap } from "./sprites/tap/barTap";
+import { CircleTap } from "./sprites/tap/circleTap";
+import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
@@ -51,7 +62,8 @@ export class Game {
   public difficulty: Difficulty;
   public columnKeybinds: string[];
   public hitWindows: HitWindows;
-  public laneColors: Color[];
+  public laneColors: readonly string[];
+  public laneArrowDirections: readonly number[]; // Only used for the arrow style
 
   public hitPosition: number;
   public readonly hitPositionOffset = 130;
@@ -75,6 +87,7 @@ export class Game {
   public stageBackground: Container;
   public stageLights: StageLight[] = [];
   public notesContainer: Container = new Container();
+  public keysContainer: Container = new Container();
   public keys: Key[] = [];
   public stageHint: StageHint;
   public judgement: Judgement;
@@ -113,6 +126,8 @@ export class Game {
     this.nextTimingPoint = this.timingPoints[1];
 
     this.laneColors = laneColors[this.difficulty.keyCount - 1];
+    this.laneArrowDirections =
+      laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = setResults;
 
@@ -175,8 +190,6 @@ export class Game {
     this.startMessage.x = this.app.screen.width / 2;
     this.startMessage.y = this.app.screen.height / 2;
 
-    this.keys.forEach((key) => key.resize());
-
     this.stageHint?.resize();
     this.stageLights.forEach((stageLight) => stageLight.resize());
 
@@ -185,6 +198,7 @@ export class Game {
       this.app.screen.width,
     );
     this.notesContainer.width = notesContainerWidth;
+    this.keysContainer.width = notesContainerWidth;
 
     const gradientFill = new FillGradient(0, this.app.screen.height, 0, 0);
     gradientFill.addColorStop(0.4, "gray");
@@ -265,9 +279,9 @@ export class Game {
     );
 
     Tap.renderTexture = null;
-    Key.bottomContainerBgGraphicsContext = null;
-    Key.markerGraphicsContext = null;
-    Key.hitAreaGraphicsContext = null;
+    BarKey.markerGraphicsContext = null;
+    CircleKey.bottomContainerBgGraphicsContext = null;
+    CircleKey.markerGraphicsContext = null;
     StageLight.graphicsContext = null;
 
     this.addScoreText();
@@ -474,6 +488,7 @@ export class Game {
 
     this.notesContainer.x = this.stageSideWidth;
     this.notesContainer.interactiveChildren = false;
+    // this.notesContainer.zIndex = 1;
 
     this.stageContainer.eventMode = "passive";
     this.stageContainer.addChild(this.notesContainer);
@@ -504,23 +519,45 @@ export class Game {
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       let key: Key;
+
       if (this.settings.style === "bars") {
         key = new BarKey(this, i);
-      } else {
+      } else if (this.settings.style === "circles") {
         key = new CircleKey(this, i);
+        this.keysContainer.zIndex = -1;
+      } else {
+        key = new ArrowKey(this, i);
+        this.keysContainer.zIndex = -1;
       }
 
-      this.stageContainer.addChild(key.view);
+      this.keysContainer.addChild(key.view);
+      this.keysContainer.eventMode = "static";
+
+      this.stageContainer.addChild(this.keysContainer);
       this.keys.push(key);
     }
+
+    this.keys.forEach((key) => key.resize());
   }
 
   private addHitObjects() {
     const hitObjects = this.hitObjects.map((hitObjectData) => {
       if (hitObjectData.type === "tap") {
-        return new Tap(this, hitObjectData);
+        if (this.settings.style === "bars") {
+          return new BarTap(this, hitObjectData);
+        } else if (this.settings.style === "circles") {
+          return new CircleTap(this, hitObjectData);
+        } else {
+          return new ArrowTap(this, hitObjectData);
+        }
       } else {
-        return new Hold(this, hitObjectData);
+        if (this.settings.style === "bars") {
+          return new BarHold(this, hitObjectData);
+        } else if (this.settings.style === "circles") {
+          return new CircleHold(this, hitObjectData);
+        } else {
+          return new ArrowHold(this, hitObjectData);
+        }
       }
     });
 

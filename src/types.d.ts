@@ -1,5 +1,5 @@
-import { Hold } from "./osuMania/sprites/hold";
-import { Tap } from "./osuMania/sprites/tap";
+import { Hold } from "./osuMania/sprites/hold/hold";
+import { Tap } from "./osuMania/sprites/tap/tap";
 
 export type GameState = "WAIT" | "PLAY" | "PAUSE";
 

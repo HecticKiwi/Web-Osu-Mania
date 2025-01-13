@@ -1,58 +1,25 @@
 import { HoldData } from "@/lib/beatmapParser";
 import { gsap } from "gsap";
-import { Container, Sprite, Texture } from "pixi.js";
-import { colors } from "../constants";
-import { Game } from "../game";
-import { Tap } from "./tap";
+import { Container } from "pixi.js";
+import { Game } from "../../game";
 
-export class Hold {
+export abstract class Hold {
   public data: HoldData;
 
   protected game: Game;
 
   public view: Container;
-  private body: Container;
-  private head?: Container;
+  protected body: Container;
+  protected head?: Container;
 
   public shouldRemove: boolean;
-  private height: number;
-  private broken = false;
+  protected height: number;
+  protected broken = false;
 
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
     this.data = holdData;
-
-    this.body = Sprite.from(Texture.WHITE);
-
-    if (this.game.settings.style === "circles") {
-      this.body.width = this.game.scaledColumnWidth * 0.8;
-    } else {
-      this.body.width = this.game.scaledColumnWidth;
-    }
-
     this.height = this.game.getHitObjectOffset(holdData.time, holdData.endTime);
-
-    this.view = new Container();
-    this.view.addChild(this.body);
-    this.view.tint = colors[game.laneColors[holdData.column]];
-    this.view.pivot.x = this.view.width / 2;
-    this.view.x =
-      holdData.column * this.game.scaledColumnWidth +
-      this.game.scaledColumnWidth / 2;
-    this.view.visible = false;
-
-    if (this.game.settings.style === "circles") {
-      const tail = new Sprite(Tap.renderTexture!);
-      tail.pivot.y = tail.height / 2;
-      this.view.addChild(tail);
-
-      this.head = new Sprite(Tap.renderTexture!);
-      this.head.pivot.y = tail.height / 2;
-      this.view.addChild(this.head);
-    }
-
-    this.setViewHeight();
-    this.game.notesContainer.addChild(this.view);
   }
 
   public update() {
@@ -177,7 +144,7 @@ export class Hold {
     return this.game.inputSystem.releasedColumns[this.data.column];
   }
 
-  private setViewHeight() {
+  protected setViewHeight() {
     this.body.height = this.height;
 
     if (this.head) {
