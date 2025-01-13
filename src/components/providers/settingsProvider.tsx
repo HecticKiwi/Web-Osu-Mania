@@ -13,7 +13,7 @@ export const BEATMAP_API_PROVIDERS = {
 
 export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 
-export const SKIN_STYLES = ["bars", "circles", "arrows"] as const;
+export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
 
 export type Settings = {

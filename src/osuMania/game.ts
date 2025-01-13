@@ -34,10 +34,12 @@ import { Fps } from "./sprites/fps";
 import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
+import { DiamondHold } from "./sprites/hold/diamondHold";
 import { Judgement } from "./sprites/judgement";
 import { ArrowKey } from "./sprites/key/arrowKey";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
+import { DiamondKey } from "./sprites/key/diamondKey";
 import { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
 import { StageHint } from "./sprites/stageHint";
@@ -45,6 +47,7 @@ import { StageLight } from "./sprites/stageLight";
 import { ArrowTap } from "./sprites/tap/arrowTap";
 import { BarTap } from "./sprites/tap/barTap";
 import { CircleTap } from "./sprites/tap/circleTap";
+import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
@@ -73,6 +76,23 @@ export class Game {
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
+
+  // Classes for skin elements
+  public tapClass:
+    | typeof BarTap
+    | typeof CircleTap
+    | typeof ArrowTap
+    | typeof DiamondTap;
+  public holdClass:
+    | typeof BarHold
+    | typeof CircleHold
+    | typeof ArrowHold
+    | typeof DiamondHold;
+  public keyClass:
+    | typeof BarKey
+    | typeof CircleKey
+    | typeof ArrowKey
+    | typeof DiamondKey;
 
   // UI Components
   private startMessage: BitmapText;
@@ -132,6 +152,28 @@ export class Game {
     this.setResults = setResults;
 
     this.settings = getSettings();
+
+    if (this.settings.style === "bars") {
+      this.tapClass = BarTap;
+      this.holdClass = BarHold;
+      this.keyClass = BarKey;
+    } else if (this.settings.style === "circles") {
+      this.tapClass = CircleTap;
+      this.holdClass = CircleHold;
+      this.keyClass = CircleKey;
+    } else if (this.settings.style === "arrows") {
+      this.tapClass = ArrowTap;
+      this.holdClass = ArrowHold;
+      this.keyClass = ArrowKey;
+    } else {
+      this.tapClass = DiamondTap;
+      this.holdClass = DiamondHold;
+      this.keyClass = DiamondKey;
+    }
+
+    if (this.settings.style !== "bars") {
+      this.keysContainer.zIndex = -1;
+    }
 
     this.columnKeybinds =
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
@@ -199,6 +241,7 @@ export class Game {
     );
     this.notesContainer.width = notesContainerWidth;
     this.keysContainer.width = notesContainerWidth;
+    this.keys.forEach((key) => key.resize());
 
     const gradientFill = new FillGradient(0, this.app.screen.height, 0, 0);
     gradientFill.addColorStop(0.4, "gray");
@@ -282,6 +325,10 @@ export class Game {
     BarKey.markerGraphicsContext = null;
     CircleKey.bottomContainerBgGraphicsContext = null;
     CircleKey.markerGraphicsContext = null;
+    DiamondKey.bottomContainerBgGraphicsContext = null;
+    DiamondKey.markerGraphicsContext = null;
+    DiamondHold.tailGraphicsContext = null;
+    ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
     this.addScoreText();
@@ -520,15 +567,7 @@ export class Game {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       let key: Key;
 
-      if (this.settings.style === "bars") {
-        key = new BarKey(this, i);
-      } else if (this.settings.style === "circles") {
-        key = new CircleKey(this, i);
-        this.keysContainer.zIndex = -1;
-      } else {
-        key = new ArrowKey(this, i);
-        this.keysContainer.zIndex = -1;
-      }
+      key = new this.keyClass(this, i);
 
       this.keysContainer.addChild(key.view);
       this.keysContainer.eventMode = "static";
@@ -543,21 +582,9 @@ export class Game {
   private addHitObjects() {
     const hitObjects = this.hitObjects.map((hitObjectData) => {
       if (hitObjectData.type === "tap") {
-        if (this.settings.style === "bars") {
-          return new BarTap(this, hitObjectData);
-        } else if (this.settings.style === "circles") {
-          return new CircleTap(this, hitObjectData);
-        } else {
-          return new ArrowTap(this, hitObjectData);
-        }
+        return new this.tapClass(this, hitObjectData);
       } else {
-        if (this.settings.style === "bars") {
-          return new BarHold(this, hitObjectData);
-        } else if (this.settings.style === "circles") {
-          return new CircleHold(this, hitObjectData);
-        } else {
-          return new ArrowHold(this, hitObjectData);
-        }
+        return new this.holdClass(this, hitObjectData);
       }
     });
 

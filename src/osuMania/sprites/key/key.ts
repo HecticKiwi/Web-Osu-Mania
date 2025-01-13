@@ -47,6 +47,8 @@ export abstract class Key {
     });
 
     this.view.addChild(hitArea);
+    this.view.x =
+      this.game.stageSideWidth + this.columnId * this.game.scaledColumnWidth;
   }
 
   public update() {
@@ -58,8 +60,6 @@ export abstract class Key {
   }
 
   public resize() {
-    this.view.x =
-      this.game.stageSideWidth + this.columnId * this.game.scaledColumnWidth;
     this.view.y = this.game.app.screen.height;
   }
 
