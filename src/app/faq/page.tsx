@@ -3,9 +3,9 @@ import Link from "next/link";
 
 const FaqPage = () => {
   return (
-    <main className="p-6">
+    <main className="p-2 sm:p-6">
       <Card className="mx-auto max-w-2xl">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <h2 className="text-2xl font-semibold tracking-tight">
             What is osu!mania?
           </h2>
