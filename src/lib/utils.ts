@@ -84,8 +84,10 @@ export function getSettings() {
     ...settings.mods,
   };
 
-  // Set default 10K keybinds
-  settings.keybinds.keyModes[9] = [...defaultSettings.keybinds.keyModes[9]];
+  if (!settings.keybinds.keyModes[9]) {
+    // Set default 10K keybinds
+    settings.keybinds.keyModes[9] = [...defaultSettings.keybinds.keyModes[9]];
+  }
 
   return settings;
 }
