@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const FaqPage = () => {
   return (
-    <main className="p-2 sm:p-6">
+    <main className="p-2 pb-4 sm:p-6">
       <div className="mx-auto max-w-2xl">
         <Card>
           <CardContent className="p-4 sm:p-6">
@@ -71,6 +71,17 @@ const FaqPage = () => {
             prefetch={false}
           >
             HecticKiwi
+          </Link>
+        </p>
+        <p className="mt-1 text-muted-foreground">
+          If you like this website, please consider donating on{" "}
+          <Link
+            href={"https://ko-fi.com/hectickiwi"}
+            className="text-primary focus-within:underline hover:underline"
+            target="_blank"
+            prefetch={false}
+          >
+            Ko-fi
           </Link>
         </p>
       </div>
