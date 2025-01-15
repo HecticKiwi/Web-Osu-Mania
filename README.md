@@ -14,7 +14,7 @@ Features:
 - Gameplay mods + custom song speed
 - A variety of settings which include:
   - Scroll speed
-  - Bar and circle skins
+  - Bar/circle/arrow/diamond skins
   - Upscroll
   - Enable/disable 300g judgement, error bar, FPS counter
 - Supports SV beatmaps and beatmap hitsounds
