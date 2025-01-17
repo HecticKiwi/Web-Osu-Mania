@@ -59,7 +59,17 @@ const GameModal = () => {
       try {
         setLoadingMessage("Parsing Beatmap...");
 
-        const beatmapData = await parseOsz(beatmapSetFile, beatmapId);
+        const beatmap = beatmapSet.beatmaps.find(
+          (beatmap) => beatmap.id === beatmapId,
+        );
+
+        if (!beatmap) {
+          throw new Error(
+            "Beatmap ID doesn't match any beatmaps (this should never happen)",
+          );
+        }
+
+        const beatmapData = await parseOsz(beatmapSetFile, beatmap);
 
         await loadAssets();
 

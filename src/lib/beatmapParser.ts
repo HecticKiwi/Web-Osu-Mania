@@ -1,6 +1,7 @@
 import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
+import { Beatmap } from "./osuApi";
 import { getSettings, removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
@@ -93,7 +94,7 @@ export interface BeatmapData {
 
 export const parseOsz = async (
   blob: Blob,
-  beatmapId: number,
+  beatmap: Beatmap,
 ): Promise<BeatmapData> => {
   const zip = await JSZip.loadAsync(blob);
 
@@ -102,12 +103,16 @@ export const parseOsz = async (
     filename.endsWith(".osu"),
   );
 
+  const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
+  const diffName = beatmap.version.replace(regex, "");
+
   let osuFileData;
   for (const file of osuFiles) {
     const fileData = await zip.files[file].async("text");
 
-    if (fileData.includes(`BeatmapID:${beatmapId}`)) {
+    if (fileData.includes(`Version:${diffName}`)) {
       osuFileData = fileData;
+      break;
     }
   }
 
