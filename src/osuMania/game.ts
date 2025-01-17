@@ -69,7 +69,7 @@ export class Game {
   public laneArrowDirections: readonly number[]; // Only used for the arrow style
 
   public hitPosition: number;
-  public readonly hitPositionOffset = 130;
+  public hitPositionOffset: number;
   public scaledColumnWidth: number;
 
   // Systems
@@ -152,6 +152,8 @@ export class Game {
     this.setResults = setResults;
 
     this.settings = getSettings();
+
+    this.hitPositionOffset = this.settings.hitPositionOffset;
 
     if (this.settings.style === "bars") {
       this.tapClass = BarTap;

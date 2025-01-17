@@ -38,6 +38,7 @@ export type Settings = {
   storeDownloadedBeatmaps: boolean;
   upscroll: boolean;
   darkerHoldNotes: boolean;
+  hitPositionOffset: number;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
   proxyBeatmapDownloads: boolean;
@@ -75,6 +76,7 @@ export const defaultSettings: Settings = {
   storeDownloadedBeatmaps: false,
   upscroll: false,
   darkerHoldNotes: true,
+  hitPositionOffset: 130,
   beatmapProvider: "NeriNyan",
   customBeatmapProvider: "",
   proxyBeatmapDownloads: false,
