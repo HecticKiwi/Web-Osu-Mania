@@ -21,12 +21,6 @@ const PauseScreen = ({
     (beatmap) => beatmap.id === beatmapId,
   );
 
-  if (!beatmap) {
-    throw new Error(
-      "Beatmap ID doesn't match any beatmaps (this should never happen)",
-    );
-  }
-
   const title = settings.preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
@@ -43,7 +37,7 @@ const PauseScreen = ({
           </div>
 
           <div className="mt-3 flex w-fit items-center gap-2 rounded border bg-card p-1.5">
-            <p className="text-yellow-400">{beatmap.difficulty_rating}★</p>
+            <p className="text-yellow-400">{beatmap?.difficulty_rating}★</p>
             <p className="line-clamp-1">{beatmapData.metadata.version}</p>
           </div>
 
