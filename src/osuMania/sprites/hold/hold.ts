@@ -110,7 +110,6 @@ export abstract class Hold {
         !this.broken
       ) {
         this.broken = true;
-        this.game.errorBar?.addTimingMark(endTimeDelta);
 
         gsap.to(this.view, {
           pixi: {
