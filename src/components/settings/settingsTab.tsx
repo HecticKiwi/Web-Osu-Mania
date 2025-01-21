@@ -148,6 +148,32 @@ const SettingsTab = () => {
             })
           }
         />
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Hit Position
+          </div>
+
+          <div className="group w-full">
+            <Tooltip open>
+              <TooltipTrigger asChild>
+                <Slider
+                  value={[settings.hitPositionOffset]}
+                  min={0}
+                  max={200}
+                  step={1}
+                  onValueChange={([hitPositionOffset]) =>
+                    setSettings((draft) => {
+                      draft.hitPositionOffset = hitPositionOffset;
+                    })
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
+                {settings.hitPositionOffset}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
         <SwitchInput
           label="Show 300g Judgement"
           checked={settings.show300g}
