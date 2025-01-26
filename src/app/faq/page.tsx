@@ -10,7 +10,7 @@ const FaqPage = () => {
             <h2 className="text-2xl font-semibold tracking-tight">
               What is osu!mania?
             </h2>
-            <p className="mt-3">
+            <p className="mt-3 text-muted-foreground">
               <Link
                 href={"https://osu.ppy.sh/"}
                 className="text-primary focus-within:underline hover:underline"
@@ -31,7 +31,7 @@ const FaqPage = () => {
             <h2 className="mt-8 text-2xl font-semibold tracking-tight">
               How do I play?
             </h2>
-            <p className="mt-3">
+            <p className="mt-3 text-muted-foreground">
               In osu!mania, notes scroll down from the top of the screen towards
               the judgement line. The objective is to press the corresponding
               key when each note reaches the line. For long notes, you must hold
@@ -39,15 +39,52 @@ const FaqPage = () => {
               the judgement line. Points are awarded based on the accuracy of
               your timing.
             </p>
-            <p className="mt-3">
+            <p className="mt-3 text-muted-foreground">
               The controls can be found at the bottom of the settings tab. By
               default, it uses the home row of a QWERTY keyboard.
             </p>
 
             <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+              Is there touchscreen/gamepad support?
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Yes! You can just tap on the lanes if you're using a touchscreen.
+              For gamepads, go to the controls at the bottom of the settings tab
+              and set your gamepad's keybinds before playing.
+            </p>
+
+            <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+              What skins are used?
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              The skins are drawn dynamically using a graphics library, so
+              unfortunately it's not possible to bring them to the official osu.
+              However, while the circle, arrow, and diamond skins are my own
+              design, the bar skin is based on{" "}
+              <Link
+                href={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
+                className="text-primary focus-within:underline hover:underline"
+                target="_blank"
+                prefetch={false}
+              >
+                Miketacular
+              </Link>
+              . The judgement elements are from{" "}
+              <Link
+                href={"https://osu.ppy.sh/community/forums/topics/1498492?n=1"}
+                className="text-primary focus-within:underline hover:underline"
+                target="_blank"
+                prefetch={false}
+              >
+                Azure Snowfall
+              </Link>
+              .
+            </p>
+
+            <h2 className="mt-8 text-2xl font-semibold tracking-tight">
               I found a bug / I have a suggestion!
             </h2>
-            <p className="mt-3">
+            <p className="mt-3 text-muted-foreground">
               Please file an issue on{" "}
               <Link
                 href={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
