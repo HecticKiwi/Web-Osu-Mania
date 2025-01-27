@@ -7,6 +7,7 @@ export const SORT_CRITERIA = [
   "plays",
   "favourites",
   "relevance",
+  "Date Saved",
 ] as const;
 export type SortCriteria = (typeof SORT_CRITERIA)[number];
 export const DEFAULT_SORT_CRITERIA: SortCriteria = "ranked";

@@ -161,3 +161,7 @@ export function difficultyRatingToRgba(rating: number) {
             ? "rgba(255,102,170,0.8)" // Magenta
             : "rgba(101,99,212,0.8)"; // Purple
 }
+
+export function caseInsensitiveIncludes(a: string, b: string) {
+  return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
+}

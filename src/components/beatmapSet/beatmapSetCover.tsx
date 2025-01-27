@@ -1,10 +1,7 @@
 import { BeatmapSet } from "@/lib/osuApi";
 import { secondsToMMSS } from "@/lib/utils";
-import { ExternalLink } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useSettingsContext } from "./providers/settingsProvider";
-import { Button } from "./ui/button";
+import { useSettingsContext } from "../providers/settingsProvider";
 
 const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   const { settings } = useSettingsContext();
@@ -29,28 +26,10 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
           src={beatmapSet.covers.cover}
           alt="Beatmap Set Cover"
           fill
-          // priority
           className="object-cover"
           sizes="720px"
         />
       </span>
-
-      <Button
-        asChild
-        variant={"secondary"}
-        size={"icon"}
-        className="h-8 w-8 self-end bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
-        onClick={(e) => e.stopPropagation()}
-        title="Go to osu! beatmap page"
-      >
-        <Link
-          href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
-          target="_blank"
-          prefetch={false}
-        >
-          <ExternalLink className="h-5 w-5" />
-        </Link>
-      </Button>
 
       {/* Details */}
       <div className="mt-auto w-full truncate text-xl">{title}</div>

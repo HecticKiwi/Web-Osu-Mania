@@ -2,6 +2,7 @@ import Header from "@/components/header";
 import BeatmapSetCacheProvider from "@/components/providers/beatmapSetCacheProvider";
 import { GameProvider } from "@/components/providers/gameProvider";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
+import SavedBeatmapSetsProvider from "@/components/providers/savedBeatmapSetsProvider";
 import SettingsProvider from "@/components/providers/settingsProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,8 @@ import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+
+export const runtime = "edge";
 
 export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
@@ -44,11 +47,13 @@ export default function RootLayout({
           <ReactQueryProvider>
             <SettingsProvider>
               <BeatmapSetCacheProvider>
-                <GameProvider>
-                  <Header />
-                  {children}
-                  <Toaster />
-                </GameProvider>
+                <SavedBeatmapSetsProvider>
+                  <GameProvider>
+                    <Header />
+                    {children}
+                    <Toaster />
+                  </GameProvider>
+                </SavedBeatmapSetsProvider>
               </BeatmapSetCacheProvider>
             </SettingsProvider>
           </ReactQueryProvider>

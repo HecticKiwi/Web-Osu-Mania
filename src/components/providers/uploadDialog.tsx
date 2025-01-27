@@ -1,10 +1,13 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
-import { Loader } from "lucide-react";
+import { ExternalLink, Loader } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import BeatmapList from "../beatmapList";
-import BeatmapSetCover from "../beatmapSetCover";
-import PreviewProgressBar from "../previewProgressBar";
+import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
+import PreviewProgressBar from "../beatmapSet/previewProgressBar";
+import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
+import { Button } from "../ui/button";
 import { useGameContext } from "./gameProvider";
 import { useSettingsContext } from "./settingsProvider";
 
@@ -54,13 +57,35 @@ const UploadDialog = () => {
           )}
           {uploadedBeatmapSet && beatmapSet && (
             <>
-              <div className="relative flex h-[150px] flex-col p-4 text-start">
+              <div className="group relative flex h-[150px] flex-col p-4 text-start">
                 <BeatmapSetCover beatmapSet={beatmapSet} />
+
                 {preview && (
                   <div className="absolute inset-x-0 bottom-0">
                     <PreviewProgressBar preview={preview} />
                   </div>
                 )}
+
+                <div className="absolute right-4 top-4 flex gap-2">
+                  <SaveBeatmapSetButton beatmapSet={beatmapSet} />
+
+                  <Button
+                    asChild
+                    variant={"secondary"}
+                    size={"icon"}
+                    className="h-8 w-8 bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
+                    onClick={(e) => e.stopPropagation()}
+                    title="Go to osu! beatmap page"
+                  >
+                    <Link
+                      href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
+                      target="_blank"
+                      prefetch={false}
+                    >
+                      <ExternalLink className="size-5" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
 
               <BeatmapList beatmapSet={beatmapSet} stopPreview={stopPreview} />

@@ -11,8 +11,8 @@ export const CATEGORIES = [
 export type Category = (typeof CATEGORIES)[number];
 export const DEFAULT_CATEGORY: Category = "Has Leaderboard";
 
-export function parseCategoryParam(param?: string | null): Category {
-  if (param && CATEGORIES.includes(param as Category)) {
+export function parseCategoryParam(param?: string | null): Category | "Saved" {
+  if (param === "Saved" || CATEGORIES.includes(param as Category)) {
     return param as Category;
   }
 

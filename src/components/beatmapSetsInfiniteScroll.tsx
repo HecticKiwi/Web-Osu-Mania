@@ -2,7 +2,7 @@
 
 import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
 import { getBeatmaps } from "@/lib/osuApi";
-import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import { Category, parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { parseGenreParam } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseLanguageParam } from "@/lib/searchParams/languageParam";
@@ -20,7 +20,7 @@ import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
-import BeatmapSet from "./beatmapSet";
+import BeatmapSet from "./beatmapSet/beatmapSet";
 import { Button } from "./ui/button";
 
 const BeatmapSetsInfiniteScroll = ({
@@ -78,7 +78,7 @@ const BeatmapSetsInfiniteScroll = ({
         sortDirection,
         keys,
         stars,
-        category,
+        category: category as Category,
         nsfw,
         genre,
         language,
