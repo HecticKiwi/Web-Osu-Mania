@@ -17,7 +17,7 @@ const SaveBeatmapSetButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       variant={"ghost"}
       size={"icon"}
       className={cn(
-        "h-8 w-8 opacity-0 transition group-hover:opacity-100",
+        "h-8 w-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100",
         isSaved && "opacity-100",
       )}
       onClick={() => {

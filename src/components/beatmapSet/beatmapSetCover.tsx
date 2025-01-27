@@ -19,7 +19,7 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       {/* Background cover */}
       <span
         className={
-          "absolute inset-0 -z-10 brightness-[0.3] transition duration-300 group-focus-within:brightness-[0.5] group-hover:brightness-[0.5]"
+          "absolute inset-0 -z-10 brightness-[0.3] transition duration-300 group-hover:brightness-[0.5]"
         }
       >
         <Image
