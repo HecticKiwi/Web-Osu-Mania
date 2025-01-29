@@ -26,7 +26,7 @@ const Keybinds = () => {
 
     const checkGamepad = () => {
       const gamepads = navigator.getGamepads();
-      const gamepad = gamepads[0];
+      const gamepad = gamepads.find((gp) => gp !== null);
 
       if (gamepad) {
         const pressedButtonIndex = gamepad.buttons.findIndex(

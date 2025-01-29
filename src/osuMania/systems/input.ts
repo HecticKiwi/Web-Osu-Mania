@@ -44,8 +44,7 @@ export class InputSystem {
   }
 
   public updateGamepadInputs() {
-    const gamepad = navigator.getGamepads()[0];
-
+    const gamepad = navigator.getGamepads().find((gp) => gp !== null) || null;
     if (!gamepad) return;
 
     gamepad.buttons.forEach((button, i) => {
