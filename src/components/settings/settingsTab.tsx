@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import {
   Tooltip,
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui/tooltip";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
-import Keybinds from "../keybinds";
 import {
   SKIN_STYLE_ICONS,
   SKIN_STYLES,
@@ -241,13 +239,6 @@ const SettingsTab = () => {
       >
         Reset Settings
       </Button>
-
-      <Separator className="my-6" />
-
-      <h3 className="text-lg font-semibold">Keybinds</h3>
-      <div className="mt-2">
-        <Keybinds />
-      </div>
     </>
   );
 };

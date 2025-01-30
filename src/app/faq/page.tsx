@@ -40,8 +40,8 @@ const FaqPage = () => {
               your timing.
             </p>
             <p className="mt-3 text-muted-foreground">
-              The controls can be found at the bottom of the settings tab. By
-              default, it uses the home row of a QWERTY keyboard.
+              The controls can be found inside the keybinds tab. By default, it
+              uses the home row of a QWERTY keyboard.
             </p>
 
             <h2 className="mt-8 text-2xl font-semibold tracking-tight">
@@ -49,7 +49,7 @@ const FaqPage = () => {
             </h2>
             <p className="mt-3 text-muted-foreground">
               Yes! You can just tap on the lanes if you're using a touchscreen.
-              For gamepads, go to the controls at the bottom of the settings tab
+              For gamepads, go to the controls at the bottom of the keybinds tab
               and set your gamepad's keybinds before playing.
             </p>
 
