@@ -8,7 +8,7 @@ export class InputSystem {
   public pressedKeys: Set<string> = new Set();
   public releasedKeys: Set<string> = new Set();
 
-  public gamepadState: GamepadButton[] = [];
+  public gamepadState: boolean[] = [];
 
   public tappedColumns: boolean[];
   public pressedColumns: boolean[];
@@ -55,7 +55,7 @@ export class InputSystem {
       if (
         button.pressed &&
         this.game.settings.keybinds.pause === `🎮Btn${i}` &&
-        !this.gamepadState[i]?.pressed
+        !this.gamepadState[i]
       ) {
         this.pauseTapped = true;
       }
@@ -63,16 +63,16 @@ export class InputSystem {
       const column = this.keybindsMap.get(`🎮Btn${i}`);
       if (column === undefined) return;
 
-      if (button.pressed && !this.gamepadState[i]?.pressed) {
+      if (button.pressed && !this.gamepadState[i]) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
-      } else if (!button.pressed && this.gamepadState[i]?.pressed) {
+      } else if (!button.pressed && this.gamepadState[i]) {
         this.pressedColumns[column] = false;
         this.releasedColumns[column] = true;
       }
     });
 
-    this.gamepadState = [...gamepad.buttons];
+    this.gamepadState = gamepad.buttons.map((button) => button.pressed);
   }
 
   public handleKeyDown(event: KeyboardEvent) {
