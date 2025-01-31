@@ -4,6 +4,7 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { Results } from "@/types";
 import { useEffect, useRef, useState } from "react";
+import { useSettingsContext } from "../providers/settingsProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
@@ -16,6 +17,7 @@ const GameScreens = ({
   beatmapData: BeatmapData;
   retry: () => void;
 }) => {
+  const { settings } = useSettingsContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<Results | null>(null);
@@ -23,7 +25,7 @@ const GameScreens = ({
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults);
+    const game = new Game(beatmapData, setResults, setIsPaused);
     setGame(game);
     game.main(containerRef.current);
 
@@ -54,26 +56,18 @@ const GameScreens = ({
       return;
     }
 
-    const handlePause = (event: KeyboardEvent) => {
-      if (event.code === "Escape" && !event.repeat) {
-        setIsPaused((prev) => !prev);
-      }
-    };
-
     const handleVisibilityChange = (event: Event) => {
       if (document.hidden) {
         setIsPaused(true);
       }
     };
 
-    document.addEventListener("keydown", handlePause);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener("keydown", handlePause);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [results]);
+  }, [results, settings.keybinds.pause]);
 
   return (
     <>

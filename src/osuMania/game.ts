@@ -63,7 +63,7 @@ export class Game {
 
   public settings: Settings;
   public difficulty: Difficulty;
-  public columnKeybinds: string[];
+  public columnKeybinds: (string | null)[];
   public hitWindows: HitWindows;
   public laneColors: readonly string[];
   public laneArrowDirections: readonly number[]; // Only used for the arrow style
@@ -127,11 +127,14 @@ export class Game {
   private nextTimingPoint: TimingPoint;
 
   private setResults: Dispatch<SetStateAction<Results | null>>;
+  private setIsPaused: Dispatch<SetStateAction<boolean>>;
+
   private finished: boolean = false;
 
   public constructor(
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<Results | null>>,
+    setIsPaused: Dispatch<SetStateAction<boolean>>,
   ) {
     this.resize = this.resize.bind(this);
 
@@ -150,6 +153,7 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = setResults;
+    this.setIsPaused = setIsPaused;
 
     this.settings = getSettings();
 
@@ -383,6 +387,10 @@ export class Game {
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
+
+    if (this.inputSystem.pauseTapped && !this.finished) {
+      this.setIsPaused((prev) => !prev);
+    }
 
     if (!this.settings.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());

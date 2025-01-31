@@ -92,7 +92,11 @@ export function getSettings() {
   return settings;
 }
 
-export function keyCodeToString(code: string) {
+export function keyCodeToString(code: string | null) {
+  if (!code) {
+    return "(None)";
+  }
+
   if (code.startsWith("Key")) {
     return code.slice(3); // KeyD => D
   }

@@ -1,16 +1,18 @@
 "use client";
 
-import { keyCodeToString, setNestedProperty } from "@/lib/utils";
-import { produce } from "immer";
+import { setNestedProperty } from "@/lib/utils";
 import { Fragment, useEffect, useState } from "react";
 import {
   defaultSettings,
   useSettingsContext,
 } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
+import KeybindButton from "./keybindButton";
 
 const KeybindsTab = () => {
-  const [keyBindPath, setKeyBindPath] = useState<any | null>(null);
+  const [selectedKeybindPath, setSelectedKeybindPath] = useState<any | null>(
+    null,
+  );
   const { settings, setSettings } = useSettingsContext();
 
   // Listen for gamepad events
@@ -27,48 +29,44 @@ const KeybindsTab = () => {
         );
 
         if (pressedButtonIndex !== -1) {
-          setSettings(
-            produce((draft) => {
-              setNestedProperty(
-                draft,
-                keyBindPath,
-                `🎮Btn${pressedButtonIndex}`,
-              );
-            }),
-          );
-          setKeyBindPath(null);
+          setSettings((draft) => {
+            setNestedProperty(
+              draft,
+              selectedKeybindPath,
+              `🎮Btn${pressedButtonIndex}`,
+            );
+          });
+          setSelectedKeybindPath(null);
         }
       }
 
       animationFrameId = requestAnimationFrame(checkGamepad);
     };
 
-    if (keyBindPath) {
+    if (selectedKeybindPath) {
       animationFrameId = requestAnimationFrame(checkGamepad);
     }
 
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [keyBindPath, setSettings]);
+  }, [selectedKeybindPath, setSettings]);
 
   // Listen for keyboard events
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       event.stopPropagation();
 
-      if (!keyBindPath) {
+      if (!selectedKeybindPath) {
         return;
       }
 
       if (event.code !== "Escape") {
-        setSettings(
-          produce((draft) => {
-            setNestedProperty(draft, keyBindPath, event.code);
-          }),
-        );
+        setSettings((draft) => {
+          setNestedProperty(draft, selectedKeybindPath, event.code);
+        });
       }
-      setKeyBindPath(null);
+      setSelectedKeybindPath(null);
     };
 
     window.addEventListener("keydown", handleKeyPress);
@@ -76,7 +74,7 @@ const KeybindsTab = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [keyBindPath, setSettings]);
+  }, [selectedKeybindPath, setSettings]);
 
   if (!settings) {
     return null;
@@ -84,12 +82,36 @@ const KeybindsTab = () => {
 
   return (
     <div>
-      <p className="text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Supports keyboard and gamepad inputs. If you're using touch controls,
         you don't need to do anything here - just tap on the lanes (´• ω •`)
       </p>
 
-      {/* <h3 className="mb-2 text-lg font-semibold">General</h3> */}
+      <p className="mt-2 text-sm text-muted-foreground">
+        Use right-click to clear a keybind.
+      </p>
+
+      <h3 className="mb-2 mt-6 text-lg font-semibold">General</h3>
+      <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-2 items-center rounded bg-background/50 p-1">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Pause / resume gameplay
+          </div>
+
+          <div className="grid grid-cols-2 gap-1">
+            <Button size={"sm"} className="h-8" disabled>
+              Escape
+            </Button>
+
+            <KeybindButton
+              keybind={settings.keybinds.pause}
+              keybindPath={"keybinds.pause"}
+              selectedKeybindPath={selectedKeybindPath}
+              setSelectedKeybindPath={setSelectedKeybindPath}
+            />
+          </div>
+        </div>
+      </div>
 
       {settings.keybinds.keyModes.map((keyMode, i) => (
         <Fragment key={i}>
@@ -105,20 +127,12 @@ const KeybindsTab = () => {
                   Key {j + 1}
                 </div>
 
-                <Button
-                  size={"sm"}
-                  className="h-8 w-full"
-                  onClick={() =>
-                    setKeyBindPath(`keybinds.keyModes[${i}][${j}]`)
-                  }
-                  variant={
-                    keyBindPath === `keybinds.keyModes[${i}][${j}]`
-                      ? "default"
-                      : "secondary"
-                  }
-                >
-                  {keyCodeToString(key)}
-                </Button>
+                <KeybindButton
+                  keybind={key}
+                  keybindPath={`keybinds.keyModes[${i}][${j}]`}
+                  selectedKeybindPath={selectedKeybindPath}
+                  setSelectedKeybindPath={setSelectedKeybindPath}
+                />
               </div>
             ))}
           </div>
@@ -129,11 +143,9 @@ const KeybindsTab = () => {
         variant={"destructive"}
         size={"sm"}
         onClick={() => {
-          setSettings(
-            produce((draft) => {
-              draft.keybinds = defaultSettings.keybinds;
-            }),
-          );
+          setSettings((draft) => {
+            draft.keybinds = defaultSettings.keybinds;
+          });
         }}
         className="mt-8 w-full"
       >

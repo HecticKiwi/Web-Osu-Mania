@@ -47,7 +47,8 @@ export type Settings = {
   errorBarScale: number;
   preferMetadataInOriginalLanguage: boolean;
   keybinds: {
-    keyModes: string[][];
+    keyModes: (string | null)[][];
+    pause: string | null;
   };
   mods: {
     autoplay: boolean;
@@ -118,6 +119,7 @@ export const defaultSettings: Settings = {
         "Semicolon",
       ],
     ],
+    pause: null,
   },
   mods: {
     autoplay: false,
