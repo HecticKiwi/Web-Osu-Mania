@@ -2,6 +2,8 @@ import { gsap } from "gsap";
 import { BitmapText, Container, Graphics } from "pixi.js";
 import { Game } from "../game";
 
+// Used for intro countdown and unpause countdown
+// Time values are in milliseconds
 export class Countdown {
   private game: Game;
 
@@ -13,7 +15,7 @@ export class Countdown {
   private progressBar: Container;
   private progressBarContainer: Container;
 
-  private fullWidth = 400;
+  private fullWidth = 300;
 
   constructor(game: Game) {
     this.game = game;
@@ -70,21 +72,20 @@ export class Countdown {
     this.view.alpha = 0;
   }
 
-  public update() {
-    const remainingTime = this.game.startTime - this.game.timeElapsed;
-
-    if (remainingTime < 1000 && !gsap.isTweening(this.view)) {
+  public update(remainingTime: number, maxTime: number) {
+    if (remainingTime < 500 && !gsap.isTweening(this.view)) {
       gsap.to(this.view, {
         pixi: {
           alpha: 0,
         },
-        duration: 1,
+        duration: 0.5,
         onComplete: () => {
           this.view.visible = false;
         },
       });
     }
 
+    // Hide skip when under 2 seconds left
     if (remainingTime < 2000) {
       this.skipText.alpha = 0;
     }
@@ -94,9 +95,16 @@ export class Countdown {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }
 
-    this.text.text = Math.round(remainingTime / 1000) + 1;
+    if (remainingTime < 3000) {
+      this.text.text = (remainingTime / 1000).toFixed(1);
+    } else {
+      this.text.text = Math.round(remainingTime / 1000);
+    }
 
-    this.progressBar.width = (remainingTime / this.game.startTime) * 400;
+    this.progressBar.width = Math.max(
+      (remainingTime / maxTime) * this.fullWidth,
+      0,
+    );
     this.progressBar.x = this.fullWidth / 2 - this.progressBar.width / 2;
   }
 }

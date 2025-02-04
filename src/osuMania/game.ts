@@ -27,6 +27,7 @@ import {
   laneColors,
   laneWidths,
   MAX_TIME_RANGE,
+  UNPAUSE_DELAY,
 } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -114,13 +115,15 @@ export class Game {
   private progressBar: ProgressBar;
   public errorBar: ErrorBar;
   private fps?: Fps;
-  private countdown?: Countdown;
+  private countdown: Countdown;
 
   public song: Howl;
   public timeElapsed: number = 0;
 
   public startTime: number;
   public endTime: number;
+
+  private pauseCountdown: number;
 
   public timingPoints: TimingPoint[];
   public currentTimingPoint: TimingPoint;
@@ -361,9 +364,7 @@ export class Game {
 
     this.addStartMessage();
 
-    if (this.startTime > 3000) {
-      this.addCountdown();
-    }
+    this.addCountdown();
 
     if (this.settings.showFpsCounter) {
       this.addFpsCounter();
@@ -402,7 +403,7 @@ export class Game {
         if (this.inputSystem.anyKeyTapped()) {
           this.app.stage.removeChild(this.startMessage);
 
-          if (this.countdown) {
+          if (this.startTime > 3000) {
             this.countdown.view.alpha = 1;
           }
 
@@ -414,8 +415,11 @@ export class Game {
       case "PLAY":
         this.timeElapsed = this.song.seek() * 1000;
 
-        if (this.countdown && this.timeElapsed < this.startTime) {
-          this.countdown.update();
+        if (this.countdown.view.visible) {
+          this.countdown.update(
+            this.startTime - this.timeElapsed,
+            this.startTime,
+          );
         }
 
         if (this.timeElapsed >= this.nextTimingPoint?.time) {
@@ -438,6 +442,17 @@ export class Game {
         break;
 
       case "PAUSE":
+        break;
+
+      case "UNPAUSE":
+        this.pauseCountdown -= time.elapsedMS;
+
+        this.countdown.update(this.pauseCountdown, UNPAUSE_DELAY);
+
+        if (this.pauseCountdown <= 0) {
+          this.play();
+        }
+
         break;
 
       default:
@@ -650,8 +665,18 @@ export class Game {
   }
 
   public async play() {
-    this.song.play();
-    this.state = "PLAY";
+    if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
+      this.pauseCountdown = UNPAUSE_DELAY;
+
+      gsap.killTweensOf(this.countdown.view);
+      this.countdown.view.alpha = 1;
+      this.countdown.view.visible = true;
+
+      this.state = "UNPAUSE";
+    } else {
+      this.song.play();
+      this.state = "PLAY";
+    }
   }
 
   private async finish() {

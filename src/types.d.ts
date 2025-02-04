@@ -1,7 +1,7 @@
 import { Hold } from "./osuMania/sprites/hold/hold";
 import { Tap } from "./osuMania/sprites/tap/tap";
 
-export type GameState = "WAIT" | "PLAY" | "PAUSE";
+export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE";
 
 export type Results = {
   score: number;

@@ -62,3 +62,5 @@ export const arrowColumnRatio = 0.8;
 export const diamondColumnRatio = 0.85;
 
 export const laneWidths = [56, 56, 56, 56, 50, 47, 42, 40, 38, 35] as const;
+
+export const UNPAUSE_DELAY = 1500;
