@@ -5,6 +5,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
 import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { ExternalLink } from "lucide-react";
@@ -66,21 +72,29 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
         <div className="absolute right-4 top-4 flex gap-2">
           <SaveBeatmapSetButton beatmapSet={beatmapSet} />
 
-          <Button
-            asChild
-            variant={"secondary"}
-            size={"icon"}
-            className="h-8 w-8 bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
-            title="Go to osu! beatmap page"
-          >
-            <Link
-              href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
-              target="_blank"
-              prefetch={false}
-            >
-              <ExternalLink className="size-5" />
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button
+                  asChild
+                  variant={"secondary"}
+                  size={"icon"}
+                  className="h-8 w-8 bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
+                >
+                  <Link
+                    href={`https://osu.ppy.sh/beatmapsets/${beatmapSet.id}`}
+                    target="_blank"
+                    prefetch={false}
+                  >
+                    <ExternalLink className="size-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Go to osu! Beatmap Page</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
