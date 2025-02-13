@@ -17,6 +17,7 @@ Features:
   - Bar/circle/arrow/diamond skins
   - Upscroll
   - Enable/disable 300g judgement, error bar, FPS counter
+- Local high scores
 - Supports SV beatmaps and beatmap hitsounds
 - Supports keyboard, gamepad, and touch screen input
 
