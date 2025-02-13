@@ -72,7 +72,7 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
             {highScore.mods.map((mod) => (
               <span
                 key={mod}
-                className="rounded-full bg-primary/25 px-1.5 py-0.5"
+                className="rounded-full bg-primary/25 px-2 py-0.5"
               >
                 {mod}
               </span>
