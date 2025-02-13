@@ -23,7 +23,7 @@ const ResultsScreen = ({
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId) {
+    if (!beatmapId || settings.mods.autoplay) {
       return;
     }
 
