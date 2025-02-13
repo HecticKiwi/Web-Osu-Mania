@@ -1,10 +1,11 @@
 import Header from "@/components/header";
 import BeatmapSetCacheProvider from "@/components/providers/beatmapSetCacheProvider";
 import { GameProvider } from "@/components/providers/gameProvider";
+import HighScoresProvider from "@/components/providers/highScoresProvider";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import SavedBeatmapSetsProvider from "@/components/providers/savedBeatmapSetsProvider";
 import SettingsProvider from "@/components/providers/settingsProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
@@ -46,11 +47,13 @@ export default function RootLayout({
             <SettingsProvider>
               <BeatmapSetCacheProvider>
                 <SavedBeatmapSetsProvider>
-                  <GameProvider>
-                    <Header />
-                    {children}
-                    <Toaster />
-                  </GameProvider>
+                  <HighScoresProvider>
+                    <GameProvider>
+                      <Header />
+                      {children}
+                      <Toaster />
+                    </GameProvider>
+                  </HighScoresProvider>
                 </SavedBeatmapSetsProvider>
               </BeatmapSetCacheProvider>
             </SettingsProvider>

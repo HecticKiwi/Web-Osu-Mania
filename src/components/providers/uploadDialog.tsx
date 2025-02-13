@@ -9,7 +9,7 @@ import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
 import { ExternalLink, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import BeatmapList from "../beatmapList";
+import BeatmapList from "../beatmapSet/beatmapList";
 import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
 import PreviewProgressBar from "../beatmapSet/previewProgressBar";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";

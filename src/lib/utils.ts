@@ -169,3 +169,63 @@ export function difficultyRatingToRgba(rating: number) {
 export function caseInsensitiveIncludes(a: string, b: string) {
   return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
 }
+
+export function getScoreMultiplier(settings: Settings) {
+  const mods = settings.mods;
+
+  let multiplier = 1;
+
+  if (mods.easy) {
+    multiplier *= 0.5;
+  }
+
+  if (mods.playbackRate < 1) {
+    multiplier *= 0.3;
+  }
+
+  if (mods.constantSpeed) {
+    multiplier *= 0.9;
+  }
+
+  if (mods.holdOff) {
+    multiplier *= 0.9;
+  }
+
+  return multiplier;
+}
+
+export function getModStrings(settings: Settings) {
+  const mods = settings.mods;
+
+  const modStrings = [
+    mods.easy && "Easy",
+    mods.playbackRate === 0.75 && "Half Time",
+    mods.hardRock && "Hard Rock",
+    mods.playbackRate === 1.5 && "Double Time",
+    mods.autoplay && "Autoplay",
+    mods.random && "Random",
+    mods.mirror && "Mirror",
+    mods.constantSpeed && "Constant Speed",
+    mods.holdOff && "Hold Off",
+    mods.playbackRate !== 1 &&
+      mods.playbackRate !== 0.75 &&
+      mods.playbackRate !== 1.5 &&
+      `Song Speed: ${mods.playbackRate}x`,
+  ].filter(Boolean) as string[];
+
+  return modStrings;
+}
+
+export function getLetterGrade(accuracy: number) {
+  return accuracy === 1
+    ? "SS"
+    : accuracy > 0.95
+      ? "S"
+      : accuracy > 0.9
+        ? "A"
+        : accuracy > 0.8
+          ? "B"
+          : accuracy > 0.7
+            ? "C"
+            : "D";
+}

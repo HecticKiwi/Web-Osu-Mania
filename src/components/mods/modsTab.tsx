@@ -6,7 +6,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, getScoreMultiplier } from "@/lib/utils";
+import { toast } from "sonner";
 import { useSettingsContext } from "../providers/settingsProvider";
 import SwitchInput from "../switchInput";
 import { Button } from "../ui/button";
@@ -18,8 +19,16 @@ const ModsTab = () => {
     return null;
   }
 
+  const multiplier = getScoreMultiplier(settings);
+
   return (
     <>
+      <h3 className="mx-auto mb-4 w-fit rounded-full border px-3 py-2 text-center text-sm">
+        Score Multiplier:{" "}
+        <span className={cn(multiplier < 1 && "text-green-400")}>
+          {multiplier.toFixed(2)}x
+        </span>
+      </h3>
       <h3 className="mb-2 text-lg font-semibold">Difficulty Reduction</h3>
       <div className="space-y-4">
         <SwitchInput
@@ -185,7 +194,10 @@ const ModsTab = () => {
       <Button
         variant={"destructive"}
         className="mt-8 w-full"
-        onClick={() => resetMods()}
+        onClick={() => {
+          resetMods();
+          toast("Mods have been reset.");
+        }}
       >
         Reset Mods
       </Button>

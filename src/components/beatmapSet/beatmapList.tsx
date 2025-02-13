@@ -3,8 +3,10 @@ import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import ManiaIcon from "./maniaIcon";
-import { useGameContext } from "./providers/gameProvider";
+import ManiaIcon from "../maniaIcon";
+import { useGameContext } from "../providers/gameProvider";
+import { useHighScoresContext } from "../providers/highScoresProvider";
+import HighScoreToolTip from "./highScore";
 
 const BeatmapList = ({
   beatmapSet,
@@ -15,6 +17,7 @@ const BeatmapList = ({
 }) => {
   const { startGame } = useGameContext();
   const searchParams = useSearchParams();
+  const { highScores } = useHighScoresContext();
 
   const { min, max } = parseStarsParam(searchParams.get("stars"));
   const keys = parseKeysParam(searchParams.get("keys"));
@@ -60,28 +63,37 @@ const BeatmapList = ({
         {filteredBeatmaps.length > 0 &&
           filteredBeatmaps
             .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-            .map((beatmap) => (
-              <button
-                key={beatmap.id}
-                className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
-                onClick={() => {
-                  stopPreview();
-                  startGame(beatmap.id);
-                }}
-              >
-                <ManiaIcon
-                  difficultyRating={beatmap.difficulty_rating}
-                  className="shrink-0"
-                />
+            .map((beatmap) => {
+              const highScore = highScores[beatmapSet.id]?.[beatmap.id];
 
-                <div>
-                  <p className="line-clamp-1">{beatmap.version}</p>
-                  <p className="text-muted-foreground">
-                    {beatmap.difficulty_rating.toFixed(2)}★
-                  </p>
-                </div>
-              </button>
-            ))}
+              return (
+                <button
+                  key={beatmap.id}
+                  className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
+                  onClick={() => {
+                    stopPreview();
+                    startGame(beatmap.id);
+                  }}
+                >
+                  <ManiaIcon
+                    difficultyRating={beatmap.difficulty_rating}
+                    className="shrink-0"
+                  />
+
+                  <div className="grow">
+                    <p className="line-clamp-1">{beatmap.version}</p>
+
+                    <div className="flex items-center justify-between">
+                      <p className="text-muted-foreground">
+                        {beatmap.difficulty_rating.toFixed(2)}★
+                      </p>
+
+                      {highScore && <HighScoreToolTip highScore={highScore} />}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
       </div>
     </div>
   );

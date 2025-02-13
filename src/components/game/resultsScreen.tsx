@@ -1,6 +1,9 @@
 import { BeatmapData } from "@/lib/beatmapParser";
+import { getLetterGrade, getModStrings } from "@/lib/utils";
 import { Results } from "@/types";
+import { useEffect, useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
+import { useHighScoresContext } from "../providers/highScoresProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
 
@@ -15,6 +18,36 @@ const ResultsScreen = ({
 }) => {
   const { closeGame, beatmapSet, beatmapId } = useGameContext();
   const { settings } = useSettingsContext();
+  const { highScores, setHighScores } = useHighScoresContext();
+  const [newHighScore, setNewHighScore] = useState(false);
+
+  // Check for new high score
+  useEffect(() => {
+    if (!beatmapId) {
+      return;
+    }
+
+    const beatmapSetId = beatmapSet!.id;
+
+    const previousHighScore =
+      highScores[beatmapSet!.id]?.[beatmapId!]?.results.score ?? 0;
+
+    if (results.score > previousHighScore) {
+      console.log("new high score");
+
+      setHighScores((draft) => {
+        draft[beatmapSetId] ??= {};
+
+        draft[beatmapSetId][beatmapId] = {
+          timestamp: Date.now(),
+          mods: getModStrings(settings),
+          results,
+        };
+      });
+
+      setNewHighScore(true);
+    }
+  }, [beatmapId, beatmapSet, highScores, results, setHighScores, settings]);
 
   const beatmap = beatmapSet?.beatmaps.find(
     (beatmap) => beatmap.id === beatmapId,
@@ -47,7 +80,15 @@ const ResultsScreen = ({
                   <h2 className="mb-4 text-3xl font-semibold text-primary">
                     Score
                   </h2>
-                  <span className="text-5xl">{Math.round(results.score)}</span>
+                  <span className="text-5xl">
+                    {results.score.toLocaleString()}
+                  </span>
+
+                  {newHighScore && (
+                    <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
+                      New high score!
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -121,19 +162,7 @@ const ResultsScreen = ({
                   <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
                     Grade
                   </h3>
-                  <span>
-                    {results.accuracy === 1
-                      ? "SS"
-                      : results.accuracy > 0.95
-                        ? "S"
-                        : results.accuracy > 0.9
-                          ? "A"
-                          : results.accuracy > 0.8
-                            ? "B"
-                            : results.accuracy > 0.7
-                              ? "C"
-                              : "D"}
-                  </span>
+                  <span>{getLetterGrade(results.accuracy)}</span>
                 </div>
 
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>

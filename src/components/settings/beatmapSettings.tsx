@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { filesize } from "filesize";
 import { Loader2Icon } from "lucide-react";
+import { toast } from "sonner";
 import BeatmapSetUpload from "../beatmapSetUpload";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import {
@@ -141,8 +142,12 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
             <Button
               className={cn("mt-8 w-full", className)}
               size={"sm"}
-              onClick={() => clearIdbCache()}
+              onClick={() => {
+                clearIdbCache();
+                toast("Cache has been cleared.");
+              }}
               disabled={!idbUsage}
+              variant={"destructive"}
             >
               {idbUsage !== null ? (
                 <>Clear Cache ({filesize(idbUsage)})</>

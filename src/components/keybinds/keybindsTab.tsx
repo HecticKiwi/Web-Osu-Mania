@@ -2,6 +2,7 @@
 
 import { setNestedProperty } from "@/lib/utils";
 import { Fragment, useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   defaultSettings,
   useSettingsContext,
@@ -146,6 +147,7 @@ const KeybindsTab = () => {
           setSettings((draft) => {
             draft.keybinds = defaultSettings.keybinds;
           });
+          toast("Keybinds have been reset.");
         }}
         className="mt-8 w-full"
       >

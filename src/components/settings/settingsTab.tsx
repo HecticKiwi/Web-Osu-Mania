@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/tooltip";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
+import { toast } from "sonner";
+import { useHighScoresContext } from "../providers/highScoresProvider";
 import {
   SKIN_STYLE_ICONS,
   SKIN_STYLES,
@@ -25,6 +27,7 @@ import VolumeSettings from "./volumeSettings";
 
 const SettingsTab = () => {
   const { settings, resetSettings, setSettings } = useSettingsContext();
+  const { setHighScores } = useHighScoresContext();
 
   if (!settings) {
     return null;
@@ -232,10 +235,24 @@ const SettingsTab = () => {
       <BeatmapSettings className="mt-6" />
 
       <Button
-        className="mt-8 w-full"
+        className="mt-4 w-full"
         variant={"destructive"}
         size={"sm"}
-        onClick={() => resetSettings()}
+        onClick={() => {
+          setHighScores({});
+          toast("High scores have been reset.");
+        }}
+      >
+        Clear High Scores
+      </Button>
+      <Button
+        className="mt-4 w-full"
+        variant={"destructive"}
+        size={"sm"}
+        onClick={() => {
+          resetSettings();
+          toast("Settings have been reset.");
+        }}
       >
         Reset Settings
       </Button>

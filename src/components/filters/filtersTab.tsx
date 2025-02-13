@@ -3,6 +3,7 @@
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CategoryFilter from "./categoryFilter";
 import GenreFilter from "./genreFilter";
@@ -35,7 +36,13 @@ const FiltersTab = () => {
         <SortFilter />
 
         <Button variant={"destructive"} className="mt-4 w-full" asChild>
-          <Link href={"/"} prefetch={false}>
+          <Link
+            href={"/"}
+            prefetch={false}
+            onClick={() => {
+              toast("Filters have been reset.");
+            }}
+          >
             Reset Filters
           </Link>
         </Button>

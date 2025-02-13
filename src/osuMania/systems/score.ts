@@ -1,4 +1,4 @@
-import { clamp } from "@/lib/utils";
+import { clamp, getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
 
@@ -40,10 +40,12 @@ export class ScoreSystem {
   public combo = 0;
   public maxCombo = 0;
   public accuracy = 1;
+  public multiplier: number;
 
   constructor(game: Game, totalHitObjects: number) {
     this.game = game;
     this.totalHitObjects = totalHitObjects;
+    this.multiplier = getScoreMultiplier(game.settings);
   }
 
   public hit(judgement: Judgement) {
@@ -99,6 +101,6 @@ export class ScoreSystem {
         Math.sqrt(this.bonus)) /
       320;
 
-    return baseScore + bonusScore;
+    return (baseScore + bonusScore) * this.multiplier;
   }
 }

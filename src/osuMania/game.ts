@@ -682,6 +682,8 @@ export class Game {
   private async finish() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
+    this.scoreSystem.score = Math.round(this.scoreSystem.score);
+
     new Howl({
       src: [`/skin/applause.mp3`],
       format: "mp3",
