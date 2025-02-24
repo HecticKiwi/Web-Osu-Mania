@@ -152,6 +152,12 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
               );
             }
 
+            if (response.status === 503) {
+              throw new Error(
+                `The beatmap provider is currently unavailable, try again later or switch to another provider.`,
+              );
+            }
+
             if (response.status === 504) {
               throw new Error(`Download request timed out.`);
             }
