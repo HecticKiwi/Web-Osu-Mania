@@ -5,10 +5,10 @@ import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
-import { useToast } from "../ui/use-toast";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
@@ -21,7 +21,6 @@ const GameModal = () => {
   );
   const { settings } = useSettingsContext();
   const { getBeatmapSet } = useBeatmapSetCacheContext();
-  const { toast } = useToast();
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
@@ -45,8 +44,7 @@ const GameModal = () => {
             setDownloadPercent,
           );
         } catch (error: any) {
-          toast({
-            title: "Download Error",
+          toast("Download Error", {
             description: error.message,
             duration: 10000,
           });
@@ -75,8 +73,7 @@ const GameModal = () => {
 
         setBeatmapData(beatmapData);
       } catch (error: any) {
-        toast({
-          title: "Parsing Error",
+        toast("Parsing Error", {
           description: error.message,
           duration: 10000,
         });
@@ -87,14 +84,7 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [
-    beatmapId,
-    closeGame,
-    toast,
-    getBeatmapSet,
-    uploadedBeatmapSet,
-    beatmapSet,
-  ]);
+  }, [beatmapId, closeGame, getBeatmapSet, uploadedBeatmapSet, beatmapSet]);
 
   // Clean up object URLs
   useEffect(() => {

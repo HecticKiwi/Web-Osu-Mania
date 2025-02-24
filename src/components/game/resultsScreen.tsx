@@ -33,8 +33,6 @@ const ResultsScreen = ({
       highScores[beatmapSet!.id]?.[beatmapId!]?.results.score ?? 0;
 
     if (results.score > previousHighScore) {
-      console.log("new high score");
-
       setHighScores((draft) => {
         draft[beatmapSetId] ??= {};
 

@@ -3,12 +3,11 @@
 import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useState } from "react";
+import { toast } from "sonner";
 import { useGameContext } from "./providers/gameProvider";
-import { useToast } from "./ui/use-toast";
 
 const BeatmapSetUpload = () => {
   const { setUploadedBeatmapSet } = useGameContext();
-  const { toast } = useToast();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const loadFile = (file?: File) => {
@@ -17,8 +16,7 @@ const BeatmapSetUpload = () => {
     }
 
     if (!file.name.endsWith(".osz")) {
-      toast({
-        title: "Failed to load beatmap file",
+      toast.message("Failed to load beatmap file", {
         description: "File is not in the .osz format.",
       });
 
