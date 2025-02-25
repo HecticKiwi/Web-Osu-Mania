@@ -43,6 +43,7 @@ import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
 import { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
+import { HealthBar } from "./sprites/healthBar";
 import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { ArrowTap } from "./sprites/tap/arrowTap";
@@ -53,6 +54,7 @@ import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
+import { HealthSystem } from "./systems/health";
 
 gsap.registerPlugin(PixiPlugin);
 
@@ -74,6 +76,7 @@ export class Game {
   public scaledColumnWidth: number;
 
   // Systems
+  public healthSystem: HealthSystem;
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
@@ -113,6 +116,7 @@ export class Game {
   public stageHint: StageHint;
   public judgement: Judgement;
   private progressBar: ProgressBar;
+  private healthBar: HealthBar;
   public errorBar: ErrorBar;
   private fps?: Fps;
   private countdown: Countdown;
@@ -122,6 +126,10 @@ export class Game {
 
   public startTime: number;
   public endTime: number;
+
+  public minhealth: number = 0;
+  public maxhealth: number = 100;
+  public health: number = this.maxhealth / 2;
 
   private pauseCountdown: number;
 
@@ -191,6 +199,13 @@ export class Game {
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
+
+    if (this.settings.mods.canfail && this.settings.mods.fc) {
+      this.minhealth = 0;
+      this.maxhealth = 1;
+      this.health = 1;
+    }
+
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
@@ -295,6 +310,7 @@ export class Game {
     this.scoreText.x = this.app.screen.width - 30;
     this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
     this.progressBar.resize();
+    this.healthBar?.resize();
     this.accuracyText.x = this.app.screen.width - 30;
     this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
   }
@@ -374,6 +390,10 @@ export class Game {
       this.addHitError();
     }
 
+    if (this.settings.mods.canfail) {
+      this.addHealthBar();
+    }
+
     // Set initial Y positions
     this.updateHitObjects();
 
@@ -396,6 +416,10 @@ export class Game {
     if (!this.settings.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());
       this.keys.forEach((key) => key.update());
+    }
+
+    if (this.health <= this.minhealth) {
+      this.state = "FAIL";
     }
 
     switch (this.state) {
@@ -431,6 +455,7 @@ export class Game {
         }
 
         this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
+        this.healthBar?.update(this.health, this.minhealth, this.maxhealth)
 
         this.updateHitObjects();
 
@@ -455,6 +480,13 @@ export class Game {
 
         break;
 
+      case "FAIL":
+        if (!this.finished) {
+          this.finished = true;
+          this.fail();
+        }  
+        
+        break;
       default:
         break;
     }
@@ -467,6 +499,12 @@ export class Game {
     this.progressBar = new ProgressBar(this);
 
     this.app.stage.addChild(this.progressBar.view);
+  }
+
+  private addHealthBar() { 
+    this.healthBar = new HealthBar(this);
+
+    this.app.stage.addChild(this.healthBar.view);
   }
 
   private addHitError() {
@@ -705,6 +743,37 @@ export class Game {
       50: this.scoreSystem[50],
       0: this.scoreSystem[0],
       score: this.scoreSystem.score,
+      accuracy: this.scoreSystem.accuracy,
+      maxCombo: this.scoreSystem.maxCombo,
+    });
+  }
+
+  private async fail() {
+    await new Promise((reslove) => setTimeout(reslove, 1500));
+
+    this.song.stop();
+
+    new Howl({
+      src: [`/skin/failsound.mp3`],
+      format: "mp3",
+      preload: true,
+      autoplay: true,
+      onloaderror: (_, error) => {
+        console.warn(error);
+      },
+      onplayerror: (_, error) => {
+        console.warn(error);
+      },
+    })
+
+    this.setResults({
+      320: this.scoreSystem[320],
+      300: this.scoreSystem[300],
+      200: this.scoreSystem[200],
+      100: this.scoreSystem[100],
+      50: this.scoreSystem[50],
+      0: this.scoreSystem[0],
+      score: 0,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
     });

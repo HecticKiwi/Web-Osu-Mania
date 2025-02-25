@@ -59,6 +59,8 @@ export type Settings = {
     random: boolean;
     constantSpeed: boolean;
     holdOff: boolean;
+    canfail: boolean;
+    fc: boolean;
   };
 };
 
@@ -130,6 +132,8 @@ export const defaultSettings: Settings = {
     random: false,
     constantSpeed: false,
     holdOff: false,
+    canfail: false,
+    fc: false,
   },
 };
 

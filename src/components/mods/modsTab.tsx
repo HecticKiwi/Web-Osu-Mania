@@ -102,6 +102,11 @@ const ModsTab = () => {
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.autoplay = checked;
+
+              if (checked) {
+                draft.mods.canfail = false;
+                draft.mods.fc = false;
+              }
             })
           }
         />
@@ -190,7 +195,41 @@ const ModsTab = () => {
           </div>
         </div>
       </div>
-
+      <h3 className="mb-2 mt-6 text-lg font-semibold">EXPERIMENTAL</h3>
+      <div className="space-y-4">
+      <SwitchInput
+          label="Can Fail"
+          tooltip="You can fail the song."
+          checked={settings.mods.canfail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.canfail = checked;
+              
+              if (checked) {
+                draft.mods.autoplay = false;
+              }
+              if (!checked) {
+                draft.mods.fc = false;
+              }
+            })
+          }
+        />
+              <SwitchInput
+          label="Full Combo"
+          tooltip="If you miss a note, you fail."
+          checked={settings.mods.fc}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.fc = checked;
+              
+              if (checked) {
+                draft.mods.canfail = true;
+              }
+            })
+          }
+        />
+      </div>
+      
       <Button
         variant={"destructive"}
         className="mt-8 w-full"

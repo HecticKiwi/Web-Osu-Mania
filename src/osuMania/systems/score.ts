@@ -1,6 +1,7 @@
 import { clamp, getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
+import { HealthSystem } from "./health";
 
 const MAX_SCORE = 1_000_000;
 
@@ -24,7 +25,6 @@ const hitBonusChange: { [key in Judgement]: number } = {
 
 export class ScoreSystem {
   private game: Game;
-
   private bonus = 100;
   private totalHitObjects: number;
 
@@ -50,6 +50,10 @@ export class ScoreSystem {
 
   public hit(judgement: Judgement) {
     this.score += this.getScoreToAdd(judgement);
+
+    if (this.game.settings.mods.canfail) {
+      this.game.healthSystem.hit(judgement);
+    }
 
     this[judgement]++;
 
