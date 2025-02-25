@@ -127,8 +127,9 @@ export class Game {
   public startTime: number;
   public endTime: number;
 
+  // https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Scoring/HealthProcessor.cs#L27
   public minhealth: number = 0;
-  public maxhealth: number = 200;
+  public maxhealth: number = 1;
   public health: number = this.maxhealth / 2;
 
   private pauseCountdown: number;
@@ -203,12 +204,7 @@ export class Game {
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
     if (this.settings.mods.canfail) { this.healthSystem = new HealthSystem(this); }
-
-    if (this.settings.mods.canfail && this.settings.mods.fc) {
-      this.minhealth = 0;
-      this.maxhealth = 1;
-      this.health = 1;
-    }
+    if (this.settings.mods.fc) { this.health = 1;}
 
 
     this.song = beatmapData.song.howl;
