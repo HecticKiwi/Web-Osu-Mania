@@ -8,6 +8,7 @@ import { useSettingsContext } from "../providers/settingsProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
+import FailScreen from "./failScreen";
 import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
@@ -21,11 +22,12 @@ const GameScreens = ({
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<Results | null>(null);
+  const [fresults, setFail] = useState<Results | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused);
+    const game = new Game(beatmapData, setResults, setFail, setIsPaused);
     setGame(game);
     game.main(containerRef.current);
 
@@ -86,6 +88,13 @@ const GameScreens = ({
           <ResultsScreen
             beatmapData={beatmapData}
             results={results}
+            retry={retry}
+          />
+        )}
+        {fresults && (
+          <FailScreen
+            beatmapData={beatmapData}
+            results={fresults}
             retry={retry}
           />
         )}

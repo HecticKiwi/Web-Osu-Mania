@@ -3,13 +3,14 @@ import { Game } from "../game";
 
 // If you want to modify the hp values of the player, they are in game.ts at lines 130-132
 
+// You can change the hp drain an regen values here
 const hitHPValue: { [key in Judgement]: number } = {
-  320: 40,
-  300: 20,
-  200: 15,
+  320: 35,
+  300: 15,
+  200: 10,
   100: 5,
   50: -10,
-  0: -40,
+  0: -35,
 };
 
 const hitHPValueFC: { [key in Judgement]: number } = {

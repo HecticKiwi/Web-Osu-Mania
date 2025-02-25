@@ -1,7 +1,6 @@
 import { clamp, getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
-import { HealthSystem } from "./health";
 
 const MAX_SCORE = 1_000_000;
 

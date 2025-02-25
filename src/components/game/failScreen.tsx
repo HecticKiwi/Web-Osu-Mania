@@ -1,5 +1,5 @@
 import { BeatmapData } from "@/lib/beatmapParser";
-import { getModStrings } from "@/lib/utils";
+import { getLetterGrade, getModStrings } from "@/lib/utils";
 import { Results } from "@/types";
 import { useEffect, useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
@@ -43,7 +43,7 @@ const FailScreen = ({
         };
       });
 
-      setNewHighScore(false);
+      setNewHighScore(true);
     }
   }, [beatmapId, beatmapSet, highScores, results, setHighScores, settings]);
 
@@ -94,6 +94,12 @@ const FailScreen = ({
                   <span className="text-5xl">
                     {results.score.toLocaleString()}
                   </span>
+
+                  {newHighScore && (
+                    <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
+                      New high score!
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">

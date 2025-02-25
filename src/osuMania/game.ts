@@ -128,7 +128,7 @@ export class Game {
   public endTime: number;
 
   public minhealth: number = 0;
-  public maxhealth: number = 100;
+  public maxhealth: number = 200;
   public health: number = this.maxhealth / 2;
 
   private pauseCountdown: number;
@@ -138,6 +138,7 @@ export class Game {
   private nextTimingPoint: TimingPoint;
 
   private setResults: Dispatch<SetStateAction<Results | null>>;
+  private setFail: Dispatch<SetStateAction<Results | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
 
   private finished: boolean = false;
@@ -145,6 +146,7 @@ export class Game {
   public constructor(
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<Results | null>>,
+    setFail: Dispatch<SetStateAction<Results | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
   ) {
     this.resize = this.resize.bind(this);
@@ -164,6 +166,7 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = setResults;
+    this.setFail = setFail;
     this.setIsPaused = setIsPaused;
 
     this.settings = getSettings();
@@ -199,6 +202,7 @@ export class Game {
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
+    if (this.settings.mods.canfail) { this.healthSystem = new HealthSystem(this); }
 
     if (this.settings.mods.canfail && this.settings.mods.fc) {
       this.minhealth = 0;
@@ -766,7 +770,7 @@ export class Game {
       },
     })
 
-    this.setResults({
+    this.setFail({
       320: this.scoreSystem[320],
       300: this.scoreSystem[300],
       200: this.scoreSystem[200],
