@@ -207,10 +207,12 @@ export function getModStrings(settings: Settings) {
     mods.mirror && "Mirror",
     mods.constantSpeed && "Constant Speed",
     mods.holdOff && "Hold Off",
+    mods.canfail && "Can Fail",
+    mods.fc && "Full Combo",
     mods.playbackRate !== 1 &&
-      mods.playbackRate !== 0.75 &&
-      mods.playbackRate !== 1.5 &&
-      `Song Speed: ${mods.playbackRate}x`,
+    mods.playbackRate !== 0.75 &&
+    mods.playbackRate !== 1.5 &&
+    `Song Speed: ${mods.playbackRate}x`,
   ].filter(Boolean) as string[];
 
   return modStrings;
