@@ -5,10 +5,10 @@ import { Game } from "../game";
 
 // You can change the hp drain an regen values here
 const hitHPValue: { [key in Judgement]: number } = {
-  320: 35,
-  300: 15,
-  200: 10,
-  100: 5,
+  320: 18,
+  300: 12,
+  200: 8,
+  100: 4,
   50: -10,
   0: -35,
 };
