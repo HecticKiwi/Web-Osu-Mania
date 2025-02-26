@@ -27,6 +27,10 @@ export class ScoreSystem {
   private bonus = 100;
   private totalHitObjects: number;
 
+  public sUIHidComb;
+  public sUIHidAcc;
+  public sUIHidScr;
+
   // Judgement counts
   public 320 = 0;
   public 300 = 0;
@@ -45,8 +49,12 @@ export class ScoreSystem {
     this.game = game;
     this.totalHitObjects = totalHitObjects;
     this.multiplier = getScoreMultiplier(game.settings);
+    this.sUIHidComb = this.game.settings.ui.hideCombo;
+    this.sUIHidAcc = this.game.settings.ui.hideAccuracy;
+    this.sUIHidScr = this.game.settings.ui.hideScore;
   }
 
+  
   public hit(judgement: Judgement) {
     this.score += this.getScoreToAdd(judgement);
 
@@ -57,23 +65,26 @@ export class ScoreSystem {
     this[judgement]++;
 
     if (judgement !== 320 || this.game.settings.show300g) {
-      this.game.judgement.showJudgement(judgement);
+      this.game.judgement?.showJudgement(judgement);
     }
 
     if (judgement === 0) {
       this.combo = 0;
-      this.game.comboText.text = this.combo;
-      this.game.comboText.visible = false;
+      if (!this.sUIHidComb) {
+        
+        this.game.comboText.text = this.combo;
+        this.game.comboText.visible = false;
+      }
     } else {
-      this.combo++;
-      this.game.comboText.visible = true;
-
+      this.combo++;  
       if (this.combo > this.maxCombo) {
         this.maxCombo = this.combo;
       }
-
-      this.game.comboText.text = this.combo;
-      this.game.scoreText.text = Math.round(this.score);
+      if (!this.sUIHidComb) {
+          this.game.comboText.visible = true;
+          this.game.comboText.text = this.combo;
+        }
+      if (!this.sUIHidScr) { this.game.scoreText.text = Math.round(this.score); }
     }
 
     // Calculate new accuracy
@@ -88,7 +99,7 @@ export class ScoreSystem {
       300 * (this[320] + this[300] + this[200] + this[100] + this[0]);
 
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
-    this.game.accuracyText.text = `${(this.accuracy * 100).toFixed(2)}%`;
+    if (!this.sUIHidAcc) { this.game.accuracyText.text = `${(this.accuracy * 100).toFixed(2)}%`; }
   }
 
   // https://osu.ppy.sh/wiki/en/Gameplay/Score/ScoreV1/osu%21mania

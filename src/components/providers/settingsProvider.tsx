@@ -62,6 +62,14 @@ export type Settings = {
     canfail: boolean;
     fc: boolean;
   };
+  ui: { // There is a lot of settings I would move here but that would be a major change.
+    hideScore: boolean;
+    hideCombo: boolean;
+    hideAccuracy: boolean;
+    hideJudgement: boolean;
+    hideProgressBar: boolean;
+    hideHealthBar: boolean;
+  };
 };
 
 export const defaultSettings: Settings = {
@@ -89,37 +97,16 @@ export const defaultSettings: Settings = {
   preferMetadataInOriginalLanguage: false,
   keybinds: {
     keyModes: [
-      ["Space"],
-      ["KeyF", "KeyJ"],
-      ["KeyF", "Space", "KeyJ"],
-      ["KeyD", "KeyF", "KeyJ", "KeyK"],
-      ["KeyD", "KeyF", "Space", "KeyJ", "KeyK"],
-      ["KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL"],
-      ["KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL"],
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL", "Semicolon"],
-      [
-        "KeyA",
-        "KeyS",
-        "KeyD",
-        "KeyF",
-        "Space",
-        "KeyJ",
-        "KeyK",
-        "KeyL",
-        "Semicolon",
-      ],
-      [
-        "KeyA",
-        "KeyS",
-        "KeyD",
-        "KeyF",
-        "KeyV",
-        "KeyN",
-        "KeyJ",
-        "KeyK",
-        "KeyL",
-        "Semicolon",
-      ],
+      [ "Space" ],
+      [ "KeyF", "KeyJ" ],
+      [ "KeyF", "Space", "KeyJ" ],
+      [ "KeyD", "KeyF", "KeyJ", "KeyK" ],
+      [ "KeyD", "KeyF", "Space", "KeyJ", "KeyK" ],
+      [ "KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL" ],
+      [ "KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL" ],
+      [ "KeyA", "KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL", "Semicolon" ],
+      [ "KeyA", "KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL", "Semicolon" ],
+      [ "KeyA", "KeyS", "KeyD", "KeyF", "KeyV", "KeyN", "KeyJ", "KeyK", "KeyL", "Semicolon" ],
     ],
     pause: null,
   },
@@ -134,6 +121,14 @@ export const defaultSettings: Settings = {
     holdOff: false,
     canfail: false,
     fc: false,
+  },
+  ui: {
+    hideScore: false,
+    hideCombo: false,
+    hideAccuracy: false,
+    hideJudgement: false,
+    hideProgressBar: false,
+    hideHealthBar: false,
   },
 };
 

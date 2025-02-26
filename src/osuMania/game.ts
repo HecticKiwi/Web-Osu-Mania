@@ -114,9 +114,9 @@ export class Game {
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
   public stageHint: StageHint;
-  public judgement: Judgement;
-  private progressBar: ProgressBar;
-  private healthBar: HealthBar;
+  public judgement?: Judgement;
+  private progressBar?: ProgressBar;
+  private healthBar?: HealthBar;
   public errorBar: ErrorBar;
   private fps?: Fps;
   private countdown: Countdown;
@@ -292,14 +292,18 @@ export class Game {
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
 
-    this.judgement.resize();
+    if (!this.settings.ui.hideJudgement) {
+      this.judgement?.resize();
+    }
 
-    this.comboText.x = this.app.screen.width / 2;
+    if (!this.settings.ui.hideCombo) {
+      this.comboText.x = this.app.screen.width / 2;
 
-    if (this.settings.upscroll) {
-      this.comboText.y = (this.app.screen.height * 2) / 3;
-    } else {
-      this.comboText.y = this.app.screen.height / 3 + 50;
+      if (this.settings.upscroll) {
+        this.comboText.y = (this.app.screen.height * 2) / 3;
+      } else {
+        this.comboText.y = this.app.screen.height / 3 + 50;
+      }
     }
 
     if (this.errorBar) {
@@ -307,12 +311,16 @@ export class Game {
     }
 
     // Hud section
-    this.scoreText.x = this.app.screen.width - 30;
-    this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
-    this.progressBar.resize();
+    if (!this.settings.ui.hideScore) {
+      this.scoreText.x = this.app.screen.width - 30;
+      this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    }
+    this.progressBar?.resize();
     this.healthBar?.resize();
-    this.accuracyText.x = this.app.screen.width - 30;
-    this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    if (!this.settings.ui.hideAccuracy) {
+      this.accuracyText.x = this.app.screen.width - 30;
+      this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    }
   }
 
   async main(ref: HTMLDivElement) {
@@ -356,13 +364,13 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
-    this.addScoreText();
+    if (!this.settings.ui.hideScore) { this.addScoreText(); } else { console.warn("Score was hidden"); }
 
     this.addStageContainer();
 
-    this.addComboText();
+    if (!this.settings.ui.hideCombo) { this.addComboText(); } else { console.warn("Combo was hidden"); }
 
-    this.addAccuracyText();
+    if (!this.settings.ui.hideAccuracy) { this.addAccuracyText(); } else { console.warn("Acc was hidden"); }
 
     if (this.settings.style === "bars") {
       this.addStageHint();
@@ -372,11 +380,11 @@ export class Game {
 
     this.addKeys();
 
-    this.addJudgement();
+    if (!this.settings.ui.hideJudgement) { this.addJudgement(); } else { console.warn("Judgement was hidden"); }
 
     this.addHitObjects();
 
-    this.addProgressBar();
+    if (!this.settings.ui.hideProgressBar) { this.addProgressBar(); } else { console.warn("Progress Bar was hidden"); }
 
     this.addStartMessage();
 
@@ -390,7 +398,7 @@ export class Game {
       this.addHitError();
     }
 
-    if (this.settings.mods.canfail) {
+    if (this.settings.mods.canfail && !this.settings.ui.hideHealthBar) {
       this.addHealthBar();
     }
 
@@ -454,7 +462,7 @@ export class Game {
             ];
         }
 
-        this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
+        this.progressBar?.update(this.timeElapsed, this.startTime, this.endTime);
         this.healthBar?.update(this.health, this.minhealth, this.maxhealth)
 
         this.updateHitObjects();

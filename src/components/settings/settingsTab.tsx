@@ -228,7 +228,63 @@ const SettingsTab = () => {
             })
           }
         />
+
+        <SwitchInput
+          label="Hide Score"
+          checked={settings.ui.hideScore}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideScore = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Hide Combo"
+          checked={settings.ui.hideCombo}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideCombo = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Hide Accuracy"
+          checked={settings.ui.hideAccuracy}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideAccuracy = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Hide Judgement"
+          checked={settings.ui.hideJudgement}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideJudgement = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Hide Progress Bar"
+          checked={settings.ui.hideProgressBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideProgressBar = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Hide Health Bar"
+          checked={settings.ui.hideHealthBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.hideHealthBar = checked;
+            })
+          }
+        />
       </div>
+
 
       <VolumeSettings className="mt-6" />
 
