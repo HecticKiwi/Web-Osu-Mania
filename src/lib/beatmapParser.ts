@@ -252,6 +252,11 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
   const hitObjectData = lines.slice(startIndex, endIndex);
+
+  if (hitObjectData === undefined || hitObjectData.length == 0) {
+    throw new Error(`Note Data missing. Use a diffrent provider if issue presists. (You may need to refresh and/or clear cache)`);
+}
+
   hitObjectData.forEach((hitObject: string, i) => {
     const [x, y, time, type, hitSoundDecimal] = hitObject
       .split(",")

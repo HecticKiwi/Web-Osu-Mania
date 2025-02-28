@@ -83,6 +83,14 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           </p>
         )}
 
+        {settings.beatmapProvider === "SayoBot" && (
+          <p className="mt-1 text-sm text-orange-400">
+            There may be some problems when downloading maps from SayoBot.
+            If you get an error when trying to play a song. 
+            Use a diffrent provider.
+          </p>
+        )}
+
         <SwitchInput
           label="Proxy Downloads"
           checked={settings.proxyBeatmapDownloads}
