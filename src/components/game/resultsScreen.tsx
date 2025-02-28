@@ -1,6 +1,6 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { getLetterGrade, getModStrings } from "@/lib/utils";
-import { Results } from "@/types";
+import { PlayResults } from "@/types";
 import { useEffect, useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
 import { useHighScoresContext } from "../providers/highScoresProvider";
@@ -13,7 +13,7 @@ const ResultsScreen = ({
   retry,
 }: {
   beatmapData: BeatmapData;
-  results: Results;
+  results: PlayResults;
   retry: () => void;
 }) => {
   const { closeGame, beatmapSet, beatmapId } = useGameContext();
@@ -23,7 +23,7 @@ const ResultsScreen = ({
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || settings.mods.autoplay) {
+    if (!beatmapId || settings.mods.autoplay || results.failed) {
       return;
     }
 
@@ -173,7 +173,11 @@ const ResultsScreen = ({
                   <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
                     Grade
                   </h3>
-                  <span>{getLetterGrade(results.accuracy)}</span>
+                  <span>
+                    {results.failed
+                      ? "Failed"
+                      : getLetterGrade(results.accuracy)}
+                  </span>
                 </div>
 
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>

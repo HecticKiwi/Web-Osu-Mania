@@ -15,6 +15,10 @@ export type Results = {
   0: number;
 };
 
+export type PlayResults = Results & {
+  failed?: boolean;
+};
+
 export type Column = (Tap | Hold)[];
 
 export type Judgement = 320 | 300 | 200 | 100 | 50 | 0;

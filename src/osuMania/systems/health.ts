@@ -1,54 +1,48 @@
+import { clamp } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
 
-// If you want to modify the hp values of the player, they are in game.ts at lines 130-132
+// Default Val: https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Judgements/Judgement.cs#L18
+// Note Heal / Drain: https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Judgements/ManiaJudgement.cs
 
-// You can change the hp drain an regen values here
-
-/* Values taken from
-  Default Val: https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Judgements/Judgement.cs#L18
-  Note Heal / Drain: https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Judgements/ManiaJudgement.cs
-*/
-const DEFAULT_MAX_HEALTH_INCREASE = 0.05;
+export const MIN_HEALTH = 0;
+export const MAX_HEALTH = 1;
+const MAX_HEALTH_INCREASE = 0.05;
 
 const hitHPValue: { [key in Judgement]: number } = {
-  320: DEFAULT_MAX_HEALTH_INCREASE, // Perfect
-  300: DEFAULT_MAX_HEALTH_INCREASE * 0.3, // Great
-  200: DEFAULT_MAX_HEALTH_INCREASE * 0.1, // Good
-  100: -DEFAULT_MAX_HEALTH_INCREASE * 0.3, // Ok
-  50: -DEFAULT_MAX_HEALTH_INCREASE * 0.5, // Meh
-  0: -DEFAULT_MAX_HEALTH_INCREASE, // Miss
-};
-
-const hitHPValueFC: { [key in Judgement]: number } = {
-  320: 0,
-  300: 0,
-  200: 0,
-  100: 0,
-  50: 0,
-  0: -1,
+  320: MAX_HEALTH_INCREASE, // Perfect
+  300: MAX_HEALTH_INCREASE * 0.3, // Great
+  200: MAX_HEALTH_INCREASE * 0.1, // Good
+  100: -MAX_HEALTH_INCREASE * 0.3, // Ok
+  50: -MAX_HEALTH_INCREASE * 0.5, // Meh
+  0: -MAX_HEALTH_INCREASE, // Miss
 };
 
 export class HealthSystem {
   private game: Game;
 
+  // https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Scoring/HealthProcessor.cs#L27
+  public health: number = MAX_HEALTH;
+
   constructor(game: Game) {
     this.game = game;
   }
-  
+
   public hit(judgement: Judgement) {
-    if (this.game.settings.mods.fc) {
-      this.game.health += hitHPValueFC[judgement];
+    const oldHealth = this.health;
+
+    if (this.game.settings.mods.suddenDeath && judgement === 0) {
+      this.health = MIN_HEALTH; // You die >:)
     } else {
-      this.game.health += hitHPValue[judgement];
+      this.health = clamp(
+        this.health + hitHPValue[judgement],
+        MIN_HEALTH,
+        MAX_HEALTH,
+      );
     }
 
+    const lostHealth = this.health < oldHealth;
 
-    if (this.game.health > this.game.maxhealth) {
-      this.game.health = this.game.maxhealth
-    }
-    if (this.game.health < this.game.minhealth) {
-      this.game.health = this.game.minhealth
-    } 
+    this.game.healthBar?.setHealth(this.health, lostHealth);
   }
 }

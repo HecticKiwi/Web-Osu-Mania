@@ -2,13 +2,12 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
-import { Results } from "@/types";
+import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useSettingsContext } from "../providers/settingsProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
-import FailScreen from "./failScreen";
 import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
@@ -21,13 +20,12 @@ const GameScreens = ({
   const { settings } = useSettingsContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [results, setResults] = useState<Results | null>(null);
-  const [fresults, setFail] = useState<Results | null>(null);
+  const [results, setResults] = useState<PlayResults | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setFail, setIsPaused);
+    const game = new Game(beatmapData, setResults, setIsPaused);
     setGame(game);
     game.main(containerRef.current);
 
@@ -88,13 +86,6 @@ const GameScreens = ({
           <ResultsScreen
             beatmapData={beatmapData}
             results={results}
-            retry={retry}
-          />
-        )}
-        {fresults && (
-          <FailScreen
-            beatmapData={beatmapData}
-            results={fresults}
             retry={retry}
           />
         )}

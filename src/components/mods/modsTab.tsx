@@ -46,6 +46,20 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="No Fail"
+          tooltip="You can't fail, no matter what."
+          checked={settings.mods.noFail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.noFail = checked;
+
+              if (checked) {
+                draft.mods.suddenDeath = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Half Time"
           tooltip="0.75x speed (don't ask me why it's called half time)."
           checked={settings.mods.playbackRate === 0.75}
@@ -78,6 +92,20 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="Sudden Death"
+          tooltip="Miss a note and fail."
+          checked={settings.mods.suddenDeath}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.suddenDeath = checked;
+
+              if (checked) {
+                draft.mods.noFail = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Double Time"
           tooltip="1.5x speed (don't ask me why it's called double time)."
           checked={settings.mods.playbackRate === 1.5}
@@ -102,11 +130,6 @@ const ModsTab = () => {
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.autoplay = checked;
-
-              if (checked) {
-                draft.mods.canfail = false;
-                draft.mods.fc = false;
-              }
             })
           }
         />
@@ -195,41 +218,7 @@ const ModsTab = () => {
           </div>
         </div>
       </div>
-      <h3 className="mb-2 mt-6 text-lg font-semibold">EXPERIMENTAL</h3>
-      <div className="space-y-4">
-      <SwitchInput
-          label="Can Fail"
-          tooltip="You can fail the song."
-          checked={settings.mods.canfail}
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.mods.canfail = checked;
-              
-              if (checked) {
-                draft.mods.autoplay = false;
-              }
-              if (!checked) {
-                draft.mods.fc = false;
-              }
-            })
-          }
-        />
-              <SwitchInput
-          label="Full Combo"
-          tooltip="If you miss a note, you fail."
-          checked={settings.mods.fc}
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.mods.fc = checked;
-              
-              if (checked) {
-                draft.mods.canfail = true;
-              }
-            })
-          }
-        />
-      </div>
-      
+
       <Button
         variant={"destructive"}
         className="mt-8 w-full"

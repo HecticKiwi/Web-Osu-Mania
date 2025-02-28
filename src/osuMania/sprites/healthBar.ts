@@ -1,7 +1,9 @@
 import { clamp } from "@/lib/utils";
+import { gsap } from "gsap";
 import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { Game } from "../game";
+import { MAX_HEALTH, MIN_HEALTH } from "../systems/health";
 
 export class HealthBar {
   public game: Game;
@@ -21,7 +23,7 @@ export class HealthBar {
       .fill(0xffffff);
     healthBarBg.alpha = 0.1;
 
-    this.healthBar = new Graphics().rect(0, 0, 0.01, 5).fill(0xe69138);
+    this.healthBar = new Graphics().rect(0, 0, 0.01, 5).fill(0xffffff);
 
     this.view = new Container();
     this.view.addChild(healthBarBg);
@@ -29,16 +31,44 @@ export class HealthBar {
     this.view.interactiveChildren = false;
 
     this.view.pivot.set(this.fullWidth, 0);
-    this.view.y = 95;
+    this.view.y = 90;
+
+    gsap.to(this.healthBar, {
+      pixi: {
+        width: this.fullWidth,
+      },
+    });
   }
 
-  public update(health: number, min: number, max: number) {
-    this.healthBar.width =
-      clamp((health - min) / (max - min), 0, 1) * 400;
+  public setHealth(health: number, lostHealth: boolean) {
+    const min = 0;
+    const max = 1;
+
+    gsap.fromTo(
+      this.healthBar,
+      {
+        pixi: {
+          tint: lostHealth ? 0xff9494 : 0xffffff,
+        },
+      },
+      {
+        pixi: {
+          tint: 0xffffff,
+          width:
+            clamp(
+              (health - MIN_HEALTH) / (MAX_HEALTH - MIN_HEALTH),
+              MIN_HEALTH,
+              MAX_HEALTH,
+            ) * 400,
+        },
+        duration: 0.4,
+        overwrite: true,
+      },
+    );
   }
 
   public resize() {
-    this.view.x = 30 + this.fullWidth;
+    this.view.x = this.game.app.screen.width - 30;
     this.view.scale.x = Math.min((this.game.app.screen.width - 60) / 400, 1);
   }
 }

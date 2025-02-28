@@ -7,7 +7,7 @@ import {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { getSettings, scaleWidth } from "@/lib/utils";
-import { Column, GameState, Results } from "@/types";
+import { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
@@ -32,6 +32,7 @@ import {
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
+import { HealthBar } from "./sprites/healthBar";
 import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
@@ -43,7 +44,6 @@ import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
 import { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
-import { HealthBar } from "./sprites/healthBar";
 import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { ArrowTap } from "./sprites/tap/arrowTap";
@@ -52,9 +52,9 @@ import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
+import { HealthSystem } from "./systems/health";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
-import { HealthSystem } from "./systems/health";
 
 gsap.registerPlugin(PixiPlugin);
 
@@ -100,9 +100,9 @@ export class Game {
 
   // UI Components
   private startMessage: BitmapText;
-  public scoreText: BitmapText;
-  public comboText: BitmapText;
-  public accuracyText: BitmapText;
+  public scoreText?: BitmapText;
+  public comboText?: BitmapText;
+  public accuracyText?: BitmapText;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
   public stageSideWidth = 2;
@@ -116,8 +116,8 @@ export class Game {
   public stageHint: StageHint;
   public judgement?: Judgement;
   private progressBar?: ProgressBar;
-  private healthBar?: HealthBar;
-  public errorBar: ErrorBar;
+  public healthBar?: HealthBar;
+  public errorBar?: ErrorBar;
   private fps?: Fps;
   private countdown: Countdown;
 
@@ -127,27 +127,20 @@ export class Game {
   public startTime: number;
   public endTime: number;
 
-  // https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Scoring/HealthProcessor.cs#L27
-  public minhealth: number = 0;
-  public maxhealth: number = 1;
-  public health: number = this.maxhealth / 2;
-
   private pauseCountdown: number;
 
   public timingPoints: TimingPoint[];
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: Dispatch<SetStateAction<Results | null>>;
-  private setFail: Dispatch<SetStateAction<Results | null>>;
+  private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
 
   private finished: boolean = false;
 
   public constructor(
     beatmapData: BeatmapData,
-    setResults: Dispatch<SetStateAction<Results | null>>,
-    setFail: Dispatch<SetStateAction<Results | null>>,
+    setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
   ) {
     this.resize = this.resize.bind(this);
@@ -167,7 +160,6 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = setResults;
-    this.setFail = setFail;
     this.setIsPaused = setIsPaused;
 
     this.settings = getSettings();
@@ -203,9 +195,12 @@ export class Game {
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
-    if (this.settings.mods.canfail) { this.healthSystem = new HealthSystem(this); }
-    if (this.settings.mods.fc) { this.health = 1;}
-
+    if (!this.settings.mods.noFail) {
+      this.healthSystem = new HealthSystem(this);
+    }
+    if (this.settings.mods.suddenDeath) {
+      this.healthSystem.health = 1;
+    }
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
@@ -292,11 +287,9 @@ export class Game {
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
 
-    if (!this.settings.ui.hideJudgement) {
-      this.judgement?.resize();
-    }
+    this.judgement?.resize();
 
-    if (!this.settings.ui.hideCombo) {
+    if (this.comboText) {
       this.comboText.x = this.app.screen.width / 2;
 
       if (this.settings.upscroll) {
@@ -311,13 +304,13 @@ export class Game {
     }
 
     // Hud section
-    if (!this.settings.ui.hideScore) {
+    if (this.scoreText) {
       this.scoreText.x = this.app.screen.width - 30;
       this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
     }
     this.progressBar?.resize();
     this.healthBar?.resize();
-    if (!this.settings.ui.hideAccuracy) {
+    if (this.accuracyText) {
       this.accuracyText.x = this.app.screen.width - 30;
       this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
     }
@@ -364,14 +357,18 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
-    if (!this.settings.ui.hideScore) { this.addScoreText(); } else { console.warn("Score was hidden"); }
-
+    if (this.settings.ui.showScore) {
+      this.addScoreText();
+    }
     this.addStageContainer();
 
-    if (!this.settings.ui.hideCombo) { this.addComboText(); } else { console.warn("Combo was hidden"); }
+    if (this.settings.ui.showCombo) {
+      this.addComboText();
+    }
 
-    if (!this.settings.ui.hideAccuracy) { this.addAccuracyText(); } else { console.warn("Acc was hidden"); }
-
+    if (this.settings.ui.showAccuracy) {
+      this.addAccuracyText();
+    }
     if (this.settings.style === "bars") {
       this.addStageHint();
 
@@ -380,12 +377,14 @@ export class Game {
 
     this.addKeys();
 
-    if (!this.settings.ui.hideJudgement) { this.addJudgement(); } else { console.warn("Judgement was hidden"); }
-
+    if (this.settings.ui.showJudgement) {
+      this.addJudgement();
+    }
     this.addHitObjects();
 
-    if (!this.settings.ui.hideProgressBar) { this.addProgressBar(); } else { console.warn("Progress Bar was hidden"); }
-
+    if (this.settings.ui.showProgressBar) {
+      this.addProgressBar();
+    }
     this.addStartMessage();
 
     this.addCountdown();
@@ -398,7 +397,7 @@ export class Game {
       this.addHitError();
     }
 
-    if (this.settings.mods.canfail && !this.settings.ui.hideHealthBar) {
+    if (!this.settings.mods.noFail && this.settings.ui.showHealthBar) {
       this.addHealthBar();
     }
 
@@ -426,7 +425,7 @@ export class Game {
       this.keys.forEach((key) => key.update());
     }
 
-    if (this.health <= this.minhealth) {
+    if (this.healthSystem?.health <= 0) {
       this.state = "FAIL";
     }
 
@@ -462,8 +461,11 @@ export class Game {
             ];
         }
 
-        this.progressBar?.update(this.timeElapsed, this.startTime, this.endTime);
-        this.healthBar?.update(this.health, this.minhealth, this.maxhealth)
+        this.progressBar?.update(
+          this.timeElapsed,
+          this.startTime,
+          this.endTime,
+        );
 
         this.updateHitObjects();
 
@@ -492,8 +494,8 @@ export class Game {
         if (!this.finished) {
           this.finished = true;
           this.fail();
-        }  
-        
+        }
+
         break;
       default:
         break;
@@ -509,7 +511,7 @@ export class Game {
     this.app.stage.addChild(this.progressBar.view);
   }
 
-  private addHealthBar() { 
+  private addHealthBar() {
     this.healthBar = new HealthBar(this);
 
     this.app.stage.addChild(this.healthBar.view);
@@ -757,9 +759,9 @@ export class Game {
   }
 
   private async fail() {
-    await new Promise((reslove) => setTimeout(reslove, 1500));
-
     this.song.stop();
+
+    this.scoreSystem.score = Math.round(this.scoreSystem.score);
 
     new Howl({
       src: [`/skin/failsound.mp3`],
@@ -772,18 +774,21 @@ export class Game {
       onplayerror: (_, error) => {
         console.warn(error);
       },
-    })
+    });
 
-    this.setFail({
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    this.setResults({
       320: this.scoreSystem[320],
       300: this.scoreSystem[300],
       200: this.scoreSystem[200],
       100: this.scoreSystem[100],
       50: this.scoreSystem[50],
       0: this.scoreSystem[0],
-      score: 0,
+      score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      failed: true,
     });
   }
 
