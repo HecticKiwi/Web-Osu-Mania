@@ -41,9 +41,6 @@ export class HealthBar {
   }
 
   public setHealth(health: number, lostHealth: boolean) {
-    const min = 0;
-    const max = 1;
-
     gsap.fromTo(
       this.healthBar,
       {

@@ -52,7 +52,7 @@ import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
-import { HealthSystem } from "./systems/health";
+import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
 
@@ -425,7 +425,7 @@ export class Game {
       this.keys.forEach((key) => key.update());
     }
 
-    if (this.healthSystem?.health <= 0) {
+    if (this.healthSystem?.health <= MIN_HEALTH) {
       this.state = "FAIL";
     }
 
