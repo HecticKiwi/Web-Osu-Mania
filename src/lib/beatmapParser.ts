@@ -104,13 +104,17 @@ export const parseOsz = async (
   );
 
   const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
-  const diffName = beatmap.version.replace(regex, "");
+  const diffName = beatmap.version
+    .replace(regex, "")
+    .replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+
+  const pattern = new RegExp(`Version:${diffName}(\r|\n)`);
 
   let osuFileData;
   for (const file of osuFiles) {
     const fileData = await zip.files[file].async("text");
 
-    if (fileData.includes(`Version:${diffName}`)) {
+    if (pattern.test(fileData)) {
       osuFileData = fileData;
       break;
     }
