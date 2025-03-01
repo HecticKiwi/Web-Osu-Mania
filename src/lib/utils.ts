@@ -179,6 +179,10 @@ export function getScoreMultiplier(settings: Settings) {
     multiplier *= 0.5;
   }
 
+  if (mods.noFail) {
+    multiplier *= 0.5;
+  }
+
   if (mods.playbackRate < 1) {
     multiplier *= 0.3;
   }
@@ -199,8 +203,10 @@ export function getModStrings(settings: Settings) {
 
   const modStrings = [
     mods.easy && "Easy",
+    mods.noFail && "No Fail",
     mods.playbackRate === 0.75 && "Half Time",
     mods.hardRock && "Hard Rock",
+    mods.suddenDeath && "Sudden Death",
     mods.playbackRate === 1.5 && "Double Time",
     mods.autoplay && "Autoplay",
     mods.random && "Random",

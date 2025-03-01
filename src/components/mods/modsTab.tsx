@@ -46,6 +46,20 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="No Fail"
+          tooltip="You can't fail, no matter what."
+          checked={settings.mods.noFail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.noFail = checked;
+
+              if (checked) {
+                draft.mods.suddenDeath = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Half Time"
           tooltip="0.75x speed (don't ask me why it's called half time)."
           checked={settings.mods.playbackRate === 0.75}
@@ -73,6 +87,20 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.easy = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Sudden Death"
+          tooltip="Miss a note and fail."
+          checked={settings.mods.suddenDeath}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.suddenDeath = checked;
+
+              if (checked) {
+                draft.mods.noFail = false;
               }
             })
           }

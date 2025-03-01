@@ -2,7 +2,7 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
-import { Results } from "@/types";
+import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useSettingsContext } from "../providers/settingsProvider";
 import PauseButton from "./pauseButton";
@@ -20,7 +20,7 @@ const GameScreens = ({
   const { settings } = useSettingsContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<PlayResults | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation

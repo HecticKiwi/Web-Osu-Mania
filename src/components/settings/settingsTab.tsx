@@ -176,11 +176,73 @@ const SettingsTab = () => {
           </div>
         </div>
         <SwitchInput
+          label="Show Score"
+          checked={settings.ui.showScore}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showScore = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Combo"
+          checked={settings.ui.showCombo}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showCombo = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Accuracy"
+          checked={settings.ui.showAccuracy}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showAccuracy = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Judgement"
+          checked={settings.ui.showJudgement}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showJudgement = checked;
+
+              if (!checked) {
+                draft.show300g = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Show 300g Judgement"
           checked={settings.show300g}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.show300g = checked;
+
+              if (checked) {
+                draft.ui.showJudgement = true;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Progress Bar"
+          checked={settings.ui.showProgressBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showProgressBar = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Health Bar"
+          checked={settings.ui.showHealthBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showHealthBar = checked;
             })
           }
         />

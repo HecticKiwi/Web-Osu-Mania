@@ -59,6 +59,16 @@ export type Settings = {
     random: boolean;
     constantSpeed: boolean;
     holdOff: boolean;
+    noFail: boolean;
+    suddenDeath: boolean;
+  };
+  ui: {
+    showScore: boolean;
+    showCombo: boolean;
+    showAccuracy: boolean;
+    showJudgement: boolean;
+    showProgressBar: boolean;
+    showHealthBar: boolean;
   };
 };
 
@@ -122,14 +132,24 @@ export const defaultSettings: Settings = {
     pause: null,
   },
   mods: {
-    autoplay: false,
     easy: false,
-    playbackRate: 1,
+    noFail: false,
     hardRock: false,
-    mirror: false,
+    suddenDeath: false,
+    autoplay: false,
     random: false,
+    mirror: false,
     constantSpeed: false,
     holdOff: false,
+    playbackRate: 1,
+  },
+  ui: {
+    showScore: true,
+    showCombo: true,
+    showAccuracy: true,
+    showJudgement: true,
+    showProgressBar: true,
+    showHealthBar: true,
   },
 };
 

@@ -51,26 +51,35 @@ export class ScoreSystem {
   public hit(judgement: Judgement) {
     this.score += this.getScoreToAdd(judgement);
 
+    this.game.healthSystem?.hit(judgement);
+
     this[judgement]++;
 
     if (judgement !== 320 || this.game.settings.show300g) {
-      this.game.judgement.showJudgement(judgement);
+      this.game.judgement?.showJudgement(judgement);
     }
 
     if (judgement === 0) {
       this.combo = 0;
-      this.game.comboText.text = this.combo;
-      this.game.comboText.visible = false;
+
+      if (this.game.comboText) {
+        this.game.comboText.text = this.combo;
+        this.game.comboText.visible = false;
+      }
     } else {
       this.combo++;
-      this.game.comboText.visible = true;
-
       if (this.combo > this.maxCombo) {
         this.maxCombo = this.combo;
       }
 
-      this.game.comboText.text = this.combo;
-      this.game.scoreText.text = Math.round(this.score);
+      if (this.game.comboText) {
+        this.game.comboText.visible = true;
+        this.game.comboText.text = this.combo;
+      }
+
+      if (this.game.scoreText) {
+        this.game.scoreText.text = Math.round(this.score);
+      }
     }
 
     // Calculate new accuracy
@@ -85,7 +94,10 @@ export class ScoreSystem {
       300 * (this[320] + this[300] + this[200] + this[100] + this[0]);
 
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
-    this.game.accuracyText.text = `${(this.accuracy * 100).toFixed(2)}%`;
+
+    if (this.game.accuracyText) {
+      this.game.accuracyText.text = `${(this.accuracy * 100).toFixed(2)}%`;
+    }
   }
 
   // https://osu.ppy.sh/wiki/en/Gameplay/Score/ScoreV1/osu%21mania
