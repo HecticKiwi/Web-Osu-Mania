@@ -104,7 +104,10 @@ export const parseOsz = async (
   );
 
   const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
-  const diffName = beatmap.version.replace(regex, "");
+  const diffName = beatmap.version
+    .replace(regex, "")
+    .replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+
   const pattern = new RegExp(`Version:${diffName}(\r|\n)`);
 
   let osuFileData;
