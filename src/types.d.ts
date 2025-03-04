@@ -1,7 +1,7 @@
 import { Hold } from "./osuMania/sprites/hold/hold";
 import { Tap } from "./osuMania/sprites/tap/tap";
 
-export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE";
+export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE" | "FAIL";
 
 export type Results = {
   score: number;
@@ -13,6 +13,10 @@ export type Results = {
   100: number;
   50: number;
   0: number;
+};
+
+export type PlayResults = Results & {
+  failed?: boolean;
 };
 
 export type Column = (Tap | Hold)[];

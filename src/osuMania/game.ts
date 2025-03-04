@@ -7,7 +7,7 @@ import {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { getSettings, scaleWidth } from "@/lib/utils";
-import { Column, GameState, Results } from "@/types";
+import { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
@@ -32,6 +32,7 @@ import {
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
 import { Fps } from "./sprites/fps";
+import { HealthBar } from "./sprites/healthBar";
 import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
@@ -51,6 +52,7 @@ import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
+import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
 
@@ -74,6 +76,7 @@ export class Game {
   public scaledColumnWidth: number;
 
   // Systems
+  public healthSystem: HealthSystem;
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
@@ -97,9 +100,9 @@ export class Game {
 
   // UI Components
   private startMessage: BitmapText;
-  public scoreText: BitmapText;
-  public comboText: BitmapText;
-  public accuracyText: BitmapText;
+  public scoreText?: BitmapText;
+  public comboText?: BitmapText;
+  public accuracyText?: BitmapText;
   public hitObjects: HitObject[];
   public columns: Column[] = [];
   public stageSideWidth = 2;
@@ -111,9 +114,10 @@ export class Game {
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
   public stageHint: StageHint;
-  public judgement: Judgement;
-  private progressBar: ProgressBar;
-  public errorBar: ErrorBar;
+  public judgement?: Judgement;
+  private progressBar?: ProgressBar;
+  public healthBar?: HealthBar;
+  public errorBar?: ErrorBar;
   private fps?: Fps;
   private countdown: Countdown;
 
@@ -129,14 +133,14 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: Dispatch<SetStateAction<Results | null>>;
+  private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
 
   private finished: boolean = false;
 
   public constructor(
     beatmapData: BeatmapData,
-    setResults: Dispatch<SetStateAction<Results | null>>,
+    setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
   ) {
     this.resize = this.resize.bind(this);
@@ -191,6 +195,12 @@ export class Game {
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
+    if (!this.settings.mods.noFail) {
+      this.healthSystem = new HealthSystem(this);
+    }
+    if (this.settings.mods.suddenDeath) {
+      this.healthSystem.health = 1;
+    }
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
@@ -277,14 +287,16 @@ export class Game {
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
 
-    this.judgement.resize();
+    this.judgement?.resize();
 
-    this.comboText.x = this.app.screen.width / 2;
+    if (this.comboText) {
+      this.comboText.x = this.app.screen.width / 2;
 
-    if (this.settings.upscroll) {
-      this.comboText.y = (this.app.screen.height * 2) / 3;
-    } else {
-      this.comboText.y = this.app.screen.height / 3 + 50;
+      if (this.settings.upscroll) {
+        this.comboText.y = (this.app.screen.height * 2) / 3;
+      } else {
+        this.comboText.y = this.app.screen.height / 3 + 50;
+      }
     }
 
     if (this.errorBar) {
@@ -292,11 +304,16 @@ export class Game {
     }
 
     // Hud section
-    this.scoreText.x = this.app.screen.width - 30;
-    this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
-    this.progressBar.resize();
-    this.accuracyText.x = this.app.screen.width - 30;
-    this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    if (this.scoreText) {
+      this.scoreText.x = this.app.screen.width - 30;
+      this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    }
+    this.progressBar?.resize();
+    this.healthBar?.resize();
+    if (this.accuracyText) {
+      this.accuracyText.x = this.app.screen.width - 30;
+      this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
+    }
   }
 
   async main(ref: HTMLDivElement) {
@@ -340,14 +357,18 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
-    this.addScoreText();
-
+    if (this.settings.ui.showScore) {
+      this.addScoreText();
+    }
     this.addStageContainer();
 
-    this.addComboText();
+    if (this.settings.ui.showCombo) {
+      this.addComboText();
+    }
 
-    this.addAccuracyText();
-
+    if (this.settings.ui.showAccuracy) {
+      this.addAccuracyText();
+    }
     if (this.settings.style === "bars") {
       this.addStageHint();
 
@@ -356,12 +377,14 @@ export class Game {
 
     this.addKeys();
 
-    this.addJudgement();
-
+    if (this.settings.ui.showJudgement) {
+      this.addJudgement();
+    }
     this.addHitObjects();
 
-    this.addProgressBar();
-
+    if (this.settings.ui.showProgressBar) {
+      this.addProgressBar();
+    }
     this.addStartMessage();
 
     this.addCountdown();
@@ -372,6 +395,10 @@ export class Game {
 
     if (this.settings.showErrorBar) {
       this.addHitError();
+    }
+
+    if (!this.settings.mods.noFail && this.settings.ui.showHealthBar) {
+      this.addHealthBar();
     }
 
     // Set initial Y positions
@@ -396,6 +423,10 @@ export class Game {
     if (!this.settings.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());
       this.keys.forEach((key) => key.update());
+    }
+
+    if (this.healthSystem?.health <= MIN_HEALTH) {
+      this.state = "FAIL";
     }
 
     switch (this.state) {
@@ -430,7 +461,11 @@ export class Game {
             ];
         }
 
-        this.progressBar.update(this.timeElapsed, this.startTime, this.endTime);
+        this.progressBar?.update(
+          this.timeElapsed,
+          this.startTime,
+          this.endTime,
+        );
 
         this.updateHitObjects();
 
@@ -455,6 +490,13 @@ export class Game {
 
         break;
 
+      case "FAIL":
+        if (!this.finished) {
+          this.finished = true;
+          this.fail();
+        }
+
+        break;
       default:
         break;
     }
@@ -467,6 +509,12 @@ export class Game {
     this.progressBar = new ProgressBar(this);
 
     this.app.stage.addChild(this.progressBar.view);
+  }
+
+  private addHealthBar() {
+    this.healthBar = new HealthBar(this);
+
+    this.app.stage.addChild(this.healthBar.view);
   }
 
   private addHitError() {
@@ -707,6 +755,40 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+    });
+  }
+
+  private async fail() {
+    this.song.stop();
+
+    this.scoreSystem.score = Math.round(this.scoreSystem.score);
+
+    new Howl({
+      src: [`/skin/failsound.mp3`],
+      format: "mp3",
+      preload: true,
+      autoplay: true,
+      onloaderror: (_, error) => {
+        console.warn(error);
+      },
+      onplayerror: (_, error) => {
+        console.warn(error);
+      },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    this.setResults({
+      320: this.scoreSystem[320],
+      300: this.scoreSystem[300],
+      200: this.scoreSystem[200],
+      100: this.scoreSystem[100],
+      50: this.scoreSystem[50],
+      0: this.scoreSystem[0],
+      score: this.scoreSystem.score,
+      accuracy: this.scoreSystem.accuracy,
+      maxCombo: this.scoreSystem.maxCombo,
+      failed: true,
     });
   }
 
