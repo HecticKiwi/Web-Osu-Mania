@@ -257,9 +257,12 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   const hitObjects: HitObject[] = [];
   const hitObjectData = lines.slice(startIndex, endIndex);
 
-  if (hitObjectData === undefined || hitObjectData.length == 0) {
-    throw new Error(`Note Data missing. Use a diffrent provider if issue presists. (You may need to refresh and/or clear cache)`);
-}
+  // Hit objects may be empty when downloading from SayoBot
+  if (hitObjectData.length === 0) {
+    throw new Error(
+      "Hit object data missing. Try switching beatmap providers and refresh (clear the IndexedDB cache if you have it enabled).",
+    );
+  }
 
   hitObjectData.forEach((hitObject: string, i) => {
     const [x, y, time, type, hitSoundDecimal] = hitObject

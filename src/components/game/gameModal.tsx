@@ -72,7 +72,6 @@ const GameModal = () => {
         await loadAssets();
 
         setBeatmapData(beatmapData);
-
       } catch (error: any) {
         toast("Parsing Error", {
           description: error.message,
