@@ -7,8 +7,8 @@ import { Updater, useImmer } from "use-immer";
 
 export const BEATMAP_API_PROVIDERS = {
   NeriNyan: "https://api.nerinyan.moe/d/$setId",
-  SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
   "Mino (catboy.best)": "https://catboy.best/d/$setIdn",
+  SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
 } as const;
 
 export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";

@@ -75,6 +75,13 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           </RadioGroup>
         </div>
 
+        {settings.beatmapProvider === "SayoBot" && (
+          <p className="mt-1 text-sm text-orange-400">
+            There may be parsing errors when downloading maps from SayoBot. If
+            this happens, try switching to a different provider.
+          </p>
+        )}
+
         {settings.beatmapProvider === "Custom" && (
           <p className="mt-1 text-sm text-orange-400">
             Custom provider URLs should replace the beatmap set ID route segment

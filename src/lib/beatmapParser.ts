@@ -256,6 +256,14 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
   const hitObjectData = lines.slice(startIndex, endIndex);
+
+  // Hit objects may be empty when downloading from SayoBot
+  if (hitObjectData.length === 0) {
+    throw new Error(
+      "Hit object data missing. Try switching beatmap providers and refresh (clear the IndexedDB cache if you have it enabled).",
+    );
+  }
+
   hitObjectData.forEach((hitObject: string, i) => {
     const [x, y, time, type, hitSoundDecimal] = hitObject
       .split(",")
