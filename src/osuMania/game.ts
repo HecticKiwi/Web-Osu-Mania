@@ -425,10 +425,6 @@ export class Game {
       this.keys.forEach((key) => key.update());
     }
 
-    if (this.healthSystem?.health <= MIN_HEALTH) {
-      this.state = "FAIL";
-    }
-
     switch (this.state) {
       case "WAIT":
         if (this.inputSystem.anyKeyTapped()) {
@@ -472,6 +468,10 @@ export class Game {
         if (this.timeElapsed > this.endTime && !this.finished) {
           this.finished = true;
           this.finish();
+        }
+
+        if (this.healthSystem?.health <= MIN_HEALTH) {
+          this.state = "FAIL";
         }
 
         break;
@@ -837,8 +837,9 @@ export class Game {
   }
 
   public updateHitObjects() {
-    this.columns.forEach((column) => {
+    for (const column of this.columns) {
       let i = 0;
+
       while (i < column.length) {
         const hitObject = column[i];
         hitObject.update();
@@ -849,6 +850,11 @@ export class Game {
           i = 0;
         }
 
+        // If you failed, you're done - no need to update any more hit objects
+        if (this.healthSystem.health === MIN_HEALTH) {
+          return;
+        }
+
         // If this hit object is above the top screen edge, there's no need to update the rest
         if (hitObject.view.y < 0) {
           break;
@@ -856,6 +862,6 @@ export class Game {
 
         i++;
       }
-    });
+    }
   }
 }
