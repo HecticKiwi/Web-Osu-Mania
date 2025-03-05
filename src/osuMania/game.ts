@@ -198,9 +198,6 @@ export class Game {
     if (!this.settings.mods.noFail) {
       this.healthSystem = new HealthSystem(this);
     }
-    if (this.settings.mods.suddenDeath) {
-      this.healthSystem.health = 1;
-    }
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
@@ -851,7 +848,7 @@ export class Game {
         }
 
         // If you failed, you're done - no need to update any more hit objects
-        if (this.healthSystem.health === MIN_HEALTH) {
+        if (this.healthSystem?.health === MIN_HEALTH) {
           return;
         }
 
