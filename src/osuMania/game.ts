@@ -76,7 +76,7 @@ export class Game {
   public scaledColumnWidth: number;
 
   // Systems
-  public healthSystem: HealthSystem;
+  public healthSystem?: HealthSystem;
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
@@ -197,9 +197,6 @@ export class Game {
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
     if (!this.settings.mods.noFail) {
       this.healthSystem = new HealthSystem(this);
-    }
-    if (this.settings.mods.suddenDeath) {
-      this.healthSystem.health = 1;
     }
 
     this.song = beatmapData.song.howl;
@@ -470,7 +467,10 @@ export class Game {
           this.finish();
         }
 
-        if (this.healthSystem?.health <= MIN_HEALTH) {
+        if (
+          this.healthSystem !== undefined &&
+          this.healthSystem.health <= MIN_HEALTH
+        ) {
           this.state = "FAIL";
         }
 
@@ -851,7 +851,7 @@ export class Game {
         }
 
         // If you failed, you're done - no need to update any more hit objects
-        if (this.healthSystem.health === MIN_HEALTH) {
+        if (this.healthSystem?.health === MIN_HEALTH) {
           return;
         }
 
