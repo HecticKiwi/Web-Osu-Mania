@@ -5,7 +5,6 @@
 name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main", "github-pages"]
 
@@ -28,6 +27,9 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_URL: "https://web-osu-mania.pages.dev"
+      NEXT_PUBLIC_BASE_PATH: "https://webosumania.com"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
