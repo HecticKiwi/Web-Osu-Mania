@@ -1,7 +1,6 @@
 import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
 
-const isGithubPages =
-  process.env.GITHUB_ACTIONS || process.env.NODE_ENV === "production";
+const isGithubPages = process.env.GITHUB_ACTIONS;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
