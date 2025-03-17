@@ -10,6 +10,7 @@ import {
   SortDirection,
 } from "./searchParams/sortParam";
 import { Stars } from "./searchParams/starsParam";
+import { BASE_PATH } from "./utils";
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
@@ -95,7 +96,7 @@ export async function getBeatmaps({
     .join(" ");
 
   const url = queryString.stringifyUrl({
-    url: `/api/getBeatmaps`,
+    url: `${BASE_PATH}/api/getBeatmaps`,
     query: {
       q,
       m: 3, // 3 = mania mode

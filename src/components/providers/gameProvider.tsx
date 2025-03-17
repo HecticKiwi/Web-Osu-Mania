@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
 import { BeatmapSet } from "@/lib/osuApi";
+import { BASE_PATH } from "@/lib/utils";
 import { Howler } from "howler";
 import queryString from "query-string";
 import {
@@ -70,7 +71,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         // Fetch beatmap set data from osu (cover BG, preview audio, diff star ratings, etc.)
         // Theoretically I could do this manually but that's too much work :<
         const url = queryString.stringifyUrl({
-          url: `/api/getBeatmap`,
+          url: `${BASE_PATH}/api/getBeatmap`,
           query: {
             beatmapSetId,
           },

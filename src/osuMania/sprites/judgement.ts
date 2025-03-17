@@ -1,3 +1,4 @@
+import { BASE_PATH } from "@/lib/utils";
 import { Judgement as JudgementValue } from "@/types";
 import { gsap } from "gsap";
 import { Sprite, Texture } from "pixi.js";
@@ -29,7 +30,7 @@ export class Judgement {
 
   public showJudgement(judgement: JudgementValue) {
     this.view.texture = Texture.from(
-      `/skin/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
+      `${BASE_PATH}/skin/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
     );
 
     this.view.alpha = 1;
