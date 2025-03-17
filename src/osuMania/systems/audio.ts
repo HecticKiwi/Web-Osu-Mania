@@ -17,7 +17,7 @@ export class AudioSystem {
       ["normal", "whistle", "finish", "clap"].forEach((sound) => {
         this.load(
           `skin-${sampleSet}-hit${sound}`,
-          `/skin/${sampleSet}-hit${sound}.ogg`,
+          `${process.env.NEXT_PUBLIC_BASE_PATH}/skin/${sampleSet}-hit${sound}.ogg`,
         );
       });
     });

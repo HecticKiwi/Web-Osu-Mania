@@ -70,7 +70,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         // Fetch beatmap set data from osu (cover BG, preview audio, diff star ratings, etc.)
         // Theoretically I could do this manually but that's too much work :<
         const url = queryString.stringifyUrl({
-          url: `/api/getBeatmap`,
+          url: `${process.env.NEXT_PUBLIC_BASE_PATH}/api/getBeatmap`,
           query: {
             beatmapSetId,
           },

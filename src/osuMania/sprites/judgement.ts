@@ -29,7 +29,7 @@ export class Judgement {
 
   public showJudgement(judgement: JudgementValue) {
     this.view.texture = Texture.from(
-      `/skin/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
+      `${process.env.NEXT_PUBLIC_BASE_PATH}/skin/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
     );
 
     this.view.alpha = 1;

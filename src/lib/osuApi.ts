@@ -95,7 +95,7 @@ export async function getBeatmaps({
     .join(" ");
 
   const url = queryString.stringifyUrl({
-    url: `/api/getBeatmaps`,
+    url: `${process.env.NEXT_PUBLIC_BASE_PATH}/api/getBeatmaps`,
     query: {
       q,
       m: 3, // 3 = mania mode
