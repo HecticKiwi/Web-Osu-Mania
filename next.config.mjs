@@ -16,8 +16,8 @@ const nextConfig = {
       },
     ],
   },
-  basePath: isGithubPages ? "/webosumania" : "",
-  assetPrefix: isGithubPages ? "/webosumania" : "",
+  basePath: isGithubPages ? "/Web-Osu-Mania" : "",
+  assetPrefix: isGithubPages ? "/Web-Osu-Mania" : "",
 };
 
 if (process.env.NODE_ENV === "development") {
