@@ -1,14 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import FiltersTab from "./filters/filtersTab";
 import KeybindsTab from "./keybinds/keybindsTab";
 import ModsTab from "./mods/modsTab";
 import SettingsTab from "./settings/settingsTab";
 
-const SidebarContent = () => {
+const SidebarContent = ({ className }: { className?: string }) => {
   return (
     <>
-      <Tabs defaultValue="filters" className="flex h-full flex-col">
+      <Tabs
+        defaultValue="filters"
+        className={cn("flex h-full flex-col", className)}
+      >
         <TabsList className="grid grid-cols-4">
           <TabsTrigger value="filters">Filters</TabsTrigger>
           <TabsTrigger value="mods">Mods</TabsTrigger>
