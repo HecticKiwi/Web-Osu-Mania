@@ -134,7 +134,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
           if (!response.ok || !response.body) {
             if (response.status === 404) {
               throw new Error(
-                `Beatmap does not exist on the current beatmap provider, please switch to another provider.`,
+                `Beatmap does not exist on the current beatmap provider, please switch to another provider in the settings.`,
               );
             }
 
@@ -142,19 +142,19 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
               const retryAfter = response.headers.get("Retry-After");
 
               throw new Error(
-                `The beatmap provider is experiencing too many requests, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"} or switch to another provider.`,
+                `The beatmap provider is experiencing too many requests, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"} or switch to another provider in the settings.`,
               );
             }
 
             if (response.status === 500) {
               throw new Error(
-                `The beatmap provider ran into an error, try again later or switch to another provider.`,
+                `The beatmap provider ran into an error, try again later or switch to another provider in the settings.`,
               );
             }
 
             if (response.status === 503) {
               throw new Error(
-                `The beatmap provider is currently unavailable, try again later or switch to another provider.`,
+                `The beatmap provider is currently unavailable, try again later or switch to another provider in the settings.`,
               );
             }
 
@@ -163,7 +163,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
             }
 
             throw new Error(
-              "An unknown error occurred while trying to download the beatmap, try again later or try switching to another beatmap provider.",
+              "An unknown error occurred while trying to download the beatmap, try again later or try switching to another beatmap provider in the settings.",
             );
           }
 
@@ -214,7 +214,7 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error(
-            `An unknown error occurred while trying to download the beatmap, try again later or try switching to another beatmap provider.`,
+            `An unknown error occurred while trying to download the beatmap, try again later or try switching to another beatmap provider in the settings.`,
           );
         }
 
