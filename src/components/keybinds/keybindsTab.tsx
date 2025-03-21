@@ -112,6 +112,18 @@ const KeybindsTab = () => {
             />
           </div>
         </div>
+        <div className="grid grid-cols-2 items-center rounded bg-background/50 p-1">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Quick retry (hold)
+          </div>
+
+          <KeybindButton
+            keybind={settings.keybinds.retry}
+            keybindPath={"keybinds.retry"}
+            selectedKeybindPath={selectedKeybindPath}
+            setSelectedKeybindPath={setSelectedKeybindPath}
+          />
+        </div>
       </div>
 
       {settings.keybinds.keyModes.map((keyMode, i) => (

@@ -49,6 +49,7 @@ export type Settings = {
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
+    retry: string | null;
   };
   mods: {
     autoplay: boolean;
@@ -130,6 +131,7 @@ export const defaultSettings: Settings = {
       ],
     ],
     pause: null,
+    retry: "Backquote",
   },
   mods: {
     easy: false,
