@@ -8,6 +8,7 @@ import { useSettingsContext } from "../providers/settingsProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
+import RetryWidget from "./retryWidget";
 import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
@@ -73,6 +74,7 @@ const GameScreens = ({
     <>
       <div ref={containerRef} className="h-full w-full">
         {game && !results && <VolumeWidget game={game} />}
+        {game && !results && <RetryWidget retry={retry} />}
         {game && !results && <PauseButton setIsPaused={setIsPaused} />}
 
         {isPaused && (

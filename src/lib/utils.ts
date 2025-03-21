@@ -124,6 +124,7 @@ export function keyCodeToString(code: string | null) {
     Slash: "/",
     Equal: "=",
     Minus: "-",
+    Backquote: "`",
   };
 
   const key = keyDictionary[code];

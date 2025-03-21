@@ -214,6 +214,9 @@ export class Game {
 
     window.removeEventListener("resize", this.resize);
 
+    gsap.killTweensOf("*");
+    gsap.globalTimeline.clear();
+
     this.app.destroy(
       { removeView: true },
       {
