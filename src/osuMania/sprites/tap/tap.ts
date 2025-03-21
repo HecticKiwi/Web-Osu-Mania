@@ -145,13 +145,13 @@ export abstract class Tap {
 
       if (absDelta <= this.game.hitWindows[320]) {
         this.game.scoreSystem.hit(320);
-      } else if (absDelta < this.game.hitWindows[300]) {
+      } else if (absDelta <= this.game.hitWindows[300]) {
         this.game.scoreSystem.hit(300);
-      } else if (absDelta < this.game.hitWindows[200]) {
+      } else if (absDelta <= this.game.hitWindows[200]) {
         this.game.scoreSystem.hit(200);
-      } else if (absDelta < this.game.hitWindows[100]) {
+      } else if (absDelta <= this.game.hitWindows[100]) {
         this.game.scoreSystem.hit(100);
-      } else if (absDelta < this.game.hitWindows[50]) {
+      } else if (absDelta <= this.game.hitWindows[50]) {
         this.game.scoreSystem.hit(50);
       } else {
         this.game.scoreSystem.hit(0);

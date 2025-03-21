@@ -493,7 +493,7 @@ function getLineValue(lines: string[], key: string) {
   return value;
 }
 
-// https://osu.ppy.sh/wiki/en/Beatmap/Overall_difficulty#osu!mania
+// https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
 export function getHitWindows(od: number): HitWindows {
   const { mods } = getSettings();
@@ -505,7 +505,7 @@ export function getHitWindows(od: number): HitWindows {
   }
 
   return {
-    320: 16,
+    320: od <= 5 ? 22.4 - 0.6 * od : 24.9 - 1.1 * od,
     300: 64 - 3 * od,
     200: 97 - 3 * od,
     100: 127 - 3 * od,

@@ -83,15 +83,16 @@ export class ScoreSystem {
     }
 
     // Calculate new accuracy
-    // https://osu.ppy.sh/wiki/en/Gameplay/Accuracy
+    // https://osu.ppy.sh/wiki/en/Gameplay/Accuracy#osu!mania
     const accuracyWeight =
-      300 * (this[320] + this[300]) +
+      305 * this[320] +
+      300 * this[300] +
       200 * this[200] +
       100 * this[100] +
       50 * this[50];
 
     const highestPossibleAccuracyWeight =
-      300 * (this[320] + this[300] + this[200] + this[100] + this[0]);
+      305 * (this[320] + this[300] + this[200] + this[100] + this[0]);
 
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
 
