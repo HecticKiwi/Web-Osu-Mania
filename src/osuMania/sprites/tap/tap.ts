@@ -134,36 +134,37 @@ export abstract class Tap {
       this.game.scoreSystem.hit(0);
       this.shouldRemove = true;
     }
+  }
 
-    if (this.isHit()) {
-      const absDelta = Math.abs(delta);
+  public hit() {
+    const delta = this.data.time - this.game.timeElapsed;
+    const absDelta = Math.abs(delta);
 
-      // Return if you pressed way too early...
-      if (absDelta > this.game.hitWindows[0]) {
-        return;
-      }
+    console.log("keydow#", performance.now());
 
-      if (absDelta <= this.game.hitWindows[320]) {
-        this.game.scoreSystem.hit(320);
-      } else if (absDelta <= this.game.hitWindows[300]) {
-        this.game.scoreSystem.hit(300);
-      } else if (absDelta <= this.game.hitWindows[200]) {
-        this.game.scoreSystem.hit(200);
-      } else if (absDelta <= this.game.hitWindows[100]) {
-        this.game.scoreSystem.hit(100);
-      } else if (absDelta <= this.game.hitWindows[50]) {
-        this.game.scoreSystem.hit(50);
-      } else {
-        this.game.scoreSystem.hit(0);
-      }
-
-      this.game.errorBar?.addTimingMark(delta);
-
-      this.shouldRemove = true;
+    // Return if you pressed way too early...
+    if (absDelta > this.game.hitWindows[0]) {
+      return;
     }
+
+    if (absDelta <= this.game.hitWindows[320]) {
+      this.game.scoreSystem.hit(320);
+    } else if (absDelta <= this.game.hitWindows[300]) {
+      this.game.scoreSystem.hit(300);
+    } else if (absDelta <= this.game.hitWindows[200]) {
+      this.game.scoreSystem.hit(200);
+    } else if (absDelta <= this.game.hitWindows[100]) {
+      this.game.scoreSystem.hit(100);
+    } else if (absDelta <= this.game.hitWindows[50]) {
+      this.game.scoreSystem.hit(50);
+    } else {
+      this.game.scoreSystem.hit(0);
+    }
+
+    this.game.errorBar?.addTimingMark(delta);
+
+    this.shouldRemove = true;
   }
 
-  public isHit() {
-    return this.game.inputSystem.tappedColumns[this.data.column];
-  }
+  public release() {}
 }
