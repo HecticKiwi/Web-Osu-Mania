@@ -34,16 +34,28 @@ export abstract class Key {
     hitArea.on("pointerdown", () => {
       this.game.inputSystem.tappedColumns[this.columnId] = true;
       this.game.inputSystem.pressedColumns[this.columnId] = true;
+
+      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+        this.game.columns[this.columnId][0]?.hit();
+      }
     });
 
     hitArea.on("pointerup", () => {
       this.game.inputSystem.pressedColumns[this.columnId] = false;
       this.game.inputSystem.releasedColumns[this.columnId] = true;
+
+      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+        this.game.columns[this.columnId][0]?.release();
+      }
     });
 
     hitArea.on("pointerupoutside", () => {
       this.game.inputSystem.pressedColumns[this.columnId] = false;
       this.game.inputSystem.releasedColumns[this.columnId] = true;
+
+      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+        this.game.columns[this.columnId][0]?.release();
+      }
     });
 
     this.view.addChild(hitArea);

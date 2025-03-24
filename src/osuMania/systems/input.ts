@@ -66,9 +66,17 @@ export class InputSystem {
       if (button.pressed && !this.gamepadState[i]) {
         this.tappedColumns[column] = true;
         this.pressedColumns[column] = true;
+
+        if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+          this.game.columns[column][0]?.hit();
+        }
       } else if (!button.pressed && this.gamepadState[i]) {
         this.pressedColumns[column] = false;
         this.releasedColumns[column] = true;
+
+        if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+          this.game.columns[column][0]?.release();
+        }
       }
     });
 
@@ -76,22 +84,31 @@ export class InputSystem {
   }
 
   public handleKeyDown(event: KeyboardEvent) {
-    if (!this.pressedKeys.has(event.code)) {
-      this.tappedKeys.add(event.code);
-      this.pressedKeys.add(event.code);
+    if (this.pressedKeys.has(event.code)) {
+      return;
+    }
 
-      if (
-        event.code === "Escape" ||
-        event.code === this.game.settings.keybinds.pause
-      ) {
-        this.pauseTapped = true;
-      }
+    this.tappedKeys.add(event.code);
+    this.pressedKeys.add(event.code);
 
-      const column = this.keybindsMap.get(event.code);
-      if (column !== undefined) {
-        this.tappedColumns[column] = true;
-        this.pressedColumns[column] = true;
-      }
+    if (
+      event.code === "Escape" ||
+      event.code === this.game.settings.keybinds.pause
+    ) {
+      this.pauseTapped = true;
+      return;
+    }
+
+    const column = this.keybindsMap.get(event.code);
+    if (column === undefined) {
+      return;
+    }
+
+    this.tappedColumns[column] = true;
+    this.pressedColumns[column] = true;
+
+    if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+      this.game.columns[column][0]?.hit();
     }
   }
 
@@ -104,10 +121,16 @@ export class InputSystem {
     }
 
     const column = this.keybindsMap.get(event.code);
-    if (column !== undefined) {
-      this.tappedColumns[column] = false;
-      this.pressedColumns[column] = false;
-      this.releasedColumns[column] = true;
+    if (column === undefined) {
+      return;
+    }
+
+    this.tappedColumns[column] = false;
+    this.pressedColumns[column] = false;
+    this.releasedColumns[column] = true;
+
+    if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
+      this.game.columns[column][0]?.release();
     }
   }
 

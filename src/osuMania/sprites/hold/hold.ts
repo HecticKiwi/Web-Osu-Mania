@@ -46,7 +46,6 @@ export abstract class Hold {
     }
 
     const endTimeDelta = this.data.endTime - this.game.timeElapsed;
-    const absDelta = Math.abs(endTimeDelta);
 
     if (this.game.settings.mods.autoplay) {
       // Press key during hold
@@ -76,49 +75,6 @@ export abstract class Hold {
         this.shouldRemove = true;
         return;
       }
-
-      if (this.isHit() && absDelta < this.game.hitWindows[0]) {
-        if (this.broken) {
-          this.game.scoreSystem.hit(50);
-          this.shouldRemove = true;
-
-          return;
-        }
-
-        if (absDelta <= this.game.hitWindows[320] * 1.5) {
-          this.game.scoreSystem.hit(320);
-        } else if (absDelta <= this.game.hitWindows[300] * 1.5) {
-          this.game.scoreSystem.hit(300);
-        } else if (absDelta <= this.game.hitWindows[200] * 1.5) {
-          this.game.scoreSystem.hit(200);
-        } else if (absDelta <= this.game.hitWindows[100] * 1.5) {
-          this.game.scoreSystem.hit(100);
-        } else if (absDelta <= this.game.hitWindows[50] * 1.5) {
-          this.game.scoreSystem.hit(50);
-        } else {
-          this.game.scoreSystem.hit(0);
-        }
-
-        this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
-        this.shouldRemove = true;
-
-        return;
-      }
-
-      // If released before hold was done
-      if (
-        !this.game.inputSystem.pressedColumns[this.data.column] &&
-        !this.broken
-      ) {
-        this.broken = true;
-
-        gsap.to(this.view, {
-          pixi: {
-            brightness: 0.5,
-          },
-          duration: 0.3,
-        });
-      }
     }
 
     if (!this.broken) {
@@ -140,8 +96,50 @@ export abstract class Hold {
     this.setViewHeight();
   }
 
-  public isHit() {
-    return this.game.inputSystem.releasedColumns[this.data.column];
+  public hit() {}
+
+  public release() {
+    const endTimeDelta = this.data.endTime - this.game.timeElapsed;
+    const absDelta = Math.abs(endTimeDelta);
+
+    if (absDelta < this.game.hitWindows[0] * 1.5) {
+      this.shouldRemove = true;
+
+      if (this.broken) {
+        this.game.scoreSystem.hit(50);
+        return;
+      }
+
+      if (absDelta <= this.game.hitWindows[320] * 1.5) {
+        this.game.scoreSystem.hit(320);
+      } else if (absDelta <= this.game.hitWindows[300] * 1.5) {
+        this.game.scoreSystem.hit(300);
+      } else if (absDelta <= this.game.hitWindows[200] * 1.5) {
+        this.game.scoreSystem.hit(200);
+      } else if (absDelta <= this.game.hitWindows[100] * 1.5) {
+        this.game.scoreSystem.hit(100);
+      } else if (absDelta <= this.game.hitWindows[50] * 1.5) {
+        this.game.scoreSystem.hit(50);
+      } else {
+        this.game.scoreSystem.hit(0);
+      }
+
+      this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
+
+      return;
+    }
+
+    // If released before hold was done
+    if (!this.broken) {
+      this.broken = true;
+
+      gsap.to(this.view, {
+        pixi: {
+          brightness: 0.5,
+        },
+        duration: 0.3,
+      });
+    }
   }
 
   protected setViewHeight() {
