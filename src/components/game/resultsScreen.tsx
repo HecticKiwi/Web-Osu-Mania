@@ -6,14 +6,18 @@ import { useGameContext } from "../providers/gameProvider";
 import { useHighScoresContext } from "../providers/highScoresProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
+import { ReplayData } from "@/osuMania/systems/replay";
+import { toast } from "sonner";
 
 const ResultsScreen = ({
   beatmapData,
   results,
+  replayData,
   retry,
 }: {
   beatmapData: BeatmapData;
   results: PlayResults;
+  replayData: ReplayData | null;
   retry: () => void;
 }) => {
   const { closeGame, beatmapSet, beatmapId } = useGameContext();
@@ -23,7 +27,7 @@ const ResultsScreen = ({
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || settings.mods.autoplay || results.failed) {
+    if (!beatmapId || settings.mods.autoplay || results.failed || results.replay) {
       return;
     }
 
@@ -55,6 +59,65 @@ const ResultsScreen = ({
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
 
+
+  const getgrade = () => { 
+    if (results.failed) {
+      return "Failed";
+    }
+    if (results.replay) {
+      return "Replay";
+    }
+    return getLetterGrade(results.accuracy);
+  }
+
+  async function downloadReplay(replaydata: ReplayData | null) {
+    try {
+      const response = await fetch('/api/saveReplay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ replaydata }),
+      });
+  
+      if (!response.ok) {
+        const result: any = await response.json();
+        toast.message("Error saving replay", {
+          description: result.message || "Check Console",
+        });
+        console.error('Error:', result);
+        return;
+      }
+  
+      // Handle the file download response
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : 'replay.womr';
+  
+      // Create a link to trigger the download
+      const link = document.createElement('a');
+      const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.download = filename; // Set the file name
+      link.click();
+  
+      // Clean up the object URL after the download
+      window.URL.revokeObjectURL(url);
+  
+      // Optionally show success message
+      toast.message("Replay saved successfully", {
+        description: "The replay has been downloaded.",
+      });
+    } catch (error) {
+      toast.message("An unknown error occurred", {
+        description: "Check Console",
+      });
+      console.error(error);
+    }
+  }
+  
   return (
     <>
       {/* Top of -1px since it wasn't covering the top for some reason */}
@@ -174,9 +237,13 @@ const ResultsScreen = ({
                     Grade
                   </h3>
                   <span>
-                    {results.failed
-                      ? "Failed"
-                      : getLetterGrade(results.accuracy)}
+                    {
+                      results.replay
+                        ? "Replay"
+                        : results.failed
+                          ? "Failed"
+                          : getgrade()
+                    }
                   </span>
                 </div>
 
@@ -194,6 +261,15 @@ const ResultsScreen = ({
                   onClick={() => retry()}
                 >
                   Retry
+                </Button>
+                <Button
+                  variant={"secondary"}
+                  size={"lg"}
+                  className="ml-4"
+                  disabled={!replayData}
+                  onClick={() => downloadReplay(replayData)}
+                >
+                  Save Replay
                 </Button>
               </div>
             </div>

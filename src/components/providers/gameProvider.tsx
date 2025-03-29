@@ -26,6 +26,8 @@ const GameContext = createContext<{
   startGame: (beatmapId: number) => void;
   uploadedBeatmapSet: File | null;
   setUploadedBeatmapSet: Dispatch<SetStateAction<File | null>>;
+  uploadedReplay: File | null;
+  setUploadedReplay: Dispatch<SetStateAction<File | null>>;
   beatmapSet: BeatmapSet | null;
   setBeatmapSet: Dispatch<SetStateAction<BeatmapSet | null>>;
   beatmapId: GameData | null;
@@ -44,6 +46,8 @@ export const useGameContext = () => {
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedBeatmapSetFile, setUploadedBeatmapSetFile] =
     useState<File | null>(null);
+  const [uploadedReplayFile, setUploadedReplayFile] =
+    useState<File | null>(null);
   const [beatmapSet, setBeatmapSet] = useState<BeatmapSet | null>(null);
   const [beatmapId, setBeatmapId] = useState<GameData | null>(null);
 
@@ -55,7 +59,10 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     if (!uploadedBeatmapSetFile) {
       setBeatmapSet(null);
     }
-  }, [uploadedBeatmapSetFile]);
+    if (!uploadedReplayFile) {
+      setUploadedReplayFile(null);
+    }
+  }, [uploadedBeatmapSetFile, uploadedReplayFile]);
 
   const startGame = useCallback((beatmapId: number) => {
     setBeatmapId(beatmapId);
@@ -95,6 +102,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       value={{
         uploadedBeatmapSet: uploadedBeatmapSetFile,
         setUploadedBeatmapSet: setUploadedBeatmapSetFile,
+        uploadedReplay: uploadedReplayFile,
+        setUploadedReplay: setUploadedReplayFile,
         beatmapSet,
         setBeatmapSet,
         startGame,

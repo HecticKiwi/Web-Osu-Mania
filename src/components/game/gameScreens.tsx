@@ -10,6 +10,7 @@ import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
 import RetryWidget from "./retryWidget";
 import VolumeWidget from "./volumeWidget";
+import { ReplayData } from "@/osuMania/systems/replay";
 
 const GameScreens = ({
   beatmapData,
@@ -22,11 +23,12 @@ const GameScreens = ({
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);
+  const [replayData, setReplayData] = useState<ReplayData | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused);
+    const game = new Game(beatmapData, setResults, setIsPaused, setReplayData);
     setGame(game);
     game.main(containerRef.current);
 
@@ -88,6 +90,7 @@ const GameScreens = ({
           <ResultsScreen
             beatmapData={beatmapData}
             results={results}
+            replayData={replayData}
             retry={retry}
           />
         )}

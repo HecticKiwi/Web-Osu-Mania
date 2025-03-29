@@ -13,6 +13,8 @@ export type Metadata = {
   artistUnicode: string;
   version: string;
   creator: string;
+  BeatmapId: string;
+  BeatmapSetId: string;
 };
 
 export type Sound = {
@@ -80,6 +82,8 @@ export type HitWindows = {
 };
 
 export interface BeatmapData {
+  beatmapId: string;
+  beatmapSetId: string;
   timingPoints: TimingPoint[];
   hitObjects: HitObject[];
   startTime: number;
@@ -128,6 +132,8 @@ export const parseOsz = async (
 
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
+  const beatmapId = metadata.BeatmapId
+  const beatmapSetId = metadata.BeatmapSetId
   const difficulty = parseDifficulty(lines);
   const { hitObjects, delay, startTime, endTime } = parseHitObjects(
     lines,
@@ -224,6 +230,8 @@ export const parseOsz = async (
   }
 
   return {
+    beatmapId,
+    beatmapSetId,
     timingPoints,
     hitObjects,
     startTime,
@@ -366,8 +374,10 @@ export function parseMetadata(lines: string[]): Metadata {
   const artistUnicode = getLineValue(lines, "ArtistUnicode");
   const version = getLineValue(lines, "Version");
   const creator = getLineValue(lines, "Creator");
+  const BeatmapId = getLineValue(lines, "BeatmapID")
+  const BeatmapSetId = getLineValue(lines, "BeatmapSetID")
 
-  return { title, titleUnicode, artist, artistUnicode, version, creator };
+  return { title, titleUnicode, artist, artistUnicode, version, creator, BeatmapId, BeatmapSetId };
 }
 
 export function parseDifficulty(lines: string[]): Difficulty {

@@ -24,6 +24,7 @@ import BackgroundBlurSlider from "./backgroundBlurSlider";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
+import ReplaySettings from "./replaySettings";
 
 const SettingsTab = () => {
   const { settings, resetSettings, setSettings } = useSettingsContext();
@@ -293,6 +294,8 @@ const SettingsTab = () => {
       </div>
 
       <VolumeSettings className="mt-6" />
+
+      <ReplaySettings className="mt-6" />
 
       <BeatmapSettings className="mt-6" />
 
