@@ -13,7 +13,7 @@ const ResultsScreen = ({
   beatmapData,
   results,
   replayData,
-  retry,
+  retry, 
 }: {
   beatmapData: BeatmapData;
   results: PlayResults;
@@ -71,42 +71,35 @@ const ResultsScreen = ({
   }
 
   async function downloadReplay(replaydata: ReplayData | null) {
-    try {
-      const response = await fetch('/api/saveReplay', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ replaydata }),
+    if (!replaydata) {
+      toast.message("Error saving replay", {
+        description: "No replay data available",
       });
+      return;
+    }
   
-      if (!response.ok) {
-        const result: any = await response.json();
-        toast.message("Error saving replay", {
-          description: result.message || "Check Console",
-        });
-        console.error('Error:', result);
-        return;
-      }
+    try {
+      // Convert replay data to a JSON string
+      const replayJson = JSON.stringify(replaydata, null, 2);
   
-      // Handle the file download response
-      const blob = await response.blob();
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const filename = contentDisposition
-        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
-        : 'replay.womr';
+      // Create a Blob from the JSON string
+      const blob = new Blob([replayJson], { type: "application/octet-stream" });
   
-      // Create a link to trigger the download
+      // Generate a unique filename
+      const timestamp = Date.now();
+      const randomString = Math.random().toString(36).substring(2, 15);
+      const filename = `replay_${timestamp}_${randomString}.womr`;
+  
+      // Create a link element for downloading
       const link = document.createElement('a');
       const url = window.URL.createObjectURL(blob);
       link.href = url;
-      link.download = filename; // Set the file name
+      link.download = filename;
       link.click();
   
-      // Clean up the object URL after the download
+      // Clean up the URL object
       window.URL.revokeObjectURL(url);
   
-      // Optionally show success message
       toast.message("Replay saved successfully", {
         description: "The replay has been downloaded.",
       });
@@ -116,7 +109,7 @@ const ResultsScreen = ({
       });
       console.error(error);
     }
-  }
+  }  
   
   return (
     <>
