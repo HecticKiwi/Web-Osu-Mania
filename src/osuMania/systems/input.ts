@@ -20,9 +20,8 @@ export class InputSystem {
 
   public pauseTapped: boolean = false;
 
-  public keyTimes: Record<string, { d: number; u?: number }> = {};
-  public timed: number = 0;
-  public timeu: number = 0;
+  public keyTimes: Record<string, { d: number; u: number | undefined }> = {};
+
 
   constructor(game: Game) {
     this.game = game;
@@ -53,13 +52,23 @@ export class InputSystem {
   }
 
   private initKeybindsMap() {
-    const keybinds =
-      this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
-    keybinds.forEach((key, index) => {
-      if (key) {
-        this.keybindsMap.set(key, index);
-      }
-    });
+    if (this.game.isreplay) {
+      const keybinds =
+        this.game.replayData?.usersettings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
+        keybinds?.forEach((key, index) => {
+        if (key) {
+          this.keybindsMap.set(key, index);
+        }
+      });
+    } else {
+      const keybinds =
+        this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
+        keybinds.forEach((key, index) => {
+        if (key) {
+          this.keybindsMap.set(key, index);
+        }
+      });
+    }
   }
 
   public updateGamepadInputs() {
@@ -126,10 +135,9 @@ export class InputSystem {
       this.game.columns[column][0]?.hit();
     }
 
-    if (this.game.record == true) {
-      this.keyTimes[event.code] = { d: this.game.timeElapsed };
-      console.log(this.keyTimes)
-    }
+    if (this.game.record) {
+      this.keyTimes[event.code] = { d: this.game.timeElapsed, u: undefined };
+    }    
   }
 
   public handleKeyUp(event: KeyboardEvent) {
@@ -153,20 +161,14 @@ export class InputSystem {
       this.game.columns[column][0]?.release();
     }
 
-    if (this.game.record == true) { 
-      if (this.keyTimes[event.code]) {
-        this.keyTimes[event.code].u = this.game.timeElapsed;
-        this.ReplayRecorder?.recordInput({
-          key: event.code,
-          time: {
-            d: this.keyTimes[event.code].d,
-            u: this.keyTimes[event.code].u,
-          },
-        });
-        this.keyTimes[event.code].d = 0
-        this.keyTimes[event.code].u = 0
-        console.log(this.keyTimes)
-      }
+    if (this.game.record && this.keyTimes[event.code]) {
+      this.keyTimes[event.code].u = this.game.timeElapsed;
+
+      this.game.replayRecorder?.recordInput({
+        key: event.code,
+        time: { d: this.keyTimes[event.code].d, u: this.keyTimes[event.code].u },
+      });
+      delete this.keyTimes[event.code];
     }
   }
 

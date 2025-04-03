@@ -1,6 +1,7 @@
 import { Game } from "../game";
 import { BeatmapData, HitObject, HitWindows } from "@/lib/beatmapParser";
 import { Settings } from "@/components/providers/settingsProvider";
+import { InputSystem } from "./input";
 
 // Types
 export type ReplayData = {
@@ -63,19 +64,37 @@ export class ReplayRecorder {
   }
 
   public recordInput(input: replayinput) {    
+    console.log("recordInput called with:", input);
     this.ReplayData.data.inputs.push(input);
+    console.log("ReplayData:", this.ReplayData.data.inputs);
   }
+  
 }
 
 // Player
 export class ReplayPlayer {
   private game: Game;
-
   public isreplay: boolean;
 
   constructor(game: Game) {
     this.game = game;
     this.game.isreplay = true;
 
+
   }
+
+  public press(key: string, until: number) {
+    const eventDown = new KeyboardEvent("keydown", { code: key });
+    this.game.inputSystem.handleKeyDown(eventDown);
+  
+    const duration = until - this.game.timeElapsed;
+    if (duration > 0) {
+      setTimeout(() => {
+        const eventUp = new KeyboardEvent("keyup", { code: key });
+        this.game.inputSystem.handleKeyUp(eventUp);
+      }, duration);
+    }
+  }
+  
+
 }

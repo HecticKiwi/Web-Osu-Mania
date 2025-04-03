@@ -70,7 +70,7 @@ const ResultsScreen = ({
     return getLetterGrade(results.accuracy);
   }
 
-  async function downloadReplay(replaydata: ReplayData | null) {
+  async function downloadReplay(replaydata: ReplayData | null, beatmapData: BeatmapData, results: PlayResults) {
     if (!replaydata) {
       toast.message("Error saving replay", {
         description: "No replay data available",
@@ -86,9 +86,8 @@ const ResultsScreen = ({
       const blob = new Blob([replayJson], { type: "application/octet-stream" });
   
       // Generate a unique filename
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const filename = `replay_${timestamp}_${randomString}.womr`;
+      const acc = (results.accuracy * 100).toString().replace(".", "-");
+      const filename = `[${beatmapData.difficulty.keyCount}K] ${beatmapData.metadata.title}-${beatmapData.metadata.artist}_Scr${results.score}_Acc${acc}.womr`;
   
       // Create a link element for downloading
       const link = document.createElement('a');
@@ -243,7 +242,7 @@ const ResultsScreen = ({
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
               </div>
 
-              <div className="mt-16 grid grid-cols-2">
+              <div className="mt-16 grid grid-cols-3">
                 <Button size={"lg"} onClick={() => closeGame()}>
                   Back
                 </Button>
@@ -260,7 +259,7 @@ const ResultsScreen = ({
                   size={"lg"}
                   className="ml-4"
                   disabled={!replayData}
-                  onClick={() => downloadReplay(replayData)}
+                  onClick={() => downloadReplay(replayData, beatmapData, results)}
                 >
                   Save Replay
                 </Button>

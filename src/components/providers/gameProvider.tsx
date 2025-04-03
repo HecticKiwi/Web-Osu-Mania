@@ -55,7 +55,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     Howler.unload();
     setBeatmapId(null);
 
-    // If playing from an uploaded file file, leave beatmapSet so the upload dialog stays open
+    // If playing from an uploaded file, leave beatmapSet so the upload dialog stays open
     if (!uploadedBeatmapSetFile) {
       setBeatmapSet(null);
     }
@@ -96,6 +96,34 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
     updateBeatmapSetFromUpload();
   }, [uploadedBeatmapSetFile]);
+
+  useEffect(() => {
+    const updateReplayUpload = async () => {
+      if (uploadedReplayFile) {
+        const filedata = await uploadedReplayFile.text();
+        const filejson = JSON.parse(filedata);
+        const beatmapSetId = filejson.beatmapData.beatmapSetId;
+
+        const url = queryString.stringifyUrl({
+          url: `${BASE_PATH}/api/getBeatmap`,
+          query: {
+            beatmapSetId
+          },
+        });
+
+        const beatmapSet: BeatmapSet = await fetch(url).then((res) =>
+          res.json(),
+        );
+
+        setBeatmapSet(beatmapSet);
+      } else {
+        setBeatmapSet(null);
+      }
+    };
+
+    updateReplayUpload();
+  }, [uploadedReplayFile]);
+  
 
   return (
     <GameContext.Provider

@@ -57,7 +57,7 @@ const ReplayUpload = () => {
       onDrop={handleDrop}
     >
       <label
-        htmlFor="beatmapSetUpload"
+        htmlFor="ReplayUpload"
         className={cn(
           "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors hover:bg-accent",
           isDraggingOver && "bg-accent",
@@ -70,7 +70,7 @@ const ReplayUpload = () => {
           </p>
         </div>
         <input
-          id="repalySetUpload"
+          id="ReplayUpload"
           type="file"
           accept=".womr"
           className="hidden"

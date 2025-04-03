@@ -66,6 +66,7 @@ export class Game {
   public state: GameState = "WAIT";
 
   public settings: Settings;
+  public mods: Settings["mods"];
   public difficulty: Difficulty;
   public columnKeybinds: (string | null)[];
   public hitWindows: HitWindows;
@@ -174,6 +175,9 @@ export class Game {
     this.setReplayData = setReplayData;
 
     this.settings = getSettings();
+    if (this.isreplay) {
+      this.settings.mods = this.replayData?.usersettings.mods ?? this.settings.mods;
+    }
 
     this.hitPositionOffset = this.settings.hitPositionOffset;
 
@@ -203,13 +207,6 @@ export class Game {
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
     // Init systems
-    this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
-    this.inputSystem = new InputSystem(this);
-    this.audioSystem = new AudioSystem(this, beatmapData.sounds);
-    if (!this.settings.mods.noFail) {
-      this.healthSystem = new HealthSystem(this);
-    }
-
     if (this.settings.replays == true && (!this.settings.mods.autoplay || !this.isreplay)) { 
       this.record = true;
       this.replayRecorder = new ReplayRecorder(this);
@@ -218,6 +215,13 @@ export class Game {
     if (this.isreplay == true) {
       this.record = false;
       this.replayPlayer = new ReplayPlayer(this);
+    }
+
+    this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
+    this.inputSystem = new InputSystem(this);
+    this.audioSystem = new AudioSystem(this, beatmapData.sounds);
+    if (!this.settings.mods.noFail) {
+      this.healthSystem = new HealthSystem(this);
     }
 
     this.song = beatmapData.song.howl;
@@ -819,6 +823,11 @@ export class Game {
       maxCombo: this.scoreSystem.maxCombo,
       failed: true,
     });
+
+    if (this.record && this.replayRecorder) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      this.setReplayData(this.replayRecorder.ReplayData);
+    }
   }
 
   // Returns the px offset of the hit object from the judgement line based on
