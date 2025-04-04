@@ -91,7 +91,7 @@ const SettingsTab = () => {
                 <Slider
                   value={[settings.unpauseDelay / 1000]}
                   min={0}
-                  max={10}
+                  max={5}
                   step={0.1}
                   onValueChange={([unpauseDelay]) =>
                     setSettings((draft) => {
