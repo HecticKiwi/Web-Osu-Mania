@@ -81,11 +81,11 @@ const SettingsTab = () => {
         </div>
 
         <SwitchInput
-          label="Auto Retry"
-          checked={settings.autoretry}
+          label="Retry on Fail"
+          checked={settings.retryOnFail}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
-              draft.autoretry = checked;
+              draft.retryOnFail = checked;
             })
           }
         />
