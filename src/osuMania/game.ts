@@ -135,6 +135,7 @@ export class Game {
 
   private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
+  private retry: () => void;
 
   private finished: boolean = false;
 
@@ -142,6 +143,7 @@ export class Game {
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
+    retry: () => void,
   ) {
     this.resize = this.resize.bind(this);
 
@@ -161,6 +163,7 @@ export class Game {
 
     this.setResults = setResults;
     this.setIsPaused = setIsPaused;
+    this.retry = retry;
 
     this.settings = getSettings();
 
@@ -763,6 +766,11 @@ export class Game {
 
   private async fail() {
     this.song.stop();
+
+    if (this.settings.retryOnFail) {
+      this.retry();
+      return;
+    }
 
     this.scoreSystem.score = Math.round(this.scoreSystem.score);
 

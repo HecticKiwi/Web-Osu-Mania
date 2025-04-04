@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import { useGameContext } from "../providers/gameProvider";
@@ -107,9 +107,9 @@ const GameModal = () => {
     };
   }, [beatmapData]);
 
-  const retry = () => {
+  const retry = useCallback(() => {
     setKey((prev) => prev + 1);
-  };
+  }, []);
 
   return (
     <main className="relative grid">
