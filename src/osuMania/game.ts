@@ -27,7 +27,6 @@ import {
   laneColors,
   laneWidths,
   MAX_TIME_RANGE,
-  UNPAUSE_DELAY,
 } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -483,11 +482,15 @@ export class Game {
         break;
 
       case "UNPAUSE":
-        this.pauseCountdown -= time.elapsedMS;
+        if (this.settings.unpauseDelay > 0) {
+          this.pauseCountdown -= time.elapsedMS;
 
-        this.countdown.update(this.pauseCountdown, UNPAUSE_DELAY);
+          this.countdown.update(this.pauseCountdown, this.settings.unpauseDelay);
 
-        if (this.pauseCountdown <= 0) {
+          if (this.pauseCountdown <= 0) {
+            this.play();
+          }
+        } else {
           this.play();
         }
 
@@ -717,11 +720,15 @@ export class Game {
 
   public async play() {
     if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
-      this.pauseCountdown = UNPAUSE_DELAY;
+      if (this.settings.unpauseDelay > 0) {
+        this.pauseCountdown = this.settings.unpauseDelay;
 
-      gsap.killTweensOf(this.countdown.view);
-      this.countdown.view.alpha = 1;
-      this.countdown.view.visible = true;
+        if (this.settings.unpauseDelay >= 500 ) {
+          gsap.killTweensOf(this.countdown.view);
+          this.countdown.view.alpha = 1;
+          this.countdown.view.visible = true;
+        }
+      }
 
       this.state = "UNPAUSE";
     } else {

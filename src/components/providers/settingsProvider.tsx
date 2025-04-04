@@ -46,6 +46,7 @@ export type Settings = {
   style: SkinStyle;
   errorBarScale: number;
   preferMetadataInOriginalLanguage: boolean;
+  unpauseDelay: number;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -96,6 +97,7 @@ export const defaultSettings: Settings = {
   style: "bars",
   errorBarScale: 1,
   preferMetadataInOriginalLanguage: false,
+  unpauseDelay: 1500,
   keybinds: {
     keyModes: [
       ["Space"],

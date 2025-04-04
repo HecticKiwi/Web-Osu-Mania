@@ -79,6 +79,38 @@ const SettingsTab = () => {
             </Tooltip>
           </div>
         </div>
+
+        <div className="grid grid-cols-2 items-center">
+          <div className="text-sm font-semibold text-muted-foreground">
+            Unpause Delay
+          </div>
+
+          <div className="group w-full">
+            <Tooltip open>
+              <TooltipTrigger asChild>
+                <Slider
+                  value={[settings.unpauseDelay / 1000]}
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  onValueChange={([unpauseDelay]) =>
+                    setSettings((draft) => {
+                      draft.unpauseDelay = (unpauseDelay * 1000);
+                    })
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
+                {settings.unpauseDelay}ms ({settings.unpauseDelay / 1000}s)
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+        {(settings.unpauseDelay < 500 && settings.unpauseDelay != 0) && (
+            <p className="mt-2 text-sm text-orange-400">
+              Note: The gui for rendering the unpause delay is not shown when under 500ms, but the delay is still applied.
+            </p>
+        )}
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>
