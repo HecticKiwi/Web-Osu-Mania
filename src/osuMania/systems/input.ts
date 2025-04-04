@@ -84,7 +84,7 @@ export class InputSystem {
   }
 
   public handleKeyDown(event: KeyboardEvent) {
-    if (this.pressedKeys.has(event.code)) {
+    if (this.pressedKeys.has(event.code) || this.game.pauseCountdownActive) {
       return;
     }
 

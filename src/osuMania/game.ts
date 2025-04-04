@@ -127,6 +127,7 @@ export class Game {
   public endTime: number;
 
   private pauseCountdown: number;
+  public pauseCountdownActive: boolean;
 
   public timingPoints: TimingPoint[];
   public currentTimingPoint: TimingPoint;
@@ -147,6 +148,7 @@ export class Game {
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
+    this.pauseCountdownActive = false;
     this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
 
@@ -488,9 +490,11 @@ export class Game {
           this.countdown.update(this.pauseCountdown, this.settings.unpauseDelay);
 
           if (this.pauseCountdown <= 0) {
+            this.pauseCountdownActive = false;
             this.play();
           }
         } else {
+          this.pauseCountdownActive = false;
           this.play();
         }
 
@@ -730,6 +734,7 @@ export class Game {
         }
       }
 
+      this.pauseCountdownActive = true;
       this.state = "UNPAUSE";
     } else {
       this.song.play();
