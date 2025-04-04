@@ -21,12 +21,13 @@ const GameScreens = ({
   const { settings } = useSettingsContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused);
+    const game = new Game(beatmapData, setResults, setIsPaused, setIsFailed);
     setGame(game);
     game.main(containerRef.current);
 
@@ -49,6 +50,13 @@ const GameScreens = ({
       }
     }
   }, [isPaused, game]);
+
+  // Fail Logic
+  useEffect(() => {
+    if (isFailed && settings.autoretry) {
+      retry();
+    }
+  }, [isFailed, settings.autoretry, retry]);
 
   // Event listeners
   useEffect(() => {

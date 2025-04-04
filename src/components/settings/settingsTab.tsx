@@ -79,6 +79,16 @@ const SettingsTab = () => {
             </Tooltip>
           </div>
         </div>
+
+        <SwitchInput
+          label="Auto Retry"
+          checked={settings.autoretry}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.autoretry = checked;
+            })
+          }
+        />
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>

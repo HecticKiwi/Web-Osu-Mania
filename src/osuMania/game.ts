@@ -135,6 +135,7 @@ export class Game {
 
   private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
+  private setIsFailed: Dispatch<SetStateAction<boolean>>;
 
   private finished: boolean = false;
 
@@ -142,6 +143,7 @@ export class Game {
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
+    setIsFailed: Dispatch<SetStateAction<boolean>>,
   ) {
     this.resize = this.resize.bind(this);
 
@@ -161,6 +163,7 @@ export class Game {
 
     this.setResults = setResults;
     this.setIsPaused = setIsPaused;
+    this.setIsFailed = setIsFailed;
 
     this.settings = getSettings();
 
@@ -474,6 +477,7 @@ export class Game {
           this.healthSystem !== undefined &&
           this.healthSystem.health <= MIN_HEALTH
         ) {
+          this.setIsFailed((prev) => !prev);
           this.state = "FAIL";
         }
 
@@ -494,7 +498,7 @@ export class Game {
         break;
 
       case "FAIL":
-        if (!this.finished) {
+        if (!this.finished) { 
           this.finished = true;
           this.fail();
         }
