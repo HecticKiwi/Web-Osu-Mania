@@ -84,13 +84,6 @@ export class InputSystem {
   }
 
   public handleKeyDown(event: KeyboardEvent) {
-    if (this.pressedKeys.has(event.code) || this.game.pauseCountdownActive) {
-      return;
-    }
-
-    this.tappedKeys.add(event.code);
-    this.pressedKeys.add(event.code);
-
     if (
       event.code === "Escape" ||
       event.code === this.game.settings.keybinds.pause
@@ -98,6 +91,13 @@ export class InputSystem {
       this.pauseTapped = true;
       return;
     }
+    
+    if (this.pressedKeys.has(event.code) || this.game.pauseCountdownActive) {
+      return;
+    }
+
+    this.tappedKeys.add(event.code);
+    this.pressedKeys.add(event.code);
 
     const column = this.keybindsMap.get(event.code);
     if (column === undefined) {
