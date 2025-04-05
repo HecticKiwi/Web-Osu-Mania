@@ -111,6 +111,16 @@ const SettingsTab = () => {
               Note: The gui for rendering the unpause delay is not shown when under 500ms, but the delay is still applied.
             </p>
         )}
+
+        <SwitchInput
+          label="Retry on Fail"
+          checked={settings.retryOnFail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.retryOnFail = checked;
+            })
+          }
+        />
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>

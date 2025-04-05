@@ -47,6 +47,7 @@ export type Settings = {
   errorBarScale: number;
   preferMetadataInOriginalLanguage: boolean;
   unpauseDelay: number;
+  retryOnFail: boolean;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -98,6 +99,7 @@ export const defaultSettings: Settings = {
   errorBarScale: 1,
   preferMetadataInOriginalLanguage: false,
   unpauseDelay: 1500,
+  retryOnFail: false,
   keybinds: {
     keyModes: [
       ["Space"],
