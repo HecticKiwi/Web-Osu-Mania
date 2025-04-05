@@ -127,7 +127,6 @@ export class Game {
   public endTime: number;
 
   private pauseCountdown: number;
-  public pauseCountdownActive: boolean;
 
   public timingPoints: TimingPoint[];
   public currentTimingPoint: TimingPoint;
@@ -150,7 +149,6 @@ export class Game {
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
-    this.pauseCountdownActive = false;
     this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
 
@@ -487,19 +485,13 @@ export class Game {
         break;
 
       case "UNPAUSE":
-        if (this.settings.unpauseDelay > 0) {
-          this.pauseCountdown -= time.elapsedMS;
-
-          this.countdown.update(this.pauseCountdown, this.settings.unpauseDelay);
-
-          if (this.pauseCountdown <= 0) {
-            this.pauseCountdownActive = false;
-            this.play();
-          }
-        } else {
-          this.pauseCountdownActive = false;
+        if (this.pauseCountdown <= 0) {
           this.play();
+          break;
         }
+
+        this.countdown.update(this.pauseCountdown, this.settings.unpauseDelay);
+        this.pauseCountdown -= time.elapsedMS;
 
         break;
 
@@ -727,17 +719,14 @@ export class Game {
 
   public async play() {
     if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
-      if (this.settings.unpauseDelay > 0) {
-        this.pauseCountdown = this.settings.unpauseDelay;
+      this.pauseCountdown = this.settings.unpauseDelay;
 
-        if (this.settings.unpauseDelay >= 500 ) {
-          gsap.killTweensOf(this.countdown.view);
-          this.countdown.view.alpha = 1;
-          this.countdown.view.visible = true;
-        }
+      if (this.settings.unpauseDelay >= 500) {
+        gsap.killTweensOf(this.countdown.view);
+        this.countdown.view.alpha = 1;
+        this.countdown.view.visible = true;
       }
 
-      this.pauseCountdownActive = true;
       this.state = "UNPAUSE";
     } else {
       this.song.play();

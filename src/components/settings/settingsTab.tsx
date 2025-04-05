@@ -89,27 +89,30 @@ const SettingsTab = () => {
             <Tooltip open>
               <TooltipTrigger asChild>
                 <Slider
-                  value={[settings.unpauseDelay / 1000]}
+                  value={[settings.unpauseDelay]}
                   min={0}
-                  max={5}
-                  step={0.1}
+                  max={3000}
+                  step={100}
                   onValueChange={([unpauseDelay]) =>
                     setSettings((draft) => {
-                      draft.unpauseDelay = (unpauseDelay * 1000);
+                      draft.unpauseDelay = unpauseDelay;
                     })
                   }
                 />
               </TooltipTrigger>
               <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {settings.unpauseDelay}ms ({settings.unpauseDelay / 1000}s)
+                {settings.unpauseDelay === 0 && "No Delay"}
+                {settings.unpauseDelay > 0 &&
+                  `${settings.unpauseDelay}ms (${settings.unpauseDelay / 1000}s)`}
               </TooltipContent>
             </Tooltip>
           </div>
         </div>
-        {(settings.unpauseDelay < 500 && settings.unpauseDelay != 0) && (
-            <p className="mt-2 text-sm text-orange-400">
-              Note: The gui for rendering the unpause delay is not shown when under 500ms, but the delay is still applied.
-            </p>
+        {settings.unpauseDelay > 0 && settings.unpauseDelay < 500 && (
+          <p className="mt-2 text-sm text-orange-400">
+            The unpause countdown will not be shown when the delay is under
+            500ms.
+          </p>
         )}
 
         <SwitchInput

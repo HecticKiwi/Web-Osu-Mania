@@ -73,6 +73,7 @@ export class Countdown {
   }
 
   public update(remainingTime: number, maxTime: number) {
+    // Fade out at 0.5s left
     if (remainingTime < 500 && !gsap.isTweening(this.view)) {
       gsap.to(this.view, {
         pixi: {
@@ -86,15 +87,17 @@ export class Countdown {
     }
 
     // Hide skip when under 2 seconds left
-    if (remainingTime < 2000) {
+    const canSkip = this.game.timeElapsed < this.game.startTime - 2000;
+    if (!canSkip) {
       this.skipText.alpha = 0;
     }
 
     // Skip intro
-    if (remainingTime >= 2000 && this.game.inputSystem.anyKeyTapped()) {
+    if (canSkip && this.game.inputSystem.anyKeyTapped()) {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }
 
+    // Show tenths of seconds when under 3s left
     if (remainingTime < 3000) {
       this.text.text = (remainingTime / 1000).toFixed(1);
     } else {
