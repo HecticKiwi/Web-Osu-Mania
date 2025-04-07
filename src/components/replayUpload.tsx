@@ -5,27 +5,59 @@ import { Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
 import { useGameContext } from "./providers/gameProvider";
+import { ReplayData } from "@/osuMania/systems/replay";
 
 
 const ReplayUpload = () => {
-  const { setUploadedReplay } = useGameContext();
+  const { setUploadedReplay, setReplay } = useGameContext();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const loadFile = (file?: File) => {
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     if (!file.name.endsWith(".womr")) {
       toast.message("Failed to load beatmap file", {
         description: "File is not in the .womr format.",
       });
-
       return;
     }
 
-    setUploadedReplay(file);
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const text = reader.result as string;
+        const parsedData: ReplayData = JSON.parse(text);
+
+        // Optional: validate fields exist
+        if (
+          parsedData?.beatmapData &&
+          parsedData?.usersettings &&
+          parsedData?.data?.inputs
+        ) {
+
+          setReplay(parsedData);
+          setUploadedReplay(file);
+        } else {
+          throw new Error("Invalid ReplayData structure");
+        }
+      } catch (err) {
+        toast.message("Error reading replay file", {
+          description: "File is not a valid .womr replay format.",
+        });
+        console.error(err);
+      }
+    };
+
+    reader.onerror = () => {
+      toast.message("Error reading file", {
+        description: "Something went wrong while loading the file.",
+      });
+    };
+
+    reader.readAsText(file);
   };
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

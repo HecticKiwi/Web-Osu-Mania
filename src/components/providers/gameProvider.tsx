@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
+import { ReplayData } from "@/osuMania/systems/replay";
 import { BeatmapSet } from "@/lib/osuApi";
 import { BASE_PATH } from "@/lib/utils";
 import { Howler } from "howler";
@@ -18,19 +19,22 @@ import {
 } from "react";
 import GameModal from "../game/gameModal";
 import UploadDialog from "./uploadDialog";
+import ReplayUploadDialog from "./replayUploadDialog";
 
 export type GameData = number | null;
 
 const GameContext = createContext<{
   closeGame: () => void;
-  startGame: (beatmapId: number) => void;
+  startGame: (beatmapId: number, replay: boolean) => void;
   uploadedBeatmapSet: File | null;
   setUploadedBeatmapSet: Dispatch<SetStateAction<File | null>>;
-  uploadedReplay: File | null;
-  setUploadedReplay: Dispatch<SetStateAction<File | null>>;
   beatmapSet: BeatmapSet | null;
   setBeatmapSet: Dispatch<SetStateAction<BeatmapSet | null>>;
   beatmapId: GameData | null;
+  uploadedReplay: File | null;
+  setUploadedReplay: Dispatch<SetStateAction<File | null>>;
+  replay: ReplayData | null;
+  setReplay: Dispatch<SetStateAction<ReplayData | null>>;
 } | null>(null);
 
 export const useGameContext = () => {
@@ -48,6 +52,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     useState<File | null>(null);
   const [uploadedReplayFile, setUploadedReplayFile] =
     useState<File | null>(null);
+  const [replay, setReplay] = useState<ReplayData | null>(null);
   const [beatmapSet, setBeatmapSet] = useState<BeatmapSet | null>(null);
   const [beatmapId, setBeatmapId] = useState<GameData | null>(null);
 
@@ -64,7 +69,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [uploadedBeatmapSetFile, uploadedReplayFile]);
 
-  const startGame = useCallback((beatmapId: number) => {
+  const startGame = useCallback((beatmapId: number, replay: boolean) => {
     setBeatmapId(beatmapId);
   }, []);
 
@@ -132,6 +137,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setUploadedBeatmapSet: setUploadedBeatmapSetFile,
         uploadedReplay: uploadedReplayFile,
         setUploadedReplay: setUploadedReplayFile,
+        replay,
+        setReplay,
         beatmapSet,
         setBeatmapSet,
         startGame,
@@ -141,6 +148,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     >
       {/* .osz upload dialog */}
       <UploadDialog />
+
+      {/* Replay upload dialog */}
+      <ReplayUploadDialog />
 
       {/* Game overlay */}
       <Dialog open={!!beatmapId}>

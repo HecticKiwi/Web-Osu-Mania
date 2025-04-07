@@ -2,10 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import ReplayUpload from "../replayUpload";
-import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import {
-  BEATMAP_API_PROVIDERS,
-  BeatmapProvider,
   useSettingsContext,
 } from "../providers/settingsProvider";
 import SwitchInput from "../switchInput";
