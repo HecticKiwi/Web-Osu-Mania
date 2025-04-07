@@ -7,8 +7,6 @@ import {
 } from "@/components/ui/tooltip";
 import { ExternalLink, Loader } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import BeatmapList from "../beatmapSet/beatmapList";
 import ManiaIcon from "../maniaIcon";
 import { BeatmapSet, Beatmap } from "@/lib/osuApi";
 import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
@@ -75,7 +73,7 @@ const BeatmapList = ({
                   key={beatmap.id}
                   className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
                   onClick={() => {
-                    startGame(beatmap.id, true);
+                    startGame(beatmap.id);
                   }}
                 >
                   <ManiaIcon

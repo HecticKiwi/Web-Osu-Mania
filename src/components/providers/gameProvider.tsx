@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
 import { ReplayData } from "@/osuMania/systems/replay";
 import { BeatmapSet } from "@/lib/osuApi";
-import { BASE_PATH } from "@/lib/utils";
+import { BASE_PATH, replayData, setReplayData } from "@/lib/utils";
 import { Howler } from "howler";
 import queryString from "query-string";
 import {
@@ -25,7 +25,7 @@ export type GameData = number | null;
 
 const GameContext = createContext<{
   closeGame: () => void;
-  startGame: (beatmapId: number, replay: boolean) => void;
+  startGame: (beatmapId: number) => void;
   uploadedBeatmapSet: File | null;
   setUploadedBeatmapSet: Dispatch<SetStateAction<File | null>>;
   beatmapSet: BeatmapSet | null;
@@ -59,6 +59,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const closeGame = useCallback(() => {
     Howler.unload();
     setBeatmapId(null);
+    setReplayData(null);
+    
 
     // If playing from an uploaded file, leave beatmapSet so the upload dialog stays open
     if (!uploadedBeatmapSetFile) {
@@ -69,9 +71,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [uploadedBeatmapSetFile, uploadedReplayFile]);
 
-  const startGame = useCallback((beatmapId: number, replay: boolean) => {
+  const startGame = useCallback((beatmapId: number) => {
     setBeatmapId(beatmapId);
-  }, []);
+    if (replay) {
+      setReplayData(replay);
+    }
+  }, [replay]);
 
   useEffect(() => {
     const updateBeatmapSetFromUpload = async () => {

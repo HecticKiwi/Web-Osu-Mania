@@ -6,7 +6,8 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import { getSettings, scaleWidth } from "@/lib/utils";
+import { useGameContext } from "@/components/providers/gameProvider";
+import { getSettings, scaleWidth, replayData } from "@/lib/utils";
 import { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
@@ -78,11 +79,11 @@ export class Game {
   public scaledColumnWidth: number;
 
   // Replay
-  public isreplay: boolean = false;
+  public isGameReplay: boolean = false;
   public record: boolean = false;
   public replayRecorder?: ReplayRecorder;
   public replayPlayer?: ReplayPlayer;
-  public replayData?: ReplayData;
+  public replayData?: ReplayData | null = null;
 
   // Systems
   public healthSystem?: HealthSystem;
@@ -109,6 +110,7 @@ export class Game {
     | typeof DiamondKey;
 
   // UI Components
+  public replayText?: BitmapText;
   private startMessage: BitmapText;
   public scoreText?: BitmapText;
   public comboText?: BitmapText;
@@ -175,9 +177,6 @@ export class Game {
     this.setReplayData = setReplayData;
 
     this.settings = getSettings();
-    if (this.isreplay) {
-      this.settings.mods = this.replayData?.usersettings.mods ?? this.settings.mods;
-    }
 
     this.hitPositionOffset = this.settings.hitPositionOffset;
 
@@ -203,18 +202,22 @@ export class Game {
       this.keysContainer.zIndex = -1;
     }
 
-    this.columnKeybinds =
-      this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
-
-    // Init systems
-    if (this.settings.replays == true && (!this.settings.mods.autoplay || !this.isreplay)) { 
-      this.record = true;
-      this.replayRecorder = new ReplayRecorder(this);
-      this.replayRecorder.init(beatmapData, this.settings);
-    }
-    if (this.isreplay == true) {
+    this.columnKeybinds = this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
+    
+    this.replayData = replayData;
+    console.log(this.replayData);
+    if (this.replayData) {
+      this.isGameReplay = true;
       this.record = false;
+      this.settings.mods = this.replayData.usersettings.mods ?? this.settings.mods;
       this.replayPlayer = new ReplayPlayer(this);
+
+    } else {
+      if (this.settings.replays == true && (!this.settings.mods.autoplay || !this.isGameReplay)) { 
+        this.record = true;
+        this.replayRecorder = new ReplayRecorder(this);
+        this.replayRecorder.init(beatmapData, this.settings);
+      }
     }
 
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
@@ -382,6 +385,10 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
+    if (this.isGameReplay) {
+      this.addReplayText();
+    }
+
     if (this.settings.ui.showScore) {
       this.addScoreText();
     }
@@ -531,6 +538,33 @@ export class Game {
 
     this.inputSystem.clearInputs();
     this.audioSystem.playedSounds.clear();
+  }
+
+  private addReplayText() {
+    const style = new TextStyle({
+      fill: 0xdddddd,
+      fontFamily: "Courier New",
+      fontSize: 80,
+      fontWeight: "700",
+      dropShadow: {
+        alpha: 0.1,
+        angle: 0,
+        blur: 5,
+        color: 0x000000,
+        distance: 0,
+      },
+    });
+
+    this.replayText = new BitmapText({
+      text: "Replay",
+      style,
+    });
+
+    this.replayText.anchor.set(0.5, 0.5);
+    this.replayText.y = 50;
+    this.replayText.x = this.app.screen.width / 2;
+
+    this.app.stage.addChild(this.replayText);
   }
 
   private addProgressBar() {

@@ -3,8 +3,10 @@ import {
   Settings,
 } from "@/components/providers/settingsProvider";
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
+import { ReplayData } from "@/osuMania/systems/replay";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useState } from "react";
 
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -242,4 +244,10 @@ export function getLetterGrade(accuracy: number) {
           : accuracy > 0.7
             ? "C"
             : "D";
+}
+
+export let replayData: ReplayData | null = null;
+
+export function setReplayData(data: ReplayData | null) {
+  replayData = data;
 }

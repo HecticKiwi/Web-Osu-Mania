@@ -1,3 +1,4 @@
+import { nothing } from "immer";
 import { Game } from "../game";
 import { ReplayRecorder, ReplayPlayer } from "./replay"
 
@@ -35,7 +36,7 @@ export class InputSystem {
     if (this.game.record == true) {
       this.ReplayRecorder = new ReplayRecorder(this.game);
     }
-    if (this.game.isreplay == true) {
+    if (this.game.isGameReplay == true) {
       this.ReplayPlayer = new ReplayPlayer(this.game);
     }
 
@@ -52,7 +53,7 @@ export class InputSystem {
   }
 
   private initKeybindsMap() {
-    if (this.game.isreplay) {
+    if (this.game.isGameReplay) {
       const keybinds =
         this.game.replayData?.usersettings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
         keybinds?.forEach((key, index) => {
@@ -107,9 +108,13 @@ export class InputSystem {
     this.gamepadState = gamepad.buttons.map((button) => button.pressed);
   }
 
-  public handleKeyDown(event: KeyboardEvent) {
-    if (this.pressedKeys.has(event.code)) {
-      return;
+  public handleKeyDown(event: KeyboardEvent, codesent: boolean = false) {
+    if (this.pressedKeys.has(event.code) || (this.game.isGameReplay && !codesent)) {
+      if (event.code === "Escape") {
+        nothing;
+      } else {
+        return;
+      }
     }
 
     this.tappedKeys.add(event.code);
@@ -141,6 +146,7 @@ export class InputSystem {
   }
 
   public handleKeyUp(event: KeyboardEvent) {
+    
     this.pressedKeys.delete(event.code);
     this.releasedKeys.add(event.code);
 

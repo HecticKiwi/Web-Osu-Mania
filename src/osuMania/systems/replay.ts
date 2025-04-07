@@ -78,9 +78,6 @@ export class ReplayPlayer {
 
   constructor(game: Game) {
     this.game = game;
-    this.game.isreplay = true;
-
-
   }
 
   public press(key: string, until: number) {
