@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { filesize } from "filesize";
-import { Loader2Icon } from "lucide-react";
+import { HardDrive, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 import BeatmapSetUpload from "../beatmapSetUpload";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
@@ -15,11 +15,14 @@ import {
   BeatmapProvider,
   useSettingsContext,
 } from "../providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import SwitchInput from "../switchInput";
 
 const BeatmapSettings = ({ className }: { className?: string }) => {
   const { settings, setSettings } = useSettingsContext();
   const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
+  const { storedBeatmapSets, setStoredBeatmapSets } =
+    useStoredBeatmapSetsContext();
 
   return (
     <div className={cn(className)}>
@@ -143,7 +146,9 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
             <p className="mt-1 text-sm text-muted-foreground">
               By default, downloaded beatmaps are discarded when you leave or
               refresh the page. If you enable caching via IndexedDB, downloaded
-              beatmaps will be saved in the browser across visits.
+              beatmaps will be stored in the browser across visits. View stored
+              beatmaps selecting the <HardDrive className="inline size-5" />{" "}
+              Stored category.
             </p>
 
             <Button
@@ -151,13 +156,17 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
               size={"sm"}
               onClick={() => {
                 clearIdbCache();
+                setStoredBeatmapSets([]);
                 toast("Cache has been cleared.");
               }}
               disabled={!idbUsage}
               variant={"destructive"}
             >
               {idbUsage !== null ? (
-                <>Clear Cache ({filesize(idbUsage)})</>
+                <>
+                  Clear Cache ({storedBeatmapSets.length} stored,{" "}
+                  {filesize(idbUsage)})
+                </>
               ) : (
                 <>
                   <Loader2Icon className="animate-spin" />

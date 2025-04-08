@@ -28,7 +28,6 @@ import {
   laneColors,
   laneWidths,
   MAX_TIME_RANGE,
-  UNPAUSE_DELAY,
 } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -148,6 +147,7 @@ export class Game {
   private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
   private setReplayData: Dispatch<SetStateAction<ReplayData | null>>;
+  private retry: () => void;
 
   private finished: boolean = false;
 
@@ -156,6 +156,7 @@ export class Game {
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
     setReplayData: Dispatch<SetStateAction<ReplayData | null>>,
+    retry: () => void,
   ) {
     this.resize = this.resize.bind(this);
     this.hitObjects = beatmapData.hitObjects;
@@ -175,6 +176,7 @@ export class Game {
     this.setResults = setResults;
     this.setIsPaused = setIsPaused;
     this.setReplayData = setReplayData;
+    this.retry = retry;
 
     this.settings = getSettings();
 
@@ -520,13 +522,13 @@ export class Game {
         break;
 
       case "UNPAUSE":
-        this.pauseCountdown -= time.elapsedMS;
-
-        this.countdown.update(this.pauseCountdown, UNPAUSE_DELAY);
-
         if (this.pauseCountdown <= 0) {
           this.play();
+          break;
         }
+
+        this.countdown.update(this.pauseCountdown, this.settings.unpauseDelay);
+        this.pauseCountdown -= time.elapsedMS;
 
         break;
 
@@ -781,11 +783,13 @@ export class Game {
 
   public async play() {
     if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
-      this.pauseCountdown = UNPAUSE_DELAY;
+      this.pauseCountdown = this.settings.unpauseDelay;
 
-      gsap.killTweensOf(this.countdown.view);
-      this.countdown.view.alpha = 1;
-      this.countdown.view.visible = true;
+      if (this.settings.unpauseDelay >= 500) {
+        gsap.killTweensOf(this.countdown.view);
+        this.countdown.view.alpha = 1;
+        this.countdown.view.visible = true;
+      }
 
       this.state = "UNPAUSE";
     } else {
@@ -834,6 +838,11 @@ export class Game {
 
   private async fail() {
     this.song.stop();
+
+    if (this.settings.retryOnFail) {
+      this.retry();
+      return;
+    }
 
     this.scoreSystem.score = Math.round(this.scoreSystem.score);
 

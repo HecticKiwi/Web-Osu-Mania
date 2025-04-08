@@ -18,15 +18,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import { Button } from "../ui/button";
 import BeatmapList from "./beatmapList";
 import BeatmapSetCover from "./beatmapSetCover";
+import IndexDbButton from "./indexDbButton";
 import PreviewProgressBar from "./previewProgressBar";
 import SaveBeatmapSetButton from "./saveBeatmapSetButton";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   const { setBeatmapSet, beatmapId } = useGameContext();
   const { settings } = useSettingsContext();
+  const { storedBeatmapSets } = useStoredBeatmapSetsContext();
   const [preview, setPreview] = useState<Howl | null>(null);
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -68,6 +71,12 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
             </div>
           )}
         </PopoverTrigger>
+
+        <div className="absolute left-4 top-4 flex gap-2">
+          {storedBeatmapSets.some(
+            (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
+          ) && <IndexDbButton beatmapSet={beatmapSet} />}
+        </div>
 
         <div className="absolute right-4 top-4 flex gap-2">
           <SaveBeatmapSetButton beatmapSet={beatmapSet} />

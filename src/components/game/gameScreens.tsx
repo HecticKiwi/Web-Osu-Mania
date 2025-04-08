@@ -28,7 +28,7 @@ const GameScreens = ({
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused, setReplayData);
+    const game = new Game(beatmapData, setResults, setIsPaused, setReplayData, retry);
     setGame(game);
     game.main(containerRef.current);
 
@@ -37,7 +37,7 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [beatmapData]);
+  }, [beatmapData, retry]);
 
   // Pause logic
   useEffect(() => {

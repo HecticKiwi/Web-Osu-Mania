@@ -4,11 +4,12 @@ import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
@@ -21,6 +22,8 @@ const GameModal = () => {
   );
   const { settings } = useSettingsContext();
   const { getBeatmapSet } = useBeatmapSetCacheContext();
+  const { storedBeatmapSets, setStoredBeatmapSets } =
+    useStoredBeatmapSetsContext();
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
@@ -43,6 +46,17 @@ const GameModal = () => {
             beatmapSet.id,
             setDownloadPercent,
           );
+
+          if (
+            settings.storeDownloadedBeatmaps &&
+            !storedBeatmapSets.some(
+              (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
+            )
+          ) {
+            setStoredBeatmapSets((draft) => {
+              draft.push(beatmapSet);
+            });
+          }
         } catch (error: any) {
           toast("Download Error", {
             description: error.message,
@@ -107,9 +121,9 @@ const GameModal = () => {
     };
   }, [beatmapData]);
 
-  const retry = () => {
+  const retry = useCallback(() => {
     setKey((prev) => prev + 1);
-  };
+  }, []);
 
   return (
     <main className="relative grid">
