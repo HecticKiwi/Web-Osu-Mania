@@ -10,25 +10,25 @@ import {
 } from "@/lib/searchParams/sortParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { caseInsensitiveIncludes, cn } from "@/lib/utils";
-import { Bookmark } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import BeatmapSet from "./beatmapSet/beatmapSet";
-import { useSavedBeatmapSetsContext } from "./providers/savedBeatmapSetsProvider";
 import { useSettingsContext } from "./providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "./providers/storedBeatmapSetsProvider";
 
-const SavedBeatmapSets = ({ className }: { className?: string }) => {
+const StoredBeatmapSets = ({ className }: { className?: string }) => {
   const { settings } = useSettingsContext();
-  const { savedBeatmapSets } = useSavedBeatmapSetsContext();
+  const { storedBeatmapSets } = useStoredBeatmapSetsContext();
   const searchParams = useSearchParams();
 
-  if (savedBeatmapSets.length === 0) {
+  if (storedBeatmapSets.length === 0) {
     return (
       <div className="mt-16 text-center">
         <h1 className="text-3xl font-semibold">
-          You Haven't Saved any Beatmaps!
+          There are no Stored Beatmaps!
         </h1>
         <p className="text-lg text-muted-foreground">
-          Save beatmaps by clicking the <Bookmark className="inline" /> icon.
+          Beatmaps will automatically appear here as you play while "IndexedDB
+          Cache" is enabled in the settings.{" "}
         </p>
       </div>
     );
@@ -43,7 +43,7 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
   const stars = parseStarsParam(searchParams.get("stars"));
   const nsfw = parseNsfwParam(searchParams.get("nsfw"));
 
-  const filteredSaves = savedBeatmapSets.filter((beatmapSet) => {
+  const filteredStoredBeatmapSets = storedBeatmapSets.filter((beatmapSet) => {
     if (query.trim()) {
       if (
         settings.preferMetadataInOriginalLanguage &&
@@ -92,10 +92,10 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
     return true;
   });
 
-  if (savedBeatmapSets.length === 0) {
+  if (storedBeatmapSets.length === 0) {
     return (
       <div className="mt-16 text-center">
-        <h1 className="text-3xl font-semibold">No Saved Beatmaps Found!</h1>
+        <h1 className="text-3xl font-semibold">No Stored Beatmaps Found!</h1>
         <p className="text-lg text-muted-foreground">
           Please adjust the filters.
         </p>
@@ -103,32 +103,32 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
     );
   }
 
-  let sortedBeatmaps: BeatmapSetData[] = filteredSaves;
+  let sortedBeatmaps: BeatmapSetData[] = filteredStoredBeatmapSets;
 
   if (sortCriteria === "title") {
     if (settings.preferMetadataInOriginalLanguage) {
-      sortedBeatmaps = filteredSaves.sort((a, b) =>
+      sortedBeatmaps = filteredStoredBeatmapSets.sort((a, b) =>
         a.title_unicode.localeCompare(b.title_unicode),
       );
     } else {
-      sortedBeatmaps = filteredSaves.sort((a, b) =>
+      sortedBeatmaps = filteredStoredBeatmapSets.sort((a, b) =>
         a.title.localeCompare(b.title),
       );
     }
   } else if (sortCriteria === "artist") {
     if (settings.preferMetadataInOriginalLanguage) {
-      sortedBeatmaps = filteredSaves.sort((a, b) =>
+      sortedBeatmaps = filteredStoredBeatmapSets.sort((a, b) =>
         a.artist_unicode.localeCompare(b.artist_unicode),
       );
     } else {
-      sortedBeatmaps = filteredSaves.sort((a, b) =>
+      sortedBeatmaps = filteredStoredBeatmapSets.sort((a, b) =>
         a.artist.localeCompare(b.artist),
       );
     }
   }
 
   if (sortDirection === "desc") {
-    sortedBeatmaps = filteredSaves.reverse();
+    sortedBeatmaps = filteredStoredBeatmapSets.reverse();
   }
 
   return (
@@ -147,4 +147,4 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
   );
 };
 
-export default SavedBeatmapSets;
+export default StoredBeatmapSets;

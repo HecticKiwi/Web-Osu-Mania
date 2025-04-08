@@ -2,6 +2,7 @@
 
 import {
   CATEGORIES,
+  CUSTOM_CATEGORIES,
   DEFAULT_CATEGORY,
   parseCategoryParam,
 } from "@/lib/searchParams/categoryParam";
@@ -10,19 +11,26 @@ import {
   DEFAULT_SORT_DIRECTION,
 } from "@/lib/searchParams/sortParam";
 import { cn } from "@/lib/utils";
-import { Bookmark } from "lucide-react";
+import { Bookmark, HardDrive } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
 
 const CategoryFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const categoryParam = parseCategoryParam(searchParams.get("category"));
+  const { settings } = useSettingsContext();
 
   const savedParams = new URLSearchParams(searchParams);
   savedParams.set("category", "Saved");
   savedParams.set("sortCriteria", "Date Saved");
   savedParams.set("sortDirection", "desc");
+
+  const storedParams = new URLSearchParams(searchParams);
+  storedParams.set("category", "Stored");
+  storedParams.set("sortCriteria", "Date Saved");
+  storedParams.set("sortDirection", "desc");
 
   return (
     <>
@@ -39,7 +47,7 @@ const CategoryFilter = ({ className }: { className?: string }) => {
               params.set("category", category);
             }
 
-            if (categoryParam === "Saved") {
+            if (CUSTOM_CATEGORIES.includes(categoryParam)) {
               params.set("sortCriteria", DEFAULT_SORT_CRITERIA);
               params.set("sortDirection", DEFAULT_SORT_DIRECTION);
             }
@@ -77,6 +85,22 @@ const CategoryFilter = ({ className }: { className?: string }) => {
               <span>Saved</span>
             </Link>
           </Button>
+          {settings.storeDownloadedBeatmaps && (
+            <Button asChild variant={"link"} className="p-0">
+              <Link
+                href={`/?${storedParams.toString()}`}
+                scroll={false}
+                className={cn(
+                  "h-8 gap-1",
+                  categoryParam === "Stored" && "text-white",
+                )}
+                prefetch={false}
+              >
+                <HardDrive className="size-5" />
+                <span>Stored</span>
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </>
