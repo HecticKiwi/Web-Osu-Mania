@@ -447,6 +447,8 @@ export class Game {
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
+    
+    if (this.isGameReplay) {this.replayPlayer?.update();}
 
     if (this.inputSystem.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
@@ -466,6 +468,9 @@ export class Game {
             this.countdown.view.alpha = 1;
           }
 
+          this.play();
+        } else if (this.isGameReplay) {
+          this.app.stage
           this.play();
         }
 
@@ -817,6 +822,8 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      replay: this.isGameReplay,
+      failed: false,
     });
 
     if (this.record && this.replayRecorder) {
@@ -855,6 +862,7 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      replay: this.isGameReplay,
       failed: true,
     });
 
