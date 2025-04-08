@@ -15,11 +15,14 @@ import {
   BeatmapProvider,
   useSettingsContext,
 } from "../providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import SwitchInput from "../switchInput";
 
 const BeatmapSettings = ({ className }: { className?: string }) => {
   const { settings, setSettings } = useSettingsContext();
   const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
+  const { storedBeatmapSets, setStoredBeatmapSets } =
+    useStoredBeatmapSetsContext();
 
   return (
     <div className={cn(className)}>
@@ -153,13 +156,17 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
               size={"sm"}
               onClick={() => {
                 clearIdbCache();
+                setStoredBeatmapSets([]);
                 toast("Cache has been cleared.");
               }}
               disabled={!idbUsage}
               variant={"destructive"}
             >
               {idbUsage !== null ? (
-                <>Clear Cache ({filesize(idbUsage)})</>
+                <>
+                  Clear Cache ({storedBeatmapSets.length} stored,{" "}
+                  {filesize(idbUsage)})
+                </>
               ) : (
                 <>
                   <Loader2Icon className="animate-spin" />

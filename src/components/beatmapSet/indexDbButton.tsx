@@ -10,6 +10,7 @@ import { Idb } from "@/lib/idb";
 import { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { HardDrive } from "lucide-react";
+import { toast } from "sonner";
 import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import { Button } from "../ui/button";
 
@@ -31,6 +32,7 @@ const IndexDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
                 setStoredBeatmapSets((draft) => {
                   return draft.filter((set) => set.id !== beatmapSet.id);
                 });
+                toast("Beatmap deleted from IndexedDB.");
               }}
             >
               <HardDrive className="size-5" />
