@@ -20,8 +20,8 @@ import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
-import BeatmapSet from "./beatmapSet/beatmapSet";
-import { Button } from "./ui/button";
+import BeatmapSet from "../beatmapSet/beatmapSet";
+import { Button } from "../ui/button";
 
 const BeatmapSetsInfiniteScroll = ({
   initialData,

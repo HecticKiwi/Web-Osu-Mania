@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
 import { useGameContext } from "../providers/gameProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
+import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
@@ -21,6 +22,8 @@ const GameModal = () => {
   );
   const { settings } = useSettingsContext();
   const { getBeatmapSet } = useBeatmapSetCacheContext();
+  const { storedBeatmapSets, setStoredBeatmapSets } =
+    useStoredBeatmapSetsContext();
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
@@ -43,6 +46,17 @@ const GameModal = () => {
             beatmapSet.id,
             setDownloadPercent,
           );
+
+          if (
+            settings.storeDownloadedBeatmaps &&
+            !storedBeatmapSets.some(
+              (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
+            )
+          ) {
+            setStoredBeatmapSets((draft) => {
+              draft.push(beatmapSet);
+            });
+          }
         } catch (error: any) {
           toast("Download Error", {
             description: error.message,

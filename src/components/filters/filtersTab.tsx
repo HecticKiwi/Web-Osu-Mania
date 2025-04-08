@@ -1,6 +1,9 @@
 "use client";
 
-import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import {
+  CUSTOM_CATEGORIES,
+  parseCategoryParam,
+} from "@/lib/searchParams/categoryParam";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -17,7 +20,7 @@ import DifficultyFilter from "./starsFilter";
 const FiltersTab = () => {
   const searchParams = useSearchParams();
   const category = parseCategoryParam(searchParams.get("category"));
-  const viewingSavedBeatmapSets = category === "Saved";
+  const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
 
   return (
     <>
@@ -27,7 +30,7 @@ const FiltersTab = () => {
         <DifficultyFilter />
         <CategoryFilter />
         <NsfwFilter />
-        {!viewingSavedBeatmapSets && (
+        {!viewingCustomCategory && (
           <>
             <GenreFilter />
             <LanguageFilter />

@@ -1,6 +1,9 @@
 "use client";
 
-import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import {
+  CUSTOM_CATEGORIES,
+  parseCategoryParam,
+} from "@/lib/searchParams/categoryParam";
 import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import {
   DEFAULT_SORT_CRITERIA,
@@ -16,7 +19,7 @@ import { Button } from "../ui/button";
 const SortFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const category = parseCategoryParam(searchParams.get("category"));
-  const viewingSavedBeatmapSets = category === "Saved";
+  const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
 
   const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
   const sortDirection = parseSortDirectionParam(
@@ -24,7 +27,7 @@ const SortFilter = ({ className }: { className?: string }) => {
   );
   const query = parseQueryParam(searchParams.get("q"));
 
-  const options = viewingSavedBeatmapSets
+  const options = viewingCustomCategory
     ? ["Date Saved", "title", "artist"]
     : [
         "title",
