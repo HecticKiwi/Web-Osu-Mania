@@ -27,8 +27,8 @@ const StoredBeatmapSets = ({ className }: { className?: string }) => {
           There are no Stored Beatmaps!
         </h1>
         <p className="text-lg text-muted-foreground">
-          Beatmaps will automatically appear here as you play while "IndexedDB
-          Cache" is enabled in the settings.{" "}
+          Beatmaps will automatically appear here as you play while IndexedDB
+          Cache is enabled in the settings.
         </p>
       </div>
     );

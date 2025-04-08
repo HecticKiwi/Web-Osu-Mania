@@ -36,7 +36,7 @@ const Main = () => {
           <InfoIcon className="h-4 w-4" />
           <AlertTitle>Currently Showing Your Stored Beatmaps</AlertTitle>
           <AlertDescription>
-            Beatmaps are automatically stored here when "IndexedDB Cache" is
+            Beatmaps are automatically stored here when IndexedDB Cache is
             enabled in the settings. Filtering is done locally, so certain
             filters may work differently or may not be available.
           </AlertDescription>
