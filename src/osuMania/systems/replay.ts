@@ -12,26 +12,22 @@ export type ReplayData = {
   usersettings: {
     audioOffset: number;
     hitPositionOffset: number;
-    keybinds: Settings["keybinds"];
     mods: Settings["mods"];
   }
   data: {
-    inputs: replayinput[];
+    inputs: ReplayInput[];
   };
 };
 
-export type replayinput = {
-  key: string;
-  time: {
-    d: number;
-    u: number | undefined;
-  }
+export type ReplayInput = {
+  column: number;
+  time: { d: number; u: number };
+  source: "Tap" | "Hold";
 };
-
-export type ReplayEvent = {
-  time: number;
-  type: 'down' | 'up';
-  key: string;
+type KeyTimeRecord = {
+  d: number;
+  u?: number;
+  source?: "Tap" | "Hold";
 };
 
 // Recorder
@@ -39,6 +35,7 @@ export class ReplayRecorder {
   private game: Game;
 
   public ReplayData: ReplayData;
+  public keyTimes: Record<number, KeyTimeRecord> = {};
 
   public BeatmapData: JSON;
 
@@ -60,7 +57,6 @@ export class ReplayRecorder {
       usersettings: {
         audioOffset: settings.audioOffset,
         hitPositionOffset: settings.hitPositionOffset,
-        keybinds: settings.keybinds,
         mods: settings.mods,
       },
       data: {
@@ -69,34 +65,53 @@ export class ReplayRecorder {
     };
   }
 
-  public recordInput(input: replayinput) {    
-    console.log("recordInput called with:", input);
+  public record(column: number, isDown: boolean, source: "Tap" | "Hold") {
+    if (!this.game.record) return;
+  
+    if (isDown) {
+      this.keyTimes[column] = {
+        d: this.game.timeElapsed,
+        source: source,
+      };
+    } else if (this.keyTimes[column]) {
+      this.keyTimes[column].u = this.game.timeElapsed;
+  
+      this.recordInput({
+        column,
+        time: {
+          d: this.keyTimes[column].d,
+          u: this.keyTimes[column].u!,
+        },
+        source: this.keyTimes[column].source!,
+      });
+  
+      delete this.keyTimes[column];
+    }
+  }
+  public recordInput(input: ReplayInput) {
     this.ReplayData.data.inputs.push(input);
-    console.log("ReplayData:", this.ReplayData.data.inputs);
-  } 
+  }
 }
 
+// Player
 export class ReplayPlayer {
   private game: Game;
-  private activeKeys: Set<string> = new Set();
-  private events: ReplayEvent[] = [];
+  private events: { time: number; type: 'down' | 'up'; column: number; source: number }[] = [];
   private currentEventIndex = 0;
 
   constructor(game: Game) {
     this.game = game;
     const inputs = this.game.replayData?.data?.inputs || [];
 
-    // Flatten each input into two events: down and up
     for (const input of inputs) {
-      const { key, time } = input;
-      this.events.push({ key, time: time.d, type: 'down' });
+      const { column, time, source } = input;
+      
+      const sourcen = source === 'Tap' ? 0 : 1;
 
-      if (time.u !== undefined) {
-        this.events.push({ key, time: time.u, type: 'up' });
-      }
+      this.events.push({ column, time: time.d, type: 'down', source: sourcen });
+      this.events.push({ column, time: time.u, type: 'up', source: sourcen });
     }
 
-    // Sort all events chronologically
     this.events.sort((a, b) => a.time - b.time);
   }
 
@@ -110,19 +125,21 @@ export class ReplayPlayer {
       const event = this.events[this.currentEventIndex];
       this.currentEventIndex++;
 
-      const keyboardEvent = new KeyboardEvent(event.type === 'down' ? 'keydown' : 'keyup', {
-        code: event.key,
-      });
+      const column = this.game.columns[event.column];
+      const source = event.source;
+      const type   = event.type;
 
-      if (event.type === 'down') {
-        if (!this.activeKeys.has(event.key)) {
-          this.activeKeys.add(event.key);
-          this.game.inputSystem.handleKeyDown(keyboardEvent, true);
-        }
-      } else {
-        if (this.activeKeys.has(event.key)) {
-          this.activeKeys.delete(event.key);
-          this.game.inputSystem.handleKeyUp(keyboardEvent);
+      if (column && column[source]) {
+        if (type === "down") {
+          column[source].hit();
+          this.game.inputSystem.tappedColumns[event.column] = true;
+          this.game.inputSystem.pressedColumns[event.column] = true;
+          this.game.inputSystem.releasedColumns[event.column] = false;
+        } else {
+          column[source].release();
+          this.game.inputSystem.tappedColumns[event.column] = false;
+          this.game.inputSystem.pressedColumns[event.column] = false;
+          this.game.inputSystem.releasedColumns[event.column] = true;
         }
       }
     }

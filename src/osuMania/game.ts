@@ -447,8 +447,8 @@ export class Game {
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
-    
-    if (this.isGameReplay) {this.replayPlayer?.update();}
+
+    this.replayPlayer?.update();
 
     if (this.inputSystem.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
@@ -470,7 +470,7 @@ export class Game {
 
           this.play();
         } else if (this.isGameReplay) {
-          this.app.stage
+          this.app.stage.removeChild(this.startMessage)
           this.play();
         }
 

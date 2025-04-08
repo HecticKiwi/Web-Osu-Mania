@@ -66,7 +66,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     if (!uploadedBeatmapSetFile) {
       setBeatmapSet(null);
     }
-    if (!uploadedReplayFile) {
+    if (uploadedReplayFile) {
       setUploadedReplayFile(null);
     }
   }, [uploadedBeatmapSetFile, uploadedReplayFile]);

@@ -96,9 +96,13 @@ export abstract class Hold {
     this.setViewHeight();
   }
 
-  public hit() {}
+  public hit() {
+    this.game.replayRecorder?.record(this.data.column, true, "Hold");
+  }
 
   public release() {
+    this.game.replayRecorder?.record(this.data.column, false, "Hold");
+
     const endTimeDelta = this.data.endTime - this.game.timeElapsed;
     const absDelta = Math.abs(endTimeDelta);
 

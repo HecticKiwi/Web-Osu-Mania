@@ -2,7 +2,7 @@ import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
 import { Beatmap } from "./osuApi";
-import { getSettings, removeFileExtension, shuffle } from "./utils";
+import { getSettings, removeFileExtension, shuffle, replayData } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
@@ -398,7 +398,13 @@ export function parseTimingPoints(
 
   const timingPointLines = lines.slice(startIndex, endIndex);
 
-  const settings = getSettings();
+  let settings = getSettings();
+  if (replayData) {
+    settings.mods = replayData.usersettings.mods;
+    settings.audioOffset = replayData.usersettings.audioOffset;
+    settings.hitPositionOffset = replayData.usersettings.hitPositionOffset;
+  }
+
   const baseScrollSpeed = settings.scrollSpeed;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
@@ -506,7 +512,10 @@ function getLineValue(lines: string[], key: string) {
 // https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
 export function getHitWindows(od: number): HitWindows {
-  const { mods } = getSettings();
+  let { mods } = getSettings();
+  if (replayData) {
+    mods = replayData.usersettings.mods;
+  }
 
   if (mods.easy) {
     od = od / 2;

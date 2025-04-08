@@ -17,88 +17,85 @@ import { useSettingsContext } from "./settingsProvider";
 import { ReplayData } from "@/osuMania/systems/replay";
 
 const ReplayUploadDialog = () => {
-  const { uploadedBeatmapSet, beatmapId, setUploadedBeatmapSet, beatmapSet, setUploadedReplay, uploadedReplay, setReplay, replay } =
+  const { beatmapId, beatmapSet, setUploadedReplay, uploadedReplay, replay } =
     useGameContext();
-  const { settings } = useSettingsContext();
-
-const BeatmapList = ({
-  beatmapSet,
-  replay
-}: {
-  beatmapSet: BeatmapSet;
-  replay: ReplayData;
-}) => {
   const { startGame } = useGameContext();
 
-  const maniaBeatmaps = beatmapSet.beatmaps.filter(
-    (beatmap) => beatmap.mode === "mania",
-  );
+  const BeatmapList = ({
+    beatmapSet,
+    replay
+  }: {
+    beatmapSet: BeatmapSet;
+    replay: ReplayData;
+  }) => {
 
-  if (maniaBeatmaps.length === 0) {
+    const maniaBeatmaps = beatmapSet.beatmaps.filter(
+      (beatmap) => beatmap.mode === "mania",
+    );
+
+    if (maniaBeatmaps.length === 0) {
+      return (
+        <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
+          <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
+            <p className="text-balance p-4 text-center text-muted-foreground">
+              This beatmap set doesn't have any osu!mania beatmaps.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    const filteredBeatmaps = maniaBeatmaps
+      .filter(
+        (beatmap) => beatmap.id.toString() == replay.beatmapData.beatmapId,
+      );
+
     return (
       <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
         <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
-          <p className="text-balance p-4 text-center text-muted-foreground">
-            This beatmap set doesn't have any osu!mania beatmaps.
-          </p>
+          {filteredBeatmaps.length === 0 && (
+            <p className="text-balance p-4 text-center text-muted-foreground">
+              No beatmaps found matching your filters. Please adjust or{" "}
+              <Link href={"/"} className="text-primary focus-within:underline">
+                reset
+              </Link>{" "}
+              your filters.
+            </p>
+          )}
+          {filteredBeatmaps.length > 0 &&
+            filteredBeatmaps
+              .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+              .map((beatmap) => {
+
+                return (
+                  <button
+                    key={beatmap.id}
+                    className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
+                    onClick={() => {
+                      startGame(beatmap.id);
+                    }}
+                  >
+                    <ManiaIcon
+                      difficultyRating={beatmap.difficulty_rating}
+                      className="shrink-0"
+                    />
+
+                    <div className="grow">
+                      <p className="line-clamp-1">{beatmap.version}</p>
+
+                      <div className="flex items-center justify-between">
+                        <p className="text-muted-foreground">
+                          {beatmap.difficulty_rating.toFixed(2)}★
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
         </div>
       </div>
     );
-  }
-
-  const filteredBeatmaps = maniaBeatmaps
-    .filter(
-      (beatmap) => beatmap.id.toString() == replay.beatmapData.beatmapId,
-    );
-
-  return (
-    <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
-      <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
-        {filteredBeatmaps.length === 0 && (
-          <p className="text-balance p-4 text-center text-muted-foreground">
-            No beatmaps found matching your filters. Please adjust or{" "}
-            <Link href={"/"} className="text-primary focus-within:underline">
-              reset
-            </Link>{" "}
-            your filters.
-          </p>
-        )}
-        {filteredBeatmaps.length > 0 &&
-          filteredBeatmaps
-            .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-            .map((beatmap) => {
-
-              return (
-                <button
-                  key={beatmap.id}
-                  className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
-                  onClick={() => {
-                    startGame(beatmap.id);
-                  }}
-                >
-                  <ManiaIcon
-                    difficultyRating={beatmap.difficulty_rating}
-                    className="shrink-0"
-                  />
-
-                  <div className="grow">
-                    <p className="line-clamp-1">{beatmap.version}</p>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-muted-foreground">
-                        {beatmap.difficulty_rating.toFixed(2)}★
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-      </div>
-    </div>
-  );
-};
-
-
+  };
 
   return (
     <>

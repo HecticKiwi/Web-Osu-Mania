@@ -32,6 +32,10 @@ export abstract class Key {
     hitArea.cursor = "pointer";
 
     hitArea.on("pointerdown", () => {
+      if (this.game.isGameReplay) {
+        return;
+      }
+      
       this.game.inputSystem.tappedColumns[this.columnId] = true;
       this.game.inputSystem.pressedColumns[this.columnId] = true;
 
@@ -41,6 +45,10 @@ export abstract class Key {
     });
 
     hitArea.on("pointerup", () => {
+      if (this.game.isGameReplay) {
+        return;
+      }
+
       this.game.inputSystem.pressedColumns[this.columnId] = false;
       this.game.inputSystem.releasedColumns[this.columnId] = true;
 
@@ -50,6 +58,10 @@ export abstract class Key {
     });
 
     hitArea.on("pointerupoutside", () => {
+      if (this.game.isGameReplay) {
+        return;
+      }
+
       this.game.inputSystem.pressedColumns[this.columnId] = false;
       this.game.inputSystem.releasedColumns[this.columnId] = true;
 
