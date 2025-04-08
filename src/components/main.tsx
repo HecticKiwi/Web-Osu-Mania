@@ -3,9 +3,9 @@
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { InfoIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import BeatmapSetsInfiniteScroll from "./beatmapSetsInfiniteScroll";
-import SavedBeatmapSets from "./savedBeatmapSets";
-import StoredBeatmapSets from "./storedBeatmapSets";
+import BeatmapSetsInfiniteScroll from "./beatmapSets/beatmapSetsInfiniteScroll";
+import SavedBeatmapSets from "./beatmapSets/savedBeatmapSets";
+import StoredBeatmapSets from "./beatmapSets/storedBeatmapSets";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const Main = () => {

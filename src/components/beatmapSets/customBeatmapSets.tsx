@@ -10,26 +10,32 @@ import {
 } from "@/lib/searchParams/sortParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { caseInsensitiveIncludes, cn } from "@/lib/utils";
-import { Bookmark } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import BeatmapSet from "./beatmapSet/beatmapSet";
-import { useSavedBeatmapSetsContext } from "./providers/savedBeatmapSetsProvider";
-import { useSettingsContext } from "./providers/settingsProvider";
+import { ReactNode } from "react";
+import BeatmapSet from "../beatmapSet/beatmapSet";
+import { useSettingsContext } from "../providers/settingsProvider";
 
-const SavedBeatmapSets = ({ className }: { className?: string }) => {
+const CustomBeatmapSets = ({
+  label,
+  helpText,
+  beatmapSets,
+  className,
+}: {
+  label: string;
+  helpText: ReactNode;
+  beatmapSets: BeatmapSetData[];
+  className?: string;
+}) => {
   const { settings } = useSettingsContext();
-  const { savedBeatmapSets } = useSavedBeatmapSetsContext();
   const searchParams = useSearchParams();
 
-  if (savedBeatmapSets.length === 0) {
+  if (beatmapSets.length === 0) {
     return (
       <div className="mt-16 text-center">
         <h1 className="text-3xl font-semibold">
-          You Haven't Saved any Beatmaps!
+          You Haven't {label} any Beatmaps!
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Save beatmaps by clicking the <Bookmark className="inline" /> icon.
-        </p>
+        <p className="text-lg text-muted-foreground">{helpText}</p>
       </div>
     );
   }
@@ -43,7 +49,7 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
   const stars = parseStarsParam(searchParams.get("stars"));
   const nsfw = parseNsfwParam(searchParams.get("nsfw"));
 
-  const filteredSaves = savedBeatmapSets.filter((beatmapSet) => {
+  const filteredSaves = beatmapSets.filter((beatmapSet) => {
     if (query.trim()) {
       if (
         settings.preferMetadataInOriginalLanguage &&
@@ -92,10 +98,10 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
     return true;
   });
 
-  if (savedBeatmapSets.length === 0) {
+  if (beatmapSets.length === 0) {
     return (
       <div className="mt-16 text-center">
-        <h1 className="text-3xl font-semibold">No Saved Beatmaps Found!</h1>
+        <h1 className="text-3xl font-semibold">No {label} Beatmaps Found!</h1>
         <p className="text-lg text-muted-foreground">
           Please adjust the filters.
         </p>
@@ -147,4 +153,4 @@ const SavedBeatmapSets = ({ className }: { className?: string }) => {
   );
 };
 
-export default SavedBeatmapSets;
+export default CustomBeatmapSets;
