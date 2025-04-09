@@ -29,8 +29,6 @@ export class HealthSystem {
   }
 
   public hit(judgement: Judgement) {
-    const oldHealth = this.health;
-
     if (this.game.settings.mods.suddenDeath && judgement === 0) {
       this.health = MIN_HEALTH; // You die >:)
     } else {
@@ -40,9 +38,5 @@ export class HealthSystem {
         MAX_HEALTH,
       );
     }
-
-    const lostHealth = this.health < oldHealth;
-
-    this.game.healthBar?.setHealth(this.health, lostHealth);
   }
 }

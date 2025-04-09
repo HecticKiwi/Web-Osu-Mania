@@ -54,12 +54,10 @@ export class StageLight {
   public light() {
     this.view.alpha = 0.5;
 
-    gsap.to(this.view, {
-      pixi: {
-        alpha: 0,
-      },
+    const quickAlpha = gsap.quickTo(this.view, "alpha", {
       duration: 0.3,
-      overwrite: true,
     });
+
+    quickAlpha(0);
   }
 }
