@@ -26,7 +26,7 @@ export class ScoreSystem {
   private game: Game;
 
   private bonus = 100;
-  private totalHitObjects: number;
+  private readonly totalHitObjects: number;
 
   // Judgement counts
   public 320 = 0;
@@ -56,7 +56,7 @@ export class ScoreSystem {
     this[judgement]++;
 
     if (judgement !== 320 || this.game.settings.show300g) {
-      this.game.judgement?.showJudgement(judgement);
+      this.game.judgementToShow = judgement;
     }
 
     if (judgement === 0) {

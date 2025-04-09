@@ -8,7 +8,12 @@ import {
 } from "@/lib/beatmapParser";
 import { useGameContext } from "@/components/providers/gameProvider";
 import { getSettings, scaleWidth, replayData } from "@/lib/utils";
-import { Column, GameState, PlayResults } from "@/types";
+import {
+  Column,
+  GameState,
+  Judgement as JudgementValue,
+  PlayResults,
+} from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
@@ -76,6 +81,8 @@ export class Game {
   public hitPosition: number;
   public hitPositionOffset: number;
   public scaledColumnWidth: number;
+
+  public judgementToShow: JudgementValue | null = null;
 
   // Replay
   public isGameReplay: boolean = false;
@@ -502,19 +509,33 @@ export class Game {
           this.endTime,
         );
 
-        this.updateHitObjects();
-
         if (this.timeElapsed > this.endTime && !this.finished) {
           this.finished = true;
           this.finish();
         }
 
-        if (
-          this.healthSystem !== undefined &&
-          this.healthSystem.health <= MIN_HEALTH
-        ) {
-          this.state = "FAIL";
+        if (this.healthSystem) {
+          const oldHealth = this.healthSystem.health;
+
+          this.updateHitObjects();
+
+          if (this.healthBar) {
+            const lostHealth = this.healthSystem.health < oldHealth;
+            this.healthBar.setHealth(this.healthSystem.health, lostHealth);
+          }
+
+          if (this.healthSystem.health <= MIN_HEALTH) {
+            this.state = "FAIL";
+          }
+        } else {
+          this.updateHitObjects();
         }
+
+        if (this.judgement && this.judgementToShow !== null) {
+          this.judgement.showJudgement(this.judgementToShow);
+        }
+
+        this.judgementToShow = null;
 
         break;
 

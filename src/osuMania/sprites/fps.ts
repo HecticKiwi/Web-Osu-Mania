@@ -10,6 +10,7 @@ export class Fps {
   public text: BitmapText;
 
   private frameTimes: number[] = [];
+  private frameTimeSum = 0;
 
   constructor(game: Game) {
     this.game = game;
@@ -41,14 +42,14 @@ export class Fps {
 
   public update(fps: number) {
     this.frameTimes.push(fps);
+    this.frameTimeSum += fps;
 
     if (this.frameTimes.length > MAX_FRAMES) {
-      this.frameTimes.shift();
+      const removedFrame = this.frameTimes.shift()!;
+      this.frameTimeSum -= removedFrame;
     }
 
-    const averageFps =
-      this.frameTimes.reduce((sum, frame) => sum + frame) /
-      this.frameTimes.length;
+    const averageFps = this.frameTimeSum / this.frameTimes.length;
 
     this.text.text = `FPS: ${Math.round(averageFps)}`;
   }

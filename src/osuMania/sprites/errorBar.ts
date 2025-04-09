@@ -1,11 +1,20 @@
 import { clamp } from "@/lib/utils";
 import { gsap } from "gsap";
-import { Container, Graphics, Sprite, Texture } from "pixi.js";
+import { Container, Graphics, Pool, Sprite, Texture } from "pixi.js";
 import { Game } from "../game";
 
 const blue = 0x32bce7;
 const green = 0x57e313;
 const orange = 0xdaae46;
+
+class MarkSprite extends Sprite {
+  public constructor() {
+    super(Texture.WHITE);
+    this.width = 2;
+    this.height = 20;
+    this.pivot.set(0.5, 0);
+  }
+}
 
 export class ErrorBar {
   private game: Game;
@@ -13,11 +22,16 @@ export class ErrorBar {
   public view: Container;
   private background: Graphics;
   private foreground: Graphics;
-  private timingMarks: Sprite[] = [];
   private averageMarker: Graphics;
 
   private readonly width = 300;
   private readonly height = 20;
+
+  private xCount = 0;
+  private xSum = 0;
+  private quickX: gsap.QuickToFunc;
+
+  private markPool: Pool<MarkSprite>;
 
   public constructor(game: Game) {
     this.game = game;
@@ -56,6 +70,12 @@ export class ErrorBar {
     this.view.addChild(this.averageMarker);
     this.view.pivot.set(this.width / 2, this.height);
     this.view.scale.set(this.game.settings.errorBarScale);
+
+    this.markPool = new Pool(MarkSprite, 50);
+
+    this.quickX = gsap.quickTo(this.averageMarker, "x", {
+      duration: 0.5,
+    });
   }
 
   public resize() {
@@ -106,18 +126,17 @@ export class ErrorBar {
           ? green
           : orange;
 
-    const mark = Sprite.from(Texture.WHITE);
-    mark.width = 2;
-    mark.height = 20;
+    const mark = this.markPool.get();
     mark.tint = color;
-    mark.pivot.set(0.5, 0);
 
     const x =
       (-offset / this.game.hitWindows["50"]) * (this.background.width / 2) +
       this.background.width / 2;
     mark.x = clamp(x, 0, this.width);
 
-    this.timingMarks.push(mark);
+    this.xCount++;
+    this.xSum += x;
+
     this.view.addChild(mark);
 
     gsap.to(mark, {
@@ -127,20 +146,13 @@ export class ErrorBar {
       duration: 4,
       onComplete: () => {
         this.view.removeChild(mark);
-        this.timingMarks = this.timingMarks.filter((m) => m !== mark);
+
+        this.xCount--;
+        this.xSum -= x;
       },
     });
 
-    const averageX =
-      this.timingMarks.reduce((sum, mark) => sum + mark.x, 0) /
-      this.timingMarks.length;
-
-    gsap.to(this.averageMarker, {
-      pixi: {
-        x: averageX,
-      },
-      duration: 0.5,
-      overwrite: true,
-    });
+    const averageX = this.xSum / this.xCount;
+    this.quickX(averageX);
   }
 }
