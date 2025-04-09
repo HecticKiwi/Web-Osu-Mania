@@ -6,7 +6,6 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import { useGameContext } from "@/components/providers/gameProvider";
 import { getSettings, scaleWidth, replayData } from "@/lib/utils";
 import {
   Column,

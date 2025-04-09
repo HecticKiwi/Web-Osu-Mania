@@ -1,7 +1,6 @@
 import { Game } from "../game";
 import { BeatmapData, HitObject, HitWindows } from "@/lib/beatmapParser";
 import { Settings } from "@/components/providers/settingsProvider";
-import { InputSystem } from "./input";
 
 // Types
 export type ReplayData = {

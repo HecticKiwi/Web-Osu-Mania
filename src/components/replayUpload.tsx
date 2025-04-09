@@ -16,7 +16,7 @@ const ReplayUpload = () => {
     if (!file) return;
 
     if (!file.name.endsWith(".womr")) {
-      toast.message("Failed to load beatmap file", {
+      toast.message("Failed to load replay file", {
         description: "File is not in the .womr format.",
       });
       return;

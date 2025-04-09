@@ -13,7 +13,6 @@ import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 import { Button } from "../ui/button";
 import { useGameContext } from "./gameProvider";
-import { useSettingsContext } from "./settingsProvider";
 import { ReplayData } from "@/osuMania/systems/replay";
 
 const ReplayUploadDialog = () => {
