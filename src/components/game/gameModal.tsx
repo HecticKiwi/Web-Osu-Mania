@@ -98,7 +98,7 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [beatmapId, closeGame, getBeatmapSet, uploadedBeatmapSet, beatmapSet]);
+  }, [beatmapId, closeGame, getBeatmapSet, uploadedBeatmapSet, beatmapSet, storedBeatmapSets, setStoredBeatmapSets, settings.storeDownloadedBeatmaps]);
 
   // Clean up object URLs
   useEffect(() => {
