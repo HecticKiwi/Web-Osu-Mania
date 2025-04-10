@@ -91,9 +91,11 @@ export function getSettings() {
     ...settings.keybinds,
   };
 
-  if (!settings.keybinds.keyModes[9]) {
-    // Set default 10K keybinds
-    settings.keybinds.keyModes[9] = [...defaultSettings.keybinds.keyModes[9]];
+  for (let i = 9; i < 18; i++) {
+    if (!settings.keybinds.keyModes[i]) {
+      // Set default 10K-18K keybinds
+      settings.keybinds.keyModes[i] = [...defaultSettings.keybinds.keyModes[i]];
+    }
   }
 
   return settings;
