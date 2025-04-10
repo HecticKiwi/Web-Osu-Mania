@@ -1,40 +1,29 @@
 "use client";
 
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
-import { cn, getSettings } from "@/lib/utils";
-import { regkeyuimap, regkeyuiclass, extkeyuimap, extkeyuiclass } from "@/osuMania/constants";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useSettingsContext } from "../providers/settingsProvider";
 import { Toggle } from "../ui/toggle";
 
-const updateUiClass = () => {
-  if (getSettings().show11kp) {
-    return extkeyuiclass
-  } else {
-    return regkeyuiclass
-  }
-}
-const updateUiMap = () => {
-  if (getSettings().show11kp) {
-    return extkeyuimap
-  } else {
-    return regkeyuimap
-  }
-}
-
+const rankedKeys = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
+const allKeys = Array.from({ length: 18 }, (_, i) => (i + 1).toString());
 
 const KeysFilter = ({ className }: { className?: string }) => {
-
   const searchParams = useSearchParams();
+  const { settings } = useSettingsContext();
   const keysParam = parseKeysParam(searchParams.get("keys"));
+
+  const keys = settings.showUnrankedModes ? allKeys : rankedKeys;
 
   return (
     <>
       <div className={cn(className)}>
         <span className="text-muted-foreground">Mode</span>
 
-        <div className={updateUiClass()}>
-          {updateUiMap().map((key: string) => {
+        <div className={"mt-2 flex flex-wrap gap-1.5"}>
+          {keys.map((key: string) => {
             const params = new URLSearchParams(searchParams.toString());
 
             let newKeysParam: string[] = [];

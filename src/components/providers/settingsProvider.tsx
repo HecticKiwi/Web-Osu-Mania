@@ -48,7 +48,7 @@ export type Settings = {
   preferMetadataInOriginalLanguage: boolean;
   unpauseDelay: number;
   retryOnFail: boolean;
-  show11kp: boolean;
+  showUnrankedModes: boolean;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -101,7 +101,7 @@ export const defaultSettings: Settings = {
   preferMetadataInOriginalLanguage: false,
   unpauseDelay: 1500,
   retryOnFail: false,
-  show11kp: false,
+  showUnrankedModes: false,
   keybinds: {
     keyModes: [
       ["Space"], // 1K
@@ -112,17 +112,161 @@ export const defaultSettings: Settings = {
       ["KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL"], // 6K
       ["KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL"], // 7K
       ["KeyA", "KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 8K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "Space", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 9K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyV", "KeyN", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 10K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyV", "Space", "KeyN", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 11K (No maps)
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyC", "KeyV", "KeyN", "KeyM", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 12K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyC", "KeyV", "Space", "KeyN", "KeyM", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 13K (No maps)
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyX", "KeyC", "KeyV", "KeyN", "KeyM", "Comma", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 14K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyX", "KeyC", "KeyV", "Space", "KeyN", "KeyM", "Comma", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 15K (No Maps)
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyN", "KeyM", "Comma", "Period", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 16K
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyZ", "KeyX", "KeyC", "KeyV", "Space", "KeyN", "KeyM", "Comma", "Period", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 17K (No Maps)
-      ["KeyA", "KeyS", "KeyD", "KeyF", "KeyG", "KeyZ", "KeyX", "KeyC", "KeyV", "KeyN", "KeyM", "Comma", "Period", "KeyH", "KeyJ", "KeyK", "KeyL", "Semicolon"], // 18K
-
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "Space",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 9K
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyV",
+        "KeyN",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 10K
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyV",
+        "Space",
+        "KeyN",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 11K (No maps)
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyC",
+        "KeyV",
+        "KeyN",
+        "KeyM",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 12K
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyC",
+        "KeyV",
+        "Space",
+        "KeyN",
+        "KeyM",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 13K (No maps)
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 14K
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "Space",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 15K (No Maps)
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 16K
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "Space",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 17K (No Maps)
+      [
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyG",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyN",
+        "KeyM",
+        "Comma",
+        "Period",
+        "KeyH",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "Semicolon",
+      ], // 18K
     ],
     pause: null,
     retry: "Backquote",

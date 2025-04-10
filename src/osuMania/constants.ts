@@ -22,13 +22,125 @@ export const laneColors = [
   [white, blue, white, blue, yellow, blue, white, blue, white], // 9K
   [white, blue, white, blue, white, white, blue, white, blue, white], // 10K
   [white, blue, white, blue, white, yellow, white, blue, white, blue, white], // 11K
-  [white, blue, white, blue, white, blue, blue, white, blue, white, blue, white], // 12K
-  [white, blue, white, blue, white, blue, yellow, blue, white, blue, white, blue, white], // 13K
-  [white, blue, white, blue, white, blue, white, white, blue, white, blue, white, blue, white], // 14K
-  [white, blue, white, blue, white, blue, white, yellow, white, blue, white, blue, white, blue, white], // 15K
-  [white, blue, white, blue, white, blue, white, blue, blue, white, blue, white, blue, white, blue, white], // 16K
-  [white, blue, white, blue, white, blue, white, blue, yellow, blue, white, blue, white, blue, white, blue, white], // 17K
-  [white, blue, white, blue, white, blue, white, blue, white, white, blue, white, blue, white, blue, white, blue, white], // 18K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 12K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    yellow,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 13K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 14K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    yellow,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 15K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 16K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    yellow,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 17K
+  [
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+    blue,
+    white,
+  ], // 18K
 ] as const;
 
 // Angles assume arrow is pointing up by default
@@ -51,24 +163,156 @@ export const laneArrowDirections = [
   [left, upLeft, up, down, up, upRight, right], // 7K
   [left, upLeft, downLeft, down, up, downRight, upRight, right], // 8K
   [left, upLeft, downLeft, up, down, up, downRight, upRight, right], // 9K
-  [left, upLeft, downLeft, upLeft, down, up, upRight, downRight, upRight, right], // 10K
-  [left, upLeft, downLeft, upLeft, down, up, down, upRight, downRight, upRight, right], // 11K
-  [left, upRight, down, up, upRight, right, left, upRight, down, up, upRight, right], // 12K
-  [left, upLeft, downLeft, upLeft, downLeft, down, up, down, downRight, upRight, downRight, upRight, right], // 13K
-  [left, upLeft, up, down, up, upRight, right, left, upLeft, up, down, up, upRight, right], // 14K
-  [left, upLeft, downLeft, left, upLeft, downLeft, down, up, down, downRight, upRight, right, downRight, upRight, right], // 15K
-  [left, upLeft, downLeft, down, up, downRight, upRight, right, left, upLeft, downLeft, down, up, downRight, upRight, right], // 16K
-  [left, upLeft, downLeft, left, upLeft, downLeft, left, down, up, down, right, downRight, upRight, right, downRight, upRight, right], // 17K
-  [left, upLeft, downLeft, up, down, up, downRight, upRight, right, left, upLeft, downLeft, up, down, up, downRight, upRight, right], // 18K
+  [
+    left,
+    upLeft,
+    downLeft,
+    upLeft,
+    down,
+    up,
+    upRight,
+    downRight,
+    upRight,
+    right,
+  ], // 10K
+  [
+    left,
+    upLeft,
+    downLeft,
+    upLeft,
+    down,
+    up,
+    down,
+    upRight,
+    downRight,
+    upRight,
+    right,
+  ], // 11K
+  [
+    left,
+    upRight,
+    down,
+    up,
+    upRight,
+    right,
+    left,
+    upRight,
+    down,
+    up,
+    upRight,
+    right,
+  ], // 12K
+  [
+    left,
+    upLeft,
+    downLeft,
+    upLeft,
+    downLeft,
+    down,
+    up,
+    down,
+    downRight,
+    upRight,
+    downRight,
+    upRight,
+    right,
+  ], // 13K
+  [
+    left,
+    upLeft,
+    up,
+    down,
+    up,
+    upRight,
+    right,
+    left,
+    upLeft,
+    up,
+    down,
+    up,
+    upRight,
+    right,
+  ], // 14K
+  [
+    left,
+    upLeft,
+    downLeft,
+    left,
+    upLeft,
+    downLeft,
+    down,
+    up,
+    down,
+    downRight,
+    upRight,
+    right,
+    downRight,
+    upRight,
+    right,
+  ], // 15K
+  [
+    left,
+    upLeft,
+    downLeft,
+    down,
+    up,
+    downRight,
+    upRight,
+    right,
+    left,
+    upLeft,
+    downLeft,
+    down,
+    up,
+    downRight,
+    upRight,
+    right,
+  ], // 16K
+  [
+    left,
+    upLeft,
+    downLeft,
+    left,
+    upLeft,
+    downLeft,
+    left,
+    down,
+    up,
+    down,
+    right,
+    downRight,
+    upRight,
+    right,
+    downRight,
+    upRight,
+    right,
+  ], // 17K
+  [
+    left,
+    upLeft,
+    downLeft,
+    up,
+    down,
+    up,
+    downRight,
+    upRight,
+    right,
+    left,
+    upLeft,
+    downLeft,
+    up,
+    down,
+    up,
+    downRight,
+    upRight,
+    right,
+  ], // 18K
 ] as const;
 
 export const circleColumnRatio = 0.8;
 export const arrowColumnRatio = 0.8;
 export const diamondColumnRatio = 0.85;
 
-export const laneWidths = [56, 56, 56, 56, 50, 47, 42, 40, 38, 35, 31, 30, 29, 27, 24, 22, 21, 20] as const;
-
-export const regkeyuimap = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-export const extkeyuimap = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"]
-export const regkeyuiclass = "mt-2 flex flex-wrap gap-1.5"
-export const extkeyuiclass = "mt-2 flex flex-wrap gap-2.5"
+export const laneWidths = [
+  56, 56, 56, 56, 50, 47, 42, 40, 38, 35, 31, 30, 29, 27, 24, 22, 21, 20,
+] as const;

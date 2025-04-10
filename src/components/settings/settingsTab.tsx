@@ -24,7 +24,6 @@ import BackgroundBlurSlider from "./backgroundBlurSlider";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
 import VolumeSettings from "./volumeSettings";
-import KeysFilter from "../filters/keysFilter";
 
 const SettingsTab = () => {
   const { settings, resetSettings, setSettings } = useSettingsContext();
@@ -125,18 +124,14 @@ const SettingsTab = () => {
             })
           }
         />
-        
+
         <SwitchInput
-          label="Show 11k+ Filters (Reload Required)"
-          checked={settings.show11kp}
+          label="Show Unranked Modes (11K-18K)"
+          checked={settings.showUnrankedModes}
           onCheckedChange={(checked) => {
             setSettings((draft) => {
-              draft.show11kp = checked;
+              draft.showUnrankedModes = checked;
             });
-
-            setTimeout(() => {
-              window.location.reload();
-            }, 50);
           }}
         />
       </div>
