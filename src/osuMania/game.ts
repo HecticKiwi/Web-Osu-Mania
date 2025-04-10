@@ -6,7 +6,7 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
-import { getSettings, scaleWidth } from "@/lib/utils";
+import { getSettings, scaleWidth, replayData } from "@/lib/utils";
 import {
   Column,
   GameState,
@@ -59,6 +59,7 @@ import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
 import { ScoreSystem } from "./systems/score";
+import { ReplayRecorder, ReplayPlayer, ReplayData } from "./systems/replay"
 
 gsap.registerPlugin(PixiPlugin);
 
@@ -69,6 +70,7 @@ export class Game {
   public state: GameState = "WAIT";
 
   public settings: Settings;
+  public mods: Settings["mods"];
   public difficulty: Difficulty;
   public columnKeybinds: (string | null)[];
   public hitWindows: HitWindows;
@@ -81,11 +83,19 @@ export class Game {
 
   public judgementToShow: JudgementValue | null = null;
 
+  // Replay
+  public isGameReplay: boolean = false;
+  public record: boolean = false;
+  public replayRecorder?: ReplayRecorder;
+  public replayPlayer?: ReplayPlayer;
+  public replayData?: ReplayData | null = null;
+
   // Systems
   public healthSystem?: HealthSystem;
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
+
 
   // Classes for skin elements
   public tapClass:
@@ -105,6 +115,7 @@ export class Game {
     | typeof DiamondKey;
 
   // UI Components
+  public replayText?: BitmapText;
   private startMessage: BitmapText;
   public scoreText?: BitmapText;
   public comboText?: BitmapText;
@@ -141,6 +152,7 @@ export class Game {
 
   private setResults: Dispatch<SetStateAction<PlayResults | null>>;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
+  private setReplayData: Dispatch<SetStateAction<ReplayData | null>>;
   private retry: () => void;
 
   private finished: boolean = false;
@@ -149,10 +161,10 @@ export class Game {
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
+    setReplayData: Dispatch<SetStateAction<ReplayData | null>>,
     retry: () => void,
   ) {
     this.resize = this.resize.bind(this);
-
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
@@ -169,6 +181,7 @@ export class Game {
 
     this.setResults = setResults;
     this.setIsPaused = setIsPaused;
+    this.setReplayData = setReplayData;
     this.retry = retry;
 
     this.settings = getSettings();
@@ -197,10 +210,24 @@ export class Game {
       this.keysContainer.zIndex = -1;
     }
 
-    this.columnKeybinds =
-      this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
+    this.columnKeybinds = this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
+    
+    this.replayData = replayData;
+    console.log(this.replayData);
+    if (this.replayData) {
+      this.isGameReplay = true;
+      this.record = false;
+      this.settings.mods = this.replayData.usersettings.mods ?? this.settings.mods;
+      this.replayPlayer = new ReplayPlayer(this);
 
-    // Init systems
+    } else {
+      if (this.settings.replays == true && (!this.settings.mods.autoplay || !this.isGameReplay)) { 
+        this.record = true;
+        this.replayRecorder = new ReplayRecorder(this);
+        this.replayRecorder.init(beatmapData, this.settings);
+      }
+    }
+
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
@@ -366,6 +393,10 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
+    if (this.isGameReplay) {
+      this.addReplayText();
+    }
+
     if (this.settings.ui.showScore) {
       this.addScoreText();
     }
@@ -416,7 +447,7 @@ export class Game {
     this.resize();
 
     window.addEventListener("resize", this.resize);
-
+    
     // Game loop
     this.app.ticker.add((time) => this.update(time));
   }
@@ -424,6 +455,8 @@ export class Game {
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
+
+    this.replayPlayer?.update();
 
     if (this.inputSystem.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
@@ -443,6 +476,9 @@ export class Game {
             this.countdown.view.alpha = 1;
           }
 
+          this.play();
+        } else if (this.isGameReplay) {
+          this.app.stage.removeChild(this.startMessage)
           this.play();
         }
 
@@ -529,6 +565,33 @@ export class Game {
 
     this.inputSystem.clearInputs();
     this.audioSystem.playedSounds.clear();
+  }
+
+  private addReplayText() {
+    const style = new TextStyle({
+      fill: 0xdddddd,
+      fontFamily: "Courier New",
+      fontSize: 80,
+      fontWeight: "700",
+      dropShadow: {
+        alpha: 0.1,
+        angle: 0,
+        blur: 5,
+        color: 0x000000,
+        distance: 0,
+      },
+    });
+
+    this.replayText = new BitmapText({
+      text: "Replay",
+      style,
+    });
+
+    this.replayText.anchor.set(0.5, 0.5);
+    this.replayText.y = 50;
+    this.replayText.x = this.app.screen.width / 2;
+
+    this.app.stage.addChild(this.replayText);
   }
 
   private addProgressBar() {
@@ -783,7 +846,14 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      replay: this.isGameReplay,
+      failed: false,
     });
+
+    if (this.record && this.replayRecorder) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      this.setReplayData(this.replayRecorder.ReplayData);
+    }
   }
 
   private async fail() {
@@ -821,8 +891,14 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      replay: this.isGameReplay,
       failed: true,
     });
+
+    if (this.record && this.replayRecorder) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      this.setReplayData(this.replayRecorder.ReplayData);
+    }
   }
 
   // Returns the px offset of the hit object from the judgement line based on

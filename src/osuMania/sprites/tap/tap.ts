@@ -137,6 +137,8 @@ export abstract class Tap {
   }
 
   public hit() {
+    this.game.replayRecorder?.record(this.data.column, true, "Tap");
+
     const delta = this.data.time - this.game.timeElapsed;
     const absDelta = Math.abs(delta);
 
@@ -164,5 +166,7 @@ export abstract class Tap {
     this.shouldRemove = true;
   }
 
-  public release() {}
+  public release() {
+    this.game.replayRecorder?.record(this.data.column, false, "Tap");
+  }
 }

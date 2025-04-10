@@ -1,3 +1,4 @@
+import { nothing } from "immer";
 import { Game } from "../game";
 
 export class InputSystem {
@@ -15,6 +16,7 @@ export class InputSystem {
   public releasedColumns: boolean[];
 
   public pauseTapped: boolean = false;
+
 
   constructor(game: Game) {
     this.game = game;
@@ -40,7 +42,7 @@ export class InputSystem {
   private initKeybindsMap() {
     const keybinds =
       this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
-    keybinds.forEach((key, index) => {
+      keybinds.forEach((key, index) => {
       if (key) {
         this.keybindsMap.set(key, index);
       }
@@ -60,6 +62,9 @@ export class InputSystem {
         this.pauseTapped = true;
       }
 
+      if (this.game.isGameReplay) {
+        return;
+      }
       const column = this.keybindsMap.get(`🎮Btn${i}`);
       if (column === undefined) return;
 
@@ -84,8 +89,21 @@ export class InputSystem {
   }
 
   public handleKeyDown(event: KeyboardEvent) {
-    if (this.pressedKeys.has(event.code)) {
+    if (event.code === "KeyP") {
+      this.game.columns.forEach((object) => {
+        object[0]?.hit();
+        object[1]?.hit();
+      });
       return;
+    }
+    
+    
+    if (this.pressedKeys.has(event.code) || (this.game.isGameReplay)) {
+      if (event.code === "Escape") {
+        nothing;
+      } else {
+        return;
+      }
     }
 
     this.tappedKeys.add(event.code);
@@ -109,10 +127,19 @@ export class InputSystem {
 
     if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
       this.game.columns[column][0]?.hit();
-    }
+    }  
   }
 
   public handleKeyUp(event: KeyboardEvent) {
+    if (this.game.isGameReplay) {
+      if (event.code === "Escape") {
+        nothing;
+      } else {
+        return;
+      }
+    }
+
+
     this.pressedKeys.delete(event.code);
     this.releasedKeys.add(event.code);
 
