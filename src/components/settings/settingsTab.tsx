@@ -125,6 +125,16 @@ const SettingsTab = () => {
             })
           }
         />
+
+        <SwitchInput
+          label="Show Unranked Modes (11K-18K)"
+          checked={settings.showUnrankedModes}
+          onCheckedChange={(checked) => {
+            setSettings((draft) => {
+              draft.showUnrankedModes = checked;
+            });
+          }}
+        />
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>
