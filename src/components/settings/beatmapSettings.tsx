@@ -147,7 +147,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
               By default, downloaded beatmaps are discarded when you leave or
               refresh the page. If you enable caching via IndexedDB, downloaded
               beatmaps will be stored in the browser across visits. View stored
-              beatmaps selecting the <HardDrive className="inline size-5" />{" "}
+              beatmaps by selecting the <HardDrive className="inline size-5" />{" "}
               Stored category.
             </p>
 
