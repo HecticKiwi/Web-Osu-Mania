@@ -1,12 +1,12 @@
 "use client";
 
-import { Idb } from "@/lib/idb";
+import { idb } from "@/lib/idb";
 import queryString from "query-string";
 import {
+  createContext,
   Dispatch,
   ReactNode,
   SetStateAction,
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -42,7 +42,6 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
   const { settings } = useSettingsContext();
 
   const calculateCacheUsage = useCallback(async () => {
-    const idb = new Idb();
     const beatmapCount = await idb.getBeatmapCount();
 
     if (beatmapCount === 0) {
@@ -66,7 +65,6 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const clearIdbCache = useCallback(async () => {
-    const idb = new Idb();
     await idb.clearBeatmapSets();
 
     await calculateCacheUsage();
@@ -82,8 +80,6 @@ const BeatmapSetCacheProvider = ({ children }: { children: ReactNode }) => {
       setDownloadPercent: Dispatch<SetStateAction<number>>,
     ) => {
       try {
-        const idb = new Idb();
-
         // Try to get beatmap set from cache
         let beatmapSetFile = beatmapSetCache.get(beatmapSetId);
         if (!beatmapSetFile && settings.storeDownloadedBeatmaps) {

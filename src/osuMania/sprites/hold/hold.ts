@@ -98,8 +98,9 @@ export abstract class Hold {
 
   public hit() {}
 
-  public release() {
-    const endTimeDelta = this.data.endTime - this.game.timeElapsed;
+  public release(timeElapsed?: number) {
+    const endTimeDelta =
+      this.data.endTime - (timeElapsed ?? this.game.timeElapsed);
     const absDelta = Math.abs(endTimeDelta);
 
     if (absDelta < this.game.hitWindows[0] * 1.5) {

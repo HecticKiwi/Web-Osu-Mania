@@ -1,4 +1,7 @@
-import { Settings } from "@/components/providers/settingsProvider";
+import {
+  defaultSettings,
+  Settings,
+} from "@/components/providers/settingsProvider";
 import {
   BeatmapData,
   Difficulty,
@@ -6,6 +9,7 @@ import {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
+import { decodeMods } from "@/lib/replay";
 import { getSettings, scaleWidth } from "@/lib/utils";
 import {
   Column,
@@ -58,6 +62,8 @@ import { Tap } from "./sprites/tap/tap";
 import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
+import { ReplayPlayer } from "./systems/replayPlayer";
+import { ReplayData, ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
 
 gsap.registerPlugin(PixiPlugin);
@@ -87,6 +93,10 @@ export class Game {
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
 
+  // Replay Systems
+  public replayRecorder?: ReplayRecorder;
+  public replayPlayer?: ReplayPlayer;
+
   // Classes for skin elements
   public tapClass:
     | typeof BarTap
@@ -105,6 +115,7 @@ export class Game {
     | typeof DiamondKey;
 
   // UI Components
+  public replayText?: BitmapText;
   private startMessage: BitmapText;
   public scoreText?: BitmapText;
   public comboText?: BitmapText;
@@ -149,10 +160,10 @@ export class Game {
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
+    replayData: ReplayData | null,
     retry: () => void,
   ) {
     this.resize = this.resize.bind(this);
-
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
@@ -200,7 +211,17 @@ export class Game {
     this.columnKeybinds =
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
-    // Init systems
+    if (replayData) {
+      this.settings.mods = {
+        ...defaultSettings.mods,
+        ...decodeMods(replayData.mods),
+      };
+
+      this.replayPlayer = new ReplayPlayer(this, replayData);
+    } else if (!this.settings.mods.autoplay) {
+      this.replayRecorder = new ReplayRecorder(this, beatmapData);
+    }
+
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
@@ -323,6 +344,14 @@ export class Game {
       this.accuracyText.x = this.app.screen.width - 30;
       this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
     }
+
+    if (this.replayText) {
+      this.replayText.x = this.app.screen.width / 2;
+
+      if (this.settings.upscroll) {
+        this.replayText.y = this.app.screen.height - 75;
+      }
+    }
   }
 
   async main(ref: HTMLDivElement) {
@@ -365,6 +394,10 @@ export class Game {
     DiamondHold.tailGraphicsContext = null;
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
+
+    if (this.replayPlayer) {
+      this.addReplayText();
+    }
 
     if (this.settings.ui.showScore) {
       this.addScoreText();
@@ -425,6 +458,8 @@ export class Game {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
 
+    this.replayPlayer?.update();
+
     if (this.inputSystem.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
     }
@@ -436,7 +471,7 @@ export class Game {
 
     switch (this.state) {
       case "WAIT":
-        if (this.inputSystem.anyKeyTapped()) {
+        if (this.replayPlayer || this.inputSystem.anyColumnTapped()) {
           this.app.stage.removeChild(this.startMessage);
 
           if (this.startTime > 3000) {
@@ -449,7 +484,7 @@ export class Game {
         break;
 
       case "PLAY":
-        this.timeElapsed = this.song.seek() * 1000;
+        this.timeElapsed = Math.round(this.song.seek() * 1000);
 
         if (this.countdown.view.visible) {
           this.countdown.update(
@@ -529,6 +564,34 @@ export class Game {
 
     this.inputSystem.clearInputs();
     this.audioSystem.playedSounds.clear();
+  }
+
+  private addReplayText() {
+    const style = new TextStyle({
+      fill: "transparent",
+      stroke: 0xffffff,
+      fontFamily: "RobotoMono",
+      fontSize: 80,
+      dropShadow: {
+        alpha: 0.1,
+        angle: 0,
+        blur: 5,
+        color: 0x000000,
+        distance: 0,
+      },
+    });
+
+    this.replayText = new BitmapText({
+      text: "Replay",
+      style,
+    });
+
+    this.replayText.anchor.set(0.5, 0.5);
+    this.replayText.y = 50;
+    this.replayText.x = this.app.screen.width / 2;
+    this.replayText.alpha = 0.35;
+
+    this.app.stage.addChild(this.replayText);
   }
 
   private addProgressBar() {
@@ -760,6 +823,11 @@ export class Game {
 
     this.scoreSystem.score = Math.round(this.scoreSystem.score);
 
+    // Record remaining release inputs
+    for (let i = 0; i < this.difficulty.keyCount; i++) {
+      this.replayRecorder?.record(i, false);
+    }
+
     new Howl({
       src: [`/skin/applause.mp3`],
       format: "mp3",
@@ -783,6 +851,10 @@ export class Game {
       score: this.scoreSystem.score,
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
+      failed: false,
+      viewingReplay: !!this.replayPlayer,
+      replayData:
+        this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
     });
   }
 
@@ -795,6 +867,11 @@ export class Game {
     }
 
     this.scoreSystem.score = Math.round(this.scoreSystem.score);
+
+    // Record remaining release inputs
+    for (let i = 0; i < this.difficulty.keyCount; i++) {
+      this.replayRecorder?.record(i, false);
+    }
 
     new Howl({
       src: [`/skin/failsound.mp3`],
@@ -822,6 +899,9 @@ export class Game {
       accuracy: this.scoreSystem.accuracy,
       maxCombo: this.scoreSystem.maxCombo,
       failed: true,
+      viewingReplay: !!this.replayPlayer,
+      replayData:
+        this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
     });
   }
 

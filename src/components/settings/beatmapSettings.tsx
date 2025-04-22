@@ -127,54 +127,50 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           it.
         </p>
 
-        {"indexedDB" in window && navigator.storage && (
-          <>
-            <SwitchInput
-              label="Enable IndexedDB Cache"
-              checked={settings.storeDownloadedBeatmaps}
-              onCheckedChange={async (checked) => {
-                setSettings((draft) => {
-                  draft.storeDownloadedBeatmaps = checked;
-                });
+        <SwitchInput
+          label="Enable IndexedDB Cache"
+          checked={settings.storeDownloadedBeatmaps}
+          onCheckedChange={async (checked) => {
+            setSettings((draft) => {
+              draft.storeDownloadedBeatmaps = checked;
+            });
 
-                if (!checked && idbUsage && idbUsage > 0) {
-                  await clearIdbCache();
-                }
-              }}
-            />
+            if (!checked && idbUsage && idbUsage > 0) {
+              await clearIdbCache();
+            }
+          }}
+        />
 
-            <p className="mt-1 text-sm text-muted-foreground">
-              By default, downloaded beatmaps are discarded when you leave or
-              refresh the page. If you enable caching via IndexedDB, downloaded
-              beatmaps will be stored in the browser across visits. View stored
-              beatmaps by selecting the <HardDrive className="inline size-5" />{" "}
-              Stored category.
-            </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          By default, downloaded beatmaps are discarded when you leave or
+          refresh the page. If you enable caching via IndexedDB, downloaded
+          beatmaps will be stored in the browser across visits. View stored
+          beatmaps by selecting the <HardDrive className="inline size-5" />{" "}
+          Stored category.
+        </p>
 
-            <Button
-              className={cn("mt-8 w-full", className)}
-              size={"sm"}
-              onClick={() => {
-                clearIdbCache();
-                setStoredBeatmapSets([]);
-                toast("Cache has been cleared.");
-              }}
-              disabled={!idbUsage}
-              variant={"destructive"}
-            >
-              {idbUsage !== null ? (
-                <>
-                  Clear Cache ({storedBeatmapSets.length} stored,{" "}
-                  {filesize(idbUsage)})
-                </>
-              ) : (
-                <>
-                  <Loader2Icon className="animate-spin" />
-                </>
-              )}
-            </Button>
-          </>
-        )}
+        <Button
+          className={cn("mt-8 w-full", className)}
+          size={"sm"}
+          onClick={() => {
+            clearIdbCache();
+            setStoredBeatmapSets([]);
+            toast("Cache has been cleared.");
+          }}
+          disabled={!idbUsage}
+          variant={"destructive"}
+        >
+          {idbUsage !== null ? (
+            <>
+              Clear Cache ({storedBeatmapSets.length} stored,{" "}
+              {filesize(idbUsage)})
+            </>
+          ) : (
+            <>
+              <Loader2Icon className="animate-spin" />
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );

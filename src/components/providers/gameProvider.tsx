@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
 import { BeatmapSet } from "@/lib/osuApi";
 import { BASE_PATH } from "@/lib/utils";
+import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { Howler } from "howler";
 import queryString from "query-string";
 import {
@@ -19,16 +20,17 @@ import {
 import GameModal from "../game/gameModal";
 import UploadDialog from "./uploadDialog";
 
-export type GameData = number | null;
-
 const GameContext = createContext<{
   closeGame: () => void;
   startGame: (beatmapId: number) => void;
+  startReplay: (replay: ReplayData) => void;
+  replayData: ReplayData | null;
+  setReplayData: Dispatch<SetStateAction<ReplayData | null>>;
   uploadedBeatmapSet: File | null;
   setUploadedBeatmapSet: Dispatch<SetStateAction<File | null>>;
   beatmapSet: BeatmapSet | null;
   setBeatmapSet: Dispatch<SetStateAction<BeatmapSet | null>>;
-  beatmapId: GameData | null;
+  beatmapId: number | null;
 } | null>(null);
 
 export const useGameContext = () => {
@@ -45,17 +47,37 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedBeatmapSetFile, setUploadedBeatmapSetFile] =
     useState<File | null>(null);
   const [beatmapSet, setBeatmapSet] = useState<BeatmapSet | null>(null);
-  const [beatmapId, setBeatmapId] = useState<GameData | null>(null);
+  const [beatmapId, setBeatmapId] = useState<number | null>(null);
+  const [replayData, setReplayData] = useState<ReplayData | null>(null);
 
   const closeGame = useCallback(() => {
     Howler.unload();
     setBeatmapId(null);
+    setReplayData(null);
 
-    // If playing from an uploaded file file, leave beatmapSet so the upload dialog stays open
+    // If playing from an uploaded file, leave beatmapSet so the upload dialog stays open
     if (!uploadedBeatmapSetFile) {
       setBeatmapSet(null);
     }
   }, [uploadedBeatmapSetFile]);
+
+  const startReplay = useCallback(async (replay: ReplayData) => {
+    const beatmapSetId = replay.beatmap.setId;
+    const beatmapId = Number(replay.beatmap.id);
+
+    const url = queryString.stringifyUrl({
+      url: `${BASE_PATH}/api/getBeatmap`,
+      query: {
+        beatmapSetId,
+      },
+    });
+
+    const beatmapSet: BeatmapSet = await fetch(url).then((res) => res.json());
+
+    setBeatmapId(beatmapId);
+    setBeatmapSet(beatmapSet);
+    setReplayData(replay);
+  }, []);
 
   const startGame = useCallback((beatmapId: number) => {
     setBeatmapId(beatmapId);
@@ -95,6 +117,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       value={{
         uploadedBeatmapSet: uploadedBeatmapSetFile,
         setUploadedBeatmapSet: setUploadedBeatmapSetFile,
+        startReplay,
+        replayData,
+        setReplayData,
         beatmapSet,
         setBeatmapSet,
         startGame,

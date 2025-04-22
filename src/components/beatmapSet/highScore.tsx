@@ -1,30 +1,76 @@
+"use client";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { idb } from "@/lib/idb";
 import { getLetterGrade } from "@/lib/utils";
+import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { format } from "date-fns";
+import { inflate } from "pako";
+import { toast } from "sonner";
+import { useGameContext } from "../providers/gameProvider";
 import { HighScore } from "../providers/highScoresProvider";
 
 const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
+  const { startReplay } = useGameContext();
+
+  const score = highScore.results.score.toLocaleString();
+  const accuracy = (highScore.results.accuracy * 100).toFixed(2);
+
+  const watchReplay = async () => {
+    if (!highScore.replayId) {
+      return;
+    }
+
+    const replay = await idb.getReplay(highScore.replayId);
+
+    if (!replay) {
+      toast("Replay Error", {
+        description: "Replay could not be found",
+      });
+
+      return;
+    }
+
+    const arrayBuffer = await replay.arrayBuffer();
+    const uint8 = new Uint8Array(arrayBuffer);
+    const decompressed = inflate(uint8);
+    const json = new TextDecoder().decode(decompressed);
+    const replayData: ReplayData = JSON.parse(json);
+
+    await startReplay(replayData);
+  };
+
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger
-        asChild
-        className="flex items-center overflow-hidden rounded-full border border-primary p-0 text-xs text-primary"
+        className="group relative overflow-hidden rounded-full border border-primary p-0 text-xs text-primary"
+        onClick={(e) => {
+          e.stopPropagation();
+          watchReplay();
+        }}
       >
-        <div tabIndex={0}>
-          <span className="px-2 pl-2.5">
-            {highScore.results.score.toLocaleString()}
-          </span>
+        <div className="flex items-center transition-opacity group-hover:opacity-0 group-focus:opacity-0">
+          <span className="px-2 pl-2.5">{score}</span>
 
           <span className="-skew-x-12 bg-primary px-2 pr-2.5 text-background">
-            <div className="skew-x-12">
-              {(highScore.results.accuracy * 100).toFixed(2)}%
-            </div>
+            <div className="skew-x-12">{accuracy}%</div>
           </span>
         </div>
+
+        {!highScore.replayId && (
+          <div className="absolute inset-0 text-center opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
+            No Replay
+          </div>
+        )}
+        {highScore.replayId && (
+          <div className="absolute inset-0 bg-primary text-center text-background opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
+            Watch Replay ➤
+          </div>
+        )}
       </TooltipTrigger>
 
       <TooltipContent className="text-xs">
@@ -34,6 +80,11 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
 
         <div className="mx-auto my-2 w-fit rounded-full border-x px-2 py-1 text-base font-semibold">
           {getLetterGrade(highScore.results.accuracy)}
+        </div>
+
+        <div className="mb-2 flex justify-around text-base">
+          <span className="text-primary">{score}</span>
+          <span className="text-muted-foreground">{accuracy}%</span>
         </div>
 
         <div className=" flex gap-1">

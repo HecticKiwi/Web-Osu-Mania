@@ -1,6 +1,9 @@
 import { BeatmapData } from "@/lib/beatmapParser";
+import { idb } from "@/lib/idb";
+import { downloadReplay } from "@/lib/replay";
 import { getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
+import { MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
 import { useHighScoresContext } from "../providers/highScoresProvider";
@@ -16,35 +19,42 @@ const ResultsScreen = ({
   results: PlayResults;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId } = useGameContext();
+  const { closeGame, beatmapSet, beatmapId, setReplayData } = useGameContext();
   const { settings } = useSettingsContext();
   const { highScores, setHighScores } = useHighScoresContext();
   const [newHighScore, setNewHighScore] = useState(false);
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || settings.mods.autoplay || results.failed) {
+    if (!beatmapId || !beatmapSet || settings.mods.autoplay || results.failed) {
       return;
     }
 
-    const beatmapSetId = beatmapSet!.id;
+    const checkNewHighScore = async () => {
+      const beatmapSetId = beatmapSet.id;
 
-    const previousHighScore =
-      highScores[beatmapSet!.id]?.[beatmapId!]?.results.score ?? 0;
+      const previousHighScore =
+        highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
 
-    if (results.score > previousHighScore) {
-      setHighScores((draft) => {
-        draft[beatmapSetId] ??= {};
+      if (results.score > previousHighScore) {
+        await idb.saveReplay(results.replayData, beatmapId.toString());
 
-        draft[beatmapSetId][beatmapId] = {
-          timestamp: Date.now(),
-          mods: getModStrings(settings),
-          results,
-        };
-      });
+        setHighScores((draft) => {
+          draft[beatmapSetId] ??= {};
 
-      setNewHighScore(true);
-    }
+          draft[beatmapSetId][beatmapId] = {
+            timestamp: Date.now(),
+            mods: getModStrings(settings),
+            results,
+            replayId: beatmapId.toString(),
+          };
+        });
+
+        setNewHighScore(true);
+      }
+    };
+
+    checkNewHighScore();
   }, [beatmapId, beatmapSet, highScores, results, setHighScores, settings]);
 
   const beatmap = beatmapSet?.beatmaps.find(
@@ -183,18 +193,53 @@ const ResultsScreen = ({
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
               </div>
 
-              <div className="mt-16 grid grid-cols-2">
-                <Button size={"lg"} onClick={() => closeGame()}>
-                  Back
-                </Button>
+              <div className="mt-16 flex items-center gap-4">
                 <Button
-                  variant={"secondary"}
+                  variant={"ghost"}
                   size={"lg"}
-                  className="ml-4"
-                  onClick={() => retry()}
+                  className="gap-2 text-xl"
+                  onClick={() => closeGame()}
                 >
-                  Retry
+                  <MoveLeft /> Back
                 </Button>
+
+                {!results.viewingReplay && (
+                  <Button
+                    variant={"default"}
+                    size={"lg"}
+                    className="gap-2 text-xl"
+                    onClick={() => retry()}
+                  >
+                    <Repeat /> Retry
+                  </Button>
+                )}
+
+                {results.replayData && (
+                  <div className="ml-auto flex gap-4">
+                    <Button
+                      variant={"secondary"}
+                      size={"lg"}
+                      className="ml-4 gap-2 text-xl"
+                      onClick={() => {
+                        setReplayData(results.replayData);
+                        retry();
+                      }}
+                    >
+                      <Play /> Watch Replay
+                    </Button>
+
+                    <Button
+                      variant={"secondary"}
+                      size={"lg"}
+                      className="gap-2 text-xl"
+                      onClick={() =>
+                        downloadReplay(results.replayData, beatmapData, results)
+                      }
+                    >
+                      <Save /> Download Replay
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -22,7 +22,7 @@ import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvi
 import { Button } from "../ui/button";
 import BeatmapList from "./beatmapList";
 import BeatmapSetCover from "./beatmapSetCover";
-import IndexDbButton from "./indexDbButton";
+import IndexedDbButton from "./indexedDbButton";
 import PreviewProgressBar from "./previewProgressBar";
 import SaveBeatmapSetButton from "./saveBeatmapSetButton";
 
@@ -75,7 +75,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
         <div className="absolute left-4 top-4 flex gap-2">
           {storedBeatmapSets.some(
             (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
-          ) && <IndexDbButton beatmapSet={beatmapSet} />}
+          ) && <IndexedDbButton beatmapSet={beatmapSet} />}
         </div>
 
         <div className="absolute right-4 top-4 flex gap-2">

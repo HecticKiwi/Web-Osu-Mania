@@ -4,7 +4,7 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useGameContext } from "../providers/gameProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
@@ -18,7 +18,7 @@ const GameScreens = ({
   beatmapData: BeatmapData;
   retry: () => void;
 }) => {
-  const { settings } = useSettingsContext();
+  const { replayData } = useGameContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);
@@ -26,7 +26,13 @@ const GameScreens = ({
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused, retry);
+    const game = new Game(
+      beatmapData,
+      setResults,
+      setIsPaused,
+      replayData,
+      retry,
+    );
     setGame(game);
     game.main(containerRef.current);
 
@@ -35,7 +41,7 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [beatmapData, retry]);
+  }, [beatmapData, replayData, retry]);
 
   // Pause logic
   useEffect(() => {
@@ -68,7 +74,7 @@ const GameScreens = ({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [results, settings.keybinds.pause]);
+  }, [results]);
 
   return (
     <>

@@ -1,6 +1,5 @@
 import { Container, Sprite, Texture } from "pixi.js";
 import { Game } from "../../game";
-import { Tap } from "../tap/tap";
 
 export abstract class Key {
   public game: Game;
@@ -28,35 +27,26 @@ export abstract class Key {
     hitArea.height = this.game.app.screen.height;
     hitArea.alpha = 0;
     hitArea.anchor.y = 1;
-    hitArea.eventMode = "static";
-    hitArea.cursor = "pointer";
 
-    hitArea.on("pointerdown", () => {
-      this.game.inputSystem.tappedColumns[this.columnId] = true;
-      this.game.inputSystem.pressedColumns[this.columnId] = true;
+    if (!this.game.replayPlayer) {
+      hitArea.eventMode = "static";
+      hitArea.cursor = "pointer";
 
-      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-        this.game.columns[this.columnId][0]?.hit();
-      }
-    });
+      hitArea.on("pointerdown", () => {
+        this.game.inputSystem.hit(this.columnId);
+      });
 
-    hitArea.on("pointerup", () => {
-      this.game.inputSystem.pressedColumns[this.columnId] = false;
-      this.game.inputSystem.releasedColumns[this.columnId] = true;
+      hitArea.on("pointerup", () => {
+        this.game.inputSystem.release(this.columnId);
+      });
 
-      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-        this.game.columns[this.columnId][0]?.release();
-      }
-    });
+      hitArea.on("pointerupoutside", () => {
+        this.game.inputSystem.pressedColumns[this.columnId] = false;
+        this.game.inputSystem.releasedColumns[this.columnId] = true;
 
-    hitArea.on("pointerupoutside", () => {
-      this.game.inputSystem.pressedColumns[this.columnId] = false;
-      this.game.inputSystem.releasedColumns[this.columnId] = true;
-
-      if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-        this.game.columns[this.columnId][0]?.release();
-      }
-    });
+        this.game.inputSystem.release(this.columnId);
+      });
+    }
 
     this.view.addChild(hitArea);
     this.view.x =
@@ -65,10 +55,6 @@ export abstract class Key {
 
   public update() {
     this.setPressed(this.game.inputSystem.pressedColumns[this.columnId]);
-
-    if (this.game.inputSystem.tappedColumns[this.columnId]) {
-      this.playNextHitsounds();
-    }
   }
 
   public resize() {
@@ -76,12 +62,4 @@ export abstract class Key {
   }
 
   public abstract setPressed(pressed: boolean): void;
-
-  private playNextHitsounds() {
-    const nextTapNote = this.game.columns[this.columnId].find(
-      (hitObject): hitObject is Tap => hitObject.data.type === "tap",
-    );
-
-    nextTapNote?.playHitsounds();
-  }
 }

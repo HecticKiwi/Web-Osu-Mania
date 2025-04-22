@@ -17,6 +17,8 @@ export type Results = {
 
 export type PlayResults = Results & {
   failed?: boolean;
+  viewingReplay?: boolean;
+  replayData?: ReplayData;
 };
 
 export type Column = (Tap | Hold)[];

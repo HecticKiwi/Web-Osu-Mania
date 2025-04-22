@@ -136,8 +136,9 @@ export abstract class Tap {
     }
   }
 
-  public hit() {
-    const delta = this.data.time - this.game.timeElapsed;
+  public hit(timeElapsed?: number) {
+    const delta = this.data.time - (timeElapsed ?? this.game.timeElapsed);
+
     const absDelta = Math.abs(delta);
 
     // Return if you pressed way too early...

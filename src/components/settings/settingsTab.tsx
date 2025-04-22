@@ -7,6 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { idb } from "@/lib/idb";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import BackgroundBlurSlider from "./backgroundBlurSlider";
 import BackgroundDimSlider from "./backgroundDimSlider";
 import BeatmapSettings from "./beatmapSettings";
+import ReplaySettings from "./replaySettings";
 import VolumeSettings from "./volumeSettings";
 
 const SettingsTab = () => {
@@ -349,14 +351,18 @@ const SettingsTab = () => {
 
       <VolumeSettings className="mt-6" />
 
+      <ReplaySettings className="mt-6" />
+
       <BeatmapSettings className="mt-6" />
 
       <Button
         className="mt-4 w-full"
         variant={"destructive"}
         size={"sm"}
-        onClick={() => {
+        onClick={async () => {
+          await idb.clearReplays();
           setHighScores({});
+
           toast("High scores have been reset.");
         }}
       >

@@ -245,3 +245,30 @@ export function getLetterGrade(accuracy: number) {
             ? "C"
             : "D";
 }
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
+  const { playbackRate, ...booleanMods } = mods;
+
+  const compacted: Partial<Settings["mods"]> = {};
+
+  for (const key in booleanMods) {
+    if (booleanMods[key as keyof typeof booleanMods]) {
+      compacted[key as keyof typeof booleanMods] = true;
+    }
+  }
+
+  if (playbackRate !== 1) {
+    compacted.playbackRate = playbackRate;
+  }
+
+  return compacted;
+}

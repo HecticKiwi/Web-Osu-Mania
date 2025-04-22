@@ -2,6 +2,7 @@ import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
 import { BASE_PATH } from "@/lib/utils";
 import { Howl } from "howler";
 import { Game } from "../game";
+import { Tap } from "../sprites/tap/tap";
 
 export class AudioSystem {
   public game: Game;
@@ -82,5 +83,13 @@ export class AudioSystem {
     } else {
       this.play(`skin-${prefix}${name}`, this.game.settings.sfxVolume * volume);
     }
+  }
+
+  public playNextHitsounds(columnId: number) {
+    const nextTapNote = this.game.columns[columnId].find(
+      (hitObject): hitObject is Tap => hitObject.data.type === "tap",
+    );
+
+    nextTapNote?.playHitsounds();
   }
 }

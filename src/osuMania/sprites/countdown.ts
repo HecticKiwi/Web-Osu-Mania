@@ -93,7 +93,7 @@ export class Countdown {
     }
 
     // Skip intro
-    if (canSkip && this.game.inputSystem.anyKeyTapped()) {
+    if (canSkip && this.game.inputSystem.anyColumnTapped()) {
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }
 
