@@ -15,7 +15,7 @@ const PauseScreen = ({
   setIsPaused: (newValue: boolean) => void;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId } = useGameContext();
+  const { closeGame, beatmapSet, beatmapId, replayData } = useGameContext();
   const { settings } = useSettingsContext();
 
   const beatmap = beatmapSet?.beatmaps.find(
@@ -44,7 +44,7 @@ const PauseScreen = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-1">
-              {getModStrings(settings).map((mod) => (
+              {getModStrings(settings, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
                   className="rounded-full bg-primary/25 px-2 py-0.5"

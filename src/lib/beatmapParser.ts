@@ -1,7 +1,4 @@
-import {
-  defaultSettings,
-  Settings,
-} from "@/components/providers/settingsProvider";
+import { Settings } from "@/components/providers/settingsProvider";
 import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
@@ -135,9 +132,7 @@ export const parseOsz = async (
 
   const lines = osuFileData?.split(/\r\n|\n\r|\n/);
 
-  const mods = replayMods
-    ? { ...defaultSettings.mods, ...decodeMods(replayMods) }
-    : getSettings().mods;
+  const mods = replayMods ? decodeMods(replayMods) : getSettings().mods;
 
   // Parse .osu file sections
   const metadata = parseMetadata(lines);

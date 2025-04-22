@@ -1,4 +1,7 @@
-import { Settings } from "@/components/providers/settingsProvider";
+import {
+  defaultSettings,
+  Settings,
+} from "@/components/providers/settingsProvider";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { PlayResults } from "@/types";
 import { deflate } from "pako";
@@ -50,7 +53,7 @@ export function decodeMods(data: EncodedMods): Settings["mods"] {
     mods[key] = (data.bits & (1 << ModBits[key])) !== 0;
   }
 
-  return mods as Settings["mods"];
+  return { ...defaultSettings.mods, ...mods };
 }
 
 export async function downloadReplay(

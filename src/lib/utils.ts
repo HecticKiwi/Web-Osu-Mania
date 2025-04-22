@@ -5,6 +5,7 @@ import {
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { decodeMods, EncodedMods } from "./replay";
 
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -208,8 +209,8 @@ export function getScoreMultiplier(settings: Settings) {
   return multiplier;
 }
 
-export function getModStrings(settings: Settings) {
-  const mods = settings.mods;
+export function getModStrings(settings: Settings, replayMods?: EncodedMods) {
+  const mods = replayMods ? decodeMods(replayMods) : settings.mods;
 
   const modStrings = [
     mods.easy && "Easy",

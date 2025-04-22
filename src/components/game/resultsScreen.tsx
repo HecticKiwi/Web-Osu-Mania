@@ -19,7 +19,8 @@ const ResultsScreen = ({
   results: PlayResults;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId, setReplayData } = useGameContext();
+  const { closeGame, beatmapSet, beatmapId, replayData, setReplayData } =
+    useGameContext();
   const { settings } = useSettingsContext();
   const { highScores, setHighScores } = useHighScoresContext();
   const [newHighScore, setNewHighScore] = useState(false);
@@ -83,7 +84,7 @@ const ResultsScreen = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-1">
-              {getModStrings(settings).map((mod) => (
+              {getModStrings(settings, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
                   className="rounded-full bg-primary/25 px-2 py-0.5"

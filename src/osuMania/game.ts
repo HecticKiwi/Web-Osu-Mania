@@ -1,7 +1,4 @@
-import {
-  defaultSettings,
-  Settings,
-} from "@/components/providers/settingsProvider";
+import { Settings } from "@/components/providers/settingsProvider";
 import {
   BeatmapData,
   Difficulty,
@@ -212,10 +209,7 @@ export class Game {
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
     if (replayData) {
-      this.settings.mods = {
-        ...defaultSettings.mods,
-        ...decodeMods(replayData.mods),
-      };
+      this.settings.mods = decodeMods(replayData.mods);
 
       this.replayPlayer = new ReplayPlayer(this, replayData);
     } else if (!this.settings.mods.autoplay) {
