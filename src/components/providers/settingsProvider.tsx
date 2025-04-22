@@ -74,7 +74,6 @@ export type Settings = {
     showProgressBar: boolean;
     showHealthBar: boolean;
   };
-  replays: boolean;
 };
 
 export const defaultSettings: Settings = {
@@ -292,7 +291,6 @@ export const defaultSettings: Settings = {
     showProgressBar: true,
     showHealthBar: true,
   },
-  replays: true,
 };
 
 const SettingsContext = createContext<{

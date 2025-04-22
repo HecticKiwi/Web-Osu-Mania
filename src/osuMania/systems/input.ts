@@ -1,13 +1,8 @@
-import { nothing } from "immer";
 import { Game } from "../game";
 
 export class InputSystem {
   private game: Game;
   private keybindsMap: Map<string, number>;
-
-  public tappedKeys: Set<string> = new Set();
-  public pressedKeys: Set<string> = new Set();
-  public releasedKeys: Set<string> = new Set();
 
   public gamepadState: boolean[] = [];
 
@@ -16,7 +11,6 @@ export class InputSystem {
   public releasedColumns: boolean[];
 
   public pauseTapped: boolean = false;
-
 
   constructor(game: Game) {
     this.game = game;
@@ -42,11 +36,44 @@ export class InputSystem {
   private initKeybindsMap() {
     const keybinds =
       this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
-      keybinds.forEach((key, index) => {
+    keybinds.forEach((key, index) => {
       if (key) {
         this.keybindsMap.set(key, index);
       }
     });
+  }
+
+  public hit(column: number, timeElapsed?: number) {
+    if (this.pressedColumns[column]) {
+      return;
+    }
+
+    this.tappedColumns[column] = true;
+    this.pressedColumns[column] = true;
+
+    if (this.game.state !== "PLAY" || this.game.settings.mods.autoplay) {
+      return;
+    }
+
+    this.game.replayRecorder?.record(column, true);
+    this.game.columns[column][0]?.hit(timeElapsed);
+    this.game.audioSystem.playNextHitsounds(column);
+  }
+
+  public release(column: number, timeElapsed?: number) {
+    if (!this.pressedColumns[column]) {
+      return;
+    }
+
+    this.pressedColumns[column] = false;
+    this.releasedColumns[column] = true;
+
+    if (this.game.state !== "PLAY" || this.game.settings.mods.autoplay) {
+      return;
+    }
+
+    this.game.replayRecorder?.record(column, false);
+    this.game.columns[column][0]?.release(timeElapsed);
   }
 
   public updateGamepadInputs() {
@@ -62,52 +89,29 @@ export class InputSystem {
         this.pauseTapped = true;
       }
 
-      if (this.game.isGameReplay) {
+      if (this.game.replayPlayer) {
         return;
       }
+
       const column = this.keybindsMap.get(`🎮Btn${i}`);
-      if (column === undefined) return;
+      if (column === undefined) {
+        return;
+      }
 
       if (button.pressed && !this.gamepadState[i]) {
-        this.tappedColumns[column] = true;
-        this.pressedColumns[column] = true;
-
-        if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-          this.game.columns[column][0]?.hit();
-        }
+        this.hit(column);
       } else if (!button.pressed && this.gamepadState[i]) {
-        this.pressedColumns[column] = false;
-        this.releasedColumns[column] = true;
-
-        if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-          this.game.columns[column][0]?.release();
-        }
+        this.release(column);
       }
     });
 
     this.gamepadState = gamepad.buttons.map((button) => button.pressed);
   }
 
-  public handleKeyDown(event: KeyboardEvent) {
-    if (event.code === "KeyP") {
-      this.game.columns.forEach((object) => {
-        object[0]?.hit();
-        object[1]?.hit();
-      });
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.repeat) {
       return;
     }
-    
-    
-    if (this.pressedKeys.has(event.code) || (this.game.isGameReplay)) {
-      if (event.code === "Escape") {
-        nothing;
-      } else {
-        return;
-      }
-    }
-
-    this.tappedKeys.add(event.code);
-    this.pressedKeys.add(event.code);
 
     if (
       event.code === "Escape" ||
@@ -117,34 +121,8 @@ export class InputSystem {
       return;
     }
 
-    const column = this.keybindsMap.get(event.code);
-    if (column === undefined) {
+    if (this.game.replayPlayer) {
       return;
-    }
-
-    this.tappedColumns[column] = true;
-    this.pressedColumns[column] = true;
-
-    if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-      this.game.columns[column][0]?.hit();
-    }  
-  }
-
-  public handleKeyUp(event: KeyboardEvent) {
-    if (this.game.isGameReplay) {
-      if (event.code === "Escape") {
-        nothing;
-      } else {
-        return;
-      }
-    }
-
-
-    this.pressedKeys.delete(event.code);
-    this.releasedKeys.add(event.code);
-
-    if (this.game.settings.keybinds.pause === event.code) {
-      this.pauseTapped = false;
     }
 
     const column = this.keybindsMap.get(event.code);
@@ -152,23 +130,27 @@ export class InputSystem {
       return;
     }
 
-    this.tappedColumns[column] = false;
-    this.pressedColumns[column] = false;
-    this.releasedColumns[column] = true;
-
-    if (this.game.state === "PLAY" && !this.game.settings.mods.autoplay) {
-      this.game.columns[column][0]?.release();
-    }
+    this.hit(column);
   }
 
-  public anyKeyTapped() {
+  private handleKeyUp(event: KeyboardEvent) {
+    if (this.game.replayPlayer) {
+      return;
+    }
+
+    const column = this.keybindsMap.get(event.code);
+    if (column === undefined) {
+      return;
+    }
+
+    this.release(column);
+  }
+
+  public anyColumnTapped() {
     return this.tappedColumns.some((value) => value);
   }
 
   public clearInputs() {
-    this.tappedKeys.clear();
-    this.releasedKeys.clear();
-
     this.tappedColumns.fill(false);
     this.releasedColumns.fill(false);
 

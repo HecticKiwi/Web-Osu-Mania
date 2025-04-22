@@ -67,9 +67,9 @@ const BeatmapList = ({
               const highScore = highScores[beatmapSet.id]?.[beatmap.id];
 
               return (
-                <button
+                <div
                   key={beatmap.id}
-                  className="flex items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
+                  className="flex cursor-pointer items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
                   onClick={() => {
                     stopPreview();
                     startGame(beatmap.id);
@@ -81,7 +81,7 @@ const BeatmapList = ({
                   />
 
                   <div className="grow">
-                    <p className="line-clamp-1">{beatmap.version}</p>
+                    <button className="line-clamp-1">{beatmap.version}</button>
 
                     <div className="flex items-center justify-between">
                       <p className="text-muted-foreground">
@@ -91,7 +91,7 @@ const BeatmapList = ({
                       {highScore && <HighScoreToolTip highScore={highScore} />}
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })}
       </div>

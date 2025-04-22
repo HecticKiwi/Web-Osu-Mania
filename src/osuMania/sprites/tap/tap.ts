@@ -136,10 +136,9 @@ export abstract class Tap {
     }
   }
 
-  public hit() {
-    this.game.replayRecorder?.record(this.data.column, true, "Tap");
+  public hit(timeElapsed?: number) {
+    const delta = this.data.time - (timeElapsed ?? this.game.timeElapsed);
 
-    const delta = this.data.time - this.game.timeElapsed;
     const absDelta = Math.abs(delta);
 
     // Return if you pressed way too early...
@@ -166,7 +165,5 @@ export abstract class Tap {
     this.shouldRemove = true;
   }
 
-  public release() {
-    this.game.replayRecorder?.record(this.data.column, false, "Tap");
-  }
+  public release() {}
 }

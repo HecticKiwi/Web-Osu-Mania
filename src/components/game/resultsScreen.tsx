@@ -1,54 +1,60 @@
 import { BeatmapData } from "@/lib/beatmapParser";
+import { idb } from "@/lib/idb";
+import { downloadReplay } from "@/lib/replay";
 import { getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
+import { MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGameContext } from "../providers/gameProvider";
 import { useHighScoresContext } from "../providers/highScoresProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
-import { ReplayData } from "@/osuMania/systems/replay";
-import { toast } from "sonner";
 
 const ResultsScreen = ({
   beatmapData,
   results,
-  replayData,
-  retry, 
+  retry,
 }: {
   beatmapData: BeatmapData;
   results: PlayResults;
-  replayData: ReplayData | null;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId } = useGameContext();
+  const { closeGame, beatmapSet, beatmapId, setReplayData } = useGameContext();
   const { settings } = useSettingsContext();
   const { highScores, setHighScores } = useHighScoresContext();
   const [newHighScore, setNewHighScore] = useState(false);
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || settings.mods.autoplay || results.failed || results.replay) {
+    if (!beatmapId || !beatmapSet || settings.mods.autoplay || results.failed) {
       return;
     }
 
-    const beatmapSetId = beatmapSet!.id;
+    const checkNewHighScore = async () => {
+      const beatmapSetId = beatmapSet.id;
 
-    const previousHighScore =
-      highScores[beatmapSet!.id]?.[beatmapId!]?.results.score ?? 0;
+      const previousHighScore =
+        highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
 
-    if (results.score > previousHighScore) {
-      setHighScores((draft) => {
-        draft[beatmapSetId] ??= {};
+      if (results.score > previousHighScore) {
+        await idb.saveReplay(results.replayData, beatmapId.toString());
 
-        draft[beatmapSetId][beatmapId] = {
-          timestamp: Date.now(),
-          mods: getModStrings(settings),
-          results,
-        };
-      });
+        setHighScores((draft) => {
+          draft[beatmapSetId] ??= {};
 
-      setNewHighScore(true);
-    }
+          draft[beatmapSetId][beatmapId] = {
+            timestamp: Date.now(),
+            mods: getModStrings(settings),
+            results,
+            replayId: beatmapId.toString(),
+          };
+        });
+
+        setNewHighScore(true);
+      }
+    };
+
+    checkNewHighScore();
   }, [beatmapId, beatmapSet, highScores, results, setHighScores, settings]);
 
   const beatmap = beatmapSet?.beatmaps.find(
@@ -59,57 +65,6 @@ const ResultsScreen = ({
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
 
-
-  const getgrade = () => { 
-    if (results.failed) {
-      return "Failed";
-    }
-    if (results.replay) {
-      return "Replay";
-    }
-    return getLetterGrade(results.accuracy);
-  }
-
-  async function downloadReplay(replaydata: ReplayData | null, beatmapData: BeatmapData, results: PlayResults) {
-    if (!replaydata) {
-      toast.message("Error saving replay", {
-        description: "No replay data available",
-      });
-      return;
-    }
-  
-    try {
-      // Convert replay data to a JSON string
-      const replayJson = JSON.stringify(replaydata, null, 2);
-  
-      // Create a Blob from the JSON string
-      const blob = new Blob([replayJson], { type: "application/octet-stream" });
-  
-      // Generate a unique filename
-      const acc = (results.accuracy * 100).toString().replace(".", "-");
-      const filename = `[${beatmapData.difficulty.keyCount}K] ${beatmapData.metadata.title}-${beatmapData.metadata.artist}_Scr${results.score}_Acc${acc}.womr`;
-  
-      // Create a link element for downloading
-      const link = document.createElement('a');
-      const url = window.URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      link.click();
-  
-      // Clean up the URL object
-      window.URL.revokeObjectURL(url);
-  
-      toast.message("Replay saved successfully", {
-        description: "The replay has been downloaded.",
-      });
-    } catch (error) {
-      toast.message("An unknown error occurred", {
-        description: "Check Console",
-      });
-      console.error(error);
-    }
-  }  
-  
   return (
     <>
       {/* Top of -1px since it wasn't covering the top for some reason */}
@@ -229,40 +184,62 @@ const ResultsScreen = ({
                     Grade
                   </h3>
                   <span>
-                    {
-                      results.replay
-                        ? "Replay"
-                        : results.failed
-                          ? "Failed"
-                          : getgrade()
-                    }
+                    {results.failed
+                      ? "Failed"
+                      : getLetterGrade(results.accuracy)}
                   </span>
                 </div>
 
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
               </div>
 
-              <div className="mt-16 grid grid-cols-3">
-                <Button size={"lg"} onClick={() => closeGame()}>
-                  Back
-                </Button>
+              <div className="mt-16 flex items-center gap-4">
                 <Button
-                  variant={"secondary"}
+                  variant={"ghost"}
                   size={"lg"}
-                  className="ml-4"
-                  onClick={() => retry()}
+                  className="gap-2 text-xl"
+                  onClick={() => closeGame()}
                 >
-                  Retry
+                  <MoveLeft /> Back
                 </Button>
-                <Button
-                  variant={"secondary"}
-                  size={"lg"}
-                  className="ml-4"
-                  disabled={!replayData}
-                  onClick={() => downloadReplay(replayData, beatmapData, results)}
-                >
-                  Save Replay
-                </Button>
+
+                {!results.viewingReplay && (
+                  <Button
+                    variant={"default"}
+                    size={"lg"}
+                    className="gap-2 text-xl"
+                    onClick={() => retry()}
+                  >
+                    <Repeat /> Retry
+                  </Button>
+                )}
+
+                {results.replayData && (
+                  <div className="ml-auto flex gap-4">
+                    <Button
+                      variant={"secondary"}
+                      size={"lg"}
+                      className="ml-4 gap-2 text-xl"
+                      onClick={() => {
+                        setReplayData(results.replayData);
+                        retry();
+                      }}
+                    >
+                      <Play /> Watch Replay
+                    </Button>
+
+                    <Button
+                      variant={"secondary"}
+                      size={"lg"}
+                      className="gap-2 text-xl"
+                      onClick={() =>
+                        downloadReplay(results.replayData, beatmapData, results)
+                      }
+                    >
+                      <Save /> Download Replay
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

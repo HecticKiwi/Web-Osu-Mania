@@ -1,8 +1,5 @@
 import { Hold } from "./osuMania/sprites/hold/hold";
 import { Tap } from "./osuMania/sprites/tap/tap";
-import { Settings } from "@/components/providers/settingsProvider";
-import { BeatmapData, Metadata, Difficulty, HitObject, HitWindows, TimingPoint, } from "@/lib/beatmapParser";
-
 
 export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE" | "FAIL";
 
@@ -20,7 +17,8 @@ export type Results = {
 
 export type PlayResults = Results & {
   failed?: boolean;
-  replay?: boolean;
+  viewingReplay?: boolean;
+  replayData?: ReplayData;
 };
 
 export type Column = (Tap | Hold)[];

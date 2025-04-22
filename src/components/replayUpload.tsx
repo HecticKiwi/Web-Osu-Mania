@@ -1,63 +1,58 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { Upload } from "lucide-react";
+import { inflate } from "pako";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
 import { useGameContext } from "./providers/gameProvider";
-import { ReplayData } from "@/osuMania/systems/replay";
-
 
 const ReplayUpload = () => {
-  const { setUploadedReplay, setReplay } = useGameContext();
+  const { startReplay } = useGameContext();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const loadFile = (file?: File) => {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     if (!file.name.endsWith(".womr")) {
       toast.message("Failed to load replay file", {
         description: "File is not in the .womr format.",
       });
+
       return;
     }
 
     const reader = new FileReader();
 
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
-        const text = reader.result as string;
-        const parsedData: ReplayData = JSON.parse(text);
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const uint8 = new Uint8Array(arrayBuffer);
+        const decompressed = inflate(uint8);
+        const jsonStr = new TextDecoder().decode(decompressed);
+        const parsedData: ReplayData = JSON.parse(jsonStr);
 
-        // Optional: validate fields exist
-        if (
-          parsedData?.beatmapData &&
-          parsedData?.usersettings &&
-          parsedData?.data?.inputs
-        ) {
-
-          setReplay(parsedData);
-          setUploadedReplay(file);
-        } else {
-          throw new Error("Invalid ReplayData structure");
-        }
+        startReplay(parsedData);
       } catch (err) {
         toast.message("Error reading replay file", {
           description: "File is not a valid .womr replay format.",
         });
-        console.error(err);
       }
     };
 
     reader.onerror = () => {
       toast.message("Error reading file", {
-        description: "Something went wrong while loading the file.",
+        description:
+          reader.error?.message ||
+          "An unknown error occurred while loading the file.",
       });
     };
 
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   };
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

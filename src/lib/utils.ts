@@ -3,10 +3,8 @@ import {
   Settings,
 } from "@/components/providers/settingsProvider";
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import { ReplayData } from "@/osuMania/systems/replay";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useState } from "react";
 
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -248,8 +246,29 @@ export function getLetterGrade(accuracy: number) {
             : "D";
 }
 
-export let replayData: ReplayData | null = null;
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
-export function setReplayData(data: ReplayData | null) {
-  replayData = data;
+export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
+  const { playbackRate, ...booleanMods } = mods;
+
+  const compacted: Partial<Settings["mods"]> = {};
+
+  for (const key in booleanMods) {
+    if (booleanMods[key as keyof typeof booleanMods]) {
+      compacted[key as keyof typeof booleanMods] = true;
+    }
+  }
+
+  if (playbackRate !== 1) {
+    compacted.playbackRate = playbackRate;
+  }
+
+  return compacted;
 }

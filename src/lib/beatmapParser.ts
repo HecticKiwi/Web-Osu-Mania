@@ -1,8 +1,13 @@
+import {
+  defaultSettings,
+  Settings,
+} from "@/components/providers/settingsProvider";
 import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
 import { Beatmap } from "./osuApi";
-import { getSettings, removeFileExtension, shuffle, replayData } from "./utils";
+import { decodeMods, EncodedMods } from "./replay";
+import { getSettings, removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
@@ -13,8 +18,6 @@ export type Metadata = {
   artistUnicode: string;
   version: string;
   creator: string;
-  BeatmapId: string;
-  BeatmapSetId: string;
 };
 
 export type Sound = {
@@ -82,8 +85,9 @@ export type HitWindows = {
 };
 
 export interface BeatmapData {
-  beatmapId: string;
-  beatmapSetId: string;
+  beatmapId: number;
+  beatmapSetId: number;
+  version: string;
   timingPoints: TimingPoint[];
   hitObjects: HitObject[];
   startTime: number;
@@ -99,6 +103,7 @@ export interface BeatmapData {
 export const parseOsz = async (
   blob: Blob,
   beatmap: Beatmap,
+  replayMods?: EncodedMods,
 ): Promise<BeatmapData> => {
   const zip = await JSZip.loadAsync(blob);
 
@@ -130,18 +135,27 @@ export const parseOsz = async (
 
   const lines = osuFileData?.split(/\r\n|\n\r|\n/);
 
+  const mods = replayMods
+    ? { ...defaultSettings.mods, ...decodeMods(replayMods) }
+    : getSettings().mods;
+
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
-  const beatmapId = metadata.BeatmapId
-  const beatmapSetId = metadata.BeatmapSetId
   const difficulty = parseDifficulty(lines);
   const { hitObjects, delay, startTime, endTime } = parseHitObjects(
     lines,
     difficulty.keyCount,
+    mods,
   );
-  const timingPoints = parseTimingPoints(lines, delay, startTime, endTime);
+  const timingPoints = parseTimingPoints(
+    lines,
+    delay,
+    startTime,
+    endTime,
+    mods,
+  );
 
-  const hitWindows = getHitWindows(difficulty.od);
+  const hitWindows = getHitWindows(difficulty.od, mods);
 
   // Song file
 
@@ -230,8 +244,9 @@ export const parseOsz = async (
   }
 
   return {
-    beatmapId,
-    beatmapSetId,
+    beatmapSetId: beatmap.beatmapset_id,
+    beatmapId: beatmap.id,
+    version: beatmap.version,
     timingPoints,
     hitObjects,
     startTime,
@@ -255,11 +270,15 @@ function findFile(zip: JSZip, filename: string) {
   ];
 }
 
-export function parseHitObjects(lines: string[], columnCount: number) {
+export function parseHitObjects(
+  lines: string[],
+  columnCount: number,
+  mods: Settings["mods"],
+) {
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
-  const { audioOffset, mods } = getSettings();
+  const { audioOffset } = getSettings();
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
@@ -337,6 +356,7 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   const delay =
     Math.max(1000 - hitObjects[0].time / mods.playbackRate, 0) *
     mods.playbackRate;
+
   hitObjects.forEach((hitObject) => {
     hitObject.time += delay - audioOffset;
     if (hitObject.type === "hold") {
@@ -367,44 +387,44 @@ export function parseHitObjects(lines: string[], columnCount: number) {
   };
 }
 
-export function parseMetadata(lines: string[]): Metadata {
+function parseMetadata(lines: string[]): Metadata {
   const title = getLineValue(lines, "Title");
   const titleUnicode = getLineValue(lines, "TitleUnicode");
   const artist = getLineValue(lines, "Artist");
   const artistUnicode = getLineValue(lines, "ArtistUnicode");
   const version = getLineValue(lines, "Version");
   const creator = getLineValue(lines, "Creator");
-  const BeatmapId = getLineValue(lines, "BeatmapID")
-  const BeatmapSetId = getLineValue(lines, "BeatmapSetID")
 
-  return { title, titleUnicode, artist, artistUnicode, version, creator, BeatmapId, BeatmapSetId };
+  return {
+    title,
+    titleUnicode,
+    artist,
+    artistUnicode,
+    version,
+    creator,
+  };
 }
 
-export function parseDifficulty(lines: string[]): Difficulty {
+function parseDifficulty(lines: string[]): Difficulty {
   const keyCount = Number(getLineValue(lines, "CircleSize"));
   const od = Number(getLineValue(lines, "OverallDifficulty"));
 
   return { keyCount, od };
 }
 
-export function parseTimingPoints(
+function parseTimingPoints(
   lines: string[],
   delay: number,
   startTime: number,
   endTime: number,
+  mods: Settings["mods"],
 ): TimingPoint[] {
   const startIndex = lines.indexOf("[TimingPoints]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
   const timingPointLines = lines.slice(startIndex, endIndex);
 
-  let settings = getSettings();
-  if (replayData) {
-    settings.mods = replayData.usersettings.mods;
-    settings.audioOffset = replayData.usersettings.audioOffset;
-    settings.hitPositionOffset = replayData.usersettings.hitPositionOffset;
-  }
-
+  const settings = getSettings();
   const baseScrollSpeed = settings.scrollSpeed;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
@@ -434,7 +454,7 @@ export function parseTimingPoints(
     return timingPoint;
   });
 
-  if (!settings.mods.constantSpeed) {
+  if (!mods.constantSpeed) {
     const mostCommonBeatLength = getMostCommonBeatLength(
       timingPoints.filter((timingPoint) => timingPoint.uninherited),
       startTime,
@@ -511,12 +531,7 @@ function getLineValue(lines: string[], key: string) {
 
 // https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
-export function getHitWindows(od: number): HitWindows {
-  let { mods } = getSettings();
-  if (replayData) {
-    mods = replayData.usersettings.mods;
-  }
-
+function getHitWindows(od: number, mods: Settings["mods"]): HitWindows {
   if (mods.easy) {
     od = od / 2;
   } else if (mods.hardRock) {

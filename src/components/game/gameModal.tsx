@@ -13,7 +13,7 @@ import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvi
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
-  const { beatmapId, beatmapSet, closeGame, uploadedBeatmapSet } =
+  const { beatmapId, beatmapSet, closeGame, uploadedBeatmapSet, replayData } =
     useGameContext();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
@@ -81,7 +81,11 @@ const GameModal = () => {
           );
         }
 
-        const beatmapData = await parseOsz(beatmapSetFile, beatmap);
+        const beatmapData = await parseOsz(
+          beatmapSetFile,
+          beatmap,
+          replayData?.mods,
+        );
 
         await loadAssets();
 
@@ -107,6 +111,7 @@ const GameModal = () => {
     storedBeatmapSets,
     setStoredBeatmapSets,
     settings.storeDownloadedBeatmaps,
+    replayData,
   ]);
 
   // Clean up object URLs

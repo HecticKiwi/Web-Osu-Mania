@@ -8,6 +8,7 @@ export type HighScore = {
   timestamp: number;
   mods: string[];
   results: Results;
+  replayId: string;
 };
 
 export type BeatmapSetHighScores = Record<number, HighScore>;

@@ -4,13 +4,12 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useGameContext } from "../providers/gameProvider";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
 import RetryWidget from "./retryWidget";
 import VolumeWidget from "./volumeWidget";
-import { ReplayData } from "@/osuMania/systems/replay";
 
 const GameScreens = ({
   beatmapData,
@@ -19,16 +18,21 @@ const GameScreens = ({
   beatmapData: BeatmapData;
   retry: () => void;
 }) => {
-  const { settings } = useSettingsContext();
+  const { replayData } = useGameContext();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);
-  const [replayData, setReplayData] = useState<ReplayData | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults, setIsPaused, setReplayData, retry);
+    const game = new Game(
+      beatmapData,
+      setResults,
+      setIsPaused,
+      replayData,
+      retry,
+    );
     setGame(game);
     game.main(containerRef.current);
 
@@ -37,7 +41,7 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [beatmapData, retry]);
+  }, [beatmapData, replayData, retry]);
 
   // Pause logic
   useEffect(() => {
@@ -70,7 +74,7 @@ const GameScreens = ({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [results, settings.keybinds.pause]);
+  }, [results]);
 
   return (
     <>
@@ -90,7 +94,6 @@ const GameScreens = ({
           <ResultsScreen
             beatmapData={beatmapData}
             results={results}
-            replayData={replayData}
             retry={retry}
           />
         )}

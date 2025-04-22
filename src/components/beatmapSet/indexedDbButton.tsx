@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Idb } from "@/lib/idb";
+import { idb } from "@/lib/idb";
 import { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { HardDrive } from "lucide-react";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
 import { Button } from "../ui/button";
 
-const IndexDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
+const IndexedDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   const { setStoredBeatmapSets } = useStoredBeatmapSetsContext();
 
   return (
@@ -27,7 +27,6 @@ const IndexDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
               size={"icon"}
               className={cn("h-8 w-8 ")}
               onClick={async () => {
-                const idb = new Idb();
                 await idb.deleteBeatmap(beatmapSet.id);
                 setStoredBeatmapSets((draft) => {
                   return draft.filter((set) => set.id !== beatmapSet.id);
@@ -47,4 +46,4 @@ const IndexDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   );
 };
 
-export default IndexDbButton;
+export default IndexedDbButton;
