@@ -194,50 +194,50 @@ const ResultsScreen = ({
                 <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
               </div>
 
-              <div className="mt-16 flex items-center gap-4">
-                <Button
-                  variant={"ghost"}
-                  size={"lg"}
-                  className="gap-2 text-xl"
-                  onClick={() => closeGame()}
-                >
-                  <MoveLeft /> Back
-                </Button>
-
-                {!results.viewingReplay && (
+              <div className="mt-16 flex flex-wrap items-center justify-between gap-8">
+                <div className="flex gap-4">
                   <Button
-                    variant={"default"}
-                    size={"lg"}
+                    variant={"ghost"}
                     className="gap-2 text-xl"
-                    onClick={() => retry()}
+                    onClick={() => closeGame()}
                   >
-                    <Repeat /> Retry
+                    <MoveLeft /> Back
                   </Button>
-                )}
+
+                  {!results.viewingReplay && (
+                    <Button
+                      variant={"default"}
+                      className="gap-2 text-xl"
+                      onClick={() => retry()}
+                    >
+                      <Repeat /> Retry
+                    </Button>
+                  )}
+                </div>
 
                 {results.replayData && (
-                  <div className="ml-auto flex gap-4">
+                  <div className="flex gap-4">
                     <Button
                       variant={"secondary"}
-                      size={"lg"}
-                      className="ml-4 gap-2 text-xl"
+                      className="gap-2 text-xl"
                       onClick={() => {
                         setReplayData(results.replayData);
                         retry();
                       }}
                     >
-                      <Play /> Watch Replay
+                      <Play /> Watch{" "}
+                      <span className="hidden lg:inline">Replay</span>
                     </Button>
 
                     <Button
                       variant={"secondary"}
-                      size={"lg"}
                       className="gap-2 text-xl"
                       onClick={() =>
                         downloadReplay(results.replayData, beatmapData, results)
                       }
                     >
-                      <Save /> Download Replay
+                      <Save /> Download{" "}
+                      <span className="hidden lg:inline">Replay</span>
                     </Button>
                   </div>
                 )}
