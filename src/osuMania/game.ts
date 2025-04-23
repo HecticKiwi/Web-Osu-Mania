@@ -949,7 +949,11 @@ export class Game {
 
       while (i < column.length) {
         const hitObject = column[i];
-        hitObject.update();
+
+        // Object may already be hit during replay
+        if (!hitObject.shouldRemove) {
+          hitObject.update();
+        }
 
         if (hitObject.shouldRemove) {
           this.notesContainer.removeChild(hitObject.view);

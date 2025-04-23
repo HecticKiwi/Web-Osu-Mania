@@ -55,6 +55,10 @@ export class InputSystem {
       return;
     }
 
+    if (!timeElapsed) {
+      this.game.timeElapsed = Math.round(this.game.song.seek() * 1000);
+    }
+
     this.game.replayRecorder?.record(column, true);
     this.game.columns[column][0]?.hit(timeElapsed);
     this.game.audioSystem.playNextHitsounds(column);
@@ -70,6 +74,10 @@ export class InputSystem {
 
     if (this.game.state !== "PLAY" || this.game.settings.mods.autoplay) {
       return;
+    }
+
+    if (!timeElapsed) {
+      this.game.timeElapsed = Math.round(this.game.song.seek() * 1000);
     }
 
     this.game.replayRecorder?.record(column, false);
