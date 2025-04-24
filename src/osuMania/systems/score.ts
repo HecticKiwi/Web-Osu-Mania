@@ -1,3 +1,4 @@
+import { HitError } from "@/components/game/timingDistributionChart";
 import { clamp, getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
@@ -27,6 +28,8 @@ export class ScoreSystem {
 
   private bonus = 100;
   private readonly totalHitObjects: number;
+
+  public hitErrors: HitError[] = [];
 
   // Judgement counts
   public 320 = 0;

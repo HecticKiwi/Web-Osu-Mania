@@ -1,3 +1,5 @@
+export const JUDGEMENTS = [320, 300, 200, 100, 50, 0] as const;
+
 // All coordinates/sizes in osu assume the game is running at 640x480 res, or 854x480 for 16:9 aspect ratio
 export const OSU_WIDTH = 854;
 export const OSU_HEIGHT = 480;
