@@ -47,14 +47,8 @@ const ResultsScreen = ({
         await idb.saveReplay(playResults.replayData, beatmapId.toString());
 
         // Trim out properties that don't need to be saved
-        const {
-          failed,
-          viewingReplay,
-          replayData,
-          missHitWindow,
-          hitErrors,
-          ...results
-        } = playResults;
+        const { failed, viewingReplay, replayData, hitErrors, ...results } =
+          playResults;
 
         setHighScores((draft) => {
           draft[beatmapSetId] ??= {};
@@ -159,27 +153,27 @@ const ResultsScreen = ({
 
                 <div className="grid gap-4 text-2xl sm:grid-cols-2">
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-great w-16">300</span>
+                    <span className="w-16 text-judgement-great">300</span>
                     <span className="text-5xl">{playResults[300]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-perfect w-16">300g</span>
+                    <span className="w-16 text-judgement-perfect">300g</span>
                     <span className="text-5xl">{playResults[320]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-good w-16">200</span>
+                    <span className="w-16 text-judgement-good">200</span>
                     <span className="text-5xl">{playResults[200]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-ok w-16">100</span>
+                    <span className="w-16 text-judgement-ok">100</span>
                     <span className="text-5xl">{playResults[100]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-meh w-16">50</span>
+                    <span className="w-16 text-judgement-meh">50</span>
                     <span className="text-5xl">{playResults[50]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-judgement-miss w-16">miss!</span>
+                    <span className="w-16 text-judgement-miss">miss!</span>
                     <span className="text-5xl">{playResults[0]}x</span>
                   </div>
                 </div>

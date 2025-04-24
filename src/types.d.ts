@@ -21,7 +21,6 @@ export type PlayResults = Results & {
   failed?: boolean;
   viewingReplay?: boolean;
   replayData?: ReplayData;
-  missHitWindow: number;
   hitErrors: HitError[];
 };
 

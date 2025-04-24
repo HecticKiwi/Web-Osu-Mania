@@ -189,7 +189,6 @@ export class Game {
         viewingReplay: !!this.replayPlayer,
         replayData:
           this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
-        missHitWindow: this.hitWindows[0],
         hitErrors: this.scoreSystem.hitErrors,
       });
     };

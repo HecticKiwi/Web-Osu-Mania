@@ -112,6 +112,7 @@ export abstract class Tap {
       if (delta < 0) {
         this.playHitsounds();
 
+        this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
         this.game.scoreSystem.hit(320);
         this.game.stageLights[this.data.column]?.light();
 

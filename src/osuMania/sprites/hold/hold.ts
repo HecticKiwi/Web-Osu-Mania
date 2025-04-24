@@ -59,6 +59,7 @@ export abstract class Hold {
 
       // If hold is completed
       if (endTimeDelta < 0) {
+        this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
         this.game.scoreSystem.hit(320);
 
         this.game.errorBar?.addTimingMark(0);

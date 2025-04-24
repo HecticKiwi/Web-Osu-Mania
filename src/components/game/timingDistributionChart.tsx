@@ -38,7 +38,6 @@ function createTimingHistogram(
   }
 
   hitErrors.forEach(({ error, judgement }) => {
-    if (error < min || error > max) return;
     const index = Math.round((error - min) / binSize);
     const clampedIndex = Math.min(index, binCount - 1);
     bins[clampedIndex][judgement]++;
@@ -76,7 +75,10 @@ export default function TimingDistributionChart({
   const min = Math.min(...hitErrors.map((e) => e.error));
   const max = Math.max(...hitErrors.map((e) => e.error));
   const absMax = Math.max(Math.abs(min), Math.abs(max));
-  const domain = [-absMax, absMax] as [number, number];
+  const domain = (absMax === 0 ? [-10, 10] : [-absMax, absMax]) as [
+    number,
+    number,
+  ];
 
   const chartData = createTimingHistogram(hitErrors, binCount, domain);
   const ticks = generateSymmetricTicks(domain, tickCount);
