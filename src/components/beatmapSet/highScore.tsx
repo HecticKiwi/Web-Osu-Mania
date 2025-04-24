@@ -89,31 +89,29 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
 
         <div className=" flex gap-1">
           <div className="flex gap-1">
-            <span className="w-8 bg-gradient-to-b from-blue-300 via-green-300 to-orange-300 bg-clip-text text-end text-transparent">
-              300g
-            </span>{" "}
+            <span className="text-judgement-perfect w-8 text-end">300g</span>{" "}
             <span className="w-9">{highScore.results[320]}</span>
           </div>
           <div className="flex gap-1">
-            <span className="w-8 text-end text-orange-300">300</span>{" "}
+            <span className="text-judgement-great w-8 text-end">300</span>{" "}
             <span className="w-9">{highScore.results[300]}</span>
           </div>
           <div className="flex gap-1">
-            <span className="w-8 text-end text-green-300">200</span>{" "}
+            <span className="text-judgement-good w-8 text-end">200</span>{" "}
             <span className="w-9">{highScore.results[200]}</span>
           </div>
         </div>
         <div className="mt-1 flex gap-1">
           <div className="flex gap-1">
-            <span className="w-8 text-end text-sky-300">100</span>{" "}
+            <span className="text-judgement-ok w-8 text-end">100</span>{" "}
             <span className="w-9">{highScore.results[100]}</span>
           </div>
           <div className="flex gap-1">
-            <span className="w-8 text-end text-slate-300">50</span>{" "}
+            <span className="text-judgement-meh w-8 text-end">50</span>{" "}
             <span className="w-9">{highScore.results[50]}</span>
           </div>
           <div className="flex gap-1">
-            <span className="w-8 text-end text-rose-300">x</span>{" "}
+            <span className="text-judgement-miss w-8 text-end">x</span>{" "}
             <span className="w-9">{highScore.results[0]}</span>
           </div>
         </div>
