@@ -273,3 +273,14 @@ export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
 
   return compacted;
 }
+
+export function mean(arr: number[]) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+export function stdev(arr: number[]) {
+  const meanValue = mean(arr);
+  return Math.sqrt(
+    arr.reduce((a, b) => a + (b - meanValue) ** 2, 0) / arr.length,
+  );
+}

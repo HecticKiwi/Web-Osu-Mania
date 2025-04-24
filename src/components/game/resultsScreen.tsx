@@ -1,7 +1,7 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
 import { downloadReplay } from "@/lib/replay";
-import { getLetterGrade, getModStrings } from "@/lib/utils";
+import { getLetterGrade, getModStrings, mean, stdev } from "@/lib/utils";
 import { PlayResults } from "@/types";
 import { MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,14 +9,15 @@ import { useGameContext } from "../providers/gameProvider";
 import { useHighScoresContext } from "../providers/highScoresProvider";
 import { useSettingsContext } from "../providers/settingsProvider";
 import { Button } from "../ui/button";
+import TimingDistributionChart from "./timingDistributionChart";
 
 const ResultsScreen = ({
   beatmapData,
-  results,
+  playResults,
   retry,
 }: {
   beatmapData: BeatmapData;
-  results: PlayResults;
+  playResults: PlayResults;
   retry: () => void;
 }) => {
   const { closeGame, beatmapSet, beatmapId, replayData, setReplayData } =
@@ -27,7 +28,12 @@ const ResultsScreen = ({
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || !beatmapSet || settings.mods.autoplay || results.failed) {
+    if (
+      !beatmapId ||
+      !beatmapSet ||
+      settings.mods.autoplay ||
+      playResults.failed
+    ) {
       return;
     }
 
@@ -37,8 +43,18 @@ const ResultsScreen = ({
       const previousHighScore =
         highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
 
-      if (results.score > previousHighScore) {
-        await idb.saveReplay(results.replayData, beatmapId.toString());
+      if (playResults.score > previousHighScore) {
+        await idb.saveReplay(playResults.replayData, beatmapId.toString());
+
+        // Trim out properties that don't need to be saved
+        const {
+          failed,
+          viewingReplay,
+          replayData,
+          missHitWindow,
+          hitErrors,
+          ...results
+        } = playResults;
 
         setHighScores((draft) => {
           draft[beatmapSetId] ??= {};
@@ -56,7 +72,7 @@ const ResultsScreen = ({
     };
 
     checkNewHighScore();
-  }, [beatmapId, beatmapSet, highScores, results, setHighScores, settings]);
+  }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, settings]);
 
   const beatmap = beatmapSet?.beatmaps.find(
     (beatmap) => beatmap.id === beatmapId,
@@ -65,6 +81,10 @@ const ResultsScreen = ({
   const title = settings.preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
+
+  const errors = playResults.hitErrors.map((timingError) => timingError.error);
+  const averageError = mean(errors);
+  const unstableRate = stdev(errors) * 10; // https://osu.ppy.sh/wiki/en/Gameplay/Unstable_rate
 
   return (
     <>
@@ -103,7 +123,7 @@ const ResultsScreen = ({
                     Score
                   </h2>
                   <span className="text-5xl">
-                    {results.score.toLocaleString()}
+                    {playResults.score.toLocaleString()}
                   </span>
 
                   {newHighScore && (
@@ -118,7 +138,7 @@ const ResultsScreen = ({
                     <h3 className="mb-4 text-3xl font-semibold text-primary">
                       Max Combo
                     </h3>
-                    <span className="text-5xl">{results.maxCombo}x</span>
+                    <span className="text-5xl">{playResults.maxCombo}x</span>
                   </div>
 
                   <div className="rounded-xl">
@@ -126,7 +146,7 @@ const ResultsScreen = ({
                       Accuracy
                     </h3>
                     <span className="text-5xl">
-                      {(results.accuracy * 100).toFixed(2)}%
+                      {(playResults.accuracy * 100).toFixed(2)}%
                     </span>
                   </div>
                 </div>
@@ -139,61 +159,79 @@ const ResultsScreen = ({
 
                 <div className="grid gap-4 text-2xl sm:grid-cols-2">
                   <div className="flex items-center gap-4">
-                    <span className="w-16 text-orange-300">300</span>
-                    <span className="text-5xl">{results[300]}x</span>
+                    <span className="text-judgement-great w-16">300</span>
+                    <span className="text-5xl">{playResults[300]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b from-blue-300 via-green-300 to-orange-300 bg-clip-text text-transparent">
-                      300g
-                    </span>
-                    <span className="text-5xl">{results[320]}x</span>
+                    <span className="text-judgement-perfect w-16">300g</span>
+                    <span className="text-5xl">{playResults[320]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-green-300">
-                      200
-                    </span>
-                    <span className="text-5xl">{results[200]}x</span>
+                    <span className="text-judgement-good w-16">200</span>
+                    <span className="text-5xl">{playResults[200]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-sky-300">
-                      100
-                    </span>
-                    <span className="text-5xl">{results[100]}x</span>
+                    <span className="text-judgement-ok w-16">100</span>
+                    <span className="text-5xl">{playResults[100]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-slate-300">
-                      50
-                    </span>
-                    <span className="text-5xl">{results[50]}x</span>
+                    <span className="text-judgement-meh w-16">50</span>
+                    <span className="text-5xl">{playResults[50]}x</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-rose-300">
-                      miss!
-                    </span>
-                    <span className="text-5xl">{results[0]}x</span>
+                    <span className="text-judgement-miss w-16">miss!</span>
+                    <span className="text-5xl">{playResults[0]}x</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col justify-center">
-              <div className="flex items-center text-center text-[100px] leading-none">
-                <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+            <div className="mt-8 w-full rounded-xl border bg-card p-6">
+              <h2 className="mb-4 text-3xl font-semibold text-primary">
+                Timing Distribution
+              </h2>
 
-                <div className="rounded-xl border bg-card p-6">
-                  <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
-                    Grade
+              <TimingDistributionChart hitErrors={playResults.hitErrors} />
+
+              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                <div className="rounded-xl">
+                  <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
+                    Average Hit Error
                   </h3>
-                  <span>
-                    {results.failed
-                      ? "Failed"
-                      : getLetterGrade(results.accuracy)}
+                  <span className="text-3xl">
+                    {Math.abs(averageError).toFixed(2)} ms{" "}
+                    {averageError < 0 && "late"}
+                    {averageError > 0 && "early"}
                   </span>
                 </div>
 
-                <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
+                <div className="rounded-xl">
+                  <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
+                    Unstable Rate
+                  </h3>
+                  <span className="text-3xl">{unstableRate.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center text-center text-[100px] leading-none">
+              <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
+                  Grade
+                </h3>
+                <span>
+                  {playResults.failed
+                    ? "Failed"
+                    : getLetterGrade(playResults.accuracy)}
+                </span>
               </div>
 
+              <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
+            </div>
+
+            <div className="mt-8 flex flex-col justify-center">
               <div className="mt-16 flex flex-wrap items-center justify-between gap-8">
                 <div className="flex gap-4">
                   <Button
@@ -204,7 +242,7 @@ const ResultsScreen = ({
                     <MoveLeft /> Back
                   </Button>
 
-                  {!results.viewingReplay && (
+                  {!playResults.viewingReplay && (
                     <Button
                       variant={"default"}
                       className="gap-2 text-xl"
@@ -215,13 +253,13 @@ const ResultsScreen = ({
                   )}
                 </div>
 
-                {results.replayData && (
+                {playResults.replayData && (
                   <div className="flex gap-4">
                     <Button
                       variant={"secondary"}
                       className="gap-2 text-xl"
                       onClick={() => {
-                        setReplayData(results.replayData);
+                        setReplayData(playResults.replayData);
                         retry();
                       }}
                     >
@@ -233,7 +271,11 @@ const ResultsScreen = ({
                       variant={"secondary"}
                       className="gap-2 text-xl"
                       onClick={() =>
-                        downloadReplay(results.replayData, beatmapData, results)
+                        downloadReplay(
+                          playResults.replayData,
+                          beatmapData,
+                          playResults,
+                        )
                       }
                     >
                       <Save /> Download{" "}

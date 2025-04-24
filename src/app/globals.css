@@ -2,18 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  @apply bg-black
-} */
-
 @layer base {
   :root {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
-
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: #72C6EF;
+    --gradient: #72c6ef;
 
     --background: 212 52% 5.52%;
     --foreground: 212 8% 98.45%;
@@ -44,6 +35,19 @@
 
     --ring: 212 80% 69%;
     --radius: 0.5rem;
+
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    --judgement-perfect: 190 100% 80%;
+    --judgement-great: 200 100% 70%;
+    --judgement-good: 75 66% 56%;
+    --judgement-ok: 74 100% 35%;
+    --judgement-meh: 46 100% 57%;
+    --judgement-miss: 356 83% 44%;
   }
 }
 

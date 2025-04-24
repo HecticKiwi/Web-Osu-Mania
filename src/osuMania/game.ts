@@ -64,7 +64,6 @@ import { ReplayData, ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
 
 gsap.registerPlugin(PixiPlugin);
-
 PixiPlugin.registerPIXI(PIXI);
 
 export class Game {
@@ -147,7 +146,7 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: Dispatch<SetStateAction<PlayResults | null>>;
+  private setResults: () => void;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
   private retry: () => void;
 
@@ -175,7 +174,26 @@ export class Game {
     this.laneArrowDirections =
       laneArrowDirections[this.difficulty.keyCount - 1];
 
-    this.setResults = setResults;
+    this.setResults = () => {
+      setResults({
+        320: this.scoreSystem[320],
+        300: this.scoreSystem[300],
+        200: this.scoreSystem[200],
+        100: this.scoreSystem[100],
+        50: this.scoreSystem[50],
+        0: this.scoreSystem[0],
+        score: this.scoreSystem.score,
+        accuracy: this.scoreSystem.accuracy,
+        maxCombo: this.scoreSystem.maxCombo,
+        failed: false,
+        viewingReplay: !!this.replayPlayer,
+        replayData:
+          this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
+        missHitWindow: this.hitWindows[0],
+        hitErrors: this.scoreSystem.hitErrors,
+      });
+    };
+
     this.setIsPaused = setIsPaused;
     this.retry = retry;
 
@@ -835,21 +853,7 @@ export class Game {
       },
     });
 
-    this.setResults({
-      320: this.scoreSystem[320],
-      300: this.scoreSystem[300],
-      200: this.scoreSystem[200],
-      100: this.scoreSystem[100],
-      50: this.scoreSystem[50],
-      0: this.scoreSystem[0],
-      score: this.scoreSystem.score,
-      accuracy: this.scoreSystem.accuracy,
-      maxCombo: this.scoreSystem.maxCombo,
-      failed: false,
-      viewingReplay: !!this.replayPlayer,
-      replayData:
-        this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
-    });
+    this.setResults();
   }
 
   private async fail() {
@@ -882,21 +886,7 @@ export class Game {
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    this.setResults({
-      320: this.scoreSystem[320],
-      300: this.scoreSystem[300],
-      200: this.scoreSystem[200],
-      100: this.scoreSystem[100],
-      50: this.scoreSystem[50],
-      0: this.scoreSystem[0],
-      score: this.scoreSystem.score,
-      accuracy: this.scoreSystem.accuracy,
-      maxCombo: this.scoreSystem.maxCombo,
-      failed: true,
-      viewingReplay: !!this.replayPlayer,
-      replayData:
-        this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
-    });
+    this.setResults();
   }
 
   // Returns the px offset of the hit object from the judgement line based on

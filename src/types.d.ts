@@ -1,3 +1,5 @@
+import { HitError } from "./components/game/timingDistributionChart";
+import { JUDGEMENTS } from "./osuMania/constants";
 import { Hold } from "./osuMania/sprites/hold/hold";
 import { Tap } from "./osuMania/sprites/tap/tap";
 
@@ -19,11 +21,13 @@ export type PlayResults = Results & {
   failed?: boolean;
   viewingReplay?: boolean;
   replayData?: ReplayData;
+  missHitWindow: number;
+  hitErrors: HitError[];
 };
 
 export type Column = (Tap | Hold)[];
 
-export type Judgement = 320 | 300 | 200 | 100 | 50 | 0;
+export type Judgement = (typeof JUDGEMENTS)[number];
 
 declare global {
   interface Window {

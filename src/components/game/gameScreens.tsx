@@ -93,7 +93,7 @@ const GameScreens = ({
         {results && (
           <ResultsScreen
             beatmapData={beatmapData}
-            results={results}
+            playResults={results}
             retry={retry}
           />
         )}
