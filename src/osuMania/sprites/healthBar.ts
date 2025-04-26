@@ -33,35 +33,45 @@ export class HealthBar {
     this.view.pivot.set(this.fullWidth, 0);
     this.view.y = 90;
 
-    gsap.to(this.healthBar, {
-      pixi: {
-        width: this.fullWidth,
-      },
-    });
+    if (this.game.settings.performanceMode) {
+      this.healthBar.width = this.fullWidth;
+    } else {
+      gsap.to(this.healthBar, {
+        pixi: {
+          width: this.fullWidth,
+        },
+      });
+    }
   }
 
   public setHealth(health: number, lostHealth: boolean) {
-    gsap.fromTo(
-      this.healthBar,
-      {
-        pixi: {
-          tint: lostHealth ? 0xff9494 : 0xffffff,
+    const newWidth =
+      clamp(
+        (health - MIN_HEALTH) / (MAX_HEALTH - MIN_HEALTH),
+        MIN_HEALTH,
+        MAX_HEALTH,
+      ) * 400;
+
+    if (this.game.settings.performanceMode) {
+      this.healthBar.width = newWidth;
+    } else {
+      gsap.fromTo(
+        this.healthBar,
+        {
+          pixi: {
+            tint: lostHealth ? 0xff9494 : 0xffffff,
+          },
         },
-      },
-      {
-        pixi: {
-          tint: 0xffffff,
-          width:
-            clamp(
-              (health - MIN_HEALTH) / (MAX_HEALTH - MIN_HEALTH),
-              MIN_HEALTH,
-              MAX_HEALTH,
-            ) * 400,
+        {
+          pixi: {
+            tint: 0xffffff,
+            width: newWidth,
+          },
+          duration: 0.4,
+          overwrite: true,
         },
-        duration: 0.4,
-        overwrite: true,
-      },
-    );
+      );
+    }
   }
 
   public resize() {

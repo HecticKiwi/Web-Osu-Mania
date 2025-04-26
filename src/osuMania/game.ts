@@ -370,7 +370,7 @@ export class Game {
       width: window.innerWidth,
       height: window.innerHeight,
       backgroundAlpha: 0,
-      antialias: true,
+      antialias: !this.settings.performanceMode,
       autoDensity: true,
       resolution: window.devicePixelRatio,
       eventMode: "none",
@@ -425,7 +425,9 @@ export class Game {
     if (this.settings.style === "bars") {
       this.addStageHint();
 
-      this.addStageLights();
+      if (!this.settings.performanceMode) {
+        this.addStageLights();
+      }
     }
 
     this.addKeys();

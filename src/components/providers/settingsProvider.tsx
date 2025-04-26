@@ -49,6 +49,7 @@ export type Settings = {
   unpauseDelay: number;
   retryOnFail: boolean;
   showUnrankedModes: boolean;
+  performanceMode: boolean;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -102,6 +103,7 @@ export const defaultSettings: Settings = {
   unpauseDelay: 1500,
   retryOnFail: false,
   showUnrankedModes: false,
+  performanceMode: false,
   keybinds: {
     keyModes: [
       ["Space"], // 1K

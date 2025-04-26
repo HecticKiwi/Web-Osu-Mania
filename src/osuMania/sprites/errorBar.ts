@@ -71,7 +71,7 @@ export class ErrorBar {
     this.view.pivot.set(this.width / 2, this.height);
     this.view.scale.set(this.game.settings.errorBarScale);
 
-    this.markPool = new Pool(MarkSprite, 50);
+    this.markPool = new Pool(MarkSprite, 150);
 
     this.quickX = gsap.quickTo(this.averageMarker, "x", {
       duration: 0.5,
@@ -139,20 +139,34 @@ export class ErrorBar {
 
     this.view.addChild(mark);
 
-    gsap.to(mark, {
-      pixi: {
-        alpha: 0,
-      },
-      duration: 4,
-      onComplete: () => {
+    if (this.game.settings.performanceMode) {
+      setTimeout(() => {
         this.view.removeChild(mark);
-
+        this.markPool.return(mark);
         this.xCount--;
         this.xSum -= x;
-      },
-    });
+      }, 1500);
+    } else {
+      gsap.to(mark, {
+        pixi: {
+          alpha: 0,
+        },
+        duration: 4,
+        onComplete: () => {
+          this.view.removeChild(mark);
+          this.markPool.return(mark);
+          this.xCount--;
+          this.xSum -= x;
+        },
+      });
+    }
 
     const averageX = this.xSum / this.xCount;
-    this.quickX(averageX);
+
+    if (this.game.settings.performanceMode) {
+      this.averageMarker.x = averageX;
+    } else {
+      this.quickX(averageX);
+    }
   }
 }

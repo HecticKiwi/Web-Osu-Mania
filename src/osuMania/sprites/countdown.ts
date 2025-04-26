@@ -74,16 +74,20 @@ export class Countdown {
 
   public update(remainingTime: number, maxTime: number) {
     // Fade out at 0.5s left
-    if (remainingTime < 500 && !gsap.isTweening(this.view)) {
-      gsap.to(this.view, {
-        pixi: {
-          alpha: 0,
-        },
-        duration: 0.5,
-        onComplete: () => {
-          this.view.visible = false;
-        },
-      });
+    if (remainingTime < 500) {
+      if (this.game.settings.performanceMode) {
+        this.view.visible = false;
+      } else if (!gsap.isTweening(this.text)) {
+        gsap.to(this.view, {
+          pixi: {
+            alpha: 0,
+          },
+          duration: 0.5,
+          onComplete: () => {
+            this.view.visible = false;
+          },
+        });
+      }
     }
 
     // Hide skip when under 2 seconds left

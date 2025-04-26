@@ -40,11 +40,13 @@ export class AudioSystem {
   }
 
   public play(filename: string, volume?: number) {
+    if (this.game.settings.performanceMode) {
+      return;
+    }
+
     const sound = this.sounds[filename];
 
     if (!sound) {
-      // console.warn("Sound not found: ", filename);
-
       return;
     }
 

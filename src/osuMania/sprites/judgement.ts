@@ -8,6 +8,7 @@ export class Judgement {
   public game: Game;
 
   public view: Sprite;
+  private timeout: NodeJS.Timeout | null = null;
 
   public constructor(game: Game) {
     this.game = game;
@@ -36,20 +37,32 @@ export class Judgement {
     this.view.alpha = 1;
     this.view.scale.set(1);
 
-    gsap.from(this.view, {
-      pixi: {
-        scale: 1.2,
-      },
-      duration: 0.3,
-      overwrite: true,
-    });
+    if (this.game.settings.performanceMode) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
 
-    gsap.to(this.view, {
-      pixi: {
-        alpha: 0,
-      },
-      delay: 0.8,
-      duration: 0.3,
-    });
+      this.view.visible = true;
+
+      this.timeout = setTimeout(() => {
+        this.view.visible = false;
+      }, 1000);
+    } else {
+      gsap.from(this.view, {
+        pixi: {
+          scale: 1.2,
+        },
+        duration: 0.3,
+        overwrite: true,
+      });
+
+      gsap.to(this.view, {
+        pixi: {
+          alpha: 0,
+        },
+        delay: 0.8,
+        duration: 0.3,
+      });
+    }
   }
 }

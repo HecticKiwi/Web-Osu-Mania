@@ -136,6 +136,21 @@ const SettingsTab = () => {
             });
           }}
         />
+
+        <SwitchInput
+          label="Performance Mode"
+          checked={settings.performanceMode}
+          onCheckedChange={(checked) => {
+            setSettings((draft) => {
+              draft.performanceMode = checked;
+            });
+          }}
+        />
+
+        <p className="text-sm text-muted-foreground">
+          Enable performance mode if you are experiencing low FPS. This will
+          disable animations and hitsounds.
+        </p>
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>

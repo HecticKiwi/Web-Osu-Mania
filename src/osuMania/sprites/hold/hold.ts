@@ -144,7 +144,7 @@ export abstract class Hold {
         pixi: {
           brightness: 0.5,
         },
-        duration: 0.3,
+        duration: this.game.settings.performanceMode ? 0 : 0.3,
       });
     }
   }
