@@ -3,18 +3,16 @@
 import { setNestedProperty } from "@/lib/utils";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  defaultSettings,
-  useSettingsContext,
-} from "../providers/settingsProvider";
+import { defaultSettings, useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 import KeybindButton from "./keybindButton";
 
 const KeybindsTab = () => {
+  const setSettings = useSettingsStore.use.setSettings();
+  const keybinds = useSettingsStore.use.keybinds();
   const [selectedKeybindPath, setSelectedKeybindPath] = useState<any | null>(
     null,
   );
-  const { settings, setSettings } = useSettingsContext();
 
   // Listen for gamepad events
   useEffect(() => {
@@ -77,10 +75,6 @@ const KeybindsTab = () => {
     };
   }, [selectedKeybindPath, setSettings]);
 
-  if (!settings) {
-    return null;
-  }
-
   return (
     <div>
       <p className="text-sm text-muted-foreground">
@@ -105,7 +99,7 @@ const KeybindsTab = () => {
             </Button>
 
             <KeybindButton
-              keybind={settings.keybinds.pause}
+              keybind={keybinds.pause}
               keybindPath={"keybinds.pause"}
               selectedKeybindPath={selectedKeybindPath}
               setSelectedKeybindPath={setSelectedKeybindPath}
@@ -118,7 +112,7 @@ const KeybindsTab = () => {
           </div>
 
           <KeybindButton
-            keybind={settings.keybinds.retry}
+            keybind={keybinds.retry}
             keybindPath={"keybinds.retry"}
             selectedKeybindPath={selectedKeybindPath}
             setSelectedKeybindPath={setSelectedKeybindPath}
@@ -126,7 +120,7 @@ const KeybindsTab = () => {
         </div>
       </div>
 
-      {settings.keybinds.keyModes.map((keyMode, i) => (
+      {keybinds.keyModes.map((keyMode, i) => (
         <Fragment key={i}>
           <h3 className="mb-2 mt-6 text-lg font-semibold">{i + 1}K</h3>
 

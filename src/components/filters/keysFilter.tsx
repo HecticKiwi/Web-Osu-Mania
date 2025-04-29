@@ -4,7 +4,7 @@ import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Toggle } from "../ui/toggle";
 
 const rankedKeys = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
@@ -12,10 +12,12 @@ const allKeys = Array.from({ length: 18 }, (_, i) => (i + 1).toString());
 
 const KeysFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
-  const { settings } = useSettingsContext();
+  const showUnrankedModes = useSettingsStore(
+    (settings) => settings.showUnrankedModes,
+  );
   const keysParam = parseKeysParam(searchParams.get("keys"));
 
-  const keys = settings.showUnrankedModes ? allKeys : rankedKeys;
+  const keys = showUnrankedModes ? allKeys : rankedKeys;
 
   return (
     <>

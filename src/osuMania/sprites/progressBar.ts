@@ -1,4 +1,4 @@
-import { clamp } from "@/lib/utils";
+import { clamp } from "@/lib/math";
 import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { Game } from "../game";

@@ -12,8 +12,8 @@ import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { caseInsensitiveIncludes, cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
+import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSet from "../beatmapSet/beatmapSet";
-import { useSettingsContext } from "../providers/settingsProvider";
 
 const CustomBeatmapSets = ({
   label,
@@ -26,7 +26,9 @@ const CustomBeatmapSets = ({
   beatmapSets: BeatmapSetData[];
   className?: string;
 }) => {
-  const { settings } = useSettingsContext();
+  const preferMetadataInOriginalLanguage = useSettingsStore(
+    (settings) => settings.preferMetadataInOriginalLanguage,
+  );
   const searchParams = useSearchParams();
 
   if (beatmapSets.length === 0) {
@@ -52,7 +54,7 @@ const CustomBeatmapSets = ({
   const filteredSaves = beatmapSets.filter((beatmapSet) => {
     if (query.trim()) {
       if (
-        settings.preferMetadataInOriginalLanguage &&
+        preferMetadataInOriginalLanguage &&
         !caseInsensitiveIncludes(beatmapSet.title_unicode, query) &&
         !caseInsensitiveIncludes(beatmapSet.artist_unicode, query) &&
         !caseInsensitiveIncludes(beatmapSet.creator, query)
@@ -61,7 +63,7 @@ const CustomBeatmapSets = ({
       }
 
       if (
-        !settings.preferMetadataInOriginalLanguage &&
+        !preferMetadataInOriginalLanguage &&
         !caseInsensitiveIncludes(beatmapSet.title, query) &&
         !caseInsensitiveIncludes(beatmapSet.artist, query) &&
         !caseInsensitiveIncludes(beatmapSet.creator, query)
@@ -112,7 +114,7 @@ const CustomBeatmapSets = ({
   let sortedBeatmaps: BeatmapSetData[] = filteredSaves;
 
   if (sortCriteria === "title") {
-    if (settings.preferMetadataInOriginalLanguage) {
+    if (preferMetadataInOriginalLanguage) {
       sortedBeatmaps = filteredSaves.sort((a, b) =>
         a.title_unicode.localeCompare(b.title_unicode),
       );
@@ -122,7 +124,7 @@ const CustomBeatmapSets = ({
       );
     }
   } else if (sortCriteria === "artist") {
-    if (settings.preferMetadataInOriginalLanguage) {
+    if (preferMetadataInOriginalLanguage) {
       sortedBeatmaps = filteredSaves.sort((a, b) =>
         a.artist_unicode.localeCompare(b.artist_unicode),
       );

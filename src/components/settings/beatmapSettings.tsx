@@ -3,89 +3,85 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { filesize } from "filesize";
 import { HardDrive, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
-import BeatmapSetUpload from "../beatmapSetUpload";
-import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
+import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
 import {
   BEATMAP_API_PROVIDERS,
   BeatmapProvider,
-  useSettingsContext,
-} from "../providers/settingsProvider";
-import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
-import SwitchInput from "../switchInput";
+  useSettingsStore,
+} from "../../stores/settingsStore";
+import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
+import RadioGroupInput from "../inputs/radioGroupInput";
+import SwitchInput from "../inputs/switchInput";
+import BeatmapSetUpload from "./beatmapSetUpload";
 
 const BeatmapSettings = ({ className }: { className?: string }) => {
-  const { settings, setSettings } = useSettingsContext();
-  const { idbUsage, clearIdbCache } = useBeatmapSetCacheContext();
-  const { storedBeatmapSets, setStoredBeatmapSets } =
-    useStoredBeatmapSetsContext();
+  const beatmapProvider = useSettingsStore.use.beatmapProvider();
+  const customBeatmapProvider = useSettingsStore.use.customBeatmapProvider();
+  const setSettings = useSettingsStore.use.setSettings();
+  const idbUsage = useBeatmapSetCacheStore.use.idbUsage();
+  const clearIdbCache = useBeatmapSetCacheStore.use.clearIdbCache();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
+  const setStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
 
   return (
     <div className={cn(className)}>
       <h3 className="mb-2 text-lg font-semibold">Beatmap Management</h3>
 
       <div className="space-y-4">
-        <div className="grid grid-cols-2">
-          <Label
-            htmlFor="beatmapProvider"
-            className="text-sm font-semibold text-muted-foreground"
-          >
-            Beatmap Provider
-          </Label>
-
-          <RadioGroup
-            id="beatmapProvider"
-            value={settings.beatmapProvider}
-            onValueChange={(value: BeatmapProvider) =>
-              setSettings((draft) => {
-                draft.beatmapProvider = value;
-              })
-            }
-            className="space-y-2"
-          >
-            {Object.entries(BEATMAP_API_PROVIDERS).map(([name, url]) => (
-              <Label
-                key={name}
-                htmlFor={name}
-                className="flex items-center space-x-2"
-              >
-                <RadioGroupItem value={name} id={name} />
-                <span>{name}</span>
-              </Label>
-            ))}
-            <Label htmlFor="r3" className="flex items-center space-x-2">
-              <RadioGroupItem value="Custom" id="Custom" className="shrink-0" />
-
-              <Input
-                onClick={() =>
-                  setSettings((draft) => {
-                    draft.beatmapProvider = "Custom";
-                  })
-                }
-                placeholder="Custom URL"
-                value={settings.customBeatmapProvider}
-                onChange={(e) =>
-                  setSettings((draft) => {
-                    draft.customBeatmapProvider = e.target.value;
-                  })
-                }
-              />
+        <RadioGroupInput
+          label="Beatmap Provider"
+          selector={(state) => state.beatmapProvider}
+          onValueChange={(beatmapProvider) =>
+            setSettings((draft) => {
+              draft.beatmapProvider = beatmapProvider as BeatmapProvider;
+            })
+          }
+          className="space-y-2"
+        >
+          {Object.entries(BEATMAP_API_PROVIDERS).map(([name, url]) => (
+            <Label
+              key={name}
+              htmlFor={name}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem value={name} id={name} />
+              <span>{name}</span>
             </Label>
-          </RadioGroup>
-        </div>
+          ))}
+          <Label htmlFor="r3" className="flex items-center space-x-2">
+            <RadioGroupItem value="Custom" id="Custom" className="shrink-0" />
 
-        {settings.beatmapProvider === "SayoBot" && (
+            <Input
+              onClick={() =>
+                setSettings((draft) => {
+                  draft.beatmapProvider = "Custom";
+                })
+              }
+              placeholder="Custom URL"
+              value={customBeatmapProvider}
+              onChange={(e) =>
+                setSettings((draft) => {
+                  draft.customBeatmapProvider = e.target.value;
+                })
+              }
+            />
+          </Label>
+        </RadioGroupInput>
+
+        {beatmapProvider === "SayoBot" && (
           <p className="mt-1 text-sm text-orange-400">
             There may be parsing errors when downloading maps from SayoBot. If
             this happens, try switching to a different provider.
           </p>
         )}
 
-        {settings.beatmapProvider === "Custom" && (
+        {beatmapProvider === "Custom" && (
           <p className="mt-1 text-sm text-orange-400">
             Custom provider URLs should replace the beatmap set ID route segment
             with $setId (e.g. NeriNyan uses
@@ -95,7 +91,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
 
         <SwitchInput
           label="Proxy Downloads"
-          checked={settings.proxyBeatmapDownloads}
+          selector={(state) => state.proxyBeatmapDownloads}
           onCheckedChange={async (checked) => {
             setSettings((draft) => {
               draft.proxyBeatmapDownloads = checked;
@@ -129,7 +125,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
 
         <SwitchInput
           label="Enable IndexedDB Cache"
-          checked={settings.storeDownloadedBeatmaps}
+          selector={(state) => state.storeDownloadedBeatmaps}
           onCheckedChange={async (checked) => {
             setSettings((draft) => {
               draft.storeDownloadedBeatmaps = checked;
@@ -154,7 +150,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           size={"sm"}
           onClick={() => {
             clearIdbCache();
-            setStoredBeatmapSets([]);
+            setStoredBeatmapSets(() => []);
             toast("Cache has been cleared.");
           }}
           disabled={!idbUsage}

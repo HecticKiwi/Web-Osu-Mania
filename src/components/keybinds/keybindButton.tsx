@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/context-menu";
 import { cn, keyCodeToString, setNestedProperty } from "@/lib/utils";
 import { Eraser } from "lucide-react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 
 const KeybindButton = ({
@@ -20,7 +20,7 @@ const KeybindButton = ({
   selectedKeybindPath: string;
   setSelectedKeybindPath: (value: any | null) => void;
 }) => {
-  const { setSettings } = useSettingsContext();
+  const setSettings = useSettingsStore.use.setSettings();
 
   return (
     <ContextMenu

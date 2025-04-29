@@ -4,7 +4,7 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
-import { useGameContext } from "../providers/gameProvider";
+import { useGameStore } from "../../stores/gameStore";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
@@ -18,7 +18,7 @@ const GameScreens = ({
   beatmapData: BeatmapData;
   retry: () => void;
 }) => {
-  const { replayData } = useGameContext();
+  const replayData = useGameStore.use.replayData();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);

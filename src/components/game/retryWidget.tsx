@@ -3,12 +3,12 @@
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 
 const retryTime = 500;
 
 function RetryWidget({ retry }: { retry: () => void }) {
-  const { settings } = useSettingsContext();
+  const keybinds = useSettingsStore.use.keybinds();
   const [holdDuration, setHoldDuration] = useState(0);
   const holdStartRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -32,14 +32,14 @@ function RetryWidget({ retry }: { retry: () => void }) {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === settings.keybinds.retry && !event.repeat) {
+      if (event.code === keybinds.retry && !event.repeat) {
         holdStartRef.current = performance.now();
         animationFrameRef.current = requestAnimationFrame(updateHoldDuration);
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.code === settings.keybinds.retry) {
+      if (event.code === keybinds.retry) {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
           animationFrameRef.current = null;
@@ -61,7 +61,7 @@ function RetryWidget({ retry }: { retry: () => void }) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [retry, settings.keybinds.retry]);
+  }, [retry, keybinds.retry]);
 
   return (
     <div

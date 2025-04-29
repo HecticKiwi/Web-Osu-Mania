@@ -1,11 +1,11 @@
 "use client";
 
 import { Bookmark } from "lucide-react";
-import { useSavedBeatmapSetsContext } from "../providers/savedBeatmapSetsProvider";
+import { useSavedBeatmapSetsStore } from "../../stores/savedBeatmapSetsStore";
 import CustomBeatmapSets from "./customBeatmapSets";
 
 const SavedBeatmapSets = ({ className }: { className?: string }) => {
-  const { savedBeatmapSets } = useSavedBeatmapSetsContext();
+  const savedBeatmapSets = useSavedBeatmapSetsStore.use.savedBeatmapSets();
 
   return (
     <CustomBeatmapSets

@@ -1,8 +1,5 @@
-import {
-  defaultSettings,
-  Settings,
-} from "@/components/providers/settingsProvider";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import { defaultSettings, Settings } from "@/stores/settingsStore";
 import { PlayResults } from "@/types";
 import { deflate } from "pako";
 import { toast } from "sonner";

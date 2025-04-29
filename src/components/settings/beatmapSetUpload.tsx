@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
-import { useGameContext } from "./providers/gameProvider";
+import { useGameStore } from "../../stores/gameStore";
 
 const BeatmapSetUpload = () => {
-  const { setUploadedBeatmapSet } = useGameContext();
+  const setUploadedBeatmapSet = useGameStore.use.setUploadedBeatmapSet();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const loadFile = (file?: File) => {

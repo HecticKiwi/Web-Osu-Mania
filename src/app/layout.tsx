@@ -1,11 +1,8 @@
+import ReactScan from "@/components/debug/reactScan";
+import { GameOverlay } from "@/components/game/gameOverlay";
 import Header from "@/components/header";
-import BeatmapSetCacheProvider from "@/components/providers/beatmapSetCacheProvider";
-import { GameProvider } from "@/components/providers/gameProvider";
-import HighScoresProvider from "@/components/providers/highScoresProvider";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
-import SavedBeatmapSetsProvider from "@/components/providers/savedBeatmapSetsProvider";
-import SettingsProvider from "@/components/providers/settingsProvider";
-import StoredBeatmapSetsProvider from "@/components/providers/storedBeatmapSetsProvider";
+import UploadDialog from "@/components/settings/uploadDialog";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
@@ -45,21 +42,14 @@ export default function RootLayout({
       <body className={`${varelaRound.className}`}>
         <TooltipProvider>
           <ReactQueryProvider>
-            <SettingsProvider>
-              <StoredBeatmapSetsProvider>
-                <BeatmapSetCacheProvider>
-                  <SavedBeatmapSetsProvider>
-                    <HighScoresProvider>
-                      <GameProvider>
-                        <Header />
-                        {children}
-                        <Toaster />
-                      </GameProvider>
-                    </HighScoresProvider>
-                  </SavedBeatmapSetsProvider>
-                </BeatmapSetCacheProvider>
-              </StoredBeatmapSetsProvider>
-            </SettingsProvider>
+            <Header />
+
+            {children}
+
+            <UploadDialog />
+            <GameOverlay />
+            <Toaster />
+            <ReactScan />
           </ReactQueryProvider>
         </TooltipProvider>
       </body>

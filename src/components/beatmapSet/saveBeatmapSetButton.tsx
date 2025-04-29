@@ -9,12 +9,13 @@ import {
 import { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { Bookmark } from "lucide-react";
-import { useSavedBeatmapSetsContext } from "../providers/savedBeatmapSetsProvider";
+import { useSavedBeatmapSetsStore } from "../../stores/savedBeatmapSetsStore";
 import { Button } from "../ui/button";
 
 const SaveBeatmapSetButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
-  const { savedBeatmapSets, setSavedBeatmapSets } =
-    useSavedBeatmapSetsContext();
+  const savedBeatmapSets = useSavedBeatmapSetsStore.use.savedBeatmapSets();
+  const setSavedBeatmapSets =
+    useSavedBeatmapSetsStore.use.setSavedBeatmapSets();
 
   const isSaved = savedBeatmapSets.some((set) => set.id === beatmapSet.id);
 
@@ -32,7 +33,10 @@ const SaveBeatmapSetButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
             onClick={() => {
               if (isSaved) {
                 setSavedBeatmapSets((draft) => {
-                  return draft.filter((set) => set.id !== beatmapSet.id);
+                  draft.splice(
+                    draft.findIndex((set) => set.id === beatmapSet.id),
+                    1,
+                  );
                 });
               } else {
                 setSavedBeatmapSets((draft) => {

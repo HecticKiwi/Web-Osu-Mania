@@ -2,8 +2,8 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
-import { useGameContext } from "../providers/gameProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useGameStore } from "../../stores/gameStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 
 const PauseScreen = ({
@@ -15,14 +15,19 @@ const PauseScreen = ({
   setIsPaused: (newValue: boolean) => void;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId, replayData } = useGameContext();
-  const { settings } = useSettingsContext();
+  const closeGame = useGameStore.use.closeGame();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const replayData = useGameStore.use.replayData();
+  const preferMetadataInOriginalLanguage =
+    useSettingsStore.use.preferMetadataInOriginalLanguage();
+  const mods = useSettingsStore.use.mods();
 
   const beatmap = beatmapSet?.beatmaps.find(
     (beatmap) => beatmap.id === beatmapId,
   );
 
-  const title = settings.preferMetadataInOriginalLanguage
+  const title = preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
 
@@ -44,7 +49,7 @@ const PauseScreen = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-1">
-              {getModStrings(settings, replayData?.mods).map((mod) => (
+              {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
                   className="rounded-full bg-primary/25 px-2 py-0.5"

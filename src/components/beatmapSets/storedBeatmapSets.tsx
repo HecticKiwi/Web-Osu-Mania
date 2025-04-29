@@ -1,10 +1,10 @@
 "use client";
 
-import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
+import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import CustomBeatmapSets from "./customBeatmapSets";
 
 const StoredBeatmapSets = ({ className }: { className?: string }) => {
-  const { storedBeatmapSets } = useStoredBeatmapSetsContext();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
 
   return (
     <CustomBeatmapSets

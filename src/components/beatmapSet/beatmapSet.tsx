@@ -16,9 +16,7 @@ import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useGameContext } from "../providers/gameProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
-import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 import BeatmapList from "./beatmapList";
 import BeatmapSetCover from "./beatmapSetCover";
@@ -27,28 +25,19 @@ import PreviewProgressBar from "./previewProgressBar";
 import SaveBeatmapSetButton from "./saveBeatmapSetButton";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
-  const { setBeatmapSet, beatmapId } = useGameContext();
-  const { settings } = useSettingsContext();
-  const { storedBeatmapSets } = useStoredBeatmapSetsContext();
   const [preview, setPreview] = useState<Howl | null>(null);
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      setBeatmapSet(beatmapSet);
-
       playPreview();
     } else {
-      // If popover is closed without selecting any diff
-      if (!beatmapId) {
-        setBeatmapSet(null);
-      }
-
       stopPreview();
     }
   };
 
   const playPreview = () => {
-    const audio = playAudioPreview(beatmapSet.id, settings.musicVolume);
+    const musicVolume = useSettingsStore.getState().musicVolume;
+    const audio = playAudioPreview(beatmapSet.id, musicVolume);
     setPreview(audio);
   };
 
@@ -73,9 +62,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
         </PopoverTrigger>
 
         <div className="absolute left-4 top-4 flex gap-2">
-          {storedBeatmapSets.some(
-            (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
-          ) && <IndexedDbButton beatmapSet={beatmapSet} />}
+          <IndexedDbButton beatmapSet={beatmapSet} />
         </div>
 
         <div className="absolute right-4 top-4 flex gap-2">

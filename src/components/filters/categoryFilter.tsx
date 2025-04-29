@@ -14,13 +14,15 @@ import { cn } from "@/lib/utils";
 import { Bookmark, HardDrive } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 
 const CategoryFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
   const categoryParam = parseCategoryParam(searchParams.get("category"));
-  const { settings } = useSettingsContext();
+  const storeDownloadedBeatmaps = useSettingsStore(
+    (settings) => settings.storeDownloadedBeatmaps,
+  );
 
   const savedParams = new URLSearchParams(searchParams);
   savedParams.set("category", "Saved");
@@ -85,7 +87,7 @@ const CategoryFilter = ({ className }: { className?: string }) => {
               <span>Saved</span>
             </Link>
           </Button>
-          {settings.storeDownloadedBeatmaps && (
+          {storeDownloadedBeatmaps && (
             <Button asChild variant={"link"} className="p-0">
               <Link
                 href={`/?${storedParams.toString()}`}

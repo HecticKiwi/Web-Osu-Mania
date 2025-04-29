@@ -1,4 +1,4 @@
-import { clamp } from "@/lib/utils";
+import { clamp } from "@/lib/math";
 import { Judgement } from "@/types";
 import { Game } from "../game";
 

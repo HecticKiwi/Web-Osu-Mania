@@ -1,5 +1,6 @@
 import { HitError } from "@/components/game/timingDistributionChart";
-import { clamp, getScoreMultiplier } from "@/lib/utils";
+import { clamp } from "@/lib/math";
+import { getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
 
@@ -48,7 +49,7 @@ export class ScoreSystem {
   constructor(game: Game, totalHitObjects: number) {
     this.game = game;
     this.totalHitObjects = totalHitObjects;
-    this.multiplier = getScoreMultiplier(game.settings);
+    this.multiplier = getScoreMultiplier(game.settings.mods);
   }
 
   public hit(judgement: Judgement) {

@@ -1,4 +1,3 @@
-import { Settings } from "@/components/providers/settingsProvider";
 import {
   BeatmapData,
   Difficulty,
@@ -7,7 +6,8 @@ import {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
-import { getSettings, scaleWidth } from "@/lib/utils";
+import { scaleWidth } from "@/lib/utils";
+import { Settings, useSettingsStore } from "@/stores/settingsStore";
 import {
   Column,
   GameState,
@@ -196,7 +196,7 @@ export class Game {
     this.setIsPaused = setIsPaused;
     this.retry = retry;
 
-    this.settings = getSettings();
+    this.settings = useSettingsStore.getState();
 
     this.hitPositionOffset = this.settings.hitPositionOffset;
 

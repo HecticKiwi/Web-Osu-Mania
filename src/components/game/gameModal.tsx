@@ -6,24 +6,32 @@ import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
-import { useGameContext } from "../providers/gameProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
-import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
+import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
+import { useGameStore } from "../../stores/gameStore";
+import { useSettingsStore } from "../../stores/settingsStore";
+import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
-  const { beatmapId, beatmapSet, closeGame, uploadedBeatmapSet, replayData } =
-    useGameContext();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const closeGame = useGameStore.use.closeGame();
+  const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
+  const replayData = useGameStore.use.replayData();
+  const storeDownloadedBeatmaps = useSettingsStore(
+    (settings) => settings.storeDownloadedBeatmaps,
+  );
+  const backgroundDim = useSettingsStore.use.backgroundDim();
+  const backgroundBlur = useSettingsStore.use.backgroundBlur();
+  const getBeatmapSet = useBeatmapSetCacheStore.use.getBeatmapSet();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
+  const setStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
     "Downloading Beatmap...",
   );
-  const { settings } = useSettingsContext();
-  const { getBeatmapSet } = useBeatmapSetCacheContext();
-  const { storedBeatmapSets, setStoredBeatmapSets } =
-    useStoredBeatmapSetsContext();
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
@@ -48,7 +56,7 @@ const GameModal = () => {
           );
 
           if (
-            settings.storeDownloadedBeatmaps &&
+            storeDownloadedBeatmaps &&
             !storedBeatmapSets.some(
               (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
             )
@@ -110,7 +118,7 @@ const GameModal = () => {
     beatmapSet,
     storedBeatmapSets,
     setStoredBeatmapSets,
-    settings.storeDownloadedBeatmaps,
+    storeDownloadedBeatmaps,
     replayData,
   ]);
 
@@ -167,7 +175,7 @@ const GameModal = () => {
               fill
               className="-z-[1] select-none object-cover"
               style={{
-                filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
+                filter: `brightness(${1 - backgroundDim}) blur(${backgroundBlur * 30}px)`,
               }}
             />
           )}

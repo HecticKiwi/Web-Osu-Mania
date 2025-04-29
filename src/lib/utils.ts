@@ -1,8 +1,5 @@
-import {
-  defaultSettings,
-  Settings,
-} from "@/components/providers/settingsProvider";
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
+import { Settings } from "@/stores/settingsStore";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { decodeMods, EncodedMods } from "./replay";
@@ -25,15 +22,6 @@ export function secondsToMMSS(seconds: number): string {
 
 export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-export function roundToPrecision(value: number, precision: number) {
-  const magnitude = 10 ** precision;
-  return Math.round((value + Number.EPSILON) * magnitude) / magnitude;
-}
-
-export function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
 }
 
 export function scaleWidth(width: number, windowWidth: number) {
@@ -66,40 +54,6 @@ export function setNestedProperty(obj: any, path: string, value: any): void {
     }
     return acc[key];
   }, obj);
-}
-
-export function getSettings() {
-  const localSettings = localStorage.getItem("settings");
-  if (!localSettings) {
-    return defaultSettings;
-  }
-
-  let settings: Settings = JSON.parse(localSettings);
-
-  // Set defaults for settings and mods that were added in recent updates
-  settings = {
-    ...defaultSettings,
-    ...settings,
-  };
-
-  settings.mods = {
-    ...defaultSettings.mods,
-    ...settings.mods,
-  };
-
-  settings.keybinds = {
-    ...defaultSettings.keybinds,
-    ...settings.keybinds,
-  };
-
-  for (let i = 9; i < 18; i++) {
-    if (!settings.keybinds.keyModes[i]) {
-      // Set default 10K-18K keybinds
-      settings.keybinds.keyModes[i] = [...defaultSettings.keybinds.keyModes[i]];
-    }
-  }
-
-  return settings;
 }
 
 export function keyCodeToString(code: string | null) {
@@ -181,9 +135,7 @@ export function caseInsensitiveIncludes(a: string, b: string) {
   return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
 }
 
-export function getScoreMultiplier(settings: Settings) {
-  const mods = settings.mods;
-
+export function getScoreMultiplier(mods: Settings["mods"]) {
   let multiplier = 1;
 
   if (mods.easy) {
@@ -209,8 +161,11 @@ export function getScoreMultiplier(settings: Settings) {
   return multiplier;
 }
 
-export function getModStrings(settings: Settings, replayMods?: EncodedMods) {
-  const mods = replayMods ? decodeMods(replayMods) : settings.mods;
+export function getModStrings(
+  settingsMods: Settings["mods"],
+  replayMods?: EncodedMods,
+) {
+  const mods = replayMods ? decodeMods(replayMods) : settingsMods;
 
   const modStrings = [
     mods.easy && "Easy",
@@ -272,15 +227,4 @@ export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
   }
 
   return compacted;
-}
-
-export function mean(arr: number[]) {
-  return arr.reduce((a, b) => a + b, 0) / arr.length;
-}
-
-export function stdev(arr: number[]) {
-  const meanValue = mean(arr);
-  return Math.sqrt(
-    arr.reduce((a, b) => a + (b - meanValue) ** 2, 0) / arr.length,
-  );
 }

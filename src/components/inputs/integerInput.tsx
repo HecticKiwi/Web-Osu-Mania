@@ -1,4 +1,5 @@
-import { cn, roundToPrecision } from "@/lib/utils";
+import { roundToPrecision } from "@/lib/math";
+import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
 import { ChangeEvent } from "react";
 import { Button } from "../ui/button";

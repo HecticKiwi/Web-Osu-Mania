@@ -1,11 +1,13 @@
+"use client";
+
 import { BeatmapSet } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useGameStore } from "../../stores/gameStore";
+import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
-import { useGameContext } from "../providers/gameProvider";
-import { useHighScoresContext } from "../providers/highScoresProvider";
 import HighScoreToolTip from "./highScore";
 
 const BeatmapList = ({
@@ -15,9 +17,10 @@ const BeatmapList = ({
   beatmapSet: BeatmapSet;
   stopPreview: () => void;
 }) => {
-  const { startGame } = useGameContext();
+  const setBeatmapSet = useGameStore.use.setBeatmapSet();
+  const startGame = useGameStore.use.startGame();
+  const highScores = useHighScoresStore.use.highScores();
   const searchParams = useSearchParams();
-  const { highScores } = useHighScoresContext();
 
   const { min, max } = parseStarsParam(searchParams.get("stars"));
   const keys = parseKeysParam(searchParams.get("keys"));
@@ -72,6 +75,7 @@ const BeatmapList = ({
                   className="flex cursor-pointer items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
                   onClick={() => {
                     stopPreview();
+                    setBeatmapSet(beatmapSet);
                     startGame(beatmap.id);
                   }}
                 >

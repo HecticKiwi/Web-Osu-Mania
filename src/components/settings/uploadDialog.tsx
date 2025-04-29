@@ -1,3 +1,5 @@
+"use client";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Tooltip,
@@ -9,18 +11,20 @@ import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
 import { ExternalLink, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useGameStore } from "../../stores/gameStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapList from "../beatmapSet/beatmapList";
 import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
 import PreviewProgressBar from "../beatmapSet/previewProgressBar";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 import { Button } from "../ui/button";
-import { useGameContext } from "./gameProvider";
-import { useSettingsContext } from "./settingsProvider";
 
 const UploadDialog = () => {
-  const { uploadedBeatmapSet, beatmapId, setUploadedBeatmapSet, beatmapSet } =
-    useGameContext();
-  const { settings } = useSettingsContext();
+  const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const setUploadedBeatmapSet = useGameStore.use.setUploadedBeatmapSet();
+  const musicVolume = useSettingsStore.use.musicVolume();
   const [preview, setPreview] = useState<Howl | null>(null);
 
   const stopPreview = () => {
@@ -32,10 +36,10 @@ const UploadDialog = () => {
 
   useEffect(() => {
     if (uploadedBeatmapSet && beatmapSet) {
-      const audio = playAudioPreview(beatmapSet.id, settings.musicVolume);
+      const audio = playAudioPreview(beatmapSet.id, musicVolume);
       setPreview(audio);
     }
-  }, [beatmapSet, settings.musicVolume, uploadedBeatmapSet]);
+  }, [beatmapSet, musicVolume, uploadedBeatmapSet]);
 
   return (
     <>

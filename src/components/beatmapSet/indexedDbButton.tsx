@@ -11,11 +11,21 @@ import { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { HardDrive } from "lucide-react";
 import { toast } from "sonner";
-import { useStoredBeatmapSetsContext } from "../providers/storedBeatmapSetsProvider";
+import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import { Button } from "../ui/button";
 
 const IndexedDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
-  const { setStoredBeatmapSets } = useStoredBeatmapSetsContext();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
+  const setStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
+
+  if (
+    !storedBeatmapSets.some(
+      (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
+    )
+  ) {
+    return null;
+  }
 
   return (
     <>
@@ -29,8 +39,12 @@ const IndexedDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
               onClick={async () => {
                 await idb.deleteBeatmap(beatmapSet.id);
                 setStoredBeatmapSets((draft) => {
-                  return draft.filter((set) => set.id !== beatmapSet.id);
+                  draft.splice(
+                    draft.findIndex((set) => set.id === beatmapSet.id),
+                    1,
+                  );
                 });
+
                 toast("Beatmap deleted from IndexedDB.");
               }}
             >

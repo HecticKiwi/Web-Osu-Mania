@@ -30,6 +30,10 @@ class Idb {
   private db: Promise<IDBPDatabase<MyDB>>;
 
   constructor() {
+    if (typeof window === "undefined") {
+      return;
+    }
+
     this.init();
   }
 

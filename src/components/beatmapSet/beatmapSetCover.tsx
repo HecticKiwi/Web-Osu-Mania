@@ -1,16 +1,17 @@
 import { BeatmapSet } from "@/lib/osuApi";
 import { secondsToMMSS } from "@/lib/utils";
 import Image from "next/image";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 
 const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
-  const { settings } = useSettingsContext();
+  const preferMetadataInOriginalLanguage =
+    useSettingsStore.use.preferMetadataInOriginalLanguage();
 
-  const artist = settings.preferMetadataInOriginalLanguage
+  const artist = preferMetadataInOriginalLanguage
     ? beatmapSet.artist_unicode
     : beatmapSet.artist;
 
-  const title = settings.preferMetadataInOriginalLanguage
+  const title = preferMetadataInOriginalLanguage
     ? beatmapSet.title_unicode
     : beatmapSet.title;
 

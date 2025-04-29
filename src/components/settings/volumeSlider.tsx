@@ -3,11 +3,11 @@
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 
 const VolumeSlider = ({ className }: { className?: string }) => {
-  const { settings, setSettings } = useSettingsContext();
-  const { volume } = settings;
+  const setSettings = useSettingsStore.use.setSettings();
+  const volume = useSettingsStore.use.volume();
 
   return (
     <>

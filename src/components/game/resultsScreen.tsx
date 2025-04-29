@@ -1,13 +1,14 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
+import { mean, stdev } from "@/lib/math";
 import { downloadReplay } from "@/lib/replay";
-import { getLetterGrade, getModStrings, mean, stdev } from "@/lib/utils";
+import { getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
 import { MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useGameContext } from "../providers/gameProvider";
-import { useHighScoresContext } from "../providers/highScoresProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useGameStore } from "../../stores/gameStore";
+import { useHighScoresStore } from "../../stores/highScoresStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 import TimingDistributionChart from "./timingDistributionChart";
 
@@ -20,20 +21,21 @@ const ResultsScreen = ({
   playResults: PlayResults;
   retry: () => void;
 }) => {
-  const { closeGame, beatmapSet, beatmapId, replayData, setReplayData } =
-    useGameContext();
-  const { settings } = useSettingsContext();
-  const { highScores, setHighScores } = useHighScoresContext();
+  const closeGame = useGameStore.use.closeGame();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const replayData = useGameStore.use.replayData();
+  const setReplayData = useGameStore.use.setReplayData();
+  const mods = useSettingsStore.use.mods();
+  const preferMetadataInOriginalLanguage =
+    useSettingsStore.use.preferMetadataInOriginalLanguage();
+  const highScores = useHighScoresStore.use.highScores();
+  const setHighScores = useHighScoresStore.use.setHighScores();
   const [newHighScore, setNewHighScore] = useState(false);
 
   // Check for new high score
   useEffect(() => {
-    if (
-      !beatmapId ||
-      !beatmapSet ||
-      settings.mods.autoplay ||
-      playResults.failed
-    ) {
+    if (!beatmapId || !beatmapSet || mods.autoplay || playResults.failed) {
       return;
     }
 
@@ -55,7 +57,7 @@ const ResultsScreen = ({
 
           draft[beatmapSetId][beatmapId] = {
             timestamp: Date.now(),
-            mods: getModStrings(settings),
+            mods: getModStrings(mods),
             results,
             replayId: beatmapId.toString(),
           };
@@ -66,13 +68,13 @@ const ResultsScreen = ({
     };
 
     checkNewHighScore();
-  }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, settings]);
+  }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, mods]);
 
   const beatmap = beatmapSet?.beatmaps.find(
     (beatmap) => beatmap.id === beatmapId,
   );
 
-  const title = settings.preferMetadataInOriginalLanguage
+  const title = preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
 
@@ -98,7 +100,7 @@ const ResultsScreen = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-1">
-              {getModStrings(settings, replayData?.mods).map((mod) => (
+              {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
                   className="rounded-full bg-primary/25 px-2 py-0.5"

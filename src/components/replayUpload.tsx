@@ -6,10 +6,10 @@ import { Upload } from "lucide-react";
 import { inflate } from "pako";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
-import { useGameContext } from "./providers/gameProvider";
+import { useGameStore } from "../stores/gameStore";
 
 const ReplayUpload = () => {
-  const { startReplay } = useGameContext();
+  const startReplay = useGameStore.use.startReplay();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const loadFile = (file?: File) => {

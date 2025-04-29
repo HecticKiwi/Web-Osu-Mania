@@ -1,9 +1,8 @@
-"use client";
-
-import { getSettings } from "@/lib/utils";
+import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
 import { Howler } from "howler";
-import { ReactNode, createContext, useContext, useEffect } from "react";
-import { Updater, useImmer } from "use-immer";
+import { create } from "zustand";
+import { combine, persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
 export const BEATMAP_API_PROVIDERS = {
   NeriNyan: "https://api.nerinyan.moe/d/$setId",
@@ -293,75 +292,80 @@ export const defaultSettings: Settings = {
     showProgressBar: true,
     showHealthBar: true,
   },
-};
+} as const;
 
-const SettingsContext = createContext<{
-  settings: Settings;
-  setSettings: Updater<Settings>;
-  resetSettings: () => void;
-  resetMods: () => void;
-} | null>(null);
+const useSettingsStoreBase = create(
+  persist(
+    immer(
+      combine(
+        defaultSettings,
 
-export const useSettingsContext = () => {
-  const settings = useContext(SettingsContext);
+        (set) => ({
+          setSettings: (fn: (draft: Settings) => void) =>
+            set((settings) => {
+              const oldVolume = settings.volume;
 
-  if (!settings) {
-    throw new Error("Using settings context outside of provider");
-  }
+              fn(settings);
 
-  return settings;
-};
+              if (settings.volume !== oldVolume) {
+                Howler.volume(settings.volume);
+              }
+            }),
 
-const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useImmer<Settings>(null!);
+          resetSettings: () => {
+            set((settings) => {
+              return {
+                ...defaultSettings,
+                mods: settings.mods,
+                keybinds: settings.keybinds,
+              };
+            });
 
-  // Load settings from localstorage
-  useEffect(() => {
-    setSettings(getSettings());
-  }, [setSettings]);
+            Howler.volume(defaultSettings.volume);
+          },
 
-  // Update localStorage whenever settings change
-  useEffect(() => {
-    if (settings) {
-      localStorage.setItem("settings", JSON.stringify(settings));
-    }
-  }, [settings]);
+          resetMods: () =>
+            set((settings) => {
+              settings.mods = defaultSettings.mods;
+            }),
+        }),
+      ),
+    ),
+    {
+      name: "settings",
+      version: 0,
+      storage: getLocalStorageConfig({ fillCallback }),
+    },
+  ),
+);
 
-  // Update Howler volume from settings
-  useEffect(() => {
-    if (settings) {
-      Howler.volume(settings.volume);
-    }
-  }, [settings]);
+export const useSettingsStore = createSelectors(useSettingsStoreBase);
 
-  const resetSettings = () => {
-    setSettings((draft) => ({
-      ...defaultSettings,
-      mods: draft.mods,
-      keybinds: draft.keybinds,
-    }));
+function fillCallback(settings: Settings) {
+  // Set defaults for settings and mods that were added in recent updates
+  const filledSettings = {
+    ...defaultSettings,
+    ...settings,
   };
 
-  const resetMods = () => {
-    setSettings((draft) => ({
-      ...draft,
-      mods: defaultSettings.mods,
-    }));
+  filledSettings.mods = {
+    ...defaultSettings.mods,
+    ...settings.mods,
   };
 
-  if (!settings) {
-    return null;
+  filledSettings.keybinds = {
+    ...defaultSettings.keybinds,
+    ...settings.keybinds,
+  };
+
+  for (let i = 9; i < 18; i++) {
+    if (!filledSettings.keybinds.keyModes[i]) {
+      // Set default 10K-18K keybinds
+      filledSettings.keybinds.keyModes[i] = [
+        ...defaultSettings.keybinds.keyModes[i],
+      ];
+    }
   }
 
-  return (
-    <>
-      <SettingsContext.Provider
-        value={{ settings, resetSettings, setSettings, resetMods }}
-      >
-        {children}
-      </SettingsContext.Provider>
-    </>
-  );
-};
-
-export default SettingsProvider;
+  return filledSettings;
+}

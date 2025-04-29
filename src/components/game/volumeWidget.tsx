@@ -3,11 +3,13 @@
 import { cn } from "@/lib/utils";
 import { Game } from "@/osuMania/game";
 import { useEffect, useRef, useState } from "react";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { useSettingsStore } from "../../stores/settingsStore";
 import VolumeSettings from "../settings/volumeSettings";
 
 function VolumeWidget({ game }: { game: Game }) {
-  const { setSettings, settings } = useSettingsContext();
+  const setSettings = useSettingsStore.use.setSettings();
+  const musicVolume = useSettingsStore.use.musicVolume();
+  const sfxVolume = useSettingsStore.use.sfxVolume();
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -50,12 +52,12 @@ function VolumeWidget({ game }: { game: Game }) {
   }, [setSettings]);
 
   useEffect(() => {
-    game.song.volume(settings.musicVolume);
-  }, [game.song, settings.musicVolume]);
+    game.song.volume(musicVolume);
+  }, [game.song, musicVolume]);
 
   useEffect(() => {
-    game.settings.sfxVolume = settings.sfxVolume;
-  }, [game.settings, settings.sfxVolume]);
+    game.settings.sfxVolume = sfxVolume;
+  }, [game.settings, sfxVolume]);
 
   return (
     <>
@@ -70,7 +72,7 @@ function VolumeWidget({ game }: { game: Game }) {
           }
         }}
       >
-        <VolumeSettings inWidget showWidget={showWidget} />
+        <VolumeSettings inWidget />
       </div>
     </>
   );

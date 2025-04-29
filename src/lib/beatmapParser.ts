@@ -1,10 +1,10 @@
-import { Settings } from "@/components/providers/settingsProvider";
+import { Settings, useSettingsStore } from "@/stores/settingsStore";
 import { Howl } from "howler";
 import JSZip from "jszip";
 import { addDelay } from "./audio";
 import { Beatmap } from "./osuApi";
 import { decodeMods, EncodedMods } from "./replay";
-import { getSettings, removeFileExtension, shuffle } from "./utils";
+import { removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
@@ -132,7 +132,9 @@ export const parseOsz = async (
 
   const lines = osuFileData?.split(/\r\n|\n\r|\n/);
 
-  const mods = replayMods ? decodeMods(replayMods) : getSettings().mods;
+  const mods = replayMods
+    ? decodeMods(replayMods)
+    : useSettingsStore.getState().mods;
 
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
@@ -273,7 +275,7 @@ export function parseHitObjects(
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
-  const { audioOffset } = getSettings();
+  const audioOffset = useSettingsStore.getState().audioOffset;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
@@ -419,7 +421,7 @@ function parseTimingPoints(
 
   const timingPointLines = lines.slice(startIndex, endIndex);
 
-  const settings = getSettings();
+  const settings = useSettingsStore.getState();
   const baseScrollSpeed = settings.scrollSpeed;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
