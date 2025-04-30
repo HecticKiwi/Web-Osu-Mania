@@ -1,12 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
-import { useSettingsStore } from "../../stores/settingsStore";
+import {
+  SKIN_STYLE_ICONS,
+  SKIN_STYLES,
+  SkinStyle,
+  useSettingsStore,
+} from "../../stores/settingsStore";
+import RadioGroupInput from "../inputs/radioGroupInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
+import { Label } from "../ui/label";
+import { RadioGroupItem } from "../ui/radio-group";
 import BeatmapSettings from "./beatmapSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
 import ReplaySettings from "./replaySettings";
@@ -152,7 +161,7 @@ const SettingsTab = () => {
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
-        {/* <RadioGroupInput
+        <RadioGroupInput
           label="Style"
           selector={(state) => state.style}
           onValueChange={(value: string) =>
@@ -177,7 +186,7 @@ const SettingsTab = () => {
               </span>
             </Label>
           ))}
-        </RadioGroupInput> */}
+        </RadioGroupInput>
 
         <SwitchInput
           label="Darker Hold Notes"
