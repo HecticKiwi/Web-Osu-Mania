@@ -1,24 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
-import {
-  SKIN_STYLE_ICONS,
-  SKIN_STYLES,
-  SkinStyle,
-  useSettingsStore,
-} from "../../stores/settingsStore";
-import RadioGroupInput from "../inputs/radioGroupInput";
+import { useSettingsStore } from "../../stores/settingsStore";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
-import { Label } from "../ui/label";
-import { RadioGroupItem } from "../ui/radio-group";
 import BeatmapSettings from "./beatmapSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
 import ReplaySettings from "./replaySettings";
+import SkinSettings from "./skinSettings";
 import UnpauseDelayWarning from "./unpauseDelayWarning";
 import VolumeSettings from "./volumeSettings";
 
@@ -30,6 +22,25 @@ const SettingsTab = () => {
     <>
       <h3 className="text-lg font-semibold">General</h3>
       <div className="mt-2 space-y-3">
+        <SliderInput
+          label="Website Color"
+          selector={(state) => state.hue}
+          graphic={(hue) => (
+            <div
+              className="size-6 shrink-0 rounded-full"
+              style={{ backgroundColor: `hsl(${hue}, 80%, 69%)` }}
+            ></div>
+          )}
+          tooltip={(hue) => hue}
+          onValueChange={([hue]) =>
+            setSettings((draft) => {
+              draft.hue = hue;
+            })
+          }
+          min={0}
+          max={360}
+          step={1}
+        />
         <SliderInput
           label="Background Dim"
           selector={(state) => state.backgroundDim}
@@ -159,44 +170,10 @@ const SettingsTab = () => {
         />
       </div>
 
+      <SkinSettings />
+
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
-        <RadioGroupInput
-          label="Style"
-          selector={(state) => state.style}
-          onValueChange={(value: string) =>
-            setSettings((draft) => {
-              draft.style = value as SkinStyle;
-            })
-          }
-          className="space-y-2"
-        >
-          {SKIN_STYLES.map((style) => (
-            <Label
-              key={style}
-              htmlFor={style}
-              className="flex items-center space-x-2"
-            >
-              <RadioGroupItem value={style} id={style} />
-              <span className="flex gap-2">
-                <span className="w-4 text-center">
-                  {SKIN_STYLE_ICONS[style]}
-                </span>
-                {capitalizeFirstLetter(style)}
-              </span>
-            </Label>
-          ))}
-        </RadioGroupInput>
-
-        <SwitchInput
-          label="Darker Hold Notes"
-          selector={(state) => state.darkerHoldNotes}
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.darkerHoldNotes = checked;
-            })
-          }
-        />
         <SwitchInput
           label="Upscroll (DDR Style)"
           selector={(state) => state.upscroll}

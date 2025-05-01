@@ -17,7 +17,7 @@ export class ArrowHold extends Hold {
 
     this.view = new Container();
     this.view.addChild(this.body);
-    this.view.tint = game.laneColors[holdData.column];
+    this.view.tint = game.laneColors[holdData.column].hold;
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +

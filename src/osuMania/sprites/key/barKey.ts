@@ -39,7 +39,7 @@ export class BarKey extends Key {
 
   public override setPressed(pressed: boolean) {
     if (pressed) {
-      this.marker.tint = this.game.laneColors[this.columnId];
+      this.marker.tint = this.game.laneColors[this.columnId].tap;
     } else {
       this.marker.tint = "hsl(0,0%,30%)";
     }

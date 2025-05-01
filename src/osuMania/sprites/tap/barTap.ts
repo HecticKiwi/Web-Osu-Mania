@@ -13,7 +13,7 @@ export class BarTap extends Tap {
     this.view = Sprite.from(Texture.WHITE);
     this.view.width = width;
     this.view.height = height;
-    this.view.tint = game.laneColors[tapData.column];
+    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.zIndex = 1;
     this.view.pivot.x = width / 2 / this.view.scale.x;
     this.view.pivot.y = height / this.view.scale.y;

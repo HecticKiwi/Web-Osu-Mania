@@ -1,4 +1,5 @@
 import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
+import { getAllLaneColors } from "@/osuMania/constants";
 import { Howler } from "howler";
 import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
@@ -20,6 +21,11 @@ export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
   circles: "⬤",
   arrows: "↗",
   diamonds: "◆",
+};
+
+export type ColumnColor = {
+  tap: string;
+  hold: string;
 };
 
 export type Settings = {
@@ -49,6 +55,7 @@ export type Settings = {
   retryOnFail: boolean;
   showUnrankedModes: boolean;
   performanceMode: boolean;
+  hue: number;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -73,6 +80,15 @@ export type Settings = {
     showJudgement: boolean;
     showProgressBar: boolean;
     showHealthBar: boolean;
+  };
+  skin: {
+    colors: {
+      mode: "simple" | "custom";
+      simple: {
+        hue: number;
+      };
+      custom: ColumnColor[][];
+    };
   };
 };
 
@@ -103,6 +119,7 @@ export const defaultSettings: Settings = {
   retryOnFail: false,
   showUnrankedModes: false,
   performanceMode: false,
+  hue: 212,
   keybinds: {
     keyModes: [
       ["Space"], // 1K
@@ -291,6 +308,15 @@ export const defaultSettings: Settings = {
     showJudgement: true,
     showProgressBar: true,
     showHealthBar: true,
+  },
+  skin: {
+    colors: {
+      mode: "simple",
+      simple: {
+        hue: 212,
+      },
+      custom: getAllLaneColors(212, true),
+    },
   },
 } as const;
 

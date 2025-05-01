@@ -8,7 +8,7 @@ import { useSettingsStore } from "../../stores/settingsStore";
 import { Toggle } from "../ui/toggle";
 
 const rankedKeys = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
-const allKeys = Array.from({ length: 18 }, (_, i) => (i + 1).toString());
+export const allKeys = Array.from({ length: 18 }, (_, i) => (i + 1).toString());
 
 const KeysFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();

@@ -1,6 +1,7 @@
 import ReactScan from "@/components/debug/reactScan";
 import { GameOverlay } from "@/components/game/gameOverlay";
 import Header from "@/components/header";
+import Html from "@/components/html";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import UploadDialog from "@/components/settings/uploadDialog";
 import { Toaster } from "@/components/ui/sonner";
@@ -30,10 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="scrollbar scrollbar-track-background scrollbar-thumb-primary"
-    >
+    <Html>
       <Script
         defer
         src="https://umami-37qe.onrender.com/script.js"
@@ -53,6 +51,6 @@ export default function RootLayout({
           </ReactQueryProvider>
         </TooltipProvider>
       </body>
-    </html>
+    </Html>
   );
 }
