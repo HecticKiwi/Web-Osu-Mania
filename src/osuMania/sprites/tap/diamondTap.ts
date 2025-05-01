@@ -40,7 +40,7 @@ export class DiamondTap extends Tap {
 
     this.view = new Container();
     this.view.addChild(sprite);
-    this.view.tint = game.laneColors[tapData.column];
+    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.zIndex = 1;
     this.view.pivot.y = height / 2 / this.view.scale.y;
     this.view.x =

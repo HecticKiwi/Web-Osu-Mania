@@ -39,7 +39,7 @@ export class ArrowTap extends Tap {
     }
 
     this.view = ArrowTap.getArrowSprite(game, tapData.column);
-    this.view.tint = game.laneColors[tapData.column];
+    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.x =
       tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
 

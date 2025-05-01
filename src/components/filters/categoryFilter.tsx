@@ -82,7 +82,11 @@ const CategoryFilter = ({ className }: { className?: string }) => {
             >
               <Bookmark
                 className="size-5"
-                fill={categoryParam === "Saved" ? "white" : "hsl(212,80%,69%)"}
+                fill={
+                  categoryParam === "Saved"
+                    ? "white"
+                    : "hsl(var(--hue),80%,69%)"
+                }
               />
               <span>Saved</span>
             </Link>

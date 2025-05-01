@@ -7,7 +7,11 @@ import {
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
 import { scaleWidth } from "@/lib/utils";
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
+import {
+  ColumnColor,
+  Settings,
+  useSettingsStore,
+} from "@/stores/settingsStore";
 import {
   Column,
   GameState,
@@ -29,8 +33,8 @@ import {
 } from "pixi.js";
 import { Dispatch, SetStateAction } from "react";
 import {
+  getAllLaneColors,
   laneArrowDirections,
-  laneColors,
   laneWidths,
   MAX_TIME_RANGE,
 } from "./constants";
@@ -74,7 +78,7 @@ export class Game {
   public difficulty: Difficulty;
   public columnKeybinds: (string | null)[];
   public hitWindows: HitWindows;
-  public laneColors: readonly string[];
+  public laneColors: readonly ColumnColor[];
   public laneArrowDirections: readonly number[]; // Only used for the arrow style
 
   public hitPosition: number;
@@ -146,7 +150,7 @@ export class Game {
   public currentTimingPoint: TimingPoint;
   private nextTimingPoint: TimingPoint;
 
-  private setResults: () => void;
+  private setResults: (failed?: boolean) => void;
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
   private retry: () => void;
 
@@ -170,11 +174,21 @@ export class Game {
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
 
-    this.laneColors = laneColors[this.difficulty.keyCount - 1];
+    this.settings = useSettingsStore.getState();
+
+    if (this.settings.skin.colors.mode === "simple") {
+      this.laneColors = getAllLaneColors(this.settings.skin.colors.simple.hue)[
+        this.difficulty.keyCount - 1
+      ];
+    } else {
+      this.laneColors =
+        this.settings.skin.colors.custom[this.difficulty.keyCount - 1];
+    }
+
     this.laneArrowDirections =
       laneArrowDirections[this.difficulty.keyCount - 1];
 
-    this.setResults = () => {
+    this.setResults = (failed?: boolean) => {
       setResults({
         320: this.scoreSystem[320],
         300: this.scoreSystem[300],
@@ -185,7 +199,7 @@ export class Game {
         score: this.scoreSystem.score,
         accuracy: this.scoreSystem.accuracy,
         maxCombo: this.scoreSystem.maxCombo,
-        failed: false,
+        failed,
         viewingReplay: !!this.replayPlayer,
         replayData:
           this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
@@ -195,8 +209,6 @@ export class Game {
 
     this.setIsPaused = setIsPaused;
     this.retry = retry;
-
-    this.settings = useSettingsStore.getState();
 
     this.hitPositionOffset = this.settings.hitPositionOffset;
 
@@ -887,7 +899,7 @@ export class Game {
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    this.setResults();
+    this.setResults(true);
   }
 
   // Returns the px offset of the hit object from the judgement line based on
