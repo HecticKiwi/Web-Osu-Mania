@@ -6,7 +6,7 @@ import { useHighScoresStore } from "../../stores/highScoresStore";
 import { Button } from "../ui/button";
 
 const ClearHighScoresButton = () => {
-  const setHighScores = useHighScoresStore.use.setHighScores();
+  const resetHighScores = useHighScoresStore.use.resetHighScores();
 
   return (
     <Button
@@ -15,7 +15,7 @@ const ClearHighScoresButton = () => {
       size={"sm"}
       onClick={async () => {
         await idb.clearReplays();
-        setHighScores(() => ({}));
+        resetHighScores();
 
         toast("High scores have been reset.");
       }}

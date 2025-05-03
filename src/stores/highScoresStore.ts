@@ -18,6 +18,7 @@ type HighScoresState = {
   setHighScores: (
     updater: (draft: Record<number, BeatmapSetHighScores>) => void,
   ) => void;
+  resetHighScores: () => void;
 };
 
 function migrateCallback(
@@ -36,6 +37,12 @@ const useHighScoresStoreBase = create<HighScoresState>()(
       setHighScores: (updater) => {
         set((state) => {
           updater(state.highScores);
+        });
+      },
+
+      resetHighScores: () => {
+        set((state) => {
+          state.highScores = {};
         });
       },
     })),
