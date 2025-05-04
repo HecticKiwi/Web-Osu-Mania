@@ -1,10 +1,15 @@
 "use client";
 
 import { useSettingsStore } from "@/stores/settingsStore";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode, useEffect } from "react";
 
 const Html = ({ children }: { children: ReactNode }) => {
   const hue = useSettingsStore.use.hue();
+  const volume = useSettingsStore.use.volume();
+
+  useEffect(() => {
+    Howler.volume(volume);
+  }, [volume]);
 
   return (
     <html

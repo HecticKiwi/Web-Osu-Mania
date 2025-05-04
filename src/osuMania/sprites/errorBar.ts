@@ -128,6 +128,7 @@ export class ErrorBar {
 
     const mark = this.markPool.get();
     mark.tint = color;
+    mark.alpha = 1;
 
     const x =
       (-offset / this.game.hitWindows["50"]) * (this.background.width / 2) +

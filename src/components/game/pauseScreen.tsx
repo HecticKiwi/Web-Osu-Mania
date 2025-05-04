@@ -34,8 +34,8 @@ const PauseScreen = ({
   return (
     <>
       {/* Inset of -1px since it wasn't covering the top for some reason */}
-      <div className="fixed -top-[1px] left-0 h-[calc(100dvh+1px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
-        <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
+      <div className="fixed -inset-y-[1px] left-0 h-[calc(100dvh+2px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
+        <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
           <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
 
           <div className="text-xl text-muted-foreground">
@@ -82,7 +82,7 @@ const PauseScreen = ({
               Quit
             </Button>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

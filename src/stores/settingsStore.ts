@@ -1,6 +1,5 @@
 import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
 import { getAllLaneColors } from "@/osuMania/constants";
-import { Howler } from "howler";
 import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -329,13 +328,7 @@ const useSettingsStoreBase = create(
         (set) => ({
           setSettings: (fn: (draft: Settings) => void) =>
             set((settings) => {
-              const oldVolume = settings.volume;
-
               fn(settings);
-
-              if (settings.volume !== oldVolume) {
-                Howler.volume(settings.volume);
-              }
             }),
 
           resetSettings: () => {
@@ -346,8 +339,6 @@ const useSettingsStoreBase = create(
                 keybinds: settings.keybinds,
               };
             });
-
-            Howler.volume(defaultSettings.volume);
           },
 
           resetMods: () =>

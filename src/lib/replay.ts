@@ -4,6 +4,7 @@ import { PlayResults } from "@/types";
 import { deflate } from "pako";
 import { toast } from "sonner";
 import { BeatmapData } from "./beatmapParser";
+import { getReplayFilename } from "./results";
 import { downloadBlob } from "./utils";
 
 const ModBits = {
@@ -74,10 +75,7 @@ export async function downloadReplay(
       type: "application/octet-stream",
     });
 
-    // Generate a unique filename
-    const score = results.score.toLocaleString();
-    const accuracy = (results.accuracy * 100).toFixed(2).replace(".", "-");
-    const filename = `${beatmapData.beatmapSetId} ${beatmapData.metadata.title} ${beatmapData.version} Scr${score} Acc${accuracy}.womr`;
+    const filename = `${getReplayFilename(beatmapData, results)}.womr`;
 
     await downloadBlob(blob, filename);
 

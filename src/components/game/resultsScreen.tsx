@@ -1,16 +1,22 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { BeatmapData } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
-import { mean, stdev } from "@/lib/math";
 import { downloadReplay } from "@/lib/replay";
-import { getLetterGrade, getModStrings } from "@/lib/utils";
+import { downloadResults, getReplayFilename } from "@/lib/results";
+import { getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
-import { MoveLeft, Play, Repeat, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Camera, MoveLeft, Play, Repeat, Save } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
-import TimingDistributionChart from "./timingDistributionChart";
+import Results from "./results";
 
 const ResultsScreen = ({
   beatmapData,
@@ -24,14 +30,12 @@ const ResultsScreen = ({
   const closeGame = useGameStore.use.closeGame();
   const beatmapSet = useGameStore.use.beatmapSet();
   const beatmapId = useGameStore.use.beatmapId();
-  const replayData = useGameStore.use.replayData();
   const setReplayData = useGameStore.use.setReplayData();
   const mods = useSettingsStore.use.mods();
-  const preferMetadataInOriginalLanguage =
-    useSettingsStore.use.preferMetadataInOriginalLanguage();
   const highScores = useHighScoresStore.use.highScores();
   const setHighScores = useHighScoresStore.use.setHighScores();
   const [newHighScore, setNewHighScore] = useState(false);
+  const hiddenRef = useRef<HTMLDivElement>(null);
 
   // Check for new high score
   useEffect(() => {
@@ -70,219 +74,125 @@ const ResultsScreen = ({
     checkNewHighScore();
   }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, mods]);
 
-  const beatmap = beatmapSet?.beatmaps.find(
-    (beatmap) => beatmap.id === beatmapId,
-  );
-
-  const title = preferMetadataInOriginalLanguage
-    ? beatmapData.metadata.titleUnicode
-    : beatmapData.metadata.title;
-
-  const errors = playResults.hitErrors.map((timingError) => timingError.error);
-  const averageError = mean(errors);
-  const unstableRate = stdev(errors) * 10; // https://osu.ppy.sh/wiki/en/Gameplay/Unstable_rate
-
   return (
     <>
       {/* Top of -1px since it wasn't covering the top for some reason */}
-      <div className="fixed inset-0 -top-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
-        <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
-
-          <div className="text-xl text-muted-foreground">
-            Beatmap by {beatmapData.metadata.creator}
+      <div className="fixed inset-0 -inset-y-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
+        {/* Hidden results at a fixed width for getting screenshots */}
+        <div className="max-h-[0px] overflow-hidden" aria-hidden tabIndex={-1}>
+          <div ref={hiddenRef} className="w-[1280px]">
+            <Results
+              beatmapData={beatmapData}
+              playResults={playResults}
+              newHighScore={newHighScore}
+            />
           </div>
+        </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
-              <p className="text-yellow-400">{beatmap?.difficulty_rating}★</p>
-              <p className="line-clamp-1">{beatmapData.metadata.version}</p>
-            </div>
+        <Results
+          beatmapData={beatmapData}
+          playResults={playResults}
+          newHighScore={newHighScore}
+          responsive
+        />
 
-            <div className="flex flex-wrap items-center gap-1">
-              {getModStrings(mods, replayData?.mods).map((mod) => (
-                <span
-                  key={mod}
-                  className="rounded-full bg-primary/25 px-2 py-0.5"
+        {/* Footer actions */}
+        <div className="mx-auto mt-8 flex max-w-screen-xl flex-col justify-center p-8 pt-0">
+          <div className="flex flex-wrap items-center justify-between gap-8">
+            <div className="flex gap-4">
+              <Button
+                variant={"ghost"}
+                className="gap-2 text-xl"
+                onClick={() => closeGame()}
+              >
+                <MoveLeft /> Back
+              </Button>
+
+              {!playResults.viewingReplay && (
+                <Button
+                  variant={"default"}
+                  className="gap-2 text-xl"
+                  onClick={() => retry()}
                 >
-                  {mod}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <div className="grid gap-6 gap-y-12 rounded-xl border bg-card p-8 xl:grid-cols-2">
-              <div className="grid gap-6">
-                <div className="rounded-xl">
-                  <h2 className="mb-4 text-3xl font-semibold text-primary">
-                    Score
-                  </h2>
-                  <span className="text-5xl">
-                    {playResults.score.toLocaleString()}
-                  </span>
-
-                  {newHighScore && (
-                    <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
-                      New high score!
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="rounded-xl">
-                    <h3 className="mb-4 text-3xl font-semibold text-primary">
-                      Max Combo
-                    </h3>
-                    <span className="text-5xl">{playResults.maxCombo}x</span>
-                  </div>
-
-                  <div className="rounded-xl">
-                    <h3 className="mb-4 text-3xl font-semibold text-primary">
-                      Accuracy
-                    </h3>
-                    <span className="text-5xl">
-                      {(playResults.accuracy * 100).toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-xl">
-                <h2 className="mb-4 text-3xl font-semibold text-primary">
-                  Breakdown
-                </h2>
-
-                <div className="grid gap-4 text-2xl sm:grid-cols-2">
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-great">300</span>
-                    <span className="text-5xl">{playResults[300]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-perfect">300g</span>
-                    <span className="text-5xl">{playResults[320]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-good">200</span>
-                    <span className="text-5xl">{playResults[200]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-ok">100</span>
-                    <span className="text-5xl">{playResults[100]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-meh">50</span>
-                    <span className="text-5xl">{playResults[50]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-judgement-miss">miss!</span>
-                    <span className="text-5xl">{playResults[0]}x</span>
-                  </div>
-                </div>
-              </div>
+                  <Repeat /> Retry
+                </Button>
+              )}
             </div>
 
-            <div className="mt-8 w-full rounded-xl border bg-card p-6">
-              <h2 className="mb-4 text-3xl font-semibold text-primary">
-                Timing Distribution
-              </h2>
-
-              <TimingDistributionChart hitErrors={playResults.hitErrors} />
-
-              <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                <div className="rounded-xl">
-                  <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
-                    Average Hit Error
-                  </h3>
-                  <span className="text-3xl">
-                    {Math.abs(averageError).toFixed(2)} ms{" "}
-                    {averageError < 0 && "late"}
-                    {averageError > 0 && "early"}
-                  </span>
-                </div>
-
-                <div className="rounded-xl">
-                  <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
-                    Unstable Rate
-                  </h3>
-                  <span className="text-3xl">{unstableRate.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex items-center text-center text-[100px] leading-none">
-              <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
-
-              <div className="rounded-xl border bg-card p-6">
-                <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
-                  Grade
-                </h3>
-                <span>
-                  {playResults.failed
-                    ? "Failed"
-                    : getLetterGrade(playResults.accuracy)}
-                </span>
-              </div>
-
-              <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
-            </div>
-
-            <div className="mt-8 flex flex-col justify-center">
-              <div className="mt-16 flex flex-wrap items-center justify-between gap-8">
-                <div className="flex gap-4">
-                  <Button
-                    variant={"ghost"}
-                    className="gap-2 text-xl"
-                    onClick={() => closeGame()}
-                  >
-                    <MoveLeft /> Back
-                  </Button>
-
-                  {!playResults.viewingReplay && (
+            <div className="flex gap-4">
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
                     <Button
-                      variant={"default"}
-                      className="gap-2 text-xl"
-                      onClick={() => retry()}
-                    >
-                      <Repeat /> Retry
-                    </Button>
-                  )}
-                </div>
-
-                {playResults.replayData && (
-                  <div className="flex gap-4">
-                    <Button
-                      variant={"secondary"}
-                      className="gap-2 text-xl"
+                      variant={"outline"}
+                      className="text-xl"
                       onClick={() => {
-                        setReplayData(playResults.replayData);
-                        retry();
+                        if (!hiddenRef.current) {
+                          return;
+                        }
+
+                        const filename = `${getReplayFilename(beatmapData, playResults)}.png`;
+                        downloadResults(hiddenRef.current, filename);
                       }}
                     >
-                      <Play /> Watch{" "}
-                      <span className="hidden lg:inline">Replay</span>
+                      <Camera />
                     </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Download Results</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
-                    <Button
-                      variant={"secondary"}
-                      className="gap-2 text-xl"
-                      onClick={() =>
-                        downloadReplay(
-                          playResults.replayData,
-                          beatmapData,
-                          playResults,
-                        )
-                      }
-                    >
-                      <Save /> Download{" "}
-                      <span className="hidden lg:inline">Replay</span>
-                    </Button>
-                  </div>
-                )}
-              </div>
+              {playResults.replayData && (
+                <div className="rounded-md outline outline-1 outline-border">
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="rounded-r-none text-xl"
+                          onClick={() => {
+                            setReplayData(playResults.replayData);
+                            retry();
+                          }}
+                        >
+                          <Play />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Watch Replay</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="rounded-l-none border-l text-xl"
+                          onClick={() =>
+                            downloadReplay(
+                              playResults.replayData,
+                              beatmapData,
+                              playResults,
+                            )
+                          }
+                        >
+                          <Save />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Download Replay</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );
