@@ -5,7 +5,31 @@ const FaqPage = () => {
   return (
     <main className="p-2 pb-4 sm:p-6">
       <div className="mx-auto max-w-2xl">
-        <Card>
+        <p className="text-muted-foreground">
+          Website made with 💗 by{" "}
+          <Link
+            href={"https://github.com/HecticKiwi"}
+            className="text-primary focus-within:underline hover:underline"
+            target="_blank"
+            prefetch={false}
+          >
+            HecticKiwi
+          </Link>
+        </p>
+
+        <p className="mt-1 text-muted-foreground">
+          If you like this website, please consider donating on{" "}
+          <Link
+            href="https://ko-fi.com/hectickiwi"
+            className="text-primary focus-within:underline hover:underline"
+            target="_blank"
+            prefetch={false}
+          >
+            Ko-fi
+          </Link>
+        </p>
+
+        <Card className="mt-4">
           <CardContent className="p-4 sm:p-6">
             <h2 className="text-2xl font-semibold tracking-tight">
               What is osu!mania?
@@ -82,6 +106,47 @@ const FaqPage = () => {
             </p>
 
             <h2 className="mt-8 text-2xl font-semibold tracking-tight">
+              The site is blocked on my network!
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              If you’re unable to access the site due to network restrictions
+              (e.g. school or workplace firewalls), you can try one of the
+              following mirror URLs:
+            </p>
+            <ul className="mt-3 list-inside list-disc space-y-1 text-muted-foreground">
+              <li>
+                <Link
+                  href="https://web-osu-mania.pages.dev/"
+                  className="text-primary focus-within:underline hover:underline"
+                  target="_blank"
+                  prefetch={false}
+                >
+                  https://web-osu-mania.pages.dev
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://hectickiwi.github.io/Web-Osu-Mania/"
+                  className="text-primary focus-within:underline hover:underline"
+                  target="_blank"
+                  prefetch={false}
+                >
+                  https://hectickiwi.github.io/Web-Osu-Mania
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://webosumania.com/"
+                  className="text-primary focus-within:underline hover:underline"
+                  target="_blank"
+                  prefetch={false}
+                >
+                  https://webosumania.com
+                </Link>
+              </li>
+            </ul>
+
+            <h2 className="mt-8 text-2xl font-semibold tracking-tight">
               I found a bug / I have a suggestion!
             </h2>
             <p className="mt-3 text-muted-foreground">
@@ -98,29 +163,6 @@ const FaqPage = () => {
             </p>
           </CardContent>
         </Card>
-
-        <p className="mt-4 text-muted-foreground">
-          Website made with 💗 by{" "}
-          <Link
-            href={"https://github.com/HecticKiwi"}
-            className="text-primary focus-within:underline hover:underline"
-            target="_blank"
-            prefetch={false}
-          >
-            HecticKiwi
-          </Link>
-        </p>
-        <p className="mt-1 text-muted-foreground">
-          If you like this website, please consider donating on{" "}
-          <Link
-            href={"https://ko-fi.com/hectickiwi"}
-            className="text-primary focus-within:underline hover:underline"
-            target="_blank"
-            prefetch={false}
-          >
-            Ko-fi
-          </Link>
-        </p>
       </div>
     </main>
   );
