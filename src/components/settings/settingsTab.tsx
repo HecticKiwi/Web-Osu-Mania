@@ -132,16 +132,6 @@ const SettingsTab = () => {
         />
 
         <SwitchInput
-          label="Show Unranked Modes (11K-18K)"
-          selector={(state) => state.showUnrankedModes}
-          onCheckedChange={(checked) => {
-            setSettings((draft) => {
-              draft.showUnrankedModes = checked;
-            });
-          }}
-        />
-
-        <SwitchInput
           label="Performance Mode"
           selector={(state) => state.performanceMode}
           onCheckedChange={(checked) => {

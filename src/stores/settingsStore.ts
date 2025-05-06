@@ -52,7 +52,6 @@ export type Settings = {
   preferMetadataInOriginalLanguage: boolean;
   unpauseDelay: number;
   retryOnFail: boolean;
-  showUnrankedModes: boolean;
   performanceMode: boolean;
   hue: number;
   keybinds: {
@@ -116,7 +115,6 @@ export const defaultSettings: Settings = {
   preferMetadataInOriginalLanguage: false,
   unpauseDelay: 1500,
   retryOnFail: false,
-  showUnrankedModes: false,
   performanceMode: false,
   hue: 212,
   keybinds: {

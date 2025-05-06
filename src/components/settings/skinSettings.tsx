@@ -27,7 +27,7 @@ import {
   SkinStyle,
   useSettingsStore,
 } from "../../stores/settingsStore";
-import { allKeys } from "../filters/keysFilter";
+import { keys } from "../filters/keysFilter";
 import RadioGroupInput from "../inputs/radioGroupInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
@@ -126,7 +126,7 @@ const SkinSettings = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {allKeys.map((key) => (
+                  {keys.map((key) => (
                     <SelectItem key={key} value={key}>
                       {key}K
                     </SelectItem>
