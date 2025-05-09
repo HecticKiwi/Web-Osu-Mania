@@ -83,6 +83,7 @@ export class Game {
 
   public hitPosition: number;
   public hitPositionOffset: number;
+  public stagePositionOffset: number;
   public scaledColumnWidth: number;
 
   public judgementToShow: JudgementValue | null = null;
@@ -286,6 +287,11 @@ export class Game {
   private resize() {
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
 
+    this.stagePositionOffset =
+      (this.settings.stagePosition *
+        (this.app.screen.width - this.stageContainer.width)) /
+      2;
+
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,
@@ -301,7 +307,7 @@ export class Game {
 
     this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
-    this.startMessage.x = this.app.screen.width / 2;
+    this.startMessage.x = this.app.screen.width / 2 + this.stagePositionOffset;
     this.startMessage.y = this.app.screen.height / 2;
 
     this.stageHint?.resize();
@@ -340,10 +346,13 @@ export class Game {
     this.stageContainer.x = this.app.screen.width / 2;
     this.stageContainer.y = this.app.screen.height / 2;
 
+    this.stageContainer.x =
+      this.app.screen.width / 2 + this.stagePositionOffset;
+
     this.judgement?.resize();
 
     if (this.comboText) {
-      this.comboText.x = this.app.screen.width / 2;
+      this.comboText.x = this.app.screen.width / 2 + this.stagePositionOffset;
 
       if (this.settings.upscroll) {
         this.comboText.y = (this.app.screen.height * 2) / 3;

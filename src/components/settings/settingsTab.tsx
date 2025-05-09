@@ -164,14 +164,24 @@ const SettingsTab = () => {
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
-        <SwitchInput
-          label="Upscroll (DDR Style)"
-          selector={(state) => state.upscroll}
-          onCheckedChange={(checked) =>
+        <SliderInput
+          label="Stage Position"
+          selector={(state) => state.stagePosition}
+          tooltip={(stagePosition) => {
+            if (stagePosition === 0) {
+              return "Centered";
+            }
+
+            return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
+          }}
+          onValueChange={([stagePosition]) =>
             setSettings((draft) => {
-              draft.upscroll = checked;
+              draft.stagePosition = stagePosition;
             })
           }
+          min={-1}
+          max={1}
+          step={0.01}
         />
         <SliderInput
           label="Hit Position"
@@ -185,6 +195,15 @@ const SettingsTab = () => {
           min={0}
           max={200}
           step={1}
+        />
+        <SwitchInput
+          label="Upscroll (DDR Style)"
+          selector={(state) => state.upscroll}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.upscroll = checked;
+            })
+          }
         />
         <SwitchInput
           label="Show Score"
