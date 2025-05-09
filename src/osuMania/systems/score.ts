@@ -96,7 +96,8 @@ export class ScoreSystem {
       50 * this[50];
 
     const highestPossibleAccuracyWeight =
-      305 * (this[320] + this[300] + this[200] + this[100] + this[0]);
+      305 *
+      (this[320] + this[300] + this[200] + this[100] + this[50] + this[0]);
 
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
 
