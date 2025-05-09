@@ -67,7 +67,14 @@ export class Countdown {
     this.view.addChild(this.progressBarContainer);
     this.view.addChild(this.skipText);
     this.view.pivot.set(this.view.width / 2, this.view.height / 2);
-    this.view.x = this.game.app.screen.width / 2;
+
+    const stagePosition = this.game.settings.stagePosition;
+    const stagePositionOffset =
+      (stagePosition *
+        (this.game.app.screen.width - this.game.stageContainer.width)) /
+      2;
+
+    this.view.x = this.game.app.screen.width / 2 + stagePositionOffset;
     this.view.y = this.game.app.screen.height / 2;
     this.view.alpha = 0;
   }

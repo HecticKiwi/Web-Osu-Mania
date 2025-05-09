@@ -54,6 +54,7 @@ export type Settings = {
   retryOnFail: boolean;
   performanceMode: boolean;
   hue: number;
+  stagePosition: number;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -117,6 +118,7 @@ export const defaultSettings: Settings = {
   retryOnFail: false,
   performanceMode: false,
   hue: 212,
+  stagePosition: 0,
   keybinds: {
     keyModes: [
       ["Space"], // 1K

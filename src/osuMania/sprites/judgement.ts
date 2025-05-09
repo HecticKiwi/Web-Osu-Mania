@@ -20,7 +20,8 @@ export class Judgement {
   }
 
   public resize() {
-    this.view.x = this.game.app.screen.width / 2;
+    this.view.x =
+      this.game.app.screen.width / 2 + this.game.stagePositionOffset;
 
     if (this.game.settings.upscroll) {
       this.view.y = (this.game.app.screen.height * 2) / 3 - 50;
