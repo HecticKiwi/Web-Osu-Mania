@@ -4,6 +4,8 @@ import { cn, getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
+import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
+import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 import TimingDistributionChart from "./timingDistributionChart";
 
 const Results = ({
@@ -39,56 +41,90 @@ const Results = ({
   return (
     <div
       className={cn(
-        "w-screen-xl mx-auto flex min-h-screen flex-col justify-center p-8",
+        "w-screen-xl mx-auto flex min-h-screen flex-col justify-center",
         responsive && "max-w-screen-xl",
       )}
     >
-      <h1
-        className={cn(
-          "text-5xl font-semibold",
-          responsive && "text-3xl md:text-5xl",
-        )}
+      <div
+        style={{
+          background: `url(${beatmapData.backgroundUrl}) center/cover no-repeat`,
+        }}
       >
-        {title}
-      </h1>
+        <div
+          style={{
+            background: `
+              linear-gradient(to top, hsl(var(--background)), hsl(var(--background) / 0.45) 25%),
+              linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background) / 0.45) 25%),
+              linear-gradient(to left, hsl(var(--background)), hsl(var(--background) / 0.45) 25%),
+              linear-gradient(to right, hsl(var(--background)), hsl(var(--background) / 0.45) 25%)
+            `,
+          }}
+          // Fixes a bug with a sliver of the BG peeking out below the gradients when downloading screenshot
+          className="-m-[1px] p-[calc(2rem+1px)]"
+        >
+          <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
+            <div>
+              <h1
+                className={cn(
+                  "text-5xl font-semibold",
+                  responsive && "text-3xl md:text-5xl",
+                )}
+              >
+                {title}
+              </h1>
 
-      <div className="text-xl text-muted-foreground">
-        Beatmap by {beatmapData.metadata.creator}
+              <div className="text-xl text-muted-foreground">
+                Beatmap by {beatmapData.metadata.creator}
+              </div>
+            </div>
+
+            {beatmapSet && (
+              <div className="flex gap-2" data-exclude>
+                <SaveBeatmapSetButton beatmapSet={beatmapSet} alwaysShow />
+
+                <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
+              </div>
+            )}
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
+              <p className="text-yellow-400">{beatmap?.difficulty_rating}★</p>
+              <p className="line-clamp-1">{beatmapData.metadata.version}</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1">
+              {getModStrings(mods, replayData?.mods).map((mod) => (
+                <span
+                  key={mod}
+                  className="rounded-full bg-primary/25 px-2 py-0.5"
+                >
+                  {mod}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 flex items-center text-center text-[100px] leading-none">
+            <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+
+            <div className="rounded-xl border bg-card p-6">
+              <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
+                Grade
+              </h3>
+              <span>
+                {playResults.failed
+                  ? "Failed"
+                  : getLetterGrade(playResults.accuracy)}
+              </span>
+            </div>
+
+            <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
-        <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
-          <p className="text-yellow-400">{beatmap?.difficulty_rating}★</p>
-          <p className="line-clamp-1">{beatmapData.metadata.version}</p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1">
-          {getModStrings(mods, replayData?.mods).map((mod) => (
-            <span key={mod} className="rounded-full bg-primary/25 px-2 py-0.5">
-              {mod}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-8 flex items-center text-center text-[100px] leading-none">
-        <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
-
-        <div className="rounded-xl border bg-card p-6">
-          <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
-            Grade
-          </h3>
-          <span>
-            {playResults.failed
-              ? "Failed"
-              : getLetterGrade(playResults.accuracy)}
-          </span>
-        </div>
-
-        <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
-      </div>
-
-      <div className="mt-8">
+      <div className="p-8 pt-0">
         <div
           className={cn(
             "grid grid-cols-2 gap-6 gap-y-12 rounded-xl border bg-card p-8 ",

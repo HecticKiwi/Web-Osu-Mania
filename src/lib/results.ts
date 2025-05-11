@@ -17,6 +17,13 @@ export function downloadResults(node: HTMLDivElement, filename: string) {
 
   domToPng(node, {
     backgroundColor: `hsl(${backgroundColor})`,
+    filter(el) {
+      if (!(el instanceof HTMLElement)) {
+        return true;
+      }
+
+      return !el.getAttribute("data-exclude");
+    },
   }).then((dataUrl) => {
     downloadUrl(dataUrl, filename);
   });

@@ -412,6 +412,11 @@ export class Game {
 
     this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
+    this.stagePositionOffset =
+      (this.settings.stagePosition *
+        (this.app.screen.width - this.stageContainer.width)) /
+      2;
+
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,

@@ -12,7 +12,13 @@ import { Bookmark } from "lucide-react";
 import { useSavedBeatmapSetsStore } from "../../stores/savedBeatmapSetsStore";
 import { Button } from "../ui/button";
 
-const SaveBeatmapSetButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
+const SaveBeatmapSetButton = ({
+  beatmapSet,
+  alwaysShow,
+}: {
+  beatmapSet: BeatmapSet;
+  alwaysShow?: boolean;
+}) => {
   const savedBeatmapSets = useSavedBeatmapSetsStore.use.savedBeatmapSets();
   const setSavedBeatmapSets =
     useSavedBeatmapSetsStore.use.setSavedBeatmapSets();
@@ -28,7 +34,7 @@ const SaveBeatmapSetButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
             size={"icon"}
             className={cn(
               "h-8 w-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100",
-              isSaved && "opacity-100",
+              (isSaved || alwaysShow) && "opacity-100",
             )}
             onClick={() => {
               if (isSaved) {

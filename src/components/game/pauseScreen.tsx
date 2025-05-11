@@ -4,6 +4,8 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
+import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
+import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 import { Button } from "../ui/button";
 
 const PauseScreen = ({
@@ -36,10 +38,22 @@ const PauseScreen = ({
       {/* Inset of -1px since it wasn't covering the top for some reason */}
       <div className="fixed -inset-y-[1px] left-0 h-[calc(100dvh+2px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
         <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
+          <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
+            <div>
+              <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
 
-          <div className="text-xl text-muted-foreground">
-            Beatmap by {beatmapData.metadata.creator}
+              <div className="text-xl text-muted-foreground">
+                Beatmap by {beatmapData.metadata.creator}
+              </div>
+            </div>
+
+            {beatmapSet && (
+              <div className="flex gap-2" data-exclude>
+                <SaveBeatmapSetButton beatmapSet={beatmapSet} alwaysShow />
+
+                <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
+              </div>
+            )}
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
