@@ -295,6 +295,7 @@ export class Game {
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,
+      this.settings.lanewidth,
     );
 
     // Cap column width on small screen widths
@@ -420,6 +421,7 @@ export class Game {
     this.scaledColumnWidth = scaleWidth(
       laneWidths[this.difficulty.keyCount - 1],
       this.app.screen.width,
+      this.settings.lanewidth,
     );
 
     Tap.renderTexture = null;

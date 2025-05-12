@@ -55,6 +55,7 @@ export type Settings = {
   performanceMode: boolean;
   hue: number;
   stagePosition: number;
+  lanewidth: number;
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -119,6 +120,7 @@ export const defaultSettings: Settings = {
   performanceMode: false,
   hue: 212,
   stagePosition: 0,
+  lanewidth: 0,
   keybinds: {
     keyModes: [
       ["Space"], // 1K

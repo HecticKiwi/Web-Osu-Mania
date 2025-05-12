@@ -33,7 +33,7 @@ const SettingsTab = () => {
           )}
           tooltip={(hue) => hue}
           onValueChange={([hue]) =>
-            setSettings((draft) => {
+            setSettings((draft: { hue: number; }) => {
               draft.hue = hue;
             })
           }
@@ -55,7 +55,7 @@ const SettingsTab = () => {
           )}
           tooltip={(backgroundDim) => `${(backgroundDim * 100).toFixed(0)}%`}
           onValueChange={([backgroundDim]) =>
-            setSettings((draft) => {
+            setSettings((draft: { backgroundDim: number; }) => {
               draft.backgroundDim = backgroundDim;
             })
           }
@@ -76,7 +76,7 @@ const SettingsTab = () => {
           )}
           tooltip={(backgroundBlur) => `${(backgroundBlur * 100).toFixed(0)}%`}
           onValueChange={([backgroundBlur]) =>
-            setSettings((draft) => {
+            setSettings((draft: { backgroundBlur: number; }) => {
               draft.backgroundBlur = backgroundBlur;
             })
           }
@@ -92,7 +92,7 @@ const SettingsTab = () => {
             `${Math.round(MAX_TIME_RANGE / scrollSpeed)}ms (speed ${scrollSpeed})`
           }
           onValueChange={([scrollSpeed]) =>
-            setSettings((draft) => {
+            setSettings((draft: { scrollSpeed: number; }) => {
               draft.scrollSpeed = scrollSpeed;
             })
           }
@@ -110,7 +110,7 @@ const SettingsTab = () => {
               : `${unpauseDelay}ms (${unpauseDelay / 1000}s)`
           }
           onValueChange={([unpauseDelay]) =>
-            setSettings((draft) => {
+            setSettings((draft: { unpauseDelay: number; }) => {
               draft.unpauseDelay = unpauseDelay;
             })
           }
@@ -121,11 +121,27 @@ const SettingsTab = () => {
 
         <UnpauseDelayWarning />
 
+        <SliderInput
+          label="Lane Width"
+          selector={(state) => state.lanewidth}
+          tooltip={(lanewidth) =>
+            `${Math.round(lanewidth)}px`
+          }
+          onValueChange={([lanewidth]) =>
+            setSettings((draft: { lanewidth: number; }) => {
+              draft.lanewidth = lanewidth;
+            })
+          }
+          min={-20}
+          max={80}
+          step={1}
+        />
+
         <SwitchInput
           label="Retry on Fail"
           selector={(state) => state.retryOnFail}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { retryOnFail: boolean; }) => {
               draft.retryOnFail = checked;
             })
           }
@@ -135,7 +151,7 @@ const SettingsTab = () => {
           label="Performance Mode"
           selector={(state) => state.performanceMode}
           onCheckedChange={(checked) => {
-            setSettings((draft) => {
+            setSettings((draft: { performanceMode: boolean; }) => {
               draft.performanceMode = checked;
             });
           }}
@@ -153,7 +169,7 @@ const SettingsTab = () => {
           label="Prefer Metadata in Original Language"
           selector={(state) => state.preferMetadataInOriginalLanguage}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { preferMetadataInOriginalLanguage: boolean; }) => {
               draft.preferMetadataInOriginalLanguage = checked;
             })
           }
@@ -175,7 +191,7 @@ const SettingsTab = () => {
             return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
           }}
           onValueChange={([stagePosition]) =>
-            setSettings((draft) => {
+            setSettings((draft: { stagePosition: number; }) => {
               draft.stagePosition = stagePosition;
             })
           }
@@ -188,7 +204,7 @@ const SettingsTab = () => {
           selector={(state) => state.hitPositionOffset}
           tooltip={(hitPositionOffset) => hitPositionOffset}
           onValueChange={([hitPositionOffset]) =>
-            setSettings((draft) => {
+            setSettings((draft: { hitPositionOffset: number; }) => {
               draft.hitPositionOffset = hitPositionOffset;
             })
           }
@@ -200,7 +216,7 @@ const SettingsTab = () => {
           label="Upscroll (DDR Style)"
           selector={(state) => state.upscroll}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { upscroll: boolean; }) => {
               draft.upscroll = checked;
             })
           }
@@ -209,7 +225,7 @@ const SettingsTab = () => {
           label="Show Score"
           selector={(state) => state.ui.showScore}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showScore: boolean; }; }) => {
               draft.ui.showScore = checked;
             })
           }
@@ -218,7 +234,7 @@ const SettingsTab = () => {
           label="Show Combo"
           selector={(state) => state.ui.showCombo}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showCombo: boolean; }; }) => {
               draft.ui.showCombo = checked;
             })
           }
@@ -227,7 +243,7 @@ const SettingsTab = () => {
           label="Show Accuracy"
           selector={(state) => state.ui.showAccuracy}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showAccuracy: boolean; }; }) => {
               draft.ui.showAccuracy = checked;
             })
           }
@@ -236,7 +252,7 @@ const SettingsTab = () => {
           label="Show Judgement"
           selector={(state) => state.ui.showJudgement}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showJudgement: boolean; }; show300g: boolean; }) => {
               draft.ui.showJudgement = checked;
 
               if (!checked) {
@@ -249,7 +265,7 @@ const SettingsTab = () => {
           label="Show 300g Judgement"
           selector={(state) => state.show300g}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { show300g: boolean; ui: { showJudgement: boolean; }; }) => {
               draft.show300g = checked;
 
               if (checked) {
@@ -262,7 +278,7 @@ const SettingsTab = () => {
           label="Show Progress Bar"
           selector={(state) => state.ui.showProgressBar}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showProgressBar: boolean; }; }) => {
               draft.ui.showProgressBar = checked;
             })
           }
@@ -271,7 +287,7 @@ const SettingsTab = () => {
           label="Show Health Bar"
           selector={(state) => state.ui.showHealthBar}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { ui: { showHealthBar: boolean; }; }) => {
               draft.ui.showHealthBar = checked;
             })
           }
@@ -280,7 +296,7 @@ const SettingsTab = () => {
           label="Show Error Bar"
           selector={(state) => state.showErrorBar}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { showErrorBar: boolean; }) => {
               draft.showErrorBar = checked;
             })
           }
@@ -290,7 +306,7 @@ const SettingsTab = () => {
           selector={(state) => state.errorBarScale}
           tooltip={(errorBarScale) => `${errorBarScale}x`}
           onValueChange={([errorBarScale]) =>
-            setSettings((draft) => {
+            setSettings((draft: { errorBarScale: number; }) => {
               draft.errorBarScale = errorBarScale;
             })
           }
@@ -302,7 +318,7 @@ const SettingsTab = () => {
           label="Show FPS Counter"
           selector={(state) => state.showFpsCounter}
           onCheckedChange={(checked) =>
-            setSettings((draft) => {
+            setSettings((draft: { showFpsCounter: boolean; }) => {
               draft.showFpsCounter = checked;
             })
           }
