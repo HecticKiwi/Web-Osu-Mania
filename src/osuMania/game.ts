@@ -728,7 +728,7 @@ export class Game {
       this.difficulty.keyCount * this.scaledColumnWidth;
 
     this.stageBackground = new Graphics()
-      .rect(0, 0, notesContainerWidth, this.app.screen.height)
+      .rect(0, 0, notesContainerWidth, (this.app.screen.height + this.settings.lanewidth))
       .fill(0x000000);
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
