@@ -196,6 +196,21 @@ const SettingsTab = () => {
           max={200}
           step={1}
         />
+        <SliderInput
+          label="Lane Width Adjustment"
+          selector={(state) => state.laneWidthAdjustment}
+          tooltip={(laneWidthAdjustment) =>
+            `${Math.round(laneWidthAdjustment)}`
+          }
+          onValueChange={([laneWidthAdjustment]) =>
+            setSettings((draft) => {
+              draft.laneWidthAdjustment = laneWidthAdjustment;
+            })
+          }
+          min={-20}
+          max={80}
+          step={1}
+        />
         <SwitchInput
           label="Upscroll (DDR Style)"
           selector={(state) => state.upscroll}
