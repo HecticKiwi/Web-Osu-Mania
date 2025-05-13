@@ -24,8 +24,8 @@ export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function scaleWidth(width: number, windowWidth: number, usrmod: number = 0) {
-  return (width / OSU_WIDTH) * Math.max(windowWidth, 1528) + usrmod;
+export function scaleWidth(width: number, windowWidth: number) {
+  return (width / OSU_WIDTH) * Math.max(windowWidth, 1528);
 }
 
 export function scaleHeight(height: number, windowHeight: number) {

@@ -287,26 +287,7 @@ export class Game {
   private resize() {
     this.app.renderer.resize(window.innerWidth, window.innerHeight);
 
-    this.stagePositionOffset =
-      (this.settings.stagePosition *
-        (this.app.screen.width - this.stageContainer.width)) /
-      2;
-
-    this.scaledColumnWidth = scaleWidth(
-      laneWidths[this.difficulty.keyCount - 1],
-      this.app.screen.width,
-      this.settings.lanewidth,
-    );
-
-    // Cap column width on small screen widths
-    if (
-      this.scaledColumnWidth * this.difficulty.keyCount >
-      this.app.screen.width
-    ) {
-      this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
-    }
-
-    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
+    this.recalculateLayout();
 
     this.startMessage.x = this.app.screen.width / 2 + this.stagePositionOffset;
     this.startMessage.y = this.app.screen.height / 2;
@@ -387,6 +368,29 @@ export class Game {
     }
   }
 
+  private recalculateLayout() {
+    this.stagePositionOffset =
+      (this.settings.stagePosition *
+        (this.app.screen.width - this.stageContainer.width)) /
+      2;
+
+    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
+
+    this.scaledColumnWidth = scaleWidth(
+      laneWidths[this.difficulty.keyCount - 1] +
+        this.settings.laneWidthAdjustment,
+      this.app.screen.width,
+    );
+
+    // Cap column width on small screen widths
+    if (
+      this.scaledColumnWidth * this.difficulty.keyCount >
+      this.app.screen.width
+    ) {
+      this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
+    }
+  }
+
   async main(ref: HTMLDivElement) {
     await this.app.init({
       width: window.innerWidth,
@@ -411,18 +415,7 @@ export class Game {
     // For the debugger extension to detect the app
     window.__PIXI_APP__ = this.app;
 
-    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
-
-    this.stagePositionOffset =
-      (this.settings.stagePosition *
-        (this.app.screen.width - this.stageContainer.width)) /
-      2;
-
-    this.scaledColumnWidth = scaleWidth(
-      laneWidths[this.difficulty.keyCount - 1],
-      this.app.screen.width,
-      this.settings.lanewidth,
-    );
+    this.recalculateLayout();
 
     Tap.renderTexture = null;
     BarKey.markerGraphicsContext = null;
@@ -728,7 +721,7 @@ export class Game {
       this.difficulty.keyCount * this.scaledColumnWidth;
 
     this.stageBackground = new Graphics()
-      .rect(0, 0, notesContainerWidth, (this.app.screen.height + this.settings.lanewidth))
+      .rect(0, 0, notesContainerWidth, this.app.screen.height)
       .fill(0x000000);
     this.stageBackground.alpha = 0.5;
     this.notesContainer.addChild(this.stageBackground);
