@@ -113,9 +113,7 @@ const Results = ({
                 Grade
               </h3>
               <span>
-                {playResults.failed
-                  ? "Failed"
-                  : getLetterGrade(playResults.accuracy)}
+                {playResults.failed ? "Failed" : getLetterGrade(playResults)}
               </span>
             </div>
 

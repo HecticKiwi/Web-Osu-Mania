@@ -81,7 +81,7 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
           </p>
 
           <div className="mx-auto my-2 w-fit rounded-full border-x px-2 py-1 text-base font-semibold">
-            {getLetterGrade(highScore.results.accuracy)}
+            {getLetterGrade(highScore.results)}
           </div>
 
           <div className="mb-2 flex justify-around text-base">

@@ -1,5 +1,6 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import { Settings } from "@/stores/settingsStore";
+import { Results } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { decodeMods, EncodedMods } from "./replay";
@@ -188,18 +189,21 @@ export function getModStrings(
   return modStrings;
 }
 
-export function getLetterGrade(accuracy: number) {
-  return accuracy === 1
-    ? "SS"
-    : accuracy > 0.95
-      ? "S"
-      : accuracy > 0.9
-        ? "A"
-        : accuracy > 0.8
-          ? "B"
-          : accuracy > 0.7
-            ? "C"
-            : "D";
+export function getLetterGrade(results: Results) {
+  if (results[200] + results[100] + results[50] + results[0] === 0) {
+    return "SS";
+  }
+
+  const accuracy = results.accuracy;
+  return accuracy > 0.95
+    ? "S"
+    : accuracy > 0.9
+      ? "A"
+      : accuracy > 0.8
+        ? "B"
+        : accuracy > 0.7
+          ? "C"
+          : "D";
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
