@@ -9,6 +9,7 @@ export type ReplayData = {
   };
   mods: EncodedMods;
   inputs: ReplayInput[][];
+  columnMap?: number[];
 };
 
 export type ReplayInput = [time: number, length: number];
@@ -29,6 +30,7 @@ export class ReplayRecorder {
       },
       mods: encodeMods(this.game.settings.mods),
       inputs: Array.from({ length: this.game.difficulty.keyCount }, () => []),
+      columnMap: game.settings.mods.random ? beatmapData.columnMap : undefined,
     };
   }
 
