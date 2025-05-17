@@ -93,6 +93,7 @@ const GameModal = () => {
           beatmapSetFile,
           beatmap,
           replayData?.mods,
+          replayData?.columnMap,
         );
 
         await loadAssets();

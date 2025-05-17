@@ -89,6 +89,7 @@ export interface BeatmapData {
   hitObjects: HitObject[];
   startTime: number;
   endTime: number;
+  columnMap?: number[];
   hitWindows: HitWindows;
   song: Required<Sound>;
   backgroundUrl: string | null;
@@ -101,6 +102,7 @@ export const parseOsz = async (
   blob: Blob,
   beatmap: Beatmap,
   replayMods?: EncodedMods,
+  replayColumnMap?: number[],
 ): Promise<BeatmapData> => {
   const zip = await JSZip.loadAsync(blob);
 
@@ -139,10 +141,11 @@ export const parseOsz = async (
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
   const difficulty = parseDifficulty(lines);
-  const { hitObjects, delay, startTime, endTime } = parseHitObjects(
+  const { hitObjects, delay, startTime, endTime, columnMap } = parseHitObjects(
     lines,
     difficulty.keyCount,
     mods,
+    replayColumnMap,
   );
   const timingPoints = parseTimingPoints(
     lines,
@@ -248,6 +251,7 @@ export const parseOsz = async (
     hitObjects,
     startTime,
     endTime,
+    columnMap,
     hitWindows,
     song,
     backgroundUrl,
@@ -271,6 +275,7 @@ export function parseHitObjects(
   lines: string[],
   columnCount: number,
   mods: Settings["mods"],
+  replayColumnMap?: number[],
 ) {
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
@@ -294,9 +299,6 @@ export function parseHitObjects(
       .map((number) => Number(number));
 
     let column = Math.floor((x * columnCount) / 512);
-    if (mods.mirror) {
-      column = columnCount - column - 1;
-    }
 
     const hitSoundBinaryString = hitSoundDecimal.toString(2).padStart(4, "0");
     const hitSound = {
@@ -340,14 +342,19 @@ export function parseHitObjects(
     }
   });
 
-  if (mods.random) {
-    const columns = Array.from({ length: columnCount }, (_, i) => i);
-    const shuffledColumns = shuffle(columns);
+  // Remap notes to new columns based on replay or if random/mirror is enabled
+  const defaultColumnMap = Array.from({ length: columnCount }, (_, i) => i);
+  const columnMap =
+    replayColumnMap ??
+    (mods.random
+      ? shuffle(defaultColumnMap)
+      : mods.mirror
+        ? defaultColumnMap.toReversed()
+        : defaultColumnMap);
 
-    hitObjects.forEach((hitObject) => {
-      hitObject.column = shuffledColumns[hitObject.column];
-    });
-  }
+  hitObjects.forEach((hitObject) => {
+    hitObject.column = columnMap[hitObject.column];
+  });
 
   // Ensure at least 1 second (unaffected by playback rate) before the song starts
   const delay =
@@ -381,6 +388,7 @@ export function parseHitObjects(
     delay,
     startTime,
     endTime,
+    columnMap,
   };
 }
 
