@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { useSettingsStore } from "../../stores/settingsStore";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
+import { Separator } from "../ui/separator";
+import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
 import ReplaySettings from "./replaySettings";
@@ -329,6 +331,10 @@ const SettingsTab = () => {
       <ReplaySettings className="mt-6" />
 
       <BeatmapSettings className="mt-6" />
+
+      <BackupSettings className="mt-6" />
+
+      <Separator className="my-8" />
 
       <ClearHighScoresButton />
 

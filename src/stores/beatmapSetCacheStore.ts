@@ -161,6 +161,8 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
   })),
 );
 
+useBeatmapSetCacheStoreBase.getState().calculateCacheUsage();
+
 export const useBeatmapSetCacheStore = createSelectors(
   useBeatmapSetCacheStoreBase,
 );
