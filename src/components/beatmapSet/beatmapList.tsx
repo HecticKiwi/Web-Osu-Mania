@@ -84,8 +84,10 @@ const BeatmapList = ({
                     className="shrink-0"
                   />
 
-                  <div className="grow">
-                    <button className="line-clamp-1">{beatmap.version}</button>
+                  <div className="grow overflow-hidden">
+                    <button className="max-w-full truncate text-start">
+                      {beatmap.version}
+                    </button>
 
                     <div className="flex items-center justify-between">
                       <p className="text-muted-foreground">
