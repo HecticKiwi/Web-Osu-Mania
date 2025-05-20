@@ -3,23 +3,24 @@ import "idb";
 import { DBSchema, IDBPDatabase, openDB } from "idb";
 import { deflate } from "pako";
 
+export type IdbFile = {
+  file: Blob;
+  dateAdded: number;
+};
+
+type StoreName = "beatmapFiles" | "replayFiles";
+
 interface MyDB extends DBSchema {
   beatmapFiles: {
     key: string;
-    value: {
-      file: Blob;
-      dateAdded: number;
-    };
+    value: IdbFile;
     indexes: {
       "by-date": number;
     };
   };
   replayFiles: {
     key: string;
-    value: {
-      file: Blob;
-      dateAdded: number;
-    };
+    value: IdbFile;
     indexes: {
       "by-date": number;
     };
@@ -51,6 +52,46 @@ class Idb {
         }
       },
     });
+  }
+
+  public async saveToStore(
+    storeName: StoreName,
+    blob: Blob,
+    id: string,
+    dateAdded: number,
+  ) {
+    const db = await this.db;
+
+    await db.put(
+      storeName,
+      {
+        file: blob,
+        dateAdded,
+      },
+      id,
+    );
+  }
+
+  public async getAllStoreEntries(
+    storeName: StoreName,
+  ): Promise<{ key: string; value: IdbFile }[]> {
+    const db = await this.db;
+    const tx = db.transaction(storeName, "readonly");
+    const store = tx.objectStore(storeName);
+
+    const entries: { key: string; value: IdbFile }[] = [];
+
+    let cursor = await store.openCursor();
+    while (cursor) {
+      entries.push({
+        key: cursor.key as string,
+        value: cursor.value,
+      });
+
+      cursor = await cursor.continue();
+    }
+
+    return entries;
   }
 
   public async getBeatmapCount() {
@@ -85,14 +126,7 @@ class Idb {
     const db = await this.db;
 
     try {
-      await db.put(
-        "beatmapFiles",
-        {
-          file,
-          dateAdded: Date.now(),
-        },
-        id.toString(),
-      );
+      this.saveToStore("beatmapFiles", file, id.toString(), Date.now());
     } catch (error: any) {
       if (error.code === DOMException.QUOTA_EXCEEDED_ERR) {
         await this.clearBeatmapSets();
@@ -111,14 +145,7 @@ class Idb {
     });
 
     try {
-      await db.put(
-        "replayFiles",
-        {
-          file,
-          dateAdded: Date.now(),
-        },
-        id,
-      );
+      this.saveToStore("replayFiles", file, id, Date.now());
     } catch (error: any) {
       if (error.code === DOMException.QUOTA_EXCEEDED_ERR) {
         await db.clear("replayFiles");
@@ -129,11 +156,11 @@ class Idb {
     return id;
   }
 
-  public async getReplay(id: string): Promise<Blob | null> {
+  public async getReplay(id: string) {
     const db = await this.db;
     const result = await db.get("replayFiles", id);
 
-    return result?.file || null;
+    return result;
   }
 
   public async clearReplays(): Promise<void> {

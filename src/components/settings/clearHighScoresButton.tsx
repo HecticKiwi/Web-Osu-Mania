@@ -10,7 +10,7 @@ const ClearHighScoresButton = () => {
 
   return (
     <Button
-      className="mt-4 w-full"
+      className="w-full"
       variant={"destructive"}
       size={"sm"}
       onClick={async () => {
