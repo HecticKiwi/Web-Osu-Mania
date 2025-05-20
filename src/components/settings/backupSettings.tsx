@@ -1,3 +1,5 @@
+"use client";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { exportBackup as createBackupFile } from "@/lib/backup";
 import { cn, downloadBlob } from "@/lib/utils";
