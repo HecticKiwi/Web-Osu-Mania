@@ -26,8 +26,8 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
   const idbUsage = useBeatmapSetCacheStore.use.idbUsage();
   const clearIdbCache = useBeatmapSetCacheStore.use.clearIdbCache();
   const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
-  const setStoredBeatmapSets =
-    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
+  const resetStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.resetStoredBeatmapSets();
 
   return (
     <div className={cn(className)}>
@@ -150,7 +150,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           size={"sm"}
           onClick={() => {
             clearIdbCache();
-            setStoredBeatmapSets(() => []);
+            resetStoredBeatmapSets();
             toast("Cache has been cleared.");
           }}
           disabled={!idbUsage}

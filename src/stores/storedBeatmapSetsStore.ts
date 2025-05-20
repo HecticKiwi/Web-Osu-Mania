@@ -7,6 +7,7 @@ import { immer } from "zustand/middleware/immer";
 type StoredBeatmapSetsState = {
   storedBeatmapSets: BeatmapSet[];
   setStoredBeatmapSets: (updater: (draft: BeatmapSet[]) => void) => void;
+  resetStoredBeatmapSets: () => void;
 };
 
 function migrateCallback(data: BeatmapSet[]): Partial<StoredBeatmapSetsState> {
@@ -23,6 +24,12 @@ const useStoredBeatmapSetsStoreBase = create<StoredBeatmapSetsState>()(
       setStoredBeatmapSets: (updater) => {
         set((state) => {
           updater(state.storedBeatmapSets);
+        });
+      },
+
+      resetStoredBeatmapSets: () => {
+        set((state) => {
+          state.storedBeatmapSets = [];
         });
       },
     })),

@@ -36,7 +36,7 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
       return;
     }
 
-    const arrayBuffer = await replay.arrayBuffer();
+    const arrayBuffer = await replay.file.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
     const decompressed = inflate(uint8);
     const json = new TextDecoder().decode(decompressed);
