@@ -96,6 +96,11 @@ class Idb {
 
   public async getBeatmapCount() {
     const db = await this.db;
+
+    if (!db) {
+      return 0;
+    }
+
     const count = await db.count("beatmapFiles");
 
     return count;
