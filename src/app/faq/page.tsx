@@ -1,5 +1,5 @@
+import TextLink from "@/components/textLink";
 import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
 
 const FaqPage = () => {
   return (
@@ -7,26 +7,16 @@ const FaqPage = () => {
       <div className="mx-auto max-w-2xl">
         <p className="text-muted-foreground">
           Website made with 💗 by{" "}
-          <Link
-            href={"https://github.com/HecticKiwi"}
-            className="text-primary focus-within:underline hover:underline"
-            target="_blank"
-            prefetch={false}
-          >
+          <TextLink href={"https://github.com/HecticKiwi"} target="_blank">
             HecticKiwi
-          </Link>
+          </TextLink>
         </p>
 
         <p className="mt-1 text-muted-foreground">
           If you like this website, please consider donating on{" "}
-          <Link
-            href="https://ko-fi.com/hectickiwi"
-            className="text-primary focus-within:underline hover:underline"
-            target="_blank"
-            prefetch={false}
-          >
+          <TextLink href="https://ko-fi.com/hectickiwi" target="_blank">
             Ko-fi
-          </Link>
+          </TextLink>
         </p>
 
         <Card className="mt-4">
@@ -35,14 +25,9 @@ const FaqPage = () => {
               What is osu!mania?
             </h2>
             <p className="mt-3 text-muted-foreground">
-              <Link
-                href={"https://osu.ppy.sh/"}
-                className="text-primary focus-within:underline hover:underline"
-                target="_blank"
-                prefetch={false}
-              >
+              <TextLink href={"https://osu.ppy.sh/"} target="_blank">
                 osu!
-              </Link>{" "}
+              </TextLink>{" "}
               is a popular rhythm game with 4 gameplay modes: osu!, osu!taiko,
               osu!catch, and osu!mania. osu!mania is a piano-like mode inspired
               by classic rhythm games such as Dance Dance Revolution and
@@ -85,23 +70,19 @@ const FaqPage = () => {
               unfortunately it's not possible to bring them to the official osu.
               However, while the circle, arrow, and diamond skins are my own
               design, the bar skin is based on{" "}
-              <Link
+              <TextLink
                 href={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
-                className="text-primary focus-within:underline hover:underline"
                 target="_blank"
-                prefetch={false}
               >
                 Miketacular
-              </Link>
+              </TextLink>
               . The judgement elements are from{" "}
-              <Link
+              <TextLink
                 href={"https://osu.ppy.sh/community/forums/topics/1498492?n=1"}
-                className="text-primary focus-within:underline hover:underline"
                 target="_blank"
-                prefetch={false}
               >
                 Azure Snowfall
-              </Link>
+              </TextLink>
               .
             </p>
 
@@ -115,34 +96,25 @@ const FaqPage = () => {
             </p>
             <ul className="mt-3 list-inside list-disc space-y-1 text-muted-foreground">
               <li>
-                <Link
+                <TextLink
                   href="https://web-osu-mania.pages.dev/"
-                  className="text-primary focus-within:underline hover:underline"
                   target="_blank"
-                  prefetch={false}
                 >
                   https://web-osu-mania.pages.dev
-                </Link>
+                </TextLink>
               </li>
               <li>
-                <Link
+                <TextLink
                   href="https://hectickiwi.github.io/Web-Osu-Mania/"
-                  className="text-primary focus-within:underline hover:underline"
                   target="_blank"
-                  prefetch={false}
                 >
                   https://hectickiwi.github.io/Web-Osu-Mania
-                </Link>
+                </TextLink>
               </li>
               <li>
-                <Link
-                  href="https://webosumania.com/"
-                  className="text-primary focus-within:underline hover:underline"
-                  target="_blank"
-                  prefetch={false}
-                >
+                <TextLink href="https://webosumania.com/" target="_blank">
                   https://webosumania.com
-                </Link>
+                </TextLink>
               </li>
             </ul>
 
@@ -151,14 +123,12 @@ const FaqPage = () => {
             </h2>
             <p className="mt-3 text-muted-foreground">
               Please file an issue on{" "}
-              <Link
+              <TextLink
                 href={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
-                className="text-primary focus-within:underline hover:underline"
                 target="_blank"
-                prefetch={false}
               >
                 GitHub
-              </Link>
+              </TextLink>
               .
             </p>
           </CardContent>

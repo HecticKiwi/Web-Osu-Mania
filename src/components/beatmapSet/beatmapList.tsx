@@ -3,11 +3,11 @@
 import { BeatmapSet } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
+import TextLink from "../textLink";
 import HighScoreToolTip from "./highScore";
 
 const BeatmapList = ({
@@ -57,10 +57,7 @@ const BeatmapList = ({
         {filteredBeatmaps.length === 0 && (
           <p className="text-balance p-4 text-center text-muted-foreground">
             No beatmaps found matching your filters. Please adjust or{" "}
-            <Link href={"/"} className="text-primary focus-within:underline">
-              reset
-            </Link>{" "}
-            your filters.
+            <TextLink href={"/"}>reset</TextLink> your filters.
           </p>
         )}
         {filteredBeatmaps.length > 0 &&

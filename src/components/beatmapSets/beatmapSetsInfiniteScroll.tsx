@@ -17,10 +17,10 @@ import { cn } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { Loader } from "lucide-react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
+import TextLink from "../textLink";
 import { Button } from "../ui/button";
 
 const BeatmapSetsInfiniteScroll = ({
@@ -119,13 +119,9 @@ const BeatmapSetsInfiniteScroll = ({
         <h1 className="text-3xl font-semibold">No Beatmaps Found!</h1>
         <p className="text-lg text-muted-foreground">
           Please adjust or{" "}
-          <Link
-            href={"/"}
-            className="text-primary hover:underline focus:underline"
-            prefetch={false}
-          >
+          <TextLink href={"/"} prefetch={false}>
             reset
-          </Link>{" "}
+          </TextLink>{" "}
           the filters.
         </p>
       </div>

@@ -2,10 +2,10 @@
 
 import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import Link from "next/link";
 import { useSettingsStore } from "../../stores/settingsStore";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
+import TextLink from "../textLink";
 
 const VolumeSettings = ({
   inWidget,
@@ -118,14 +118,12 @@ const VolumeSettings = ({
               <p className="text-sm text-muted-foreground">
                 If using an audio offset, it is highly recommended that you mute
                 the SFX. Use a{" "}
-                <Link
+                <TextLink
                   href={"https://nullvoxpopuli.github.io/latency-tester/"}
-                  className="text-primary hover:underline focus:underline"
                   target="_blank"
-                  prefetch={false}
                 >
                   latency tester
-                </Link>{" "}
+                </TextLink>{" "}
                 to determine your offset.
               </p>
 
