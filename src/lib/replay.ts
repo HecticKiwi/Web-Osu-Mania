@@ -1,7 +1,7 @@
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { defaultSettings, Settings } from "@/stores/settingsStore";
 import { PlayResults } from "@/types";
-import { deflate } from "pako";
+import { compressSync } from "fflate";
 import { toast } from "sonner";
 import { BeatmapData } from "./beatmapParser";
 import { getReplayFilename } from "./results";
@@ -68,9 +68,8 @@ export async function downloadReplay(
 
   try {
     const replayDataString = JSON.stringify(replayData);
-
-    const compressed = deflate(replayDataString);
-
+    const encoded = new TextEncoder().encode(replayDataString);
+    const compressed = compressSync(encoded);
     const blob = new Blob([compressed], {
       type: "application/octet-stream",
     });

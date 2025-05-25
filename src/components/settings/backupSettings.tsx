@@ -1,14 +1,15 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { exportBackup as createBackupFile } from "@/lib/backup";
-import { cn, downloadBlob } from "@/lib/utils";
+import { downloadBackup } from "@/lib/backup";
+import { cn } from "@/lib/utils";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import BackupUpload from "./backupUpload";
+import BackupUploadOld from "./backupUploadOld";
 
 const exportOptionIds = [
   "settingsAndKeybinds",
@@ -43,14 +44,21 @@ const BackupSettings = ({ className }: { className?: string }) => {
     try {
       setLoading(true);
 
-      const backupFile = await createBackupFile(
+      const date = new Date();
+      const dateString = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      const filename = `Backup ${dateString} (${options
+        .map((option) => option.label)
+        .join(", ")}).zip`;
+
+      await downloadBackup(
+        filename,
         options.map((option) => option.id),
       );
-      const filename = `Backup (${options
-        .map((option) => option.label)
-        .join(", ")}).womb`;
-
-      downloadBlob(backupFile, filename);
 
       toast("Backup exported successfully", {
         description: `Saved as ${filename}`,
@@ -71,11 +79,24 @@ const BackupSettings = ({ className }: { className?: string }) => {
 
       <div className="grid grid-cols-2 items-center">
         <div className="text-sm font-semibold text-muted-foreground">
-          Import Backup
+          Import Backup (.zip)
         </div>
 
         <BackupUpload />
       </div>
+
+      <div className="mt-4 grid grid-cols-2 items-center">
+        <div className="text-sm font-semibold text-muted-foreground">
+          Import Backup (.womb)
+        </div>
+
+        <BackupUploadOld />
+      </div>
+
+      <p className="mt-4 text-sm text-muted-foreground text-orange-400">
+        The backup format has recently changed from .womb to .zip. The ability
+        to import .womb backups will be removed on June 8th.
+      </p>
 
       <div className="mt-4 space-y-4">
         <div className="grid grid-cols-2">

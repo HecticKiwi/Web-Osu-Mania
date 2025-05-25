@@ -1,6 +1,12 @@
 import { Settings, useSettingsStore } from "@/stores/settingsStore";
+import {
+  BlobReader,
+  BlobWriter,
+  Entry,
+  TextWriter,
+  ZipReader,
+} from "@zip.js/zip.js";
 import { Howl } from "howler";
-import JSZip from "jszip";
 import { addDelay } from "./audio";
 import { Beatmap } from "./osuApi";
 import { decodeMods, EncodedMods } from "./replay";
@@ -104,12 +110,10 @@ export const parseOsz = async (
   replayMods?: EncodedMods,
   replayColumnMap?: number[],
 ): Promise<BeatmapData> => {
-  const zip = await JSZip.loadAsync(blob);
+  const zipReader = new ZipReader(new BlobReader(blob));
+  const entries = await zipReader.getEntries();
 
   // Locate .osu file
-  const osuFiles = Object.keys(zip.files).filter((filename) =>
-    filename.endsWith(".osu"),
-  );
 
   const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
   const diffName = beatmap.version
@@ -119,11 +123,12 @@ export const parseOsz = async (
   const pattern = new RegExp(`Version:${diffName}(\r|\n)`);
 
   let osuFileData;
-  for (const file of osuFiles) {
-    const fileData = await zip.files[file].async("text");
+  const osuEntries = entries.filter((entry) => entry.filename.endsWith(".osu"));
+  for (const entry of osuEntries) {
+    const text = await entry.getData!(new TextWriter());
 
-    if (pattern.test(fileData)) {
-      osuFileData = fileData;
+    if (pattern.test(text)) {
+      osuFileData = text;
       break;
     }
   }
@@ -171,9 +176,9 @@ export const parseOsz = async (
   }
 
   let songUrl: string;
-  const songFile = findFile(zip, songFilename);
+  const songFile = findEntry(entries, songFilename);
   if (songFile) {
-    const audioBlob = await songFile.async("blob");
+    const audioBlob = await songFile.getData!(new BlobWriter());
 
     const delayedAudioBlob = await addDelay(audioBlob, delay / 1000);
 
@@ -201,28 +206,27 @@ export const parseOsz = async (
   const sounds: SoundDictionary = {};
 
   const audioExtensions = ["wav", "mp3", "ogg"];
-  const audioFiles = Object.keys(zip.files).filter((fileName) => {
-    const extension = fileName.split(".").pop()?.toLowerCase();
+  const audioEntries = entries.filter((entry) => {
+    const extension = entry.filename.split(".").pop()?.toLowerCase();
     return extension && audioExtensions.includes(extension);
   });
 
-  for (const fileName of audioFiles) {
-    const name = removeFileExtension(fileName);
+  for (const entry of audioEntries) {
+    const name = removeFileExtension(entry.filename);
 
     // Don't load the song file, that's already done
-    if (fileName === songFilename) {
+    if (entry.filename === songFilename) {
       continue;
     }
 
-    const fileData = await zip.files[fileName].async("blob");
+    const fileData = await entry.getData!(new BlobWriter());
     const url = URL.createObjectURL(fileData);
 
     sounds[name] = {
       url,
       howl: new Howl({
         src: [url],
-        format: fileName.split(".").pop(),
-        // onloaderror: (_, e) => console.warn(e),
+        format: entry.filename.split(".").pop(),
       }),
     };
   }
@@ -237,10 +241,12 @@ export const parseOsz = async (
     .replaceAll('"', "");
 
   if (backgroundFilename) {
-    const backgroundFile = findFile(zip, backgroundFilename);
+    const backgroundEntry = findEntry(entries, backgroundFilename);
 
-    const backgroundBlob = await backgroundFile.async("blob");
-    backgroundUrl = URL.createObjectURL(backgroundBlob);
+    if (backgroundEntry) {
+      const backgroundBlob = await backgroundEntry?.getData!(new BlobWriter());
+      backgroundUrl = URL.createObjectURL(backgroundBlob);
+    }
   }
 
   return {
@@ -261,14 +267,11 @@ export const parseOsz = async (
   };
 };
 
-function findFile(zip: JSZip, filename: string) {
+function findEntry(entries: Entry[], filename: string) {
   const lowercaseFilename = filename.toLowerCase();
-
-  return zip.files[
-    Object.keys(zip.files).find(
-      (key) => key.toLowerCase() === lowercaseFilename,
-    )!
-  ];
+  return entries.find(
+    (entry) => entry.filename.toLowerCase() === lowercaseFilename,
+  );
 }
 
 export function parseHitObjects(
@@ -554,19 +557,18 @@ function getHitWindows(od: number, mods: Settings["mods"]): HitWindows {
 }
 
 export async function getBeatmapSetIdFromOsz(blob: Blob) {
-  const zip = await JSZip.loadAsync(blob);
+  const zipReader = new ZipReader(new BlobReader(blob));
+  const entries = await zipReader.getEntries();
 
   // Locate any .osu file
-  const osuFile = Object.keys(zip.files).find((filename) =>
-    filename.endsWith(".osu"),
-  );
+  const osuEntry = entries.find((entry) => entry.filename.endsWith(".osu"));
 
-  if (!osuFile) {
+  if (!osuEntry) {
     throw new Error("No .osu files found.");
   }
 
-  const fileData = await zip.files[osuFile].async("text");
-  const lines = fileData?.split(/\r\n|\n\r|\n/);
+  const text = await osuEntry.getData!(new TextWriter());
+  const lines = text?.split(/\r\n|\n\r|\n/);
 
   const beatmapSetId = getLineValue(lines, "BeatmapSetID");
 

@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import { decompressSync } from "fflate";
 import { Upload } from "lucide-react";
-import { inflate } from "pako";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
 import { useGameStore } from "../stores/gameStore";
@@ -31,7 +31,7 @@ const ReplayUpload = () => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
         const uint8 = new Uint8Array(arrayBuffer);
-        const decompressed = inflate(uint8);
+        const decompressed = decompressSync(uint8);
         const jsonStr = new TextDecoder().decode(decompressed);
         const parsedData: ReplayData = JSON.parse(jsonStr);
 
