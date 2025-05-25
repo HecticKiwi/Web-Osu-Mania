@@ -1,14 +1,13 @@
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
-import "idb";
+import { compressSync } from "fflate";
 import { DBSchema, IDBPDatabase, openDB } from "idb";
-import { deflate } from "pako";
 
 export type IdbFile = {
   file: Blob;
   dateAdded: number;
 };
 
-type StoreName = "beatmapFiles" | "replayFiles";
+export type StoreName = "beatmapFiles" | "replayFiles";
 
 interface MyDB extends DBSchema {
   beatmapFiles: {
@@ -54,6 +53,20 @@ class Idb {
     });
   }
 
+  public async getStoreKeys(storeName: StoreName) {
+    const db = await this.db;
+    const keys = await db.getAllKeys(storeName);
+
+    return keys;
+  }
+
+  public async getStoreValue(storeName: StoreName, id: string) {
+    const db = await this.db;
+    const file = await db.get(storeName, id.toString());
+
+    return file;
+  }
+
   public async saveToStore(
     storeName: StoreName,
     blob: Blob,
@@ -70,28 +83,6 @@ class Idb {
       },
       id,
     );
-  }
-
-  public async getAllStoreEntries(
-    storeName: StoreName,
-  ): Promise<{ key: string; value: IdbFile }[]> {
-    const db = await this.db;
-    const tx = db.transaction(storeName, "readonly");
-    const store = tx.objectStore(storeName);
-
-    const entries: { key: string; value: IdbFile }[] = [];
-
-    let cursor = await store.openCursor();
-    while (cursor) {
-      entries.push({
-        key: cursor.key as string,
-        value: cursor.value,
-      });
-
-      cursor = await cursor.continue();
-    }
-
-    return entries;
   }
 
   public async getBeatmapCount() {
@@ -128,8 +119,6 @@ class Idb {
   }
 
   public async putBeatmapSet(id: number, file: Blob) {
-    const db = await this.db;
-
     try {
       this.saveToStore("beatmapFiles", file, id.toString(), Date.now());
     } catch (error: any) {
@@ -144,7 +133,8 @@ class Idb {
     const db = await this.db;
 
     const replayDataString = JSON.stringify(replayData);
-    const compressed = deflate(replayDataString);
+    const encoded = new TextEncoder().encode(replayDataString);
+    const compressed = compressSync(encoded);
     const file = new Blob([compressed], {
       type: "application/octet-stream",
     });
