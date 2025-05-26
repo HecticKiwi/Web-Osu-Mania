@@ -1,12 +1,12 @@
 "use client";
 
-import { importBackup } from "@/lib/backup";
+import { importBackupOld } from "@/lib/backupOld";
 import { cn } from "@/lib/utils";
 import { Loader, Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useState } from "react";
 import { toast } from "sonner";
 
-const BackupUpload = () => {
+const BackupUploadOld = () => {
   const [loading, setLoading] = useState(false);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -15,9 +15,9 @@ const BackupUpload = () => {
       return;
     }
 
-    if (!file.name.endsWith(".zip")) {
+    if (!file.name.endsWith(".womb")) {
       toast.message("Failed to parse backup file", {
-        description: "File is not in a .zip format.",
+        description: "File is not in the .womb format.",
       });
 
       return;
@@ -25,7 +25,7 @@ const BackupUpload = () => {
 
     try {
       setLoading(true);
-      await importBackup(file);
+      await importBackupOld(file);
     } catch (error: any) {
       toast.message("Error parsing backup file", {
         description: error.message,
@@ -33,6 +33,8 @@ const BackupUpload = () => {
     } finally {
       setLoading(false);
     }
+
+    toast("Backup imported successfully.");
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +67,7 @@ const BackupUpload = () => {
       onDrop={handleDrop}
     >
       <label
-        htmlFor="backupUpload"
+        htmlFor="backupUploadOld"
         className={cn(
           "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors hover:bg-accent",
           isDraggingOver && "bg-accent",
@@ -84,9 +86,9 @@ const BackupUpload = () => {
           )}
         </div>
         <input
-          id="backupUpload"
+          id="backupUploadOld"
           type="file"
-          accept=".zip"
+          accept=".womb"
           className="hidden"
           onChange={handleChange}
         />
@@ -95,4 +97,4 @@ const BackupUpload = () => {
   );
 };
 
-export default BackupUpload;
+export default BackupUploadOld;

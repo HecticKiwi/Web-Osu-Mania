@@ -10,7 +10,7 @@ import { idb } from "@/lib/idb";
 import { getLetterGrade } from "@/lib/utils";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { format } from "date-fns";
-import { inflate } from "pako";
+import { decompressSync } from "fflate";
 import { toast } from "sonner";
 import { useGameStore } from "../../stores/gameStore";
 import { HighScore } from "../../stores/highScoresStore";
@@ -38,7 +38,7 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
 
     const arrayBuffer = await replay.file.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
-    const decompressed = inflate(uint8);
+    const decompressed = decompressSync(uint8);
     const json = new TextDecoder().decode(decompressed);
     const replayData: ReplayData = JSON.parse(json);
 
