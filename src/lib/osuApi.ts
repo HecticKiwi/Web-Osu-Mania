@@ -113,3 +113,12 @@ export async function getBeatmaps({
 
   return data;
 }
+
+export async function getBeatmapSetById(beatmapSetId: number | string) {
+  const url = `${BASE_PATH}/api/getBeatmap?beatmapSetId=${beatmapSetId}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch beatmap set with id ${beatmapSetId}`);
+  }
+  return await res.json();
+}

@@ -1,21 +1,46 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation'; // Import for query parameter handling
 import { toast } from "sonner";
 import { supabase } from '@/lib/auth/client';
 import { Auth } from '@supabase/auth-ui-react';
+import { Provider } from '@supabase/supabase-js';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { Session } from '@supabase/supabase-js';
-import {
-  Settings,
-  useSettingsStore,
-} from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useSavedBeatmapSetsStore } from "@/stores/savedBeatmapSetsStore";
+import { useHighScoresStore } from "@/stores/highScoresStore";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
+
+const exportOptions = [
+  { id: "settingsAndKeybinds", label: "Settings & Keybinds" },
+  { id: "highScoresAndReplays", label: "Highscores & Replays" },
+  { id: "savedBeatmapSets", label: "Saved Beatmaps" },
+] as const;
+
+type ExportOptionId = "settingsAndKeybinds" | "highScoresAndReplays" | "savedBeatmapSets";
 
 const AccountTab = () => {
+  // Auth Tab Settings
+  const A_Client = supabase; // The supabase client instance
+  const A_OAuth: Provider[] = ['google']; // OAuth providers (Must have enabled in Supabase Auth settings)
+  const A_appearance = { theme: ThemeSupa };
+  const A_theme = "dark";
+  // End of Auth Tab Settings
+  
   const [session, setSession] = useState<Session | null>(null);
   const settings = useSettingsStore.getState();
-  const setSettings = useSettingsStore.setState;
+  const [selectedOptions, setSelectedOptions] = useState<Partial<Record<ExportOptionId, boolean>>>({
+    settingsAndKeybinds: true,
+    highScoresAndReplays: true,
+    savedBeatmapSets: true,
+  });
+  const [loading, setLoading] = useState(false);
+  const resetCode = useSearchParams().get('code'); // Get the 'code' query parameter
 
   useEffect(() => {
     const loadSession = async () => {
@@ -45,7 +70,7 @@ const AccountTab = () => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setSession(session); // Update session on change
 
       // Persist session when auth state changes
@@ -84,43 +109,90 @@ const AccountTab = () => {
     }
   };
 
+  // Helper to load backup data from Supabase and restore
+  const restoreBackupData = async (data: any) => {
+    // Use the same method as importBackup for settings and high scores
+    if (data.settings_and_keybinds) {
+      const mods = useSettingsStore.getState().mods;
+      localStorage.setItem("settings", data.settings_and_keybinds);
+      useSettingsStore.persist.rehydrate();
+      useSettingsStore.setState({ mods });
+    }
+    if (data.high_scores_and_replays) {
+      localStorage.setItem("highScores", data.high_scores_and_replays);
+      useHighScoresStore.persist.rehydrate();
+    }
+    // For saved beatmap sets, restore the full data directly
+    if (data.saved_beatmap_sets) {
+      localStorage.setItem("savedBeatmapSets", data.saved_beatmap_sets);
+      useSavedBeatmapSetsStore.persist.rehydrate();
+    }
+  };
+
+  // Save backup to Supabase (selected categories)
   const handleSaveSettings = async () => {
     if (!session) return;
+    setLoading(true);
     await ensureUserRow(session.user.id);
+
+    const backupData: any = {};
+    if (selectedOptions.settingsAndKeybinds) {
+      backupData.settings_and_keybinds = localStorage.getItem("settings");
+    }
+    if (selectedOptions.highScoresAndReplays) {
+      backupData.high_scores_and_replays = localStorage.getItem("highScores");
+    }
+    if (selectedOptions.savedBeatmapSets) {
+      // Save the full savedBeatmapSets data as JSON
+      const savedBeatmapSets = useSavedBeatmapSetsStore.getState().savedBeatmapSets;
+      backupData.saved_beatmap_sets = JSON.stringify(savedBeatmapSets);
+    }
+
     const { error } = await supabase
       .from('data')
-      .update({ settings })
+      .update(backupData)
       .eq('uuid', session.user.id);
 
+    setLoading(false);
+
     if (error) {
-      console.error('Error saving settings:', error);
+      console.error('Error saving backup:', error);
     } else {
       toast.message("Sync", {
-        description: "Settings saved to Supabase",
+        description: "Backup saved to Supabase",
       });
     }
   };
 
+  // Load backup from Supabase (selected categories)
   const handleLoadSettings = async () => {
     if (!session) return;
+    setLoading(true);
+
+    const columns = [
+      selectedOptions.settingsAndKeybinds && "settings_and_keybinds",
+      selectedOptions.highScoresAndReplays && "high_scores_and_replays",
+      selectedOptions.savedBeatmapSets && "saved_beatmap_sets",
+    ].filter(Boolean).join(", ");
 
     const { data, error } = await supabase
       .from('data')
-      .select('settings')
+      .select(columns)
       .eq('uuid', session.user.id)
       .single();
 
+    setLoading(false);
+
     if (error) {
-      console.error('Error loading settings:', error);
+      console.error('Error loading backup:', error);
       return;
     }
 
-    if (data?.settings) {
-      setSettings(() => data.settings as Settings);
-      toast.message("Sync", {
-        description: "Settings loaded from Supabase",
-      });
-    }
+    await restoreBackupData(data);
+
+    toast.message("Sync", {
+      description: "Backup loaded from Supabase",
+    });
   };
 
   const handleLogout = async () => {
@@ -130,16 +202,32 @@ const AccountTab = () => {
     console.log('Logged out successfully');
   };
 
+  const toggle = (id: ExportOptionId) => {
+    setSelectedOptions((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <div className="space-y-4">
-      {!session ? (
+      {resetCode ? (
+        // Show password reset UI if 'code' query parameter is present
+        <>
+          <h2 className="text-lg font-semibold">Reset Password</h2>
+          <Auth
+            supabaseClient={A_Client}
+            appearance={A_appearance}
+            theme={A_theme}
+            providers={A_OAuth}
+            view="update_password" // Show password reset form
+          />
+        </>
+      ) : !session ? (
         <>
           <h2 className="text-lg font-semibold">Login</h2>
           <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            theme="dark"
-            providers={['google']}
+            supabaseClient={A_Client}
+            appearance={A_appearance}
+            theme={A_theme}
+            providers={A_OAuth}
           />
         </>
       ) : (
@@ -149,25 +237,50 @@ const AccountTab = () => {
             Signed in as <strong>{session.user.email}</strong>
           </p>
 
-          <div className="flex flex-col gap-2 mt-4">
-            <button
-              onClick={handleSaveSettings}
-              className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              Save Settings
-            </button>
-            <button
-              onClick={handleLoadSettings}
-              className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-            >
-              Load Settings
-            </button>
-            <button
-              onClick={handleLogout}
-              className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-            >
-              Log out
-            </button>
+          {/* Account Sync UI */}
+          <div className="mt-6">
+            <h3 className="mb-2 text-md font-semibold">Account Sync</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="pr-2 text-sm font-semibold text-muted-foreground">
+                Sync Contents
+              </div>
+              <div className="space-y-2">
+                {exportOptions.map((option) => (
+                  <Label key={option.id} className="flex items-center gap-2">
+                    <Checkbox
+                      checked={!!selectedOptions[option.id]}
+                      onCheckedChange={() => toggle(option.id)}
+                    />
+                    <span className={"text-gray-400"}>{option.label}</span>
+                  </Label>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 mt-4">
+              <Button
+                onClick={handleSaveSettings}
+                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                disabled={loading || !Object.values(selectedOptions).some(Boolean)}
+                size="sm"
+              >
+                {loading ? "Saving..." : "Save Selected"}
+              </Button>
+              <Button
+                onClick={handleLoadSettings}
+                className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                disabled={loading || !Object.values(selectedOptions).some(Boolean)}
+                size="sm"
+              >
+                {loading ? "Loading..." : "Load Selected"}
+              </Button>
+              <Button
+                onClick={handleLogout}
+                className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                size="sm"
+              >
+                Log out
+              </Button>
+            </div>
           </div>
         </>
       )}

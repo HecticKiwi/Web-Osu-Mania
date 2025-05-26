@@ -72,10 +72,13 @@ export async function exportBackup(selectedData: ExportOptionId[]) {
   }
 
   if (selectedData.includes("savedBeatmapSets")) {
-    exportData.localStorage["savedBeatmapSets"] =
-      localStorage.getItem("savedBeatmapSets");
+    // Only save IDs for savedBeatmapSets
+    const ids = useSavedBeatmapSetsStore.getState()
+      .savedBeatmapSets.map((set: any) => set.id);
+    exportData.localStorage["savedBeatmapSets"] = JSON.stringify(ids);
   }
 
+  // Do NOT export storedBeatmapSets or beatmapFiles for Supabase backup
   if (selectedData.includes("storedBeatmapSets")) {
     exportData.localStorage["storedBeatmapSets"] =
       localStorage.getItem("storedBeatmapSets");
@@ -117,11 +120,11 @@ export async function importBackup(blob: Blob) {
   }
 
   if (data.localStorage.savedBeatmapSets) {
+    // Only restore IDs, fetch metadata as needed elsewhere
     localStorage.setItem(
       "savedBeatmapSets",
       data.localStorage.savedBeatmapSets,
     );
-
     useSavedBeatmapSetsStore.persist.rehydrate();
   }
 
