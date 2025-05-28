@@ -33,13 +33,14 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `GET getBeatmaps error: ${response.status} - ${response.statusText}`,
-    );
-  }
-
   const data: GetBeatmapsResponse = await response.json();
+
+  if (!response.ok) {
+    return NextResponse.json(null, {
+      status: response.status,
+      statusText: response.statusText,
+    });
+  }
 
   return NextResponse.json(data, {
     headers: {
