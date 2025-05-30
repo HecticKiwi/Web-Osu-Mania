@@ -53,6 +53,7 @@ const BeatmapSetsInfiniteScroll = ({
     isPending,
     isFetchingNextPage,
     isError,
+    error,
   } = useInfiniteQuery({
     initialData: initialData && {
       pages: [initialData],
@@ -87,6 +88,7 @@ const BeatmapSetsInfiniteScroll = ({
     initialPageParam: "",
     getNextPageParam: (lastPage, pages) => lastPage?.cursor_string,
     staleTime: Infinity,
+    retry: 1,
   });
 
   useEffect(() => {
@@ -109,6 +111,7 @@ const BeatmapSetsInfiniteScroll = ({
         <p className="text-center text-muted-foreground">
           Failed to fetch beatmaps. Please try again later.
         </p>
+        <p className="text-center text-muted-foreground">({error.message})</p>
       </div>
     );
   }

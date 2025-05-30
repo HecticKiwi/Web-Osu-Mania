@@ -109,7 +109,13 @@ export async function getBeatmaps({
     },
   });
 
-  const data: GetBeatmapsResponse = await fetch(url).then((res) => res.json());
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error(`Code ${res.status}: ${res.statusText}`);
+  }
+
+  const data: GetBeatmapsResponse = await res.json();
 
   return data;
 }
