@@ -1,5 +1,6 @@
 import { idb } from "@/lib/idb";
 import { createSelectors } from "@/lib/zustand";
+import { enableMapSet } from "immer";
 import queryString from "query-string";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -16,6 +17,8 @@ type BeatmapSetCacheState = {
     setDownloadPercent: (percent: number) => void,
   ) => Promise<Blob>;
 };
+
+enableMapSet();
 
 const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
   immer((set, get) => ({
