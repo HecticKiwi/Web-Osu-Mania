@@ -133,6 +133,7 @@ export function difficultyRatingToRgba(rating: number) {
 }
 
 export function caseInsensitiveIncludes(a: string, b: string) {
+  if (!a || !b) return false;
   return a.toLocaleLowerCase().includes(b.toLocaleLowerCase());
 }
 
