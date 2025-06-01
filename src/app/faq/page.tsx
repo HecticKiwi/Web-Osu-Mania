@@ -96,24 +96,25 @@ const FaqPage = () => {
             </p>
             <ul className="mt-3 list-inside list-disc space-y-1 text-muted-foreground">
               <li>
+                <TextLink href={"https://webosumania.com"} target="_blank">
+                  https://webosumania.com
+                </TextLink>{" "}
+                (main)
+              </li>
+              <li>
                 <TextLink
-                  href="https://web-osu-mania.pages.dev/"
+                  href={"https://webosumania.hectickiwi.workers.dev"}
                   target="_blank"
                 >
-                  https://web-osu-mania.pages.dev
+                  https://webosumania.hectickiwi.workers.dev
                 </TextLink>
               </li>
               <li>
                 <TextLink
-                  href="https://hectickiwi.github.io/Web-Osu-Mania/"
+                  href={"https://hectickiwi.github.io/Web-Osu-Mania"}
                   target="_blank"
                 >
                   https://hectickiwi.github.io/Web-Osu-Mania
-                </TextLink>
-              </li>
-              <li>
-                <TextLink href="https://webosumania.com/" target="_blank">
-                  https://webosumania.com
                 </TextLink>
               </li>
             </ul>

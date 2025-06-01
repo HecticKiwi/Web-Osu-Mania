@@ -9,6 +9,7 @@ Web osu!mania is an unofficial web port of osu!'s piano-style gamemode, osu!mani
 Game mechanics attempt to match (if not come close to) the official osu!mania's V2 scoring system.
 
 **Features**
+
 - Search & filter beatmaps just like on the osu! site
 - Gameplay mods + custom song speed
 - Local high scores
@@ -17,6 +18,7 @@ Game mechanics attempt to match (if not come close to) the official osu!mania's 
 - Supports keyboard, gamepad, and touch screen input
 
 **Supported Settings**
+
 - Scroll speed
 - Bar/circle/arrow/diamond skins
 - Upscroll
@@ -41,7 +43,7 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 - Add a `.env` to the project's root:
 
 ```
-NEXT_PUBLIC_BASE_URL=https://web-osu-mania.pages.dev
+NEXT_PUBLIC_BASE_URL=https://webosumania.com
 
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
