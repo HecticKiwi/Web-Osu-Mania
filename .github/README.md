@@ -23,7 +23,7 @@ Game mechanics attempt to match (if not come close to) the official osu!mania's 
 - Enable/disable 300g judgement, error bar, FPS counter
 - ...and more!
 
-[Visit the site](https://web-osu-mania.pages.dev/)
+[Visit the site](https://webosumania.com/)
 
 ## Demo
 
