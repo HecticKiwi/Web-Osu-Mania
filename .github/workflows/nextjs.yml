@@ -28,8 +28,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_BASE_URL: "https://web-osu-mania.pages.dev"
-      NEXT_PUBLIC_BASE_PATH: "https://web-osu-mania.pages.dev"
+      NEXT_PUBLIC_BASE_URL: "https://webosumania.com"
+      NEXT_PUBLIC_BASE_PATH: "https://webosumania.com"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
