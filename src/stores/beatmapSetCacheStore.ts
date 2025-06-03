@@ -1,5 +1,6 @@
 import { idb } from "@/lib/idb";
 import { createSelectors } from "@/lib/zustand";
+import { enableMapSet } from "immer";
 import queryString from "query-string";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -7,6 +8,7 @@ import { immer } from "zustand/middleware/immer";
 import { BEATMAP_API_PROVIDERS, useSettingsStore } from "./settingsStore";
 
 type BeatmapSetCacheState = {
+  beatmapSetCache: Map<number, Blob>;
   idbUsage: number;
   calculateCacheUsage: () => Promise<void>;
   clearIdbCache: () => Promise<void>;
@@ -16,10 +18,12 @@ type BeatmapSetCacheState = {
   ) => Promise<Blob>;
 };
 
+enableMapSet();
+
 const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
   immer((set, get) => ({
+    beatmapSetCache: new Map(),
     idbUsage: 0,
-
     calculateCacheUsage: async () => {
       const beatmapCount = await idb.getBeatmapCount();
 
@@ -57,10 +61,10 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
       } = useSettingsStore.getState();
 
       try {
-        // Try to get beatmap set from IndexedDB
-        let beatmapSetFile: Blob | undefined;
+        let beatmapSetFile = get().beatmapSetCache.get(beatmapSetId);
 
-        if (storeDownloadedBeatmaps) {
+        if (!beatmapSetFile && storeDownloadedBeatmaps) {
+          // Try to get beatmap set from IndexedDB
           const beatmapSet = await idb.getBeatmap(beatmapSetId);
           beatmapSetFile = beatmapSet?.file;
         }
@@ -134,7 +138,7 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
         }
 
         // Store or cache beatmap
-        if (storeDownloadedBeatmaps && beatmapSetFile) {
+        if (storeDownloadedBeatmaps) {
           try {
             await idb.putBeatmapSet(beatmapSetId, beatmapSetFile);
             await get().calculateCacheUsage();
@@ -145,6 +149,10 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
               duration: 10000,
             });
           }
+        } else {
+          set((state) => {
+            state.beatmapSetCache.set(beatmapSetId, beatmapSetFile!);
+          });
         }
 
         return beatmapSetFile!;

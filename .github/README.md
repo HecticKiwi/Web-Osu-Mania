@@ -9,6 +9,7 @@ Web osu!mania is an unofficial web port of osu!'s piano-style gamemode, osu!mani
 Game mechanics attempt to match (if not come close to) the official osu!mania's V2 scoring system.
 
 **Features**
+
 - Search & filter beatmaps just like on the osu! site
 - Gameplay mods + custom song speed
 - Local high scores
@@ -17,13 +18,14 @@ Game mechanics attempt to match (if not come close to) the official osu!mania's 
 - Supports keyboard, gamepad, and touch screen input
 
 **Supported Settings**
+
 - Scroll speed
 - Bar/circle/arrow/diamond skins
 - Upscroll
 - Enable/disable 300g judgement, error bar, FPS counter
 - ...and more!
 
-[Visit the site](https://web-osu-mania.pages.dev/)
+[Visit the site](https://webosumania.com/)
 
 ## Demo
 
