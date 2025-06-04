@@ -5,8 +5,8 @@ import { combine, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 export const BEATMAP_API_PROVIDERS = {
-  NeriNyan: "https://api.nerinyan.moe/d/$setId",
   "Mino (catboy.best)": "https://catboy.best/d/$setIdn",
+  NeriNyan: "https://api.nerinyan.moe/d/$setId",
   SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
 } as const;
 
@@ -108,7 +108,7 @@ export const defaultSettings: Settings = {
   upscroll: false,
   darkerHoldNotes: true,
   hitPositionOffset: 130,
-  beatmapProvider: "NeriNyan",
+  beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
   proxyBeatmapDownloads: false,
   ignoreBeatmapHitsounds: false,
