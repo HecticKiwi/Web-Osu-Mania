@@ -33,14 +33,14 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const data: GetBeatmapsResponse = await response.json();
-
   if (!response.ok) {
     return NextResponse.json(null, {
       status: response.status,
       statusText: response.statusText || "Unknown API Error",
     });
   }
+
+  const data: GetBeatmapsResponse = await response.json();
 
   return NextResponse.json(data, {
     headers: {
