@@ -59,10 +59,15 @@ export async function GET(request: NextRequest) {
     const errorMessage =
       statusErrorMessages[response.status] ?? "An unknown error occurred.";
 
-    return NextResponse.json(null, {
-      status: response.status,
-      statusText: errorMessage,
-    });
+    return NextResponse.json(
+      {
+        message: errorMessage,
+      },
+      {
+        status: response.status,
+        statusText: errorMessage,
+      },
+    );
   }
 
   const data: GetBeatmapsResponse = await response.json();

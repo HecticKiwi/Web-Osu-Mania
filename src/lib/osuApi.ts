@@ -112,7 +112,12 @@ export async function getBeatmaps({
   const res = await fetch(url);
 
   if (!res.ok) {
-    throw new Error(`Code ${res.status}: ${res.statusText}`);
+    try {
+      const message = ((await res.json()) as any).message;
+      throw new Error(`Code ${res.status}: ${message}`);
+    } catch (error) {
+      throw new Error(`Code ${res.status}`);
+    }
   }
 
   const data: GetBeatmapsResponse = await res.json();
