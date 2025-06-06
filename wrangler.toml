@@ -4,6 +4,7 @@ compatibility_date = "2025-05-18"
 compatibility_flags = ["nodejs_compat"]
 kv_namespaces = [
     { binding = "TOKENS", id = "4c393a66c157468282b7e336b1627cd6" },
+    { binding = "BEATMAP_SETS", id = "e24512f619c648009717ac1c53a9f685" },
 ]
 [assets]
 directory = ".open-next/assets"
