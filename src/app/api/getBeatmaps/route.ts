@@ -61,11 +61,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: errorMessage,
+        message: "asdf",
       },
       {
         status: response.status,
-        statusText: errorMessage,
+        statusText: "fdas",
       },
     );
   }
