@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
   });
 
   if (!response.ok) {
+    console.log(response);
+
     return NextResponse.json(null, {
       status: response.status,
       statusText: response.statusText || "Unknown API Error",
