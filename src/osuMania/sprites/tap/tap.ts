@@ -132,7 +132,7 @@ export abstract class Tap {
 
     // If this has passed the late miss point
     if (delta < -this.game.hitWindows[0]) {
-      this.game.scoreSystem.hit(0);
+      this.game.scoreSystem.hit(0, this.data.endTime !== this.data.time);
       this.shouldRemove = true;
     }
   }
@@ -161,7 +161,7 @@ export abstract class Tap {
                 : 0;
 
     this.game.scoreSystem.hitErrors.push({ error: delta, judgement });
-    this.game.scoreSystem.hit(judgement);
+    this.game.scoreSystem.hit(judgement, this.data.endTime !== this.data.time);
 
     this.game.errorBar?.addTimingMark(delta);
 

@@ -1,5 +1,6 @@
 import {
   BeatmapData,
+  Break,
   Difficulty,
   HitObject,
   HitWindows,
@@ -145,6 +146,8 @@ export class Game {
   public startTime: number;
   public endTime: number;
 
+  public breaks: Break[];
+
   private pauseCountdown: number;
 
   public timingPoints: TimingPoint[];
@@ -168,6 +171,7 @@ export class Game {
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
+    this.breaks = beatmapData.breaks;
     this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
 
