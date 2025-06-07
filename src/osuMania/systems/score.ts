@@ -52,10 +52,10 @@ export class ScoreSystem {
     this.multiplier = getScoreMultiplier(game.settings.mods);
   }
 
-  public hit(judgement: Judgement) {
+  public hit(judgement: Judgement, isForHold?: boolean) {
     this.score += this.getScoreToAdd(judgement);
 
-    this.game.healthSystem?.hit(judgement);
+    this.game.healthSystem?.hit(judgement, isForHold);
 
     this[judgement]++;
 
