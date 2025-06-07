@@ -8,6 +8,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
 import TextLink from "../textLink";
+import DifficultyBars from "./difficultyBars";
 import HighScoreToolTip from "./highScore";
 
 const BeatmapList = ({
@@ -69,31 +70,40 @@ const BeatmapList = ({
               return (
                 <div
                   key={beatmap.id}
-                  className="flex cursor-pointer items-center gap-3 rounded p-2 text-start transition hover:bg-white/5"
+                  className="cursor-pointer rounded bg-slate-500/5 p-2 text-start transition hover:bg-white/5"
                   onClick={() => {
                     stopPreview();
                     setBeatmapSet(beatmapSet);
                     startGame(beatmap.id);
                   }}
                 >
-                  <ManiaIcon
-                    difficultyRating={beatmap.difficulty_rating}
-                    className="shrink-0"
-                  />
+                  <div className="flex gap-3">
+                    <ManiaIcon
+                      difficultyRating={beatmap.difficulty_rating}
+                      className="shrink-0"
+                    />
 
-                  <div className="grow overflow-hidden">
-                    <button className="max-w-full truncate text-start">
-                      {beatmap.version}
-                    </button>
+                    <div className="grow overflow-hidden">
+                      <button className="max-w-full truncate text-start">
+                        {beatmap.version}
+                      </button>
 
-                    <div className="flex items-center justify-between">
-                      <p className="text-muted-foreground">
-                        {beatmap.difficulty_rating.toFixed(2)}★
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {beatmap.difficulty_rating.toFixed(2)}★
+                        </span>
 
-                      {highScore && <HighScoreToolTip highScore={highScore} />}
+                        {highScore && (
+                          <HighScoreToolTip highScore={highScore} />
+                        )}
+                      </div>
                     </div>
                   </div>
+
+                  <DifficultyBars
+                    accuracy={beatmap.accuracy}
+                    drain={beatmap.drain}
+                  />
                 </div>
               );
             })}

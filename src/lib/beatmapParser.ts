@@ -14,6 +14,11 @@ import { removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
+export type Break = {
+  startTime: number;
+  endTime: number;
+};
+
 export type Metadata = {
   title: string;
   titleUnicode: string;
@@ -32,6 +37,7 @@ export type SoundDictionary = { [key: string]: Sound };
 export type Difficulty = {
   keyCount: number;
   od: number;
+  hp: number;
 };
 
 export const sampleSets = ["default", "normal", "soft", "drum"] as const;
@@ -67,6 +73,7 @@ export type TapData = {
   type: "tap";
   column: number;
   time: number;
+  endTime: number;
   hitSound: HitSound;
   hitSample: HitSample;
 };
@@ -93,6 +100,7 @@ export interface BeatmapData {
   version: string;
   timingPoints: TimingPoint[];
   hitObjects: HitObject[];
+  breaks: Break[];
   startTime: number;
   endTime: number;
   columnMap?: number[];
@@ -159,6 +167,8 @@ export const parseOsz = async (
     endTime,
     mods,
   );
+
+  const breaks = parseBreaks(lines, delay);
 
   const hitWindows = getHitWindows(difficulty.od, mods);
 
@@ -257,6 +267,7 @@ export const parseOsz = async (
     hitObjects,
     startTime,
     endTime,
+    breaks,
     columnMap,
     hitWindows,
     song,
@@ -331,6 +342,7 @@ export function parseHitObjects(
       time,
       hitSound,
       hitSample,
+      endTime: isHoldNote && !mods.holdOff ? parseInt(sampleSet[0]) : time,
     });
 
     if (isHoldNote && !mods.holdOff) {
@@ -366,9 +378,7 @@ export function parseHitObjects(
 
   hitObjects.forEach((hitObject) => {
     hitObject.time += delay - audioOffset;
-    if (hitObject.type === "hold") {
-      hitObject.endTime += delay - audioOffset;
-    }
+    hitObject.endTime += delay - audioOffset;
   });
 
   const startTime = hitObjects[0].time;
@@ -416,8 +426,26 @@ function parseMetadata(lines: string[]): Metadata {
 function parseDifficulty(lines: string[]): Difficulty {
   const keyCount = Number(getLineValue(lines, "CircleSize"));
   const od = Number(getLineValue(lines, "OverallDifficulty"));
+  const hp = Number(getLineValue(lines, "HPDrainRate"));
 
-  return { keyCount, od };
+  return { keyCount, od, hp };
+}
+
+function parseBreaks(lines: string[], delay: number): Break[] {
+  const startIndex = lines.indexOf("[Events]") + 1;
+  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
+
+  const eventLines = lines.slice(startIndex, endIndex);
+  const breakLines = eventLines.filter((line) => line.startsWith("2,"));
+
+  return breakLines.map((line) => {
+    const [_, startTime, endTime] = line.split(",");
+
+    return {
+      startTime: parseInt(startTime) + delay,
+      endTime: parseInt(endTime) + delay,
+    };
+  });
 }
 
 function parseTimingPoints(

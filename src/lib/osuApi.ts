@@ -26,7 +26,9 @@ export type Beatmap = {
   user_id: number;
   version: string;
 
-  cs: number;
+  cs: number; // Key count
+  accuracy: number; // OD
+  drain: number; // HP
 };
 
 type Covers = {
