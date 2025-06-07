@@ -35,6 +35,10 @@ export async function GET(request: NextRequest) {
 
   // Params are forwarded to the osu API endpoint
   const params = new URLSearchParams(requestUrl.search);
+
+  // Sort so the keys are in consistent order for caching
+  params.sort();
+
   const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
 
   const accessToken = await getAccessToken();
