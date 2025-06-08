@@ -1,8 +1,11 @@
-name = "web-osu-mania"
-compatibility_date = "2024-10-10"
+main = ".open-next/worker.js"
+name = "webosumania"
+compatibility_date = "2025-05-18"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
 kv_namespaces = [
     { binding = "TOKENS", id = "4c393a66c157468282b7e336b1627cd6" },
     { binding = "BEATMAP_SETS", id = "e24512f619c648009717ac1c53a9f685" },
 ]
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"

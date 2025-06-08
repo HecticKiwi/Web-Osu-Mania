@@ -1,5 +1,4 @@
 import Main from "@/components/main";
-import MigrationNotice from "@/components/migrationNotice";
 import SidebarContent from "@/components/sidebar";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -36,7 +35,6 @@ export default async function Home({
 
         <div className="w-full max-w-screen-xl px-2 py-4 pt-0 sm:px-4 lg:px-8 lg:pb-8">
           <Suspense>
-            <MigrationNotice />
             <Main />
           </Suspense>
         </div>

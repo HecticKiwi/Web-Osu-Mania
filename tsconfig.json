@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "types": [
-      "@cloudflare/workers-types"
-    ],
+    "types": [],
     "lib": [
       "dom",
       "dom.iterable",
@@ -35,7 +33,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "worker-configuration.d.ts"
   ],
   "exclude": [
     "node_modules",

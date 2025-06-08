@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy"
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-build": "opennextjs-cloudflare build",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@opennextjs/cloudflare": "^1.0.3",
     "@pixi/layers": "^2.1.0",
     "@pixi/react": "^7.1.2",
     "@pixi/sound": "^6.0.0",
@@ -88,8 +91,6 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.5",
-    "@cloudflare/workers-types": "^4.20241205.0",
     "@types/audiobuffer-to-wav": "^1.0.4",
     "@types/howler": "^2.2.11",
     "@types/ini": "^4.1.1",
@@ -100,13 +101,13 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "eslint-plugin-next-on-pages": "^1.13.5",
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.15.2"
   },
   "overrides": {
     "undici": "^5.28.5"

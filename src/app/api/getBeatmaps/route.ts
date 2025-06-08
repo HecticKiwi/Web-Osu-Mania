@@ -1,5 +1,5 @@
 import { BeatmapSet } from "@/lib/osuApi";
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../utils";
 
@@ -20,7 +20,7 @@ export type GetBeatmapsResponse = {
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
-  const BEATMAP_SETS = getRequestContext().env.BEATMAP_SETS;
+  const BEATMAP_SETS = getCloudflareContext().env.BEATMAP_SETS;
   const cachedData = await BEATMAP_SETS.get(requestUrl.search);
 
   if (cachedData) {
