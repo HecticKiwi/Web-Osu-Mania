@@ -2,12 +2,12 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "https://web-osu-mania.pages.dev/",
+      "destination": "https://webosumania.com/",
       "permanent": true
     },
     {
       "source": "/faq",
-      "destination": "https://web-osu-mania.pages.dev/faq",
+      "destination": "https://webosumania.com/faq",
       "permanent": true
     }
   ]
