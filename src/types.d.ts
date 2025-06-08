@@ -1,9 +1,9 @@
-import { HitObject } from "./lib/beatmapParser";
-import { OldHold } from "./osuMania/sprites/hold";
-import { Hold } from "./osuMania/sprites/hold";
-import { Tap } from "./osuMania/sprites/tap";
+import { HitError } from "./components/game/timingDistributionChart";
+import { JUDGEMENTS } from "./osuMania/constants";
+import { Hold } from "./osuMania/sprites/hold/hold";
+import { Tap } from "./osuMania/sprites/tap/tap";
 
-export type GameState = "WAIT" | "PLAY" | "PAUSE";
+export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE" | "FAIL";
 
 export type Results = {
   score: number;
@@ -17,9 +17,16 @@ export type Results = {
   0: number;
 };
 
+export type PlayResults = Results & {
+  failed?: boolean;
+  viewingReplay?: boolean;
+  replayData?: ReplayData;
+  hitErrors: HitError[];
+};
+
 export type Column = (Tap | Hold)[];
 
-export type Judgement = 320 | 300 | 200 | 100 | 50 | 0;
+export type Judgement = (typeof JUDGEMENTS)[number];
 
 declare global {
   interface Window {

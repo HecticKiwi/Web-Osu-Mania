@@ -1,6 +1,8 @@
 import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
+import { BASE_PATH } from "@/lib/utils";
 import { Howl } from "howler";
 import { Game } from "../game";
+import { Tap } from "../sprites/tap/tap";
 
 export class AudioSystem {
   public game: Game;
@@ -17,11 +19,13 @@ export class AudioSystem {
       ["normal", "whistle", "finish", "clap"].forEach((sound) => {
         this.load(
           `skin-${sampleSet}-hit${sound}`,
-          `/skin/${sampleSet}-hit${sound}.ogg`,
+          `${BASE_PATH}/skin/${sampleSet}-hit${sound}.ogg`,
         );
       });
     });
   }
+
+  public dispose() {}
 
   private load(name: string, src: string) {
     this.sounds[name] = {
@@ -36,11 +40,13 @@ export class AudioSystem {
   }
 
   public play(filename: string, volume?: number) {
+    if (this.game.settings.performanceMode) {
+      return;
+    }
+
     const sound = this.sounds[filename];
 
     if (!sound) {
-      // console.warn("Sound not found: ", filename);
-
       return;
     }
 
@@ -81,5 +87,11 @@ export class AudioSystem {
     }
   }
 
-  public dispose() {}
+  public playNextHitsounds(columnId: number) {
+    const nextTapNote = this.game.columns[columnId].find(
+      (hitObject): hitObject is Tap => hitObject.data.type === "tap",
+    );
+
+    nextTapNote?.playHitsounds();
+  }
 }

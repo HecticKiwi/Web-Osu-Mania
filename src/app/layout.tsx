@@ -1,17 +1,17 @@
+import ReactScan from "@/components/debug/reactScan";
+import { GameOverlay } from "@/components/game/gameOverlay";
 import Header from "@/components/header";
-import { AudioPreviewProvider } from "@/components/providers/audioPreviewProvider";
-import BeatmapSetCacheProvider from "@/components/providers/beatmapSetCacheProvider";
-import { GameProvider } from "@/components/providers/gameOverlayProvider";
+import Html from "@/components/html";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
-import SettingsProvider from "@/components/providers/settingsProvider";
-import { Toaster } from "@/components/ui/toaster";
+import UploadDialog from "@/components/settings/uploadDialog";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
 import { Varela_Round } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-export const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
+const varelaRound = Varela_Round({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
@@ -31,10 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="scrollbar scrollbar-track-background scrollbar-thumb-primary"
-    >
+    <Html>
       <Script
         defer
         src="https://umami-37qe.onrender.com/script.js"
@@ -43,20 +40,17 @@ export default function RootLayout({
       <body className={`${varelaRound.className}`}>
         <TooltipProvider>
           <ReactQueryProvider>
-            <SettingsProvider>
-              <BeatmapSetCacheProvider>
-                <GameProvider>
-                  <AudioPreviewProvider>
-                    <Header />
-                    {children}
-                    <Toaster />
-                  </AudioPreviewProvider>
-                </GameProvider>
-              </BeatmapSetCacheProvider>
-            </SettingsProvider>
+            <Header />
+
+            {children}
+
+            <UploadDialog />
+            <GameOverlay />
+            <Toaster />
+            <ReactScan />
           </ReactQueryProvider>
         </TooltipProvider>
       </body>
-    </html>
+    </Html>
   );
 }

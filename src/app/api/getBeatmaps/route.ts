@@ -1,14 +1,9 @@
 import { BeatmapSet } from "@/lib/osuApi";
-import { cookies } from "next/headers";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 import { NextRequest, NextResponse } from "next/server";
+import { getAccessToken } from "../utils";
 
 export const runtime = "edge";
-
-export type OAuthTokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-};
 
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
@@ -25,72 +20,69 @@ export type GetBeatmapsResponse = {
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
-  // Params are forwarded to the osu API endpoint
-  const params = new URLSearchParams(requestUrl.search);
+  const BEATMAP_SETS = getRequestContext().env.BEATMAP_SETS;
+  const cachedData = await BEATMAP_SETS.get(requestUrl.search);
 
-  const cookieStore = cookies();
-  let token = cookieStore.get("osu_api_access_token")?.value;
+  if (cachedData) {
+    const data = JSON.parse(cachedData);
 
-  if (!token) {
-    const { token: newToken, expires } = await getAccessToken();
-
-    token = newToken;
-
-    cookieStore.set("osu_api_access_token", newToken, {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      expires: expires,
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "public, max-age=3600",
+      },
     });
   }
 
+  // Params are forwarded to the osu API endpoint
+  const params = new URLSearchParams(requestUrl.search);
+
+  // Sort so the keys are in consistent order for caching
+  params.sort();
+
   const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
+
+  const accessToken = await getAccessToken();
 
   const response = await fetch(url, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 
   if (!response.ok) {
-    throw new Error();
+    const retryAfter = response.headers.get("Retry-After");
+
+    const statusErrorMessages: Record<number, string> = {
+      429: `The site is being rate-limited by the osu! API, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"}.`,
+      500: "The osu! API ran into an error, try again later.",
+      503: "The osu! API is currently unavailable, try again later.",
+      504: "The request to the osu! API timed out.",
+    };
+
+    const message =
+      statusErrorMessages[response.status] ?? "An unknown error occurred.";
+
+    return NextResponse.json(
+      {
+        message,
+      },
+      {
+        status: response.status,
+        statusText: message,
+      },
+    );
   }
 
   const data: GetBeatmapsResponse = await response.json();
+
+  await BEATMAP_SETS.put(requestUrl.search, JSON.stringify(data), {
+    expirationTtl: 3600,
+  });
 
   return NextResponse.json(data, {
     headers: {
       "Cache-Control": "public, max-age=3600",
     },
   });
-}
-
-async function getAccessToken() {
-  const response = await fetch("https://osu.ppy.sh/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      client_id: process.env.OSU_API_CLIENT_ID,
-      client_secret: process.env.OSU_API_CLIENT_SECRET,
-      grant_type: "client_credentials",
-      scope: "public",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Access token error: ${response.status}`);
-  }
-
-  const data: OAuthTokenData = await response.json();
-
-  const expiryDate = new Date();
-  expiryDate.setSeconds(expiryDate.getSeconds() + data.expires_in);
-
-  return {
-    token: data.access_token,
-    expires: expiryDate,
-  };
 }

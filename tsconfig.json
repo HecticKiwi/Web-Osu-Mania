@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "types": [
+      "@cloudflare/workers-types"
+    ],
     "lib": [
       "dom",
       "dom.iterable",

@@ -1,156 +1,198 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { BeatmapData } from "@/lib/beatmapParser";
-import { Results } from "@/types";
-import { useGameContext } from "../providers/gameOverlayProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
+import { idb } from "@/lib/idb";
+import { downloadReplay } from "@/lib/replay";
+import { downloadResults, getReplayFilename } from "@/lib/results";
+import { getModStrings } from "@/lib/utils";
+import { PlayResults } from "@/types";
+import { Camera, MoveLeft, Play, Repeat, Save } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useGameStore } from "../../stores/gameStore";
+import { useHighScoresStore } from "../../stores/highScoresStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
+import Results from "./results";
 
 const ResultsScreen = ({
   beatmapData,
-  results,
+  playResults,
   retry,
 }: {
   beatmapData: BeatmapData;
-  results: Results;
+  playResults: PlayResults;
   retry: () => void;
 }) => {
-  const { closeGame } = useGameContext();
-  const { settings } = useSettingsContext();
+  const closeGame = useGameStore.use.closeGame();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const setReplayData = useGameStore.use.setReplayData();
+  const mods = useSettingsStore.use.mods();
+  const highScores = useHighScoresStore.use.highScores();
+  const setHighScores = useHighScoresStore.use.setHighScores();
+  const [newHighScore, setNewHighScore] = useState(false);
+  const hiddenRef = useRef<HTMLDivElement>(null);
 
-  const artist = settings.preferMetadataInOriginalLanguage
-    ? beatmapData.metadata.artistUnicode
-    : beatmapData.metadata.artist;
+  // Check for new high score
+  useEffect(() => {
+    if (!beatmapId || !beatmapSet || mods.autoplay || playResults.failed) {
+      return;
+    }
 
-  const title = settings.preferMetadataInOriginalLanguage
-    ? beatmapData.metadata.titleUnicode
-    : beatmapData.metadata.title;
+    const checkNewHighScore = async () => {
+      const beatmapSetId = beatmapSet.id;
+
+      const previousHighScore =
+        highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
+
+      if (playResults.score > previousHighScore) {
+        await idb.saveReplay(playResults.replayData, beatmapId.toString());
+
+        // Trim out properties that don't need to be saved
+        const { failed, viewingReplay, replayData, hitErrors, ...results } =
+          playResults;
+
+        setHighScores((draft) => {
+          draft[beatmapSetId] ??= {};
+
+          draft[beatmapSetId][beatmapId] = {
+            timestamp: Date.now(),
+            mods: getModStrings(mods),
+            results,
+            replayId: beatmapId.toString(),
+          };
+        });
+
+        setNewHighScore(true);
+      }
+    };
+
+    checkNewHighScore();
+  }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, mods]);
 
   return (
     <>
       {/* Top of -1px since it wasn't covering the top for some reason */}
-      <div className="fixed inset-0 -top-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
-        <main className="mx-auto flex min-h-screen max-w-screen-xl flex-col justify-center p-8">
-          <h1 className="text-3xl font-semibold md:text-5xl">
-            {artist} - {title}
-          </h1>
-          <div className="mt-1 text-2xl text-muted-foreground">
-            Beatmap by {beatmapData.metadata.creator}
+      <div className="fixed inset-0 -inset-y-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
+        {/* Hidden results at a fixed width for getting screenshots */}
+        <div className="max-h-[0px] overflow-hidden" aria-hidden tabIndex={-1}>
+          <div ref={hiddenRef} className="w-[1280px]">
+            <Results
+              beatmapData={beatmapData}
+              playResults={playResults}
+              newHighScore={newHighScore}
+            />
           </div>
+        </div>
 
-          <div className="mt-8">
-            <div className="grid gap-6 gap-y-12 rounded-xl border bg-card p-8 xl:grid-cols-2">
-              <div className="grid gap-6">
-                <div className="rounded-xl">
-                  <h2 className="mb-4 text-3xl font-semibold text-primary">
-                    Score
-                  </h2>
-                  <span className="text-5xl">{Math.round(results.score)}</span>
-                </div>
+        <Results
+          beatmapData={beatmapData}
+          playResults={playResults}
+          newHighScore={newHighScore}
+          responsive
+        />
 
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="rounded-xl">
-                    <h3 className="mb-4 text-3xl font-semibold text-primary">
-                      Max Combo
-                    </h3>
-                    <span className="text-5xl">{results.maxCombo}x</span>
-                  </div>
+        {/* Footer actions */}
+        <div className="mx-auto mt-8 flex max-w-screen-xl flex-col justify-center p-8 pt-0">
+          <div className="flex flex-wrap items-center justify-between gap-8">
+            <div className="flex gap-4">
+              <Button
+                variant={"ghost"}
+                className="gap-2 text-xl"
+                onClick={() => closeGame()}
+              >
+                <MoveLeft /> Back
+              </Button>
 
-                  <div className="rounded-xl">
-                    <h3 className="mb-4 text-3xl font-semibold text-primary">
-                      Accuracy
-                    </h3>
-                    <span className="text-5xl">
-                      {(results.accuracy * 100).toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-xl">
-                <h2 className="mb-4 text-3xl font-semibold text-primary">
-                  Breakdown
-                </h2>
-
-                <div className="grid gap-4 text-2xl sm:grid-cols-2">
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 text-orange-300">300</span>
-                    <span className="text-5xl">{results[300]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b from-blue-300 via-green-300 to-orange-300 bg-clip-text text-transparent">
-                      300g
-                    </span>
-                    <span className="text-5xl">{results[320]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-green-300">
-                      200
-                    </span>
-                    <span className="text-5xl">{results[200]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-sky-300">
-                      100
-                    </span>
-                    <span className="text-5xl">{results[100]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-slate-300">
-                      50
-                    </span>
-                    <span className="text-5xl">{results[50]}x</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="w-16 bg-gradient-to-b text-rose-300">
-                      miss!
-                    </span>
-                    <span className="text-5xl">{results[0]}x</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex flex-col justify-center">
-              <div className="flex items-center text-center text-[100px] leading-none">
-                <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
-
-                <div className="rounded-xl border bg-card p-6">
-                  <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
-                    Grade
-                  </h3>
-                  <span>
-                    {results.accuracy === 1
-                      ? "SS"
-                      : results.accuracy > 0.95
-                        ? "S"
-                        : results.accuracy > 0.9
-                          ? "A"
-                          : results.accuracy > 0.8
-                            ? "B"
-                            : results.accuracy > 0.7
-                              ? "C"
-                              : "D"}
-                  </span>
-                </div>
-
-                <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
-              </div>
-
-              <div className="mt-16 grid grid-cols-2">
-                <Button size={"lg"} onClick={() => closeGame()}>
-                  Back
-                </Button>
+              {!playResults.viewingReplay && (
                 <Button
-                  variant={"secondary"}
-                  size={"lg"}
-                  className="ml-4"
+                  variant={"default"}
+                  className="gap-2 text-xl"
                   onClick={() => retry()}
                 >
-                  Retry
+                  <Repeat /> Retry
                 </Button>
-              </div>
+              )}
+            </div>
+
+            <div className="flex gap-4">
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className="text-xl"
+                      onClick={() => {
+                        if (!hiddenRef.current) {
+                          return;
+                        }
+
+                        const filename = `${getReplayFilename(beatmapData, playResults)}.png`;
+                        downloadResults(hiddenRef.current, filename);
+                      }}
+                    >
+                      <Camera />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Download Results</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {playResults.replayData && (
+                <div className="rounded-md outline outline-1 outline-border">
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="rounded-r-none text-xl"
+                          onClick={() => {
+                            setReplayData(playResults.replayData);
+                            retry();
+                          }}
+                        >
+                          <Play />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Watch Replay</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={"ghost"}
+                          className="rounded-l-none border-l text-xl"
+                          onClick={() =>
+                            downloadReplay(
+                              playResults.replayData,
+                              beatmapData,
+                              playResults,
+                            )
+                          }
+                        >
+                          <Save />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Download Replay</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

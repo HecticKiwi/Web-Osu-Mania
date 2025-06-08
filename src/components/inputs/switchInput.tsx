@@ -1,0 +1,54 @@
+"use client";
+
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Settings, useSettingsStore } from "@/stores/settingsStore";
+import { ComponentProps } from "react";
+
+const SwitchInput = ({
+  label,
+  tooltip,
+  selector,
+  ...props
+}: {
+  label: string;
+  tooltip?: string | ((value: any) => string);
+  selector: (settings: Settings) => boolean;
+} & ComponentProps<typeof Switch>) => {
+  const value = useSettingsStore(selector);
+
+  return (
+    <>
+      <div className="grid grid-cols-2 items-center">
+        <div className="pr-2 text-sm font-semibold text-muted-foreground">
+          {label}
+        </div>
+
+        {tooltip ? (
+          <div className="group w-fit">
+            <Tooltip open>
+              <TooltipTrigger asChild>
+                <div>
+                  <Switch className="block" checked={value} {...props} />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="hidden px-3 py-1.5 group-focus-within:block group-hover:block">
+                <p>
+                  {typeof tooltip === "function" ? tooltip(value) : tooltip}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ) : (
+          <Switch checked={value} {...props} />
+        )}
+      </div>
+    </>
+  );
+};
+
+export default SwitchInput;

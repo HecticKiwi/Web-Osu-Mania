@@ -1,89 +1,159 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Slider } from "@/components/ui/slider";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
-import Keybinds from "../keybinds";
-import {
-  SKIN_STYLES,
-  SkinStyle,
-  useSettingsContext,
-} from "../providers/settingsProvider";
-import SwitchInput from "../switchInput";
-import { Label } from "../ui/label";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import BackgroundBlurSlider from "./backgroundBlurSlider";
-import BackgroundDimSlider from "./backgroundDimSlider";
+import { PersonStanding } from "lucide-react";
+import { toast } from "sonner";
+import { useSettingsStore } from "../../stores/settingsStore";
+import SliderInput from "../inputs/sliderInput";
+import SwitchInput from "../inputs/switchInput";
+import { Separator } from "../ui/separator";
+import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
+import ClearHighScoresButton from "./clearHighScoresButton";
+import ReplaySettings from "./replaySettings";
+import SkinSettings from "./skinSettings";
+import UnpauseDelayWarning from "./unpauseDelayWarning";
 import VolumeSettings from "./volumeSettings";
 
 const SettingsTab = () => {
-  const { settings, resetSettings, setSettings } = useSettingsContext();
-
-  if (!settings) {
-    return null;
-  }
+  const setSettings = useSettingsStore.use.setSettings();
+  const resetSettings = useSettingsStore.use.resetSettings();
 
   return (
     <>
       <h3 className="text-lg font-semibold">General</h3>
       <div className="mt-2 space-y-3">
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Background Dim
-          </div>
+        <SliderInput
+          label="Website Color"
+          selector={(state) => state.hue}
+          graphic={(hue) => (
+            <div
+              className="size-6 shrink-0 rounded-full"
+              style={{ backgroundColor: `hsl(${hue}, 80%, 69%)` }}
+            ></div>
+          )}
+          tooltip={(hue) => hue}
+          onValueChange={([hue]) =>
+            setSettings((draft) => {
+              draft.hue = hue;
+            })
+          }
+          min={0}
+          max={360}
+          step={1}
+        />
+        <SliderInput
+          label="Background Dim"
+          selector={(state) => state.backgroundDim}
+          graphic={(backgroundDim) => (
+            <div className="relative">
+              <div
+                className="absolute inset-0 rounded-full bg-primary"
+                style={{ opacity: backgroundDim }}
+              ></div>
+              <PersonStanding />
+            </div>
+          )}
+          tooltip={(backgroundDim) => `${(backgroundDim * 100).toFixed(0)}%`}
+          onValueChange={([backgroundDim]) =>
+            setSettings((draft) => {
+              draft.backgroundDim = backgroundDim;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
+        />
 
-          <BackgroundDimSlider />
-        </div>
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Background Blur
-          </div>
+        <SliderInput
+          label="Background Blur"
+          selector={(state) => state.backgroundBlur}
+          graphic={(backgroundBlur) => (
+            <div>
+              <PersonStanding
+                style={{ filter: `blur(${backgroundBlur * 4}px)` }}
+              />
+            </div>
+          )}
+          tooltip={(backgroundBlur) => `${(backgroundBlur * 100).toFixed(0)}%`}
+          onValueChange={([backgroundBlur]) =>
+            setSettings((draft) => {
+              draft.backgroundBlur = backgroundBlur;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
+        />
 
-          <BackgroundBlurSlider />
-        </div>
+        <SliderInput
+          label="Scroll Speed"
+          selector={(state) => state.scrollSpeed}
+          tooltip={(scrollSpeed) =>
+            `${Math.round(MAX_TIME_RANGE / scrollSpeed)}ms (speed ${scrollSpeed})`
+          }
+          onValueChange={([scrollSpeed]) =>
+            setSettings((draft) => {
+              draft.scrollSpeed = scrollSpeed;
+            })
+          }
+          min={1}
+          max={40}
+          step={1}
+        />
 
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Scroll Speed
-          </div>
+        <SliderInput
+          label="Unpause Delay"
+          selector={(state) => state.unpauseDelay}
+          tooltip={(unpauseDelay) =>
+            unpauseDelay === 0
+              ? "No Delay"
+              : `${unpauseDelay}ms (${unpauseDelay / 1000}s)`
+          }
+          onValueChange={([unpauseDelay]) =>
+            setSettings((draft) => {
+              draft.unpauseDelay = unpauseDelay;
+            })
+          }
+          min={0}
+          max={3000}
+          step={100}
+        />
 
-          <div className="group w-full">
-            <Tooltip open>
-              <TooltipTrigger asChild>
-                <Slider
-                  value={[settings.scrollSpeed]}
-                  min={1}
-                  max={40}
-                  step={1}
-                  onValueChange={([scrollSpeed]) =>
-                    setSettings((draft) => {
-                      draft.scrollSpeed = scrollSpeed;
-                    })
-                  }
-                />
-              </TooltipTrigger>
-              <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {Math.round(MAX_TIME_RANGE / settings.scrollSpeed)}ms (speed{" "}
-                {settings.scrollSpeed})
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
+        <UnpauseDelayWarning />
+
+        <SwitchInput
+          label="Retry on Fail"
+          selector={(state) => state.retryOnFail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.retryOnFail = checked;
+            })
+          }
+        />
+
+        <SwitchInput
+          label="Performance Mode"
+          selector={(state) => state.performanceMode}
+          onCheckedChange={(checked) => {
+            setSettings((draft) => {
+              draft.performanceMode = checked;
+            });
+          }}
+        />
+
+        <p className="text-sm text-muted-foreground">
+          Enable performance mode if you are experiencing low FPS. This will
+          disable animations and hitsounds.
+        </p>
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Language</h3>
       <div className="mt-2 space-y-3">
         <SwitchInput
           label="Prefer Metadata in Original Language"
-          checked={settings.preferMetadataInOriginalLanguage}
+          selector={(state) => state.preferMetadataInOriginalLanguage}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.preferMetadataInOriginalLanguage = checked;
@@ -92,41 +162,60 @@ const SettingsTab = () => {
         />
       </div>
 
+      <SkinSettings />
+
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
-        <div className="grid grid-cols-2">
-          <Label
-            htmlFor="beatmapProvider"
-            className="text-sm font-semibold text-muted-foreground"
-          >
-            Style
-          </Label>
-
-          <RadioGroup
-            id="style"
-            value={settings.style}
-            onValueChange={(value: SkinStyle) =>
-              setSettings((draft) => {
-                draft.style = value;
-              })
+        <SliderInput
+          label="Stage Position"
+          selector={(state) => state.stagePosition}
+          tooltip={(stagePosition) => {
+            if (stagePosition === 0) {
+              return "Centered";
             }
-            className="space-y-2"
-          >
-            {SKIN_STYLES.map((style) => (
-              <Label
-                key={style}
-                htmlFor={style}
-                className="flex items-center space-x-2"
-              >
-                <RadioGroupItem value={style} id={style} />
-                <span>{capitalizeFirstLetter(style)}</span>
-              </Label>
-            ))}
-          </RadioGroup>
-        </div>
+
+            return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
+          }}
+          onValueChange={([stagePosition]) =>
+            setSettings((draft) => {
+              draft.stagePosition = stagePosition;
+            })
+          }
+          min={-1}
+          max={1}
+          step={0.01}
+        />
+        <SliderInput
+          label="Hit Position"
+          selector={(state) => state.hitPositionOffset}
+          tooltip={(hitPositionOffset) => hitPositionOffset}
+          onValueChange={([hitPositionOffset]) =>
+            setSettings((draft) => {
+              draft.hitPositionOffset = hitPositionOffset;
+            })
+          }
+          min={0}
+          max={200}
+          step={1}
+        />
+        <SliderInput
+          label="Lane Width Adjustment"
+          selector={(state) => state.laneWidthAdjustment}
+          tooltip={(laneWidthAdjustment) =>
+            `${Math.round(laneWidthAdjustment)}`
+          }
+          onValueChange={([laneWidthAdjustment]) =>
+            setSettings((draft) => {
+              draft.laneWidthAdjustment = laneWidthAdjustment;
+            })
+          }
+          min={-20}
+          max={80}
+          step={1}
+        />
         <SwitchInput
           label="Upscroll (DDR Style)"
-          checked={settings.upscroll}
+          selector={(state) => state.upscroll}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.upscroll = checked;
@@ -134,52 +223,101 @@ const SettingsTab = () => {
           }
         />
         <SwitchInput
+          label="Show Score"
+          selector={(state) => state.ui.showScore}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showScore = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Combo"
+          selector={(state) => state.ui.showCombo}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showCombo = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Accuracy"
+          selector={(state) => state.ui.showAccuracy}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showAccuracy = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Judgement"
+          selector={(state) => state.ui.showJudgement}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showJudgement = checked;
+
+              if (!checked) {
+                draft.show300g = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Show 300g Judgement"
-          checked={settings.show300g}
+          selector={(state) => state.show300g}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.show300g = checked;
+
+              if (checked) {
+                draft.ui.showJudgement = true;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Progress Bar"
+          selector={(state) => state.ui.showProgressBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showProgressBar = checked;
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Health Bar"
+          selector={(state) => state.ui.showHealthBar}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showHealthBar = checked;
             })
           }
         />
         <SwitchInput
           label="Show Error Bar"
-          checked={settings.showErrorBar}
+          selector={(state) => state.showErrorBar}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.showErrorBar = checked;
             })
           }
         />
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Error Bar Scale
-          </div>
-
-          <div className="group w-full">
-            <Tooltip open>
-              <TooltipTrigger asChild>
-                <Slider
-                  value={[settings.errorBarScale]}
-                  min={0.5}
-                  max={2}
-                  step={0.1}
-                  onValueChange={([errorBarScale]) =>
-                    setSettings((draft) => {
-                      draft.errorBarScale = errorBarScale;
-                    })
-                  }
-                />
-              </TooltipTrigger>
-              <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                {settings.errorBarScale}x
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
+        <SliderInput
+          label="Error Bar Scale"
+          selector={(state) => state.errorBarScale}
+          tooltip={(errorBarScale) => `${errorBarScale}x`}
+          onValueChange={([errorBarScale]) =>
+            setSettings((draft) => {
+              draft.errorBarScale = errorBarScale;
+            })
+          }
+          min={0.5}
+          max={2}
+          step={0.1}
+        />
         <SwitchInput
           label="Show FPS Counter"
-          checked={settings.showFpsCounter}
+          selector={(state) => state.showFpsCounter}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.showFpsCounter = checked;
@@ -190,23 +328,27 @@ const SettingsTab = () => {
 
       <VolumeSettings className="mt-6" />
 
+      <ReplaySettings className="mt-6" />
+
       <BeatmapSettings className="mt-6" />
 
+      <BackupSettings className="mt-6" />
+
+      <Separator className="my-8" />
+
+      <ClearHighScoresButton />
+
       <Button
-        className="mt-8 w-full"
+        className="mt-4 w-full"
         variant={"destructive"}
         size={"sm"}
-        onClick={() => resetSettings()}
+        onClick={() => {
+          resetSettings();
+          toast("Settings have been reset.");
+        }}
       >
         Reset Settings
       </Button>
-
-      <Separator className="my-6" />
-
-      <h3 className="text-lg font-semibold">Keybinds</h3>
-      <div className="mt-2">
-        <Keybinds />
-      </div>
     </>
   );
 };

@@ -2,48 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  @apply bg-black
-} */
-
 @layer base {
   :root {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
+    /* Hue is overridden in settings store */
+    --hue: 212;
 
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: #72C6EF;
+    --gradient: #72c6ef;
 
-    --background: 212 52% 5.52%;
-    --foreground: 212 8% 98.45%;
+    --background: var(--hue) 52% 5.52%;
+    --foreground: var(--hue) 8% 98.45%;
 
-    --muted: 212 40% 20.7%;
-    --muted-foreground: 212 8% 56.9%;
+    --muted: var(--hue) 40% 20.7%;
+    --muted-foreground: var(--hue) 8% 56.9%;
 
-    --popover: 212 49% 8.969999999999999%;
-    --popover-foreground: 212 8% 98.45%;
+    --popover: var(--hue) 49% 8.969999999999999%;
+    --popover-foreground: var(--hue) 8% 98.45%;
 
-    --card: 212 49% 8.969999999999999%;
-    --card-foreground: 212 8% 98.45%;
+    --card: var(--hue) 49% 8.969999999999999%;
+    --card-foreground: var(--hue) 8% 98.45%;
 
-    --border: 212 40% 20.7%;
-    --input: 212 40% 20.7%;
+    --border: var(--hue) 40% 20.7%;
+    --input: var(--hue) 40% 20.7%;
 
-    --primary: 212 80% 69%;
-    --primary-foreground: 212 8% 6.8999999999999995%;
+    --primary: var(--hue) 80% 69%;
+    --primary-foreground: var(--hue) 8% 6.8999999999999995%;
 
-    --secondary: 212 40% 20.7%;
-    --secondary-foreground: 212 8% 98.45%;
+    --secondary: var(--hue) 40% 20.7%;
+    --secondary-foreground: var(--hue) 8% 98.45%;
 
-    --accent: 212 40% 20.7%;
-    --accent-foreground: 212 8% 98.45%;
+    --accent: var(--hue) 40% 20.7%;
+    --accent-foreground: var(--hue) 8% 98.45%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 212 8% 98.45%;
+    --destructive-foreground: var(--hue) 8% 98.45%;
 
-    --ring: 212 80% 69%;
+    --ring: var(--hue) 80% 69%;
     --radius: 0.5rem;
+
+    --judgement-perfect: 190 100% 80%;
+    --judgement-great: 200 100% 70%;
+    --judgement-good: 75 66% 56%;
+    --judgement-ok: 74 100% 35%;
+    --judgement-meh: 46 100% 57%;
+    --judgement-miss: 356 83% 44%;
   }
 }
 

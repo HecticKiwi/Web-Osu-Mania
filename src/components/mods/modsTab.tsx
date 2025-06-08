@@ -1,31 +1,26 @@
 "use client";
 
-import { Slider } from "@/components/ui/slider";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { useSettingsContext } from "../providers/settingsProvider";
-import SwitchInput from "../switchInput";
+import { toast } from "sonner";
+import { useSettingsStore } from "../../stores/settingsStore";
+import SliderInput from "../inputs/sliderInput";
+import SwitchInput from "../inputs/switchInput";
 import { Button } from "../ui/button";
+import ScoreMultiplier from "./scoreMultiplier";
 
 const ModsTab = () => {
-  const { settings, setSettings, resetMods } = useSettingsContext();
-
-  if (!settings) {
-    return null;
-  }
+  const setSettings = useSettingsStore.use.setSettings();
+  const resetMods = useSettingsStore.use.resetMods();
 
   return (
     <>
+      <ScoreMultiplier />
+
       <h3 className="mb-2 text-lg font-semibold">Difficulty Reduction</h3>
       <div className="space-y-4">
         <SwitchInput
           label="Easy"
           tooltip="Larger timing windows."
-          checked={settings.mods.easy}
+          selector={(state) => state.mods.easy}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.easy = checked;
@@ -37,9 +32,23 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="No Fail"
+          tooltip="You can't fail, no matter what."
+          selector={(state) => state.mods.noFail}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.noFail = checked;
+
+              if (checked) {
+                draft.mods.suddenDeath = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Half Time"
           tooltip="0.75x speed (don't ask me why it's called half time)."
-          checked={settings.mods.playbackRate === 0.75}
+          selector={(state) => state.mods.playbackRate === 0.75}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -57,7 +66,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Hard Rock"
           tooltip="Smaller timing windows."
-          checked={settings.mods.hardRock}
+          selector={(state) => state.mods.hardRock}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.hardRock = checked;
@@ -69,9 +78,23 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="Sudden Death"
+          tooltip="Miss a note and fail."
+          selector={(state) => state.mods.suddenDeath}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.suddenDeath = checked;
+
+              if (checked) {
+                draft.mods.noFail = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Double Time"
           tooltip="1.5x speed (don't ask me why it's called double time)."
-          checked={settings.mods.playbackRate === 1.5}
+          selector={(state) => state.mods.playbackRate === 1.5}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -89,7 +112,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Autoplay"
           tooltip="Watch a perfect automated play."
-          checked={settings.mods.autoplay}
+          selector={(state) => state.mods.autoplay}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.autoplay = checked;
@@ -103,7 +126,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Random"
           tooltip="Shuffle around the notes."
-          checked={settings.mods.random}
+          selector={(state) => state.mods.random}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.random = checked;
@@ -117,7 +140,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Mirror"
           tooltip="Notes are flipped horizontally."
-          checked={settings.mods.mirror}
+          selector={(state) => state.mods.mirror}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.mirror = checked;
@@ -131,7 +154,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Constant Speed"
           tooltip="No more scroll speed changes during a song."
-          checked={settings.mods.constantSpeed}
+          selector={(state) => state.mods.constantSpeed}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.constantSpeed = checked;
@@ -141,7 +164,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Hold Off"
           tooltip="All hold notes become normal notes."
-          checked={settings.mods.holdOff}
+          selector={(state) => state.mods.holdOff}
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.holdOff = checked;
@@ -152,40 +175,28 @@ const ModsTab = () => {
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Custom</h3>
       <div className="space-y-4">
-        <div className="grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
-            Song Speed
-          </div>
-
-          <div className={cn("flex items-center gap-4")}>
-            <div className="group w-full">
-              <Tooltip open>
-                <TooltipTrigger asChild>
-                  <Slider
-                    value={[settings.mods.playbackRate]}
-                    min={0.5}
-                    max={2}
-                    step={0.05}
-                    onValueChange={([playbackRate]) =>
-                      setSettings((draft) => {
-                        draft.mods.playbackRate = playbackRate;
-                      })
-                    }
-                  />
-                </TooltipTrigger>
-                <TooltipContent className="sr-only group-focus-within:not-sr-only group-focus-within:px-3 group-focus-within:py-1.5 group-hover:not-sr-only group-hover:px-3 group-hover:py-1.5">
-                  {settings.mods.playbackRate}x
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </div>
-        </div>
+        <SliderInput
+          label="Song Speed"
+          selector={(state) => state.mods.playbackRate}
+          tooltip={(playbackRate) => `${playbackRate}x`}
+          onValueChange={([playbackRate]) =>
+            setSettings((draft) => {
+              draft.mods.playbackRate = playbackRate;
+            })
+          }
+          min={0.5}
+          max={2}
+          step={0.05}
+        />
       </div>
 
       <Button
         variant={"destructive"}
         className="mt-8 w-full"
-        onClick={() => resetMods()}
+        onClick={() => {
+          resetMods();
+          toast("Mods have been reset.");
+        }}
       >
         Reset Mods
       </Button>

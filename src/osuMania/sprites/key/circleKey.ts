@@ -1,38 +1,46 @@
+import { circleColumnRatio } from "@/osuMania/constants";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { Key } from "./key";
 
 export class CircleKey extends Key {
-  protected override setKeyGraphics() {
-    if (!Key.bottomContainerBgGraphicsContext) {
-      Key.bottomContainerBgGraphicsContext = new GraphicsContext().roundRect(
-        this.game.scaledColumnWidth * 0.1,
-        0,
-        this.game.scaledColumnWidth * 0.8,
-        this.game.scaledColumnWidth * 0.8,
-        this.game.scaledColumnWidth,
-      );
+  static bottomContainerBgGraphicsContext: GraphicsContext | null;
+  static markerGraphicsContext: GraphicsContext | null;
 
-      Key.bottomContainerBgGraphicsContext.stroke({
+  protected marker: Graphics;
+  protected bottomContainer: Container;
+
+  protected override setKeyGraphics() {
+    if (!CircleKey.bottomContainerBgGraphicsContext) {
+      CircleKey.bottomContainerBgGraphicsContext =
+        new GraphicsContext().roundRect(
+          (this.game.scaledColumnWidth * (1 - circleColumnRatio)) / 2,
+          0,
+          this.game.scaledColumnWidth * circleColumnRatio,
+          this.game.scaledColumnWidth * circleColumnRatio,
+          this.game.scaledColumnWidth,
+        );
+
+      CircleKey.bottomContainerBgGraphicsContext.stroke({
         width: 4,
         color: "hsl(0,0%,70%)",
       });
     }
 
-    const markerSize = this.game.scaledColumnWidth * 0.8;
+    const markerSize = this.game.scaledColumnWidth * circleColumnRatio;
 
-    if (!Key.markerGraphicsContext) {
-      Key.markerGraphicsContext = new GraphicsContext()
+    if (!CircleKey.markerGraphicsContext) {
+      CircleKey.markerGraphicsContext = new GraphicsContext()
         .roundRect(0, 0, markerSize, markerSize, markerSize)
         .fill("white");
     }
 
-    const bg = new Graphics(Key.bottomContainerBgGraphicsContext);
+    const bg = new Graphics(CircleKey.bottomContainerBgGraphicsContext);
 
     this.bottomContainer = new Container();
     this.bottomContainer.pivot.y = this.game.hitPositionOffset + markerSize / 2;
     this.bottomContainer.addChild(bg);
 
-    this.marker = new Graphics(Key.markerGraphicsContext);
+    this.marker = new Graphics(CircleKey.markerGraphicsContext);
     this.marker.pivot = 5;
     this.marker.pivot.x = markerSize / 2;
     this.marker.x = this.game.scaledColumnWidth / 2;
@@ -41,7 +49,7 @@ export class CircleKey extends Key {
     this.marker.alpha = 0;
     this.bottomContainer.addChild(this.marker);
 
-    this.view.zIndex = -3;
+    this.view.addChild(this.bottomContainer);
   }
 
   public override setPressed(pressed: boolean) {

@@ -1,5 +1,5 @@
-import BeatmapSetsInfiniteScroll from "@/components/beatmapSetsInfiniteScroll";
-import MobileSidebar from "@/components/mobileSidebar";
+import Main from "@/components/main";
+import MigrationNotice from "@/components/migrationNotice";
 import SidebarContent from "@/components/sidebar";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -34,12 +34,10 @@ export default async function Home({
           </Suspense>
         </div>
 
-        {/* Duplicating UI like This is probably terrible practice */}
-        <MobileSidebar />
-
-        <div className="w-full max-w-screen-xl p-4 pt-0 lg:px-8 lg:pb-8">
+        <div className="w-full max-w-screen-xl px-2 py-4 pt-0 sm:px-4 lg:px-8 lg:pb-8">
           <Suspense>
-            <BeatmapSetsInfiniteScroll />
+            <MigrationNotice />
+            <Main />
           </Suspense>
         </div>
       </main>

@@ -1,9 +1,23 @@
+import { Settings, useSettingsStore } from "@/stores/settingsStore";
+import {
+  BlobReader,
+  BlobWriter,
+  Entry,
+  TextWriter,
+  ZipReader,
+} from "@zip.js/zip.js";
 import { Howl } from "howler";
-import JSZip from "jszip";
 import { addDelay } from "./audio";
-import { getSettings, removeFileExtension, shuffle } from "./utils";
+import { Beatmap } from "./osuApi";
+import { decodeMods, EncodedMods } from "./replay";
+import { removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
+
+export type Break = {
+  startTime: number;
+  endTime: number;
+};
 
 export type Metadata = {
   title: string;
@@ -23,6 +37,7 @@ export type SoundDictionary = { [key: string]: Sound };
 export type Difficulty = {
   keyCount: number;
   od: number;
+  hp: number;
 };
 
 export const sampleSets = ["default", "normal", "soft", "drum"] as const;
@@ -58,6 +73,7 @@ export type TapData = {
   type: "tap";
   column: number;
   time: number;
+  endTime: number;
   hitSound: HitSound;
   hitSample: HitSample;
 };
@@ -79,13 +95,18 @@ export type HitWindows = {
 };
 
 export interface BeatmapData {
+  beatmapId: number;
+  beatmapSetId: number;
+  version: string;
   timingPoints: TimingPoint[];
   hitObjects: HitObject[];
+  breaks: Break[];
   startTime: number;
   endTime: number;
+  columnMap?: number[];
   hitWindows: HitWindows;
   song: Required<Sound>;
-  backgroundUrl: string;
+  backgroundUrl: string | null;
   metadata: Metadata;
   difficulty: Difficulty;
   sounds: SoundDictionary;
@@ -93,21 +114,30 @@ export interface BeatmapData {
 
 export const parseOsz = async (
   blob: Blob,
-  beatmapId: number,
+  beatmap: Beatmap,
+  replayMods?: EncodedMods,
+  replayColumnMap?: number[],
 ): Promise<BeatmapData> => {
-  const zip = await JSZip.loadAsync(blob);
+  const zipReader = new ZipReader(new BlobReader(blob));
+  const entries = await zipReader.getEntries();
 
   // Locate .osu file
-  const osuFiles = Object.keys(zip.files).filter((filename) =>
-    filename.endsWith(".osu"),
-  );
+
+  const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
+  const diffName = beatmap.version
+    .replace(regex, "")
+    .replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+
+  const pattern = new RegExp(`Version:${diffName}(\r|\n)`);
 
   let osuFileData;
-  for (const file of osuFiles) {
-    const fileData = await zip.files[file].async("text");
+  const osuEntries = entries.filter((entry) => entry.filename.endsWith(".osu"));
+  for (const entry of osuEntries) {
+    const text = await entry.getData!(new TextWriter());
 
-    if (fileData.includes(`BeatmapID:${beatmapId}`)) {
-      osuFileData = fileData;
+    if (pattern.test(text)) {
+      osuFileData = text;
+      break;
     }
   }
 
@@ -117,22 +147,36 @@ export const parseOsz = async (
 
   const lines = osuFileData?.split(/\r\n|\n\r|\n/);
 
+  const mods = replayMods
+    ? decodeMods(replayMods)
+    : useSettingsStore.getState().mods;
+
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
   const difficulty = parseDifficulty(lines);
-  const { hitObjects, delay, startTime, endTime } = parseHitObjects(
+  const { hitObjects, delay, startTime, endTime, columnMap } = parseHitObjects(
     lines,
     difficulty.keyCount,
+    mods,
+    replayColumnMap,
   );
-  const timingPoints = parseTimingPoints(lines, delay, startTime, endTime);
+  const timingPoints = parseTimingPoints(
+    lines,
+    delay,
+    startTime,
+    endTime,
+    mods,
+  );
 
-  const hitWindows = getHitWindows(difficulty.od);
+  const breaks = parseBreaks(lines, delay);
+
+  const hitWindows = getHitWindows(difficulty.od, mods);
 
   // Song file
 
   const songFilename = getLineValue(lines, "AudioFilename");
   if (!songFilename) {
-    throw new Error("Didn't find the song filename");
+    throw new Error("Could not find the song filename");
   }
 
   const songFileExtension = songFilename.split(".").pop();
@@ -142,9 +186,9 @@ export const parseOsz = async (
   }
 
   let songUrl: string;
-  const songFile = findFile(zip, songFilename);
+  const songFile = findEntry(entries, songFilename);
   if (songFile) {
-    const audioBlob = await songFile.async("blob");
+    const audioBlob = await songFile.getData!(new BlobWriter());
 
     const delayedAudioBlob = await addDelay(audioBlob, delay / 1000);
 
@@ -172,53 +216,59 @@ export const parseOsz = async (
   const sounds: SoundDictionary = {};
 
   const audioExtensions = ["wav", "mp3", "ogg"];
-  const audioFiles = Object.keys(zip.files).filter((fileName) => {
-    const extension = fileName.split(".").pop()?.toLowerCase();
+  const audioEntries = entries.filter((entry) => {
+    const extension = entry.filename.split(".").pop()?.toLowerCase();
     return extension && audioExtensions.includes(extension);
   });
 
-  for (const fileName of audioFiles) {
-    const name = removeFileExtension(fileName);
+  for (const entry of audioEntries) {
+    const name = removeFileExtension(entry.filename);
 
     // Don't load the song file, that's already done
-    if (fileName === songFilename) {
+    if (entry.filename === songFilename) {
       continue;
     }
 
-    const fileData = await zip.files[fileName].async("blob");
+    const fileData = await entry.getData!(new BlobWriter());
     const url = URL.createObjectURL(fileData);
 
     sounds[name] = {
       url,
       howl: new Howl({
         src: [url],
-        format: fileName.split(".").pop(),
-        // onloaderror: (_, e) => console.warn(e),
+        format: entry.filename.split(".").pop(),
       }),
     };
   }
 
   // Background image
 
+  let backgroundUrl = null;
+
   const backgroundFilename = lines
     .find((line) => line.startsWith("0,0,"))
     ?.split(",")[2]
     .replaceAll('"', "");
 
-  if (!backgroundFilename) {
-    throw new Error("Didn't find the bg filename");
+  if (backgroundFilename) {
+    const backgroundEntry = findEntry(entries, backgroundFilename);
+
+    if (backgroundEntry) {
+      const backgroundBlob = await backgroundEntry?.getData!(new BlobWriter());
+      backgroundUrl = URL.createObjectURL(backgroundBlob);
+    }
   }
 
-  const backgroundFile = findFile(zip, backgroundFilename);
-
-  const backgroundBlob = await backgroundFile.async("blob");
-  const backgroundUrl = URL.createObjectURL(backgroundBlob);
-
   return {
+    beatmapSetId: beatmap.beatmapset_id,
+    beatmapId: beatmap.id,
+    version: beatmap.version,
     timingPoints,
     hitObjects,
     startTime,
     endTime,
+    breaks,
+    columnMap,
     hitWindows,
     song,
     backgroundUrl,
@@ -228,34 +278,41 @@ export const parseOsz = async (
   };
 };
 
-function findFile(zip: JSZip, filename: string) {
+function findEntry(entries: Entry[], filename: string) {
   const lowercaseFilename = filename.toLowerCase();
-
-  return zip.files[
-    Object.keys(zip.files).find(
-      (key) => key.toLowerCase() === lowercaseFilename,
-    )!
-  ];
+  return entries.find(
+    (entry) => entry.filename.toLowerCase() === lowercaseFilename,
+  );
 }
 
-export function parseHitObjects(lines: string[], columnCount: number) {
+export function parseHitObjects(
+  lines: string[],
+  columnCount: number,
+  mods: Settings["mods"],
+  replayColumnMap?: number[],
+) {
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
-  const { audioOffset, mods } = getSettings();
+  const audioOffset = useSettingsStore.getState().audioOffset;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
   const hitObjectData = lines.slice(startIndex, endIndex);
+
+  // Hit objects may be empty when downloading from SayoBot
+  if (hitObjectData.length === 0) {
+    throw new Error(
+      "Hit object data missing. Try switching beatmap providers and refresh (clear the IndexedDB cache if you have it enabled).",
+    );
+  }
+
   hitObjectData.forEach((hitObject: string, i) => {
     const [x, y, time, type, hitSoundDecimal] = hitObject
       .split(",")
       .map((number) => Number(number));
 
     let column = Math.floor((x * columnCount) / 512);
-    if (mods.mirror) {
-      column = columnCount - column - 1;
-    }
 
     const hitSoundBinaryString = hitSoundDecimal.toString(2).padStart(4, "0");
     const hitSound = {
@@ -285,6 +342,7 @@ export function parseHitObjects(lines: string[], columnCount: number) {
       time,
       hitSound,
       hitSample,
+      endTime: isHoldNote && !mods.holdOff ? parseInt(sampleSet[0]) : time,
     });
 
     if (isHoldNote && !mods.holdOff) {
@@ -299,24 +357,28 @@ export function parseHitObjects(lines: string[], columnCount: number) {
     }
   });
 
-  if (mods.random) {
-    const columns = Array.from({ length: columnCount }, (_, i) => i);
-    const shuffledColumns = shuffle(columns);
+  // Remap notes to new columns based on replay or if random/mirror is enabled
+  const defaultColumnMap = Array.from({ length: columnCount }, (_, i) => i);
+  const columnMap =
+    replayColumnMap ??
+    (mods.random
+      ? shuffle(defaultColumnMap)
+      : mods.mirror
+        ? defaultColumnMap.toReversed()
+        : defaultColumnMap);
 
-    hitObjects.forEach((hitObject) => {
-      hitObject.column = shuffledColumns[hitObject.column];
-    });
-  }
+  hitObjects.forEach((hitObject) => {
+    hitObject.column = columnMap[hitObject.column];
+  });
 
   // Ensure at least 1 second (unaffected by playback rate) before the song starts
   const delay =
     Math.max(1000 - hitObjects[0].time / mods.playbackRate, 0) *
     mods.playbackRate;
+
   hitObjects.forEach((hitObject) => {
     hitObject.time += delay - audioOffset;
-    if (hitObject.type === "hold") {
-      hitObject.endTime += delay - audioOffset;
-    }
+    hitObject.endTime += delay - audioOffset;
   });
 
   const startTime = hitObjects[0].time;
@@ -339,10 +401,11 @@ export function parseHitObjects(lines: string[], columnCount: number) {
     delay,
     startTime,
     endTime,
+    columnMap,
   };
 }
 
-export function parseMetadata(lines: string[]): Metadata {
+function parseMetadata(lines: string[]): Metadata {
   const title = getLineValue(lines, "Title");
   const titleUnicode = getLineValue(lines, "TitleUnicode");
   const artist = getLineValue(lines, "Artist");
@@ -350,28 +413,54 @@ export function parseMetadata(lines: string[]): Metadata {
   const version = getLineValue(lines, "Version");
   const creator = getLineValue(lines, "Creator");
 
-  return { title, titleUnicode, artist, artistUnicode, version, creator };
+  return {
+    title,
+    titleUnicode,
+    artist,
+    artistUnicode,
+    version,
+    creator,
+  };
 }
 
-export function parseDifficulty(lines: string[]): Difficulty {
+function parseDifficulty(lines: string[]): Difficulty {
   const keyCount = Number(getLineValue(lines, "CircleSize"));
   const od = Number(getLineValue(lines, "OverallDifficulty"));
+  const hp = Number(getLineValue(lines, "HPDrainRate"));
 
-  return { keyCount, od };
+  return { keyCount, od, hp };
 }
 
-export function parseTimingPoints(
+function parseBreaks(lines: string[], delay: number): Break[] {
+  const startIndex = lines.indexOf("[Events]") + 1;
+  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
+
+  const eventLines = lines.slice(startIndex, endIndex);
+  const breakLines = eventLines.filter((line) => line.startsWith("2,"));
+
+  return breakLines.map((line) => {
+    const [_, startTime, endTime] = line.split(",");
+
+    return {
+      startTime: parseInt(startTime) + delay,
+      endTime: parseInt(endTime) + delay,
+    };
+  });
+}
+
+function parseTimingPoints(
   lines: string[],
   delay: number,
   startTime: number,
   endTime: number,
+  mods: Settings["mods"],
 ): TimingPoint[] {
   const startIndex = lines.indexOf("[TimingPoints]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
   const timingPointLines = lines.slice(startIndex, endIndex);
 
-  const settings = getSettings();
+  const settings = useSettingsStore.getState();
   const baseScrollSpeed = settings.scrollSpeed;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
@@ -401,7 +490,7 @@ export function parseTimingPoints(
     return timingPoint;
   });
 
-  if (!settings.mods.constantSpeed) {
+  if (!mods.constantSpeed) {
     const mostCommonBeatLength = getMostCommonBeatLength(
       timingPoints.filter((timingPoint) => timingPoint.uninherited),
       startTime,
@@ -476,11 +565,9 @@ function getLineValue(lines: string[], key: string) {
   return value;
 }
 
-// https://osu.ppy.sh/wiki/en/Beatmap/Overall_difficulty#osu!mania
+// https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
-export function getHitWindows(od: number): HitWindows {
-  const { mods } = getSettings();
-
+function getHitWindows(od: number, mods: Settings["mods"]): HitWindows {
   if (mods.easy) {
     od = od / 2;
   } else if (mods.hardRock) {
@@ -488,11 +575,30 @@ export function getHitWindows(od: number): HitWindows {
   }
 
   return {
-    320: 16,
+    320: od <= 5 ? 22.4 - 0.6 * od : 24.9 - 1.1 * od,
     300: 64 - 3 * od,
     200: 97 - 3 * od,
     100: 127 - 3 * od,
     50: 151 - 3 * od,
     0: 188 - 3 * od,
   };
+}
+
+export async function getBeatmapSetIdFromOsz(blob: Blob) {
+  const zipReader = new ZipReader(new BlobReader(blob));
+  const entries = await zipReader.getEntries();
+
+  // Locate any .osu file
+  const osuEntry = entries.find((entry) => entry.filename.endsWith(".osu"));
+
+  if (!osuEntry) {
+    throw new Error("No .osu files found.");
+  }
+
+  const text = await osuEntry.getData!(new TextWriter());
+  const lines = text?.split(/\r\n|\n\r|\n/);
+
+  const beatmapSetId = getLineValue(lines, "BeatmapSetID");
+
+  return beatmapSetId;
 }

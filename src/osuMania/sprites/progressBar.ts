@@ -1,4 +1,5 @@
-import { clamp } from "@/lib/utils";
+import { clamp } from "@/lib/math";
+import { useSettingsStore } from "@/stores/settingsStore";
 import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { Game } from "../game";
@@ -21,7 +22,10 @@ export class ProgressBar {
       .fill(0xffffff);
     progressBarBg.alpha = 0.1;
 
-    this.progressBar = new Graphics().rect(0, 0, 0.01, 5).fill(0x71acef);
+    const hue = useSettingsStore.getState().hue;
+    this.progressBar = new Graphics()
+      .rect(0, 0, 0.01, 5)
+      .fill(`hsl(${hue}, 80%, 69%)`);
 
     this.view = new Container();
     this.view.addChild(progressBarBg);

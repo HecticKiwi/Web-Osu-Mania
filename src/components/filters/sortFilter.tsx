@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  CUSTOM_CATEGORIES,
+  parseCategoryParam,
+} from "@/lib/searchParams/categoryParam";
 import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import {
   DEFAULT_SORT_CRITERIA,
@@ -14,12 +18,27 @@ import { Button } from "../ui/button";
 
 const SortFilter = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams();
+  const category = parseCategoryParam(searchParams.get("category"));
+  const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
 
   const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
   const sortDirection = parseSortDirectionParam(
     searchParams.get("sortDirection"),
   );
   const query = parseQueryParam(searchParams.get("q"));
+
+  const options = viewingCustomCategory
+    ? ["Date Saved", "title", "artist"]
+    : [
+        "title",
+        "artist",
+        "difficulty",
+        "ranked",
+        "rating",
+        "plays",
+        "favourites",
+        ...(query ? ["relevance"] : []),
+      ];
 
   return (
     <>
@@ -29,16 +48,7 @@ const SortFilter = ({ className }: { className?: string }) => {
         </span>
 
         <div className="flex flex-wrap gap-x-2">
-          {[
-            "title",
-            "artist",
-            "difficulty",
-            "ranked",
-            "rating",
-            "plays",
-            "favourites",
-            ...(query ? ["relevance"] : []),
-          ].map((criteria) => {
+          {options.map((criteria) => {
             const newSortDirection =
               sortCriteria === criteria && sortDirection === "desc"
                 ? "asc"

@@ -2,11 +2,13 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
-import { Results } from "@/types";
+import { PlayResults } from "@/types";
 import { useEffect, useRef, useState } from "react";
+import { useGameStore } from "../../stores/gameStore";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
 import ResultsScreen from "./resultsScreen";
+import RetryWidget from "./retryWidget";
 import VolumeWidget from "./volumeWidget";
 
 const GameScreens = ({
@@ -16,14 +18,21 @@ const GameScreens = ({
   beatmapData: BeatmapData;
   retry: () => void;
 }) => {
+  const replayData = useGameStore.use.replayData();
   const [game, setGame] = useState<Game | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<PlayResults | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
 
   // Game creation
   useEffect(() => {
-    const game = new Game(beatmapData, setResults);
+    const game = new Game(
+      beatmapData,
+      setResults,
+      setIsPaused,
+      replayData,
+      retry,
+    );
     setGame(game);
     game.main(containerRef.current);
 
@@ -32,7 +41,7 @@ const GameScreens = ({
 
       game.dispose();
     };
-  }, [beatmapData]);
+  }, [beatmapData, replayData, retry]);
 
   // Pause logic
   useEffect(() => {
@@ -54,23 +63,15 @@ const GameScreens = ({
       return;
     }
 
-    const handlePause = (event: KeyboardEvent) => {
-      if (event.code === "Escape" && !event.repeat) {
-        setIsPaused((prev) => !prev);
-      }
-    };
-
     const handleVisibilityChange = (event: Event) => {
       if (document.hidden) {
         setIsPaused(true);
       }
     };
 
-    document.addEventListener("keydown", handlePause);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener("keydown", handlePause);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [results]);
@@ -79,6 +80,7 @@ const GameScreens = ({
     <>
       <div ref={containerRef} className="h-full w-full">
         {game && !results && <VolumeWidget game={game} />}
+        {game && !results && <RetryWidget retry={retry} />}
         {game && !results && <PauseButton setIsPaused={setIsPaused} />}
 
         {isPaused && (
@@ -91,7 +93,7 @@ const GameScreens = ({
         {results && (
           <ResultsScreen
             beatmapData={beatmapData}
-            results={results}
+            playResults={results}
             retry={retry}
           />
         )}

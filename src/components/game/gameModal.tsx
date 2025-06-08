@@ -4,60 +4,104 @@ import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useBeatmapSetCacheContext } from "../providers/beatmapSetCacheProvider";
-import { useGameContext } from "../providers/gameOverlayProvider";
-import { useSettingsContext } from "../providers/settingsProvider";
-import { useToast } from "../ui/use-toast";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
+import { useGameStore } from "../../stores/gameStore";
+import { useSettingsStore } from "../../stores/settingsStore";
+import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import GameScreens from "./gameScreens";
 
 const GameModal = () => {
-  const { data, closeGame } = useGameContext();
+  const beatmapSet = useGameStore.use.beatmapSet();
+  const beatmapId = useGameStore.use.beatmapId();
+  const closeGame = useGameStore.use.closeGame();
+  const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
+  const replayData = useGameStore.use.replayData();
+  const storeDownloadedBeatmaps = useSettingsStore(
+    (settings) => settings.storeDownloadedBeatmaps,
+  );
+  const backgroundDim = useSettingsStore.use.backgroundDim();
+  const backgroundBlur = useSettingsStore.use.backgroundBlur();
+  const getBeatmapSet = useBeatmapSetCacheStore.use.getBeatmapSet();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
+  const setStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
     "Downloading Beatmap...",
   );
-  const { settings } = useSettingsContext();
-  const { getBeatmapSet } = useBeatmapSetCacheContext();
-  const { toast } = useToast();
   const [downloadPercent, setDownloadPercent] = useState(0);
 
   useEffect(() => {
-    if (!data) {
+    if (!beatmapId) {
       return;
     }
 
     const loadBeatmap = async () => {
       let beatmapSetFile: Blob;
-      try {
-        beatmapSetFile = await getBeatmapSet(
-          data.beatmapSetId,
-          setDownloadPercent,
-        );
-      } catch (error: any) {
-        toast({
-          title: "Download Error",
-          description: error.message,
-          duration: 10000,
-        });
 
-        closeGame();
-        return;
+      if (!beatmapSet) {
+        throw new Error("beatmapSet is null (this shouldn't happen)");
+      }
+
+      if (uploadedBeatmapSet) {
+        beatmapSetFile = uploadedBeatmapSet;
+      } else {
+        try {
+          beatmapSetFile = await getBeatmapSet(
+            beatmapSet.id,
+            setDownloadPercent,
+          );
+
+          if (
+            storeDownloadedBeatmaps &&
+            !storedBeatmapSets.some(
+              (storedBeatmapSet) => storedBeatmapSet.id === beatmapSet.id,
+            )
+          ) {
+            setStoredBeatmapSets((draft) => {
+              draft.push(beatmapSet);
+            });
+          }
+        } catch (error: any) {
+          toast("Download Error", {
+            description: error.message,
+            duration: 10000,
+          });
+
+          closeGame();
+          return;
+        }
       }
 
       try {
         setLoadingMessage("Parsing Beatmap...");
 
-        const beatmapData = await parseOsz(beatmapSetFile, data.beatmapId);
+        const beatmap = beatmapSet.beatmaps.find(
+          (beatmap) => beatmap.id === beatmapId,
+        );
+
+        if (!beatmap) {
+          throw new Error(
+            "Beatmap ID doesn't match any beatmaps (this should never happen)",
+          );
+        }
+
+        const beatmapData = await parseOsz(
+          beatmapSetFile,
+          beatmap,
+          replayData?.mods,
+          replayData?.columnMap,
+        );
 
         await loadAssets();
 
         setBeatmapData(beatmapData);
       } catch (error: any) {
-        toast({
-          title: "Parsing Error",
-          description: "An error occurred while parsing the beatmap.",
+        toast("Parsing Error", {
+          description: error.message,
           duration: 10000,
         });
 
@@ -67,27 +111,42 @@ const GameModal = () => {
     };
 
     loadBeatmap();
-  }, [data, closeGame, toast, getBeatmapSet]);
+  }, [
+    beatmapId,
+    closeGame,
+    getBeatmapSet,
+    uploadedBeatmapSet,
+    beatmapSet,
+    storedBeatmapSets,
+    setStoredBeatmapSets,
+    storeDownloadedBeatmaps,
+    replayData,
+  ]);
 
-  // Cleanup object URLs
+  // Clean up object URLs
   useEffect(() => {
-    return () => {
-      if (beatmapData) {
-        URL.revokeObjectURL(beatmapData.backgroundUrl);
-        URL.revokeObjectURL(beatmapData.song.url);
+    if (!beatmapData) {
+      return;
+    }
 
-        Object.values(beatmapData.sounds).forEach((sound) => {
-          if (sound.url) {
-            URL.revokeObjectURL(sound.url);
-          }
-        });
+    return () => {
+      if (beatmapData.backgroundUrl) {
+        URL.revokeObjectURL(beatmapData.backgroundUrl);
       }
+
+      URL.revokeObjectURL(beatmapData.song.url);
+
+      Object.values(beatmapData.sounds).forEach((sound) => {
+        if (sound.url) {
+          URL.revokeObjectURL(sound.url);
+        }
+      });
     };
   }, [beatmapData]);
 
-  const retry = () => {
+  const retry = useCallback(() => {
     setKey((prev) => prev + 1);
-  };
+  }, []);
 
   return (
     <main className="relative grid">
@@ -110,15 +169,17 @@ const GameModal = () => {
       )}
       {beatmapData && (
         <>
-          <Image
-            src={beatmapData.backgroundUrl}
-            alt="Beatmap Background"
-            fill
-            className="-z-[1] select-none object-cover"
-            style={{
-              filter: `brightness(${1 - settings.backgroundDim}) blur(${settings.backgroundBlur * 30}px)`,
-            }}
-          />
+          {beatmapData.backgroundUrl && (
+            <Image
+              src={beatmapData.backgroundUrl}
+              alt="Beatmap Background"
+              fill
+              className="-z-[1] select-none object-cover"
+              style={{
+                filter: `brightness(${1 - backgroundDim}) blur(${backgroundBlur * 30}px)`,
+              }}
+            />
+          )}
 
           <GameScreens key={key} beatmapData={beatmapData} retry={retry} />
         </>

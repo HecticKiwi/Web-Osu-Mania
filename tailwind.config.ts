@@ -19,6 +19,14 @@ const config = {
     },
     extend: {
       colors: {
+        judgement: {
+          perfect: "hsl(var(--judgement-perfect))",
+          great: "hsl(var(--judgement-great))",
+          good: "hsl(var(--judgement-good))",
+          ok: "hsl(var(--judgement-ok))",
+          meh: "hsl(var(--judgement-meh))",
+          miss: "hsl(var(--judgement-miss))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

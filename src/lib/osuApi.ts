@@ -10,12 +10,13 @@ import {
   SortDirection,
 } from "./searchParams/sortParam";
 import { Stars } from "./searchParams/starsParam";
+import { BASE_PATH } from "./utils";
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
 type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
 
-type Beatmap = {
+export type Beatmap = {
   beatmapset_id: number;
   difficulty_rating: number;
   id: number;
@@ -25,7 +26,9 @@ type Beatmap = {
   user_id: number;
   version: string;
 
-  cs: number;
+  cs: number; // Key count
+  accuracy: number; // OD
+  drain: number; // HP
 };
 
 type Covers = {
@@ -95,7 +98,7 @@ export async function getBeatmaps({
     .join(" ");
 
   const url = queryString.stringifyUrl({
-    url: `/api/getBeatmaps`,
+    url: `${BASE_PATH}/api/getBeatmaps`,
     query: {
       q,
       m: 3, // 3 = mania mode
@@ -108,7 +111,21 @@ export async function getBeatmaps({
     },
   });
 
-  const data: GetBeatmapsResponse = await fetch(url).then((res) => res.json());
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    let errorMessage = `Code ${res.status}`;
+
+    try {
+      const message = ((await res.json()) as any).message;
+      errorMessage += `: ${message}`;
+    } catch (error) {
+    } finally {
+      throw new Error(errorMessage);
+    }
+  }
+
+  const data: GetBeatmapsResponse = await res.json();
 
   return data;
 }
