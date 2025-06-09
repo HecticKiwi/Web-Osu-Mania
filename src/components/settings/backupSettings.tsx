@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import BackupUpload from "./backupUpload";
-import BackupUploadOld from "./backupUploadOld";
 
 const exportOptionIds = [
   "settingsAndKeybinds",
@@ -84,19 +83,6 @@ const BackupSettings = ({ className }: { className?: string }) => {
 
         <BackupUpload />
       </div>
-
-      <div className="mt-4 grid grid-cols-2 items-center">
-        <div className="text-sm font-semibold text-muted-foreground">
-          Import Backup (.womb)
-        </div>
-
-        <BackupUploadOld />
-      </div>
-
-      <p className="mt-4 text-sm text-muted-foreground text-orange-400">
-        The backup format has recently changed from .womb to .zip. The ability
-        to import .womb backups will be removed on June 8th.
-      </p>
 
       <div className="mt-4 space-y-4">
         <div className="grid grid-cols-2">
