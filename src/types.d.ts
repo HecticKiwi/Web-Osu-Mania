@@ -2,6 +2,7 @@ import { HitError } from "./components/game/timingDistributionChart";
 import { JUDGEMENTS } from "./osuMania/constants";
 import { Hold } from "./osuMania/sprites/hold/hold";
 import { Tap } from "./osuMania/sprites/tap/tap";
+import { ReplayData } from "./osuMania/systems/replayRecorder";
 
 export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE" | "FAIL";
 
@@ -20,7 +21,7 @@ export type Results = {
 export type PlayResults = Results & {
   failed?: boolean;
   viewingReplay?: boolean;
-  replayData?: ReplayData;
+  replayData: ReplayData;
   hitErrors: HitError[];
 };
 

@@ -3,6 +3,7 @@ import { EncodedMods, encodeMods } from "@/lib/replay";
 import { Game } from "../game";
 
 export type ReplayData = {
+  timestamp?: number;
   beatmap: {
     id: number;
     setId: number;

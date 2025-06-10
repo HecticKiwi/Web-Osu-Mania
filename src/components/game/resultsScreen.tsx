@@ -60,7 +60,7 @@ const ResultsScreen = ({
           draft[beatmapSetId] ??= {};
 
           draft[beatmapSetId][beatmapId] = {
-            timestamp: Date.now(),
+            timestamp: replayData.timestamp!,
             mods: getModStrings(mods),
             results,
             replayId: beatmapId.toString(),

@@ -194,6 +194,10 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = (failed?: boolean) => {
+      if (this.replayRecorder) {
+        this.replayRecorder.replayData.timestamp = Date.now();
+      }
+
       setResults({
         320: this.scoreSystem[320],
         300: this.scoreSystem[300],
@@ -206,8 +210,8 @@ export class Game {
         maxCombo: this.scoreSystem.maxCombo,
         failed,
         viewingReplay: !!this.replayPlayer,
-        replayData:
-          this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
+        replayData: (this.replayRecorder?.replayData ??
+          this.replayPlayer?.replayData)!,
         hitErrors: this.scoreSystem.hitErrors,
       });
     };

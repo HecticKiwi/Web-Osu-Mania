@@ -2,6 +2,7 @@ import { BeatmapData } from "@/lib/beatmapParser";
 import { mean, stdev } from "@/lib/math";
 import { cn, getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
+import { format } from "date-fns";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
@@ -97,13 +98,20 @@ const Results = ({
               {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-2 py-0.5"
+                  className="rounded-full bg-primary/25 px-3 py-0.5"
                 >
                   {mod}
                 </span>
               ))}
             </div>
           </div>
+
+          {playResults.replayData.timestamp && (
+            <p className="mt-1 text-muted-foreground">
+              Set on{" "}
+              {format(playResults.replayData.timestamp, "d MMMM yyyy h:mm a")}
+            </p>
+          )}
 
           <div className="mt-8 flex items-center text-center text-[100px] leading-none">
             <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>

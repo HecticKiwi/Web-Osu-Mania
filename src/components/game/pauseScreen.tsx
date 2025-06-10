@@ -66,7 +66,7 @@ const PauseScreen = ({
               {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-2 py-0.5"
+                  className="rounded-full bg-primary/25 px-3 py-0.5"
                 >
                   {mod}
                 </span>
