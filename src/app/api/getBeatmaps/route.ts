@@ -1,10 +1,9 @@
 import { BeatmapSet } from "@/lib/osuApi";
-import { isGithubPages } from "@/osuMania/constants";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../utils";
 
-export const runtime = isGithubPages ? "edge" : undefined;
+export const runtime = "edge";
 
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
