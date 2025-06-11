@@ -1,10 +1,7 @@
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
-const isGithubPages = process.env.GITHUB_ACTIONS;
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: isGithubPages ? "export" : undefined,
   reactStrictMode: false,
   images: {
     unoptimized: true,
@@ -15,8 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  basePath: isGithubPages ? "/Web-Osu-Mania" : "",
-  assetPrefix: isGithubPages ? "/Web-Osu-Mania" : "",
   async headers() {
     return [
       {
