@@ -23,6 +23,8 @@ type BooleanMod = keyof typeof ModBits;
 export type EncodedMods = {
   bits: number;
   rate: number;
+  hpOverride: number | null;
+  odOverride: number | null;
 };
 
 export function encodeMods(mods: Settings["mods"]): EncodedMods {
@@ -38,12 +40,16 @@ export function encodeMods(mods: Settings["mods"]): EncodedMods {
   return {
     bits: bitfield,
     rate: mods.playbackRate,
+    hpOverride: mods.hpOverride,
+    odOverride: mods.odOverride,
   };
 }
 
 export function decodeMods(data: EncodedMods): Settings["mods"] {
   const mods: Partial<Settings["mods"]> = {
     playbackRate: data.rate ?? 1,
+    hpOverride: data.hpOverride,
+    odOverride: data.odOverride,
   };
 
   for (const modName in ModBits) {

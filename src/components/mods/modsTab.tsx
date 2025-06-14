@@ -10,6 +10,8 @@ import ScoreMultiplier from "./scoreMultiplier";
 const ModsTab = () => {
   const setSettings = useSettingsStore.use.setSettings();
   const resetMods = useSettingsStore.use.resetMods();
+  const hpOverride = useSettingsStore((state) => state.mods.hpOverride);
+  const odOverride = useSettingsStore((state) => state.mods.odOverride);
 
   return (
     <>
@@ -27,6 +29,8 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.hardRock = false;
+                draft.mods.hpOverride = null;
+                draft.mods.odOverride = null;
               }
             })
           }
@@ -73,6 +77,8 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.easy = false;
+                draft.mods.hpOverride = null;
+                draft.mods.odOverride = null;
               }
             })
           }
@@ -187,6 +193,72 @@ const ModsTab = () => {
           min={0.5}
           max={2}
           step={0.05}
+        />
+        <SwitchInput
+          label="Accuracy Override"
+          selector={(state) => state.mods.odOverride !== null}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.odOverride = 5;
+
+                draft.mods.easy = false;
+                draft.mods.hardRock = false;
+              } else {
+                draft.mods.odOverride = null;
+              }
+            })
+          }
+          extraInput={
+            odOverride !== null ? (
+              <SliderInput
+                containerClassName="w-full"
+                selector={(state) => state.mods.odOverride!}
+                tooltip={(odOverride) => odOverride}
+                onValueChange={([odOverride]) =>
+                  setSettings((draft) => {
+                    draft.mods.odOverride = odOverride;
+                  })
+                }
+                min={0}
+                max={11}
+                step={0.5}
+              />
+            ) : undefined
+          }
+        />
+        <SwitchInput
+          label="HP Drain Override"
+          selector={(state) => state.mods.hpOverride !== null}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.hpOverride = 5;
+
+                draft.mods.easy = false;
+                draft.mods.hardRock = false;
+              } else {
+                draft.mods.hpOverride = null;
+              }
+            })
+          }
+          extraInput={
+            hpOverride !== null ? (
+              <SliderInput
+                containerClassName="w-full"
+                selector={(state) => state.mods.hpOverride!}
+                tooltip={(hpOverride) => hpOverride}
+                onValueChange={([hpOverride]) =>
+                  setSettings((draft) => {
+                    draft.mods.hpOverride = hpOverride;
+                  })
+                }
+                min={0}
+                max={11}
+                step={0.5}
+              />
+            ) : null
+          }
         />
       </div>
 

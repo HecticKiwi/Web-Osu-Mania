@@ -10,7 +10,7 @@ import { Howl } from "howler";
 import { addDelay } from "./audio";
 import { Beatmap } from "./osuApi";
 import { decodeMods, EncodedMods } from "./replay";
-import { removeFileExtension, shuffle } from "./utils";
+import { getHpOrOdAfterMods, removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
 
@@ -568,11 +568,7 @@ function getLineValue(lines: string[], key: string) {
 // https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
 function getHitWindows(od: number, mods: Settings["mods"]): HitWindows {
-  if (mods.easy) {
-    od = od / 2;
-  } else if (mods.hardRock) {
-    od = Math.min(od * 1.4, 10);
-  }
+  od = getHpOrOdAfterMods(od, "od", mods);
 
   return {
     320: od <= 5 ? 22.4 - 0.6 * od : 24.9 - 1.1 * od,

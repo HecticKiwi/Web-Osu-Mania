@@ -72,6 +72,8 @@ export type Settings = {
     holdOff: boolean;
     noFail: boolean;
     suddenDeath: boolean;
+    hpOverride: number | null;
+    odOverride: number | null;
   };
   ui: {
     showScore: boolean;
@@ -301,6 +303,8 @@ export const defaultSettings: Settings = {
     constantSpeed: false,
     holdOff: false,
     playbackRate: 1,
+    hpOverride: null,
+    odOverride: null,
   },
   ui: {
     showScore: true,
