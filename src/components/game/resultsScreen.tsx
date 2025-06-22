@@ -49,7 +49,7 @@ const ResultsScreen = ({
       const previousHighScore =
         highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
 
-      if (playResults.score > previousHighScore) {
+      if (playResults.score > previousHighScore && playResults.replayData) {
         await idb.saveReplay(playResults.replayData, beatmapId.toString());
 
         // Trim out properties that don't need to be saved
@@ -153,7 +153,7 @@ const ResultsScreen = ({
                           variant={"ghost"}
                           className="rounded-r-none text-xl"
                           onClick={() => {
-                            setReplayData(playResults.replayData);
+                            setReplayData(playResults.replayData!);
                             retry();
                           }}
                         >
@@ -174,7 +174,7 @@ const ResultsScreen = ({
                           className="rounded-l-none border-l text-xl"
                           onClick={() =>
                             downloadReplay(
-                              playResults.replayData,
+                              playResults.replayData!,
                               beatmapData,
                               playResults,
                             )

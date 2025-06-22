@@ -1,17 +1,26 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { useGameStore } from "@/stores/gameStore";
 import FiltersTab from "./filters/filtersTab";
 import KeybindsTab from "./keybinds/keybindsTab";
 import ModsTab from "./mods/modsTab";
 import SettingsTab from "./settings/settingsTab";
 
 const SidebarContent = ({ className }: { className?: string }) => {
+  const beatmapId = useGameStore.use.beatmapId();
+
   return (
     <>
       <Tabs
         defaultValue="filters"
-        className={cn("flex h-full flex-col", className)}
+        className={cn(
+          "flex h-full flex-col",
+          !!beatmapId && "hidden",
+          className,
+        )}
       >
         <TabsList className="grid grid-cols-4">
           <TabsTrigger value="filters">Filters</TabsTrigger>

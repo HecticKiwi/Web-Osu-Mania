@@ -106,7 +106,7 @@ const Results = ({
             </div>
           </div>
 
-          {playResults.replayData.timestamp && (
+          {playResults.replayData?.timestamp && (
             <p className="mt-1 text-muted-foreground">
               Set on{" "}
               {format(playResults.replayData.timestamp, "d MMMM yyyy h:mm a")}
