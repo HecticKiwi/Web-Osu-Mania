@@ -137,6 +137,10 @@ export abstract class Hold {
     }
 
     // If released before hold was done
+    this.break();
+  }
+
+  public break() {
     if (!this.broken) {
       this.broken = true;
 

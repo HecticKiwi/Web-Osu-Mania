@@ -134,6 +134,11 @@ export abstract class Tap {
     if (delta < -this.game.hitWindows[0]) {
       this.game.scoreSystem.hit(0, this.data.endTime !== this.data.time);
       this.shouldRemove = true;
+
+      const nextHitObject = column[1];
+      if (nextHitObject && nextHitObject instanceof Hold) {
+        nextHitObject.break();
+      }
     }
   }
 
