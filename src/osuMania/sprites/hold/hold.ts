@@ -60,7 +60,7 @@ export abstract class Hold {
       // If hold is completed
       if (endTimeDelta < 0) {
         this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
-        this.game.scoreSystem.hit(320, true);
+        this.game.scoreSystem.hit(320, undefined, true);
 
         this.game.errorBar?.addTimingMark(0);
 
@@ -72,7 +72,7 @@ export abstract class Hold {
     } else {
       // If this has passed the late miss point
       if (endTimeDelta < -this.game.hitWindows[0]) {
-        this.game.scoreSystem.hit(0, true);
+        this.game.scoreSystem.hit(0, "late", true);
         this.shouldRemove = true;
         return;
       }
@@ -104,11 +104,13 @@ export abstract class Hold {
       this.data.endTime - (timeElapsed ?? this.game.timeElapsed);
     const absDelta = Math.abs(endTimeDelta);
 
+    const earlyOrLate = endTimeDelta > 0 ? "early" : "late";
+
     if (absDelta < this.game.hitWindows[0] * 1.5) {
       this.shouldRemove = true;
 
       if (this.broken) {
-        this.game.scoreSystem.hit(50, true);
+        this.game.scoreSystem.hit(50, earlyOrLate, true);
         return;
       }
 
@@ -129,7 +131,7 @@ export abstract class Hold {
         error: endTimeDelta,
         judgement,
       });
-      this.game.scoreSystem.hit(judgement, true);
+      this.game.scoreSystem.hit(judgement, earlyOrLate, true);
 
       this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
 

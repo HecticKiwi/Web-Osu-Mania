@@ -13,12 +13,7 @@ import {
   Settings,
   useSettingsStore,
 } from "@/stores/settingsStore";
-import {
-  Column,
-  GameState,
-  Judgement as JudgementValue,
-  PlayResults,
-} from "@/types";
+import { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
@@ -86,8 +81,6 @@ export class Game {
   public hitPositionOffset: number;
   public stagePositionOffset: number;
   public scaledColumnWidth: number;
-
-  public judgementToShow: JudgementValue | null = null;
 
   // Systems
   public healthSystem?: HealthSystem;
@@ -571,11 +564,9 @@ export class Game {
           this.updateHitObjects();
         }
 
-        if (this.judgement && this.judgementToShow !== null) {
-          this.judgement.showJudgement(this.judgementToShow);
+        if (this.judgement && this.judgement.judgementToShow !== null) {
+          this.judgement.showJudgement();
         }
-
-        this.judgementToShow = null;
 
         break;
 

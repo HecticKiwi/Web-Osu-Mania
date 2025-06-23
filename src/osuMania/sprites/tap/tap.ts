@@ -1,6 +1,7 @@
 import { SampleSet, TapData } from "@/lib/beatmapParser";
 import { Container, Texture } from "pixi.js";
 import { Game } from "../../game";
+import { Hold } from "../hold/hold";
 
 export abstract class Tap {
   static renderTexture: Texture | null;
@@ -132,7 +133,11 @@ export abstract class Tap {
 
     // If this has passed the late miss point
     if (delta < -this.game.hitWindows[0]) {
-      this.game.scoreSystem.hit(0, this.data.endTime !== this.data.time);
+      this.game.scoreSystem.hit(
+        0,
+        "late",
+        this.data.endTime !== this.data.time,
+      );
       this.shouldRemove = true;
 
       const nextHitObject = column[1];
@@ -165,8 +170,14 @@ export abstract class Tap {
                 ? 50
                 : 0;
 
+    const earlyOrLate = delta > 0 ? "early" : "late";
+
     this.game.scoreSystem.hitErrors.push({ error: delta, judgement });
-    this.game.scoreSystem.hit(judgement, this.data.endTime !== this.data.time);
+    this.game.scoreSystem.hit(
+      judgement,
+      earlyOrLate,
+      this.data.endTime !== this.data.time,
+    );
 
     this.game.errorBar?.addTimingMark(delta);
 

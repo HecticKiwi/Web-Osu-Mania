@@ -80,6 +80,7 @@ export type Settings = {
     showCombo: boolean;
     showAccuracy: boolean;
     showJudgement: boolean;
+    showEarlyLateIndicator: boolean;
     showProgressBar: boolean;
     showHealthBar: boolean;
   };
@@ -311,6 +312,7 @@ export const defaultSettings: Settings = {
     showCombo: true,
     showAccuracy: true,
     showJudgement: true,
+    showEarlyLateIndicator: true,
     showProgressBar: true,
     showHealthBar: true,
   },
