@@ -174,7 +174,7 @@ const SettingsTab = () => {
               return "Centered";
             }
 
-            return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
+            return `${Math.abs(Math.round(stagePosition * 100))}% ${stagePosition < 0 ? "Left" : "Right"}`;
           }}
           onValueChange={([stagePosition]) =>
             setSettings((draft) => {
@@ -258,6 +258,7 @@ const SettingsTab = () => {
 
               if (!checked) {
                 draft.show300g = false;
+                draft.ui.showEarlyLateIndicator = false;
               }
             })
           }
@@ -268,6 +269,19 @@ const SettingsTab = () => {
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.show300g = checked;
+
+              if (checked) {
+                draft.ui.showJudgement = true;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Show Early/Late Indicator"
+          selector={(state) => state.ui.showEarlyLateIndicator}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.ui.showEarlyLateIndicator = checked;
 
               if (checked) {
                 draft.ui.showJudgement = true;
