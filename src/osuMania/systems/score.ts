@@ -68,8 +68,7 @@ export class ScoreSystem {
       (judgement !== 320 || this.game.settings.show300g)
     ) {
       this.game.judgement.judgementToShow = judgement;
-      this.game.judgement.earlyOrLateToShow =
-        judgement !== 320 && judgement !== 300 ? (earlyOrLate ?? null) : null;
+      this.game.judgement.earlyOrLateToShow = earlyOrLate ?? null;
     }
 
     if (judgement === 0) {

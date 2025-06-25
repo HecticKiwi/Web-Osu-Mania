@@ -54,6 +54,10 @@ export class Judgement {
   }
 
   public showJudgement() {
+    if (this.judgementToShow === null) {
+      return;
+    }
+
     const judgement = this.judgementToShow;
     const earlyOrLate = this.earlyOrLateToShow;
 
@@ -66,8 +70,8 @@ export class Judgement {
     this.earlyOrLate.scale.set(1);
 
     if (
-      this.game.settings.ui.showEarlyLateIndicator &&
-      this.earlyOrLateToShow
+      this.earlyOrLateToShow &&
+      judgement <= this.game.settings.ui.earlyLateThreshold
     ) {
       if (earlyOrLate === "early") {
         this.earlyOrLate.text = "Early";

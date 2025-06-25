@@ -564,9 +564,7 @@ export class Game {
           this.updateHitObjects();
         }
 
-        if (this.judgement && this.judgement.judgementToShow !== null) {
-          this.judgement.showJudgement();
-        }
+        this.judgement?.showJudgement();
 
         break;
 
