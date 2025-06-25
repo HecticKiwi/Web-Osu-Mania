@@ -386,6 +386,11 @@ function fillCallback(settings: Settings) {
     ...settings,
   };
 
+  filledSettings.ui = {
+    ...defaultSettings.ui,
+    ...settings.ui,
+  };
+
   filledSettings.mods = {
     ...defaultSettings.mods,
     ...settings.mods,
