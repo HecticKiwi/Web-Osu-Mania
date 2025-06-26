@@ -18,24 +18,25 @@ export type GetBeatmapsResponse = {
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
-  const BEATMAP_SETS = getCloudflareContext().env.BEATMAP_SETS;
-  const cachedData = await BEATMAP_SETS.get(requestUrl.search);
-
-  if (cachedData) {
-    const data = JSON.parse(cachedData);
-
-    return NextResponse.json(data, {
-      headers: {
-        "Cache-Control": "public, max-age=3600",
-      },
-    });
-  }
-
   // Params are forwarded to the osu API endpoint
   const params = new URLSearchParams(requestUrl.search);
 
   // Sort so the keys are in consistent order for caching
   params.sort();
+
+  const cacheKey = params.toString();
+
+  const BEATMAP_SETS = getCloudflareContext().env.BEATMAP_SETS;
+  const cachedData = await BEATMAP_SETS.get(cacheKey);
+
+  if (cachedData) {
+    return new NextResponse(cachedData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  }
 
   const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
 
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest) {
 
   const data: GetBeatmapsResponse = await response.json();
 
-  await BEATMAP_SETS.put(requestUrl.search, JSON.stringify(data), {
+  await BEATMAP_SETS.put(cacheKey, JSON.stringify(data), {
     expirationTtl: 3600,
   });
 
