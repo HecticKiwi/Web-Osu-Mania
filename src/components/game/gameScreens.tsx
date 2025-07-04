@@ -78,7 +78,7 @@ const GameScreens = ({
 
   return (
     <>
-      <div ref={containerRef} className="h-full w-full">
+      <div id="game" ref={containerRef} className="h-full w-full">
         {game && !results && <VolumeWidget game={game} />}
         {game && !results && <RetryWidget retry={retry} />}
         {game && !results && <PauseButton setIsPaused={setIsPaused} />}
