@@ -79,8 +79,13 @@ export async function GET(request: NextRequest) {
     expirationTtl: 3600,
   });
 
+  console.log({
+    cacheKey,
+  });
+
   return NextResponse.json(data, {
     headers: {
+      "Content-Type": "application/json",
       "Cache-Control": "public, max-age=3600",
     },
   });
