@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "/",
+    canonical: "https://webosumania.com",
   },
 };
 
