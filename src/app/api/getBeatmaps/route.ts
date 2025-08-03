@@ -15,11 +15,27 @@ export type GetBeatmapsResponse = {
   cursor_string: string;
 };
 
+const KEEP_KEYS = new Set([
+  "q",
+  "m",
+  "sort",
+  "cursor_string",
+  "s",
+  "nsfw",
+  "g",
+  "l",
+]);
+
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
 
   // Params are forwarded to the osu API endpoint
   const params = new URLSearchParams(requestUrl.search);
+  params.keys().forEach((key) => {
+    if (!KEEP_KEYS.has(key)) {
+      params.delete(key);
+    }
+  });
 
   // Sort so the keys are in consistent order for caching
   params.sort();
