@@ -3,16 +3,21 @@ import { gsap } from "gsap";
 import { Container, Graphics, Pool, Sprite, Texture } from "pixi.js";
 import { Game } from "../game";
 
+const lightBlue = 0x99eeff;
 const blue = 0x32bce7;
 const green = 0x57e313;
 const orange = 0xdaae46;
 
 class MarkSprite extends Sprite {
+  public static marksContainer: Container;
+
   public constructor() {
     super(Texture.WHITE);
     this.width = 2;
     this.height = 20;
     this.pivot.set(0.5, 0);
+    this.visible = false;
+    MarkSprite.marksContainer.addChild(this);
   }
 }
 
@@ -32,6 +37,7 @@ export class ErrorBar {
   private quickX: gsap.QuickToFunc;
 
   private markPool: Pool<MarkSprite>;
+  private marksContainer: Container;
 
   public constructor(game: Game) {
     this.game = game;
@@ -63,14 +69,18 @@ export class ErrorBar {
     staticView.addChild(this.foreground);
     staticView.cacheAsTexture(true);
 
+    this.marksContainer = new Container();
+
     this.view = new Container();
     this.view.interactiveChildren = false;
     this.view.addChild(staticView);
+    this.view.addChild(this.marksContainer);
     this.view.addChild(centerLine);
     this.view.addChild(this.averageMarker);
     this.view.pivot.set(this.width / 2, this.height);
     this.view.scale.set(this.game.settings.errorBarScale);
 
+    MarkSprite.marksContainer = this.marksContainer;
     this.markPool = new Pool(MarkSprite, 150);
 
     this.quickX = gsap.quickTo(this.averageMarker, "x", {
@@ -92,6 +102,20 @@ export class ErrorBar {
     const center = this.width / 2;
     const height = this.height / 3;
 
+    // 50 Section
+    const orangeWidth = this.width;
+    this.foreground
+      .rect(0, height, orangeWidth, height)
+      .rect(this.width - orangeWidth, height, orangeWidth, height)
+      .fill(orange);
+
+    // 200/100 Section
+    const greenWidth =
+      (this.game.hitWindows["100"] / this.game.hitWindows["50"]) * this.width;
+    this.foreground
+      .rect(center - greenWidth / 2, height, greenWidth, height)
+      .fill(green);
+
     // 300 Section
     const blueWidth =
       (this.game.hitWindows["300"] / this.game.hitWindows["50"]) * this.width;
@@ -99,36 +123,29 @@ export class ErrorBar {
       .rect(center - blueWidth / 2, height, blueWidth, height)
       .fill(blue);
 
-    // 200/100 Section
-    const greenWidth =
-      ((this.game.hitWindows["200"] - this.game.hitWindows["300"]) /
-        this.game.hitWindows["50"]) *
-      this.width;
+    // 320 Section
+    const lightBlueWidth =
+      (this.game.hitWindows["320"] / this.game.hitWindows["50"]) * this.width;
     this.foreground
-      .rect(center - blueWidth / 2 - greenWidth, height, greenWidth, height)
-      .rect(center + blueWidth / 2, height, greenWidth, height)
-      .fill(green);
-
-    // 50 Section
-    const orangeWidth = (this.width - blueWidth - 2 * greenWidth) / 2;
-    this.foreground
-      .rect(0, height, orangeWidth, height)
-      .rect(this.width - orangeWidth, height, orangeWidth, height)
-      .fill(orange);
+      .rect(center - lightBlueWidth / 2, height, lightBlueWidth, height)
+      .fill(lightBlue);
   }
 
   public addTimingMark(offset: number) {
     const absOffset = Math.abs(offset);
     const color =
-      absOffset <= this.game.hitWindows["300"]
-        ? blue
-        : absOffset < this.game.hitWindows["100"]
-          ? green
-          : orange;
+      absOffset <= this.game.hitWindows["320"]
+        ? lightBlue
+        : absOffset <= this.game.hitWindows["300"]
+          ? blue
+          : absOffset <= this.game.hitWindows["100"]
+            ? green
+            : orange;
 
     const mark = this.markPool.get();
     mark.tint = color;
     mark.alpha = 1;
+    mark.visible = true;
 
     const x =
       (-offset / this.game.hitWindows["50"]) * (this.background.width / 2) +
@@ -138,27 +155,23 @@ export class ErrorBar {
     this.xCount++;
     this.xSum += x;
 
-    this.view.addChild(mark);
+    const hideMark = () => {
+      mark.visible = false;
+      mark.alpha = 0;
+      this.markPool.return(mark);
+      this.xCount--;
+      this.xSum -= x;
+    };
 
     if (this.game.settings.performanceMode) {
-      setTimeout(() => {
-        this.view.removeChild(mark);
-        this.markPool.return(mark);
-        this.xCount--;
-        this.xSum -= x;
-      }, 1500);
+      setTimeout(hideMark, 1500);
     } else {
       gsap.to(mark, {
         pixi: {
           alpha: 0,
         },
         duration: 4,
-        onComplete: () => {
-          this.view.removeChild(mark);
-          this.markPool.return(mark);
-          this.xCount--;
-          this.xSum -= x;
-        },
+        onComplete: hideMark,
       });
     }
 

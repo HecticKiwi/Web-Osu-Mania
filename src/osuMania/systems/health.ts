@@ -1,5 +1,6 @@
 import { HitObject } from "@/lib/beatmapParser";
 import { clamp } from "@/lib/math";
+import { getHpOrOdAfterMods } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Judgement } from "@/types";
 import { Game } from "../game";
@@ -40,16 +41,11 @@ export class HealthSystem {
 
   // Calculates hpMultiplierNormal
   private computeDrainRate() {
-    let hp = this.game.difficulty.hp;
-
-    const easy = useSettingsStore.getState().mods.easy;
-    const hardRock = useSettingsStore.getState().mods.hardRock;
-
-    if (easy) {
-      hp = hp / 2;
-    } else if (hardRock) {
-      hp = Math.min(hp * 1.4, 10);
-    }
+    const hp = getHpOrOdAfterMods(
+      this.game.difficulty.hp,
+      "hp",
+      useSettingsStore.getState().mods,
+    );
 
     const lowestHpEver = difficultyRange(hp, 0.975, 0.8, 0.3);
     const lowestHpEnd = difficultyRange(hp, 0.99, 0.9, 0.4);

@@ -13,6 +13,7 @@ type GameState = {
   beatmapSet: BeatmapSet | null;
   beatmapId: number | null;
   replayData: ReplayData | null;
+  scrollPosition: number | null;
   startGame: (beatmapId: number) => void;
   startReplay: (replay: ReplayData) => Promise<void>;
   setBeatmapSet: (beatmapSet: BeatmapSet | null) => void;
@@ -27,10 +28,14 @@ const useGameStoreBase = create<GameState>()(
     beatmapSet: null,
     beatmapId: null,
     replayData: null,
+    scrollPosition: null,
 
     startGame: (beatmapId: number) => {
       set((state) => {
         state.beatmapId = beatmapId;
+
+        // Site content is hidden while playing game, so scroll position must be restored afterwards
+        state.scrollPosition = window.scrollY;
       });
     },
 

@@ -149,7 +149,7 @@ const GameModal = () => {
   }, []);
 
   return (
-    <main className="relative grid">
+    <main id="game" className="relative grid">
       {!beatmapData && (
         <div className="flex w-full items-center text-center">
           <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>

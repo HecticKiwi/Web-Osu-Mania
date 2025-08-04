@@ -5,25 +5,11 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "/",
+    canonical: "https://webosumania.com",
   },
 };
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: {
-    q?: string;
-    category?: string;
-    sortCriteria?: string;
-    sortDirection?: string;
-    keys?: string;
-    stars?: string;
-    nsfw?: string;
-    genre?: string;
-    language?: string;
-  };
-}) {
+export default async function Home() {
   return (
     <>
       <main className="flex min-w-fit justify-center">

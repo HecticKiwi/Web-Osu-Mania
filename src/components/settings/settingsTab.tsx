@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
-import { useSettingsStore } from "../../stores/settingsStore";
+import {
+  EarlyLateThreshold,
+  earlyLateThresholdOptions,
+  useSettingsStore,
+} from "../../stores/settingsStore";
+import RadioGroupInput from "../inputs/radioGroupInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
+import { Label } from "../ui/label";
+import { RadioGroupItem } from "../ui/radio-group";
 import { Separator } from "../ui/separator";
 import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
@@ -174,7 +181,7 @@ const SettingsTab = () => {
               return "Centered";
             }
 
-            return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
+            return `${Math.abs(Math.round(stagePosition * 100))}% ${stagePosition < 0 ? "Left" : "Right"}`;
           }}
           onValueChange={([stagePosition]) =>
             setSettings((draft) => {
@@ -258,6 +265,7 @@ const SettingsTab = () => {
 
               if (!checked) {
                 draft.show300g = false;
+                draft.ui.earlyLateThreshold = -1;
               }
             })
           }
@@ -275,6 +283,35 @@ const SettingsTab = () => {
             })
           }
         />
+        <RadioGroupInput
+          label="Early/Late Indicator"
+          selector={(state) => state.ui.earlyLateThreshold.toString()}
+          onValueChange={(value: string) =>
+            setSettings((draft) => {
+              draft.ui.earlyLateThreshold = Number(value) as EarlyLateThreshold;
+
+              if (value !== "none") {
+                draft.ui.showJudgement = true;
+              }
+            })
+          }
+          className="space-y-2"
+        >
+          {earlyLateThresholdOptions.map((condition) => (
+            <Label
+              key={condition.id}
+              htmlFor={condition.id.toString()}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem
+                value={condition.id.toString()}
+                id={condition.id.toString()}
+              />
+              <span className="flex gap-2">{condition.label}</span>
+            </Label>
+          ))}
+        </RadioGroupInput>
+
         <SwitchInput
           label="Show Progress Bar"
           selector={(state) => state.ui.showProgressBar}

@@ -15,6 +15,19 @@ export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
 
+export const EARLY_LATE_THRESHOLDS = [-1, 200, 300, 320] as const;
+export type EarlyLateThreshold = (typeof EARLY_LATE_THRESHOLDS)[number];
+
+export const earlyLateThresholdOptions: {
+  id: EarlyLateThreshold;
+  label: string;
+}[] = [
+  { id: -1, label: "Off" },
+  { id: 200, label: "200s and below" },
+  { id: 300, label: "300s and below" },
+  { id: 320, label: "Always" },
+] as const;
+
 export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
   bars: "▬",
   circles: "⬤",
@@ -72,12 +85,15 @@ export type Settings = {
     holdOff: boolean;
     noFail: boolean;
     suddenDeath: boolean;
+    hpOverride: number | null;
+    odOverride: number | null;
   };
   ui: {
     showScore: boolean;
     showCombo: boolean;
     showAccuracy: boolean;
     showJudgement: boolean;
+    earlyLateThreshold: EarlyLateThreshold;
     showProgressBar: boolean;
     showHealthBar: boolean;
   };
@@ -301,12 +317,15 @@ export const defaultSettings: Settings = {
     constantSpeed: false,
     holdOff: false,
     playbackRate: 1,
+    hpOverride: null,
+    odOverride: null,
   },
   ui: {
     showScore: true,
     showCombo: true,
     showAccuracy: true,
     showJudgement: true,
+    earlyLateThreshold: 200,
     showProgressBar: true,
     showHealthBar: true,
   },
@@ -365,6 +384,11 @@ function fillCallback(settings: Settings) {
   const filledSettings = {
     ...defaultSettings,
     ...settings,
+  };
+
+  filledSettings.ui = {
+    ...defaultSettings.ui,
+    ...settings.ui,
   };
 
   filledSettings.mods = {

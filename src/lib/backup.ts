@@ -13,12 +13,13 @@ import {
 } from "@zip.js/zip.js";
 import { createElement } from "react";
 import { toast } from "sonner";
-import streamSaver from "streamsaver";
 
 export async function downloadBackup(
   filename: string,
   selectedData: ExportOptionId[],
 ) {
+  const { default: streamSaver } = await import("streamsaver");
+
   const fileStream = streamSaver.createWriteStream(filename);
   const zipWriter = new ZipWriter(fileStream);
 

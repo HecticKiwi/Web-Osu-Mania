@@ -100,10 +100,7 @@ const BeatmapList = ({
                     </div>
                   </div>
 
-                  <DifficultyBars
-                    accuracy={beatmap.accuracy}
-                    drain={beatmap.drain}
-                  />
+                  <DifficultyBars od={beatmap.accuracy} hp={beatmap.drain} />
                 </div>
               );
             })}
