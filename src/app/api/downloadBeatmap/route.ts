@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/api/ratelimit";
 
 export async function GET(request: NextRequest) {
+  if (!rateLimit(request, { limit: 30, windowMs: 60000 })) {
+    return new NextResponse(
+      JSON.stringify({ error: "Too many requests. Slow down!" }),
+      { status: 429 }
+    );
+  }
+
   const requestUrl = new URL(request.url);
 
   const destinationUrl = requestUrl.searchParams.get("destinationUrl");
