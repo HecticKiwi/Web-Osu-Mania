@@ -1,8 +1,8 @@
+import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../utils";
-import { rateLimit } from "@/lib/api/ratelimit";
 
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
@@ -28,14 +28,10 @@ const KEEP_KEYS = new Set([
 ]);
 
 export async function GET(request: NextRequest) {
-  if (!rateLimit(request, { limit: 30, windowMs: 60000 })) {
-    return new NextResponse(
-      JSON.stringify({ error: "Too many requests. Slow down!" }),
-      { status: 429 }
-    );
+  if (!rateLimit(request, { limit: 25, windowMs: 60000 })) {
+    return new NextResponse("Too many requests. Slow down!", { status: 429 });
   }
-  
-  
+
   const requestUrl = new URL(request.url);
 
   // Params are forwarded to the osu API endpoint
@@ -87,15 +83,10 @@ export async function GET(request: NextRequest) {
     const message =
       statusErrorMessages[response.status] ?? "An unknown error occurred.";
 
-    return NextResponse.json(
-      {
-        message,
-      },
-      {
-        status: response.status,
-        statusText: message,
-      },
-    );
+    return new NextResponse(message, {
+      status: response.status,
+      statusText: message,
+    });
   }
 
   const data: GetBeatmapsResponse = await response.json();
