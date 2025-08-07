@@ -25,7 +25,10 @@ function getClientIp(req: NextRequest): string {
 
 export function rateLimit(
   req: NextRequest,
-  { limit, windowMs }: RateLimitOptions,
+  { limit, windowMs }: RateLimitOptions = {
+    limit: 25,
+    windowMs: 60000, // 1 minute
+  },
 ): boolean {
   const now = Date.now();
   const ip = getClientIp(req);

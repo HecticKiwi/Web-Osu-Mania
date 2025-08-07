@@ -2,7 +2,7 @@ import { rateLimit } from "@/lib/api/ratelimit";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  if (!rateLimit(request, { limit: 25, windowMs: 60000 })) {
+  if (!rateLimit(request)) {
     return new NextResponse("Too many requests. Slow down!", { status: 429 });
   }
 
