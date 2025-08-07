@@ -1,8 +1,13 @@
+import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "../utils";
 
 export async function GET(request: NextRequest) {
+  if (!rateLimit(request)) {
+    return new NextResponse("Too many requests. Slow down!", { status: 429 });
+  }
+
   const requestUrl = new URL(request.url);
 
   const beatmapSetId = requestUrl.searchParams.get("beatmapSetId");

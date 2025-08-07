@@ -53,6 +53,9 @@ NEXT_PUBLIC_BASE_URL=https://webosumania.com
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
 OSU_API_CLIENT_SECRET=
+
+# Ratelimit
+TRUST_CF_CONNECTING_IP=true # Set to false if not behind Cloudflare
 ```
 
 - Install NPM packages with `npm install`

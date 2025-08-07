@@ -5,6 +5,7 @@ import { createSelectors } from "@/lib/zustand";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { Howler } from "howler";
 import queryString from "query-string";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -48,7 +49,14 @@ const useGameStoreBase = create<GameState>()(
         query: { beatmapSetId },
       });
 
-      const beatmapSet: BeatmapSet = await fetch(url).then((res) => res.json());
+      const beatmapSetRes = await fetch(url);
+
+      if (!beatmapSetRes.ok) {
+        const message = await beatmapSetRes.text();
+        throw new Error(message);
+      }
+
+      const beatmapSet: BeatmapSet = await beatmapSetRes.json();
 
       set((state) => {
         state.beatmapId = beatmapId;
@@ -86,9 +94,20 @@ const useGameStoreBase = create<GameState>()(
           query: { beatmapSetId },
         });
 
-        const beatmapSet: BeatmapSet = await fetch(url).then((res) =>
-          res.json(),
-        );
+        const beatmapSetRes = await fetch(url);
+
+        if (!beatmapSetRes.ok) {
+          set((state) => {
+            state.uploadedBeatmapSet = null;
+          });
+
+          const message = await beatmapSetRes.text();
+          toast(message);
+
+          return;
+        }
+
+        const beatmapSet: BeatmapSet = await beatmapSetRes.json();
 
         set((state) => {
           state.beatmapSet = beatmapSet;
