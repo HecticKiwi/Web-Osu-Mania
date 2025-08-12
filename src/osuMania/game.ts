@@ -56,6 +56,7 @@ import { BarTap } from "./sprites/tap/barTap";
 import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
+import { TouchHitboxes } from "./sprites/touchHitboxes";
 import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
@@ -125,6 +126,7 @@ export class Game {
   public notesContainer: Container = new Container();
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
+  public touchHitboxes: TouchHitboxes;
   public stageHint: StageHint;
   public judgement?: Judgement;
   private progressBar?: ProgressBar;
@@ -326,11 +328,11 @@ export class Game {
     this.stageContainer.pivot.x = this.stageContainer.width / 2;
     this.stageContainer.pivot.y = this.app.screen.height / 2;
 
-    this.stageContainer.x = this.app.screen.width / 2;
-    this.stageContainer.y = this.app.screen.height / 2;
-
     this.stageContainer.x =
       this.app.screen.width / 2 + this.stagePositionOffset;
+    this.stageContainer.y = this.app.screen.height / 2;
+
+    this.touchHitboxes.resize();
 
     this.judgement?.resize();
 
@@ -453,6 +455,10 @@ export class Game {
     }
 
     this.addKeys();
+
+    if (!this.replayPlayer) {
+      this.addTouchHitboxes();
+    }
 
     if (this.settings.ui.showJudgement) {
       this.addJudgement();
@@ -758,9 +764,7 @@ export class Game {
 
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
-      let key: Key;
-
-      key = new this.keyClass(this, i);
+      const key = new this.keyClass(this, i);
 
       this.keysContainer.addChild(key.view);
       this.keysContainer.eventMode = "static";
@@ -786,6 +790,11 @@ export class Game {
         hitObjects.filter((hitObject) => hitObject.data.column === i),
       );
     }
+  }
+
+  private addTouchHitboxes() {
+    this.touchHitboxes = new TouchHitboxes(this);
+    this.app.stage.addChild(this.touchHitboxes.view);
   }
 
   private addJudgement() {
