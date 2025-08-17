@@ -126,7 +126,7 @@ export class Game {
   public notesContainer: Container = new Container();
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
-  public touchHitboxes: TouchHitboxes;
+  public touchHitboxes?: TouchHitboxes;
   public stageHint: StageHint;
   public judgement?: Judgement;
   private progressBar?: ProgressBar;
@@ -332,7 +332,7 @@ export class Game {
       this.app.screen.width / 2 + this.stagePositionOffset;
     this.stageContainer.y = this.app.screen.height / 2;
 
-    this.touchHitboxes.resize();
+    this.touchHitboxes?.resize();
 
     this.judgement?.resize();
 
