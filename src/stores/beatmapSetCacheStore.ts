@@ -134,7 +134,7 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
             setDownloadPercent((receivedLength / contentLength) * 100);
           }
 
-          beatmapSetFile = new Blob(chunks);
+          beatmapSetFile = new Blob(chunks as BlobPart[]);
         }
 
         // Store or cache beatmap

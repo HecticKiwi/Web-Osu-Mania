@@ -1,9 +1,7 @@
 import ReactScan from "@/components/debug/reactScan";
-import { GameOverlay } from "@/components/game/gameOverlay";
 import Header from "@/components/header";
 import Html from "@/components/html";
 import ReactQueryProvider from "@/components/providers/reactQueryProvider";
-import UploadDialog from "@/components/settings/uploadDialog";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
@@ -44,8 +42,6 @@ export default function RootLayout({
 
             {children}
 
-            <UploadDialog />
-            <GameOverlay />
             <Toaster />
             <ReactScan />
           </ReactQueryProvider>

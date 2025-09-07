@@ -1,4 +1,6 @@
+import { GameOverlay } from "@/components/game/gameOverlay";
 import Main from "@/components/main";
+import UploadDialog from "@/components/settings/uploadDialog";
 import SidebarContent from "@/components/sidebar";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -24,6 +26,9 @@ export default async function Home() {
             <Main />
           </Suspense>
         </div>
+
+        <UploadDialog />
+        <GameOverlay />
       </main>
     </>
   );
