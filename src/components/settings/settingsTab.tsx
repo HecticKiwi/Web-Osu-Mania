@@ -1,12 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
 import {
   EarlyLateThreshold,
   earlyLateThresholdOptions,
+  TouchMode,
+  touchModes,
   useSettingsStore,
 } from "../../stores/settingsStore";
 import RadioGroupInput from "../inputs/radioGroupInput";
@@ -166,6 +169,48 @@ const SettingsTab = () => {
               draft.preferMetadataInOriginalLanguage = checked;
             })
           }
+        />
+      </div>
+
+      <h3 className="mt-6 text-lg font-semibold">Touch Controls</h3>
+      <div className="mt-2 space-y-3">
+        <RadioGroupInput
+          label="Mode"
+          selector={(state) => state.touch.mode}
+          onValueChange={(value: TouchMode) =>
+            setSettings((draft) => {
+              draft.touch.mode = value;
+            })
+          }
+          className="space-y-2"
+        >
+          {touchModes.map((touchMode) => (
+            <Label
+              key={touchMode}
+              htmlFor={touchMode}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem value={touchMode} id={touchMode} />
+              <span className="flex gap-2">
+                {capitalizeFirstLetter(touchMode)}
+              </span>
+            </Label>
+          ))}
+        </RadioGroupInput>
+        <SliderInput
+          label="Border Opacity"
+          selector={(state) => state.touch.borderOpacity}
+          tooltip={(borderOpacity) => {
+            return `${Math.round(borderOpacity * 100)}%`;
+          }}
+          onValueChange={([borderOpacity]) =>
+            setSettings((draft) => {
+              draft.touch.borderOpacity = borderOpacity;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
         />
       </div>
 

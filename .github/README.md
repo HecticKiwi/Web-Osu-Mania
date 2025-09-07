@@ -27,7 +27,7 @@ Game mechanics attempt to match (if not come close to) the official osu!mania's 
 
 [Visit the site](https://webosumania.com/)
 
-Site blocked on your betwork? Try these mirrors:
+Site blocked on your network? Try these mirrors:
 
 - [Mirror 1](https://webosumania.hectickiwi.workers.dev)
 - [Mirror 2](https://hectickiwi.github.io/Web-Osu-Mania)
@@ -53,6 +53,9 @@ NEXT_PUBLIC_BASE_URL=https://webosumania.com
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
 OSU_API_CLIENT_SECRET=
+
+# Ratelimit
+TRUST_CF_CONNECTING_IP=true # Set to false if not behind Cloudflare
 ```
 
 - Install NPM packages with `npm install`

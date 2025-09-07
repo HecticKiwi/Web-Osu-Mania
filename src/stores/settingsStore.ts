@@ -15,6 +15,13 @@ export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
 export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
 
+export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
+  bars: "▬",
+  circles: "⬤",
+  arrows: "↗",
+  diamonds: "◆",
+};
+
 export const EARLY_LATE_THRESHOLDS = [-1, 200, 300, 320] as const;
 export type EarlyLateThreshold = (typeof EARLY_LATE_THRESHOLDS)[number];
 
@@ -28,12 +35,8 @@ export const earlyLateThresholdOptions: {
   { id: 320, label: "Always" },
 ] as const;
 
-export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
-  bars: "▬",
-  circles: "⬤",
-  arrows: "↗",
-  diamonds: "◆",
-};
+export const touchModes = ["normal", "fullscreen"] as const;
+export type TouchMode = (typeof touchModes)[number];
 
 export type ColumnColor = {
   tap: string;
@@ -69,6 +72,10 @@ export type Settings = {
   hue: number;
   stagePosition: number;
   laneWidthAdjustment: number;
+  touch: {
+    mode: TouchMode;
+    borderOpacity: number;
+  };
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -137,6 +144,10 @@ export const defaultSettings: Settings = {
   hue: 212,
   stagePosition: 0,
   laneWidthAdjustment: 0,
+  touch: {
+    mode: "normal",
+    borderOpacity: 0.1,
+  },
   keybinds: {
     keyModes: [
       ["Space"], // 1K
@@ -384,6 +395,11 @@ function fillCallback(settings: Settings) {
   const filledSettings = {
     ...defaultSettings,
     ...settings,
+  };
+
+  filledSettings.touch = {
+    ...defaultSettings.touch,
+    ...settings.touch,
   };
 
   filledSettings.ui = {

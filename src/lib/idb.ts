@@ -135,12 +135,12 @@ class Idb {
     const replayDataString = JSON.stringify(replayData);
     const encoded = new TextEncoder().encode(replayDataString);
     const compressed = compressSync(encoded);
-    const file = new Blob([compressed], {
+    const file = new Blob([compressed as BlobPart], {
       type: "application/octet-stream",
     });
 
     try {
-      this.saveToStore("replayFiles", file, id, Date.now());
+      await this.saveToStore("replayFiles", file, id, Date.now());
     } catch (error: any) {
       if (error.code === DOMException.QUOTA_EXCEEDED_ERR) {
         await db.clear("replayFiles");
