@@ -33,6 +33,19 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "https://hectickiwi.github.io",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET,OPTIONS",
+          },
+        ],
+      },
     ];
   },
 };
