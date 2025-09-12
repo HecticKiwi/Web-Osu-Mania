@@ -19,6 +19,7 @@ export class StageHint {
 
     this.view = new Container();
     this.view.addChild(this.graphics);
+    this.view.alpha = this.game.settings.ui.receptorOpacity;
   }
 
   public resize() {

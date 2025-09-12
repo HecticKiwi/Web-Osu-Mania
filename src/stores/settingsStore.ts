@@ -103,6 +103,7 @@ export type Settings = {
     earlyLateThreshold: EarlyLateThreshold;
     showProgressBar: boolean;
     showHealthBar: boolean;
+    receptorOpacity: number;
   };
   skin: {
     colors: {
@@ -339,6 +340,7 @@ export const defaultSettings: Settings = {
     earlyLateThreshold: 200,
     showProgressBar: true,
     showHealthBar: true,
+    receptorOpacity: 1,
   },
   skin: {
     colors: {

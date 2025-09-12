@@ -265,6 +265,19 @@ const SettingsTab = () => {
           max={80}
           step={1}
         />
+        <SliderInput
+          label="Receptor Opacity"
+          selector={(state) => state.ui.receptorOpacity}
+          tooltip={(receptorOpacity) => `${Math.round(receptorOpacity * 100)}%`}
+          onValueChange={([receptorOpacity]) =>
+            setSettings((draft) => {
+              draft.ui.receptorOpacity = receptorOpacity;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
+        />
         <SwitchInput
           label="Upscroll (DDR Style)"
           selector={(state) => state.upscroll}
