@@ -42,6 +42,11 @@ const HighScoreToolTip = ({ highScore }: { highScore: HighScore }) => {
     const json = new TextDecoder().decode(decompressed);
     const replayData: ReplayData = JSON.parse(json);
 
+    // Timestamp property was recently added, if it doesn't exist then set it from IDB file
+    if (!replayData.timestamp) {
+      replayData.timestamp = replay.dateAdded;
+    }
+
     await startReplay(replayData);
   };
 

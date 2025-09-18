@@ -26,7 +26,9 @@ export type Beatmap = {
   user_id: number;
   version: string;
 
-  cs: number;
+  cs: number; // Key count
+  accuracy: number; // OD
+  drain: number; // HP
 };
 
 type Covers = {
@@ -112,7 +114,15 @@ export async function getBeatmaps({
   const res = await fetch(url);
 
   if (!res.ok) {
-    throw new Error(`Code ${res.status}: ${res.statusText}`);
+    let errorMessage = `Code ${res.status}`;
+
+    try {
+      const message = await res.text();
+      errorMessage += `: ${message}`;
+    } catch (error) {
+    } finally {
+      throw new Error(errorMessage);
+    }
   }
 
   const data: GetBeatmapsResponse = await res.json();

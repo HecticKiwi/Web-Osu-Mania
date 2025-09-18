@@ -1,10 +1,7 @@
-import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
-
-const isGithubPages = process.env.GITHUB_ACTIONS;
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: isGithubPages ? "export" : undefined,
   reactStrictMode: false,
   images: {
     unoptimized: true,
@@ -15,8 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  basePath: isGithubPages ? "/Web-Osu-Mania" : "",
-  assetPrefix: isGithubPages ? "/Web-Osu-Mania" : "",
   async headers() {
     return [
       {
@@ -42,8 +37,6 @@ const nextConfig = {
   },
 };
 
-if (process.env.NODE_ENV === "development") {
-  await setupDevPlatform();
-}
+initOpenNextCloudflareForDev();
 
 export default nextConfig;

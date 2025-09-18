@@ -16,7 +16,7 @@ import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { cn } from "@/lib/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
-import { Loader } from "lucide-react";
+import { Bookmark, HardDrive, Loader } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
@@ -112,6 +112,17 @@ const BeatmapSetsInfiniteScroll = ({
           Failed to fetch beatmaps. Please try again later.
         </p>
         <p className="text-center text-muted-foreground">({error.message})</p>
+        {error.message.startsWith("Code 200") && (
+          <p className="mt-4 text-balance text-center text-orange-500">
+            While I look into this issue, consider{" "}
+            <Bookmark className="inline size-5" /> saving beatmaps or enabling
+            IndexedDB caching in the settings the next time the beatmap listing
+            is available. Either will allow you to play beatmaps from the{" "}
+            <Bookmark className="inline size-5" /> Saved and{" "}
+            <HardDrive className="inline size-5" /> Stored categories which do
+            not use the osu! API.
+          </p>
+        )}
       </div>
     );
   }

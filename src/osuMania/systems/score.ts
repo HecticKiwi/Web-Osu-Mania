@@ -52,15 +52,23 @@ export class ScoreSystem {
     this.multiplier = getScoreMultiplier(game.settings.mods);
   }
 
-  public hit(judgement: Judgement) {
+  public hit(
+    judgement: Judgement,
+    earlyOrLate?: "early" | "late",
+    isForHold?: boolean,
+  ) {
     this.score += this.getScoreToAdd(judgement);
 
-    this.game.healthSystem?.hit(judgement);
+    this.game.healthSystem?.hit(judgement, isForHold);
 
     this[judgement]++;
 
-    if (judgement !== 320 || this.game.settings.show300g) {
-      this.game.judgementToShow = judgement;
+    if (
+      this.game.judgement &&
+      (judgement !== 320 || this.game.settings.show300g)
+    ) {
+      this.game.judgement.judgementToShow = judgement;
+      this.game.judgement.earlyOrLateToShow = earlyOrLate ?? null;
     }
 
     if (judgement === 0) {

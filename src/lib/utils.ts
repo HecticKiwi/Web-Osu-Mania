@@ -160,6 +160,10 @@ export function getScoreMultiplier(mods: Settings["mods"]) {
     multiplier *= 0.9;
   }
 
+  if (mods.hpOverride !== null || mods.odOverride !== null) {
+    multiplier *= 0.5;
+  }
+
   return multiplier;
 }
 
@@ -185,6 +189,8 @@ export function getModStrings(
       mods.playbackRate !== 0.75 &&
       mods.playbackRate !== 1.5 &&
       `Song Speed: ${mods.playbackRate}x`,
+    mods.odOverride !== null && `Accuracy Override: ${mods.odOverride}`,
+    mods.hpOverride !== null && `Health Drain Override: ${mods.hpOverride}`,
   ].filter(Boolean) as string[];
 
   return modStrings;
@@ -221,7 +227,7 @@ export function downloadUrl(url: string, filename: string) {
 }
 
 export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
-  const { playbackRate, ...booleanMods } = mods;
+  const { playbackRate, hpOverride, odOverride, ...booleanMods } = mods;
 
   const compacted: Partial<Settings["mods"]> = {};
 
@@ -236,4 +242,26 @@ export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
   }
 
   return compacted;
+}
+
+export function getHpOrOdAfterMods(
+  value: number,
+  type: "hp" | "od",
+  mods: Settings["mods"],
+) {
+  if (mods.easy) {
+    return value / 2;
+  } else if (mods.hardRock) {
+    return Math.min(value * 1.4, 10);
+  }
+
+  if (type === "hp" && mods.hpOverride !== null) {
+    return mods.hpOverride;
+  }
+
+  if (type === "od" && mods.odOverride !== null) {
+    return mods.odOverride;
+  }
+
+  return value;
 }

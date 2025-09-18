@@ -1,12 +1,22 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
-import { useSettingsStore } from "../../stores/settingsStore";
+import {
+  EarlyLateThreshold,
+  earlyLateThresholdOptions,
+  TouchMode,
+  touchModes,
+  useSettingsStore,
+} from "../../stores/settingsStore";
+import RadioGroupInput from "../inputs/radioGroupInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
+import { Label } from "../ui/label";
+import { RadioGroupItem } from "../ui/radio-group";
 import { Separator } from "../ui/separator";
 import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
@@ -162,6 +172,48 @@ const SettingsTab = () => {
         />
       </div>
 
+      <h3 className="mt-6 text-lg font-semibold">Touch Controls</h3>
+      <div className="mt-2 space-y-3">
+        <RadioGroupInput
+          label="Mode"
+          selector={(state) => state.touch.mode}
+          onValueChange={(value: TouchMode) =>
+            setSettings((draft) => {
+              draft.touch.mode = value;
+            })
+          }
+          className="space-y-2"
+        >
+          {touchModes.map((touchMode) => (
+            <Label
+              key={touchMode}
+              htmlFor={touchMode}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem value={touchMode} id={touchMode} />
+              <span className="flex gap-2">
+                {capitalizeFirstLetter(touchMode)}
+              </span>
+            </Label>
+          ))}
+        </RadioGroupInput>
+        <SliderInput
+          label="Border Opacity"
+          selector={(state) => state.touch.borderOpacity}
+          tooltip={(borderOpacity) => {
+            return `${Math.round(borderOpacity * 100)}%`;
+          }}
+          onValueChange={([borderOpacity]) =>
+            setSettings((draft) => {
+              draft.touch.borderOpacity = borderOpacity;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
+        />
+      </div>
+
       <SkinSettings />
 
       <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
@@ -174,7 +226,7 @@ const SettingsTab = () => {
               return "Centered";
             }
 
-            return `${Math.round(stagePosition * 100)}% ${stagePosition < 0 ? "Left" : "Right"}`;
+            return `${Math.abs(Math.round(stagePosition * 100))}% ${stagePosition < 0 ? "Left" : "Right"}`;
           }}
           onValueChange={([stagePosition]) =>
             setSettings((draft) => {
@@ -212,6 +264,19 @@ const SettingsTab = () => {
           min={-20}
           max={80}
           step={1}
+        />
+        <SliderInput
+          label="Receptor Opacity"
+          selector={(state) => state.ui.receptorOpacity}
+          tooltip={(receptorOpacity) => `${Math.round(receptorOpacity * 100)}%`}
+          onValueChange={([receptorOpacity]) =>
+            setSettings((draft) => {
+              draft.ui.receptorOpacity = receptorOpacity;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
         />
         <SwitchInput
           label="Upscroll (DDR Style)"
@@ -258,6 +323,7 @@ const SettingsTab = () => {
 
               if (!checked) {
                 draft.show300g = false;
+                draft.ui.earlyLateThreshold = -1;
               }
             })
           }
@@ -275,6 +341,35 @@ const SettingsTab = () => {
             })
           }
         />
+        <RadioGroupInput
+          label="Early/Late Indicator"
+          selector={(state) => state.ui.earlyLateThreshold.toString()}
+          onValueChange={(value: string) =>
+            setSettings((draft) => {
+              draft.ui.earlyLateThreshold = Number(value) as EarlyLateThreshold;
+
+              if (value !== "none") {
+                draft.ui.showJudgement = true;
+              }
+            })
+          }
+          className="space-y-2"
+        >
+          {earlyLateThresholdOptions.map((condition) => (
+            <Label
+              key={condition.id}
+              htmlFor={condition.id.toString()}
+              className="flex items-center space-x-2"
+            >
+              <RadioGroupItem
+                value={condition.id.toString()}
+                id={condition.id.toString()}
+              />
+              <span className="flex gap-2">{condition.label}</span>
+            </Label>
+          ))}
+        </RadioGroupInput>
+
         <SwitchInput
           label="Show Progress Bar"
           selector={(state) => state.ui.showProgressBar}

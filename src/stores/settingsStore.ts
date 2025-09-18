@@ -5,8 +5,8 @@ import { combine, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 export const BEATMAP_API_PROVIDERS = {
-  NeriNyan: "https://api.nerinyan.moe/d/$setId",
   "Mino (catboy.best)": "https://catboy.best/d/$setIdn",
+  NeriNyan: "https://api.nerinyan.moe/d/$setId",
   SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
 } as const;
 
@@ -21,6 +21,22 @@ export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
   arrows: "↗",
   diamonds: "◆",
 };
+
+export const EARLY_LATE_THRESHOLDS = [-1, 200, 300, 320] as const;
+export type EarlyLateThreshold = (typeof EARLY_LATE_THRESHOLDS)[number];
+
+export const earlyLateThresholdOptions: {
+  id: EarlyLateThreshold;
+  label: string;
+}[] = [
+  { id: -1, label: "Off" },
+  { id: 200, label: "200s and below" },
+  { id: 300, label: "300s and below" },
+  { id: 320, label: "Always" },
+] as const;
+
+export const touchModes = ["normal", "fullscreen"] as const;
+export type TouchMode = (typeof touchModes)[number];
 
 export type ColumnColor = {
   tap: string;
@@ -56,6 +72,10 @@ export type Settings = {
   hue: number;
   stagePosition: number;
   laneWidthAdjustment: number;
+  touch: {
+    mode: TouchMode;
+    borderOpacity: number;
+  };
   keybinds: {
     keyModes: (string | null)[][];
     pause: string | null;
@@ -72,14 +92,18 @@ export type Settings = {
     holdOff: boolean;
     noFail: boolean;
     suddenDeath: boolean;
+    hpOverride: number | null;
+    odOverride: number | null;
   };
   ui: {
     showScore: boolean;
     showCombo: boolean;
     showAccuracy: boolean;
     showJudgement: boolean;
+    earlyLateThreshold: EarlyLateThreshold;
     showProgressBar: boolean;
     showHealthBar: boolean;
+    receptorOpacity: number;
   };
   skin: {
     colors: {
@@ -108,7 +132,7 @@ export const defaultSettings: Settings = {
   upscroll: false,
   darkerHoldNotes: true,
   hitPositionOffset: 130,
-  beatmapProvider: "NeriNyan",
+  beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
   proxyBeatmapDownloads: false,
   ignoreBeatmapHitsounds: false,
@@ -121,6 +145,10 @@ export const defaultSettings: Settings = {
   hue: 212,
   stagePosition: 0,
   laneWidthAdjustment: 0,
+  touch: {
+    mode: "normal",
+    borderOpacity: 0.1,
+  },
   keybinds: {
     keyModes: [
       ["Space"], // 1K
@@ -301,14 +329,18 @@ export const defaultSettings: Settings = {
     constantSpeed: false,
     holdOff: false,
     playbackRate: 1,
+    hpOverride: null,
+    odOverride: null,
   },
   ui: {
     showScore: true,
     showCombo: true,
     showAccuracy: true,
     showJudgement: true,
+    earlyLateThreshold: 200,
     showProgressBar: true,
     showHealthBar: true,
+    receptorOpacity: 1,
   },
   skin: {
     colors: {
@@ -365,6 +397,16 @@ function fillCallback(settings: Settings) {
   const filledSettings = {
     ...defaultSettings,
     ...settings,
+  };
+
+  filledSettings.touch = {
+    ...defaultSettings.touch,
+    ...settings.touch,
+  };
+
+  filledSettings.ui = {
+    ...defaultSettings.ui,
+    ...settings.ui,
   };
 
   filledSettings.mods = {

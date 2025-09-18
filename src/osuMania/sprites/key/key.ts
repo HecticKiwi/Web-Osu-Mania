@@ -7,7 +7,6 @@ export abstract class Key {
   protected columnId: number;
 
   public view: Container;
-  protected hitArea: Sprite;
 
   protected abstract setKeyGraphics(): void;
 
@@ -21,36 +20,15 @@ export abstract class Key {
 
     this.setKeyGraphics();
 
-    const hitArea = Sprite.from(Texture.WHITE);
-    this.hitArea = hitArea;
-    hitArea.width = game.scaledColumnWidth;
-    hitArea.height = this.game.app.screen.height;
-    hitArea.alpha = 0;
-    hitArea.anchor.y = 1;
+    // Used to be the touch hitbox but can't remove since it somehow breaks the marker width
+    // I'll fix later maybe
+    const background = Sprite.from(Texture.WHITE);
+    background.width = game.scaledColumnWidth;
 
-    if (!this.game.replayPlayer) {
-      hitArea.eventMode = "static";
-      hitArea.cursor = "pointer";
-
-      hitArea.on("pointerdown", () => {
-        this.game.inputSystem.hit(this.columnId);
-      });
-
-      hitArea.on("pointerup", () => {
-        this.game.inputSystem.release(this.columnId);
-      });
-
-      hitArea.on("pointerupoutside", () => {
-        this.game.inputSystem.pressedColumns[this.columnId] = false;
-        this.game.inputSystem.releasedColumns[this.columnId] = true;
-
-        this.game.inputSystem.release(this.columnId);
-      });
-    }
-
-    this.view.addChild(hitArea);
+    this.view.addChild(background);
     this.view.x =
       this.game.stageSideWidth + this.columnId * this.game.scaledColumnWidth;
+    this.view.alpha = this.game.settings.ui.receptorOpacity;
   }
 
   public update() {

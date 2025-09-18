@@ -1,5 +1,6 @@
 import {
   BeatmapData,
+  Break,
   Difficulty,
   HitObject,
   HitWindows,
@@ -12,12 +13,7 @@ import {
   Settings,
   useSettingsStore,
 } from "@/stores/settingsStore";
-import {
-  Column,
-  GameState,
-  Judgement as JudgementValue,
-  PlayResults,
-} from "@/types";
+import { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
@@ -60,6 +56,7 @@ import { BarTap } from "./sprites/tap/barTap";
 import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
+import { TouchHitboxes } from "./sprites/touchHitboxes";
 import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
@@ -85,8 +82,6 @@ export class Game {
   public hitPositionOffset: number;
   public stagePositionOffset: number;
   public scaledColumnWidth: number;
-
-  public judgementToShow: JudgementValue | null = null;
 
   // Systems
   public healthSystem?: HealthSystem;
@@ -131,6 +126,7 @@ export class Game {
   public notesContainer: Container = new Container();
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
+  public touchHitboxes?: TouchHitboxes;
   public stageHint: StageHint;
   public judgement?: Judgement;
   private progressBar?: ProgressBar;
@@ -144,6 +140,8 @@ export class Game {
 
   public startTime: number;
   public endTime: number;
+
+  public breaks: Break[];
 
   private pauseCountdown: number;
 
@@ -168,6 +166,7 @@ export class Game {
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
+    this.breaks = beatmapData.breaks;
     this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
 
@@ -190,6 +189,10 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = (failed?: boolean) => {
+      if (this.replayRecorder) {
+        this.replayRecorder.replayData.timestamp = Date.now();
+      }
+
       setResults({
         320: this.scoreSystem[320],
         300: this.scoreSystem[300],
@@ -202,8 +205,8 @@ export class Game {
         maxCombo: this.scoreSystem.maxCombo,
         failed,
         viewingReplay: !!this.replayPlayer,
-        replayData:
-          this.replayRecorder?.replayData ?? this.replayPlayer?.replayData,
+        replayData: (this.replayRecorder?.replayData ??
+          this.replayPlayer?.replayData)!,
         hitErrors: this.scoreSystem.hitErrors,
       });
     };
@@ -325,11 +328,11 @@ export class Game {
     this.stageContainer.pivot.x = this.stageContainer.width / 2;
     this.stageContainer.pivot.y = this.app.screen.height / 2;
 
-    this.stageContainer.x = this.app.screen.width / 2;
-    this.stageContainer.y = this.app.screen.height / 2;
-
     this.stageContainer.x =
       this.app.screen.width / 2 + this.stagePositionOffset;
+    this.stageContainer.y = this.app.screen.height / 2;
+
+    this.touchHitboxes?.resize();
 
     this.judgement?.resize();
 
@@ -453,6 +456,10 @@ export class Game {
 
     this.addKeys();
 
+    if (!this.replayPlayer) {
+      this.addTouchHitboxes();
+    }
+
     if (this.settings.ui.showJudgement) {
       this.addJudgement();
     }
@@ -563,11 +570,7 @@ export class Game {
           this.updateHitObjects();
         }
 
-        if (this.judgement && this.judgementToShow !== null) {
-          this.judgement.showJudgement(this.judgementToShow);
-        }
-
-        this.judgementToShow = null;
+        this.judgement?.showJudgement();
 
         break;
 
@@ -761,9 +764,7 @@ export class Game {
 
   private addKeys() {
     for (let i = 0; i < this.difficulty.keyCount; i++) {
-      let key: Key;
-
-      key = new this.keyClass(this, i);
+      const key = new this.keyClass(this, i);
 
       this.keysContainer.addChild(key.view);
       this.keysContainer.eventMode = "static";
@@ -789,6 +790,11 @@ export class Game {
         hitObjects.filter((hitObject) => hitObject.data.column === i),
       );
     }
+  }
+
+  private addTouchHitboxes() {
+    this.touchHitboxes = new TouchHitboxes(this);
+    this.app.stage.addChild(this.touchHitboxes.view);
   }
 
   private addJudgement() {

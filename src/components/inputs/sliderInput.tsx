@@ -16,13 +16,15 @@ const SliderInput = ({
   tooltip,
   graphic,
   inWidget,
+  containerClassName,
   ...props
 }: {
-  label: string;
+  label?: string;
   selector: (settings: Settings) => number;
   tooltip?: string | ((value: any) => string);
   graphic?: (value: any) => ReactNode;
   inWidget?: boolean;
+  containerClassName?: string;
 } & ComponentProps<typeof Slider>) => {
   const value = useSettingsStore(selector);
   const [isActive, setIsActive] = useState(false);
@@ -46,15 +48,19 @@ const SliderInput = ({
         className={cn(
           "grid grid-cols-2 items-center",
           inWidget && "grid-cols-3",
+          containerClassName,
         )}
       >
-        <div className="pr-2 text-sm font-semibold text-muted-foreground">
-          {label}
-        </div>
+        {label !== undefined && (
+          <div className="pr-2 text-sm font-semibold text-muted-foreground">
+            {label}
+          </div>
+        )}
 
         <div
           className={cn(
             "group flex items-center gap-4",
+            label === undefined && "col-start-1 -col-end-1",
             inWidget && "col-start-2 -col-end-1",
           )}
         >

@@ -1,8 +1,11 @@
+import { rateLimit } from "@/lib/api/ratelimit";
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 export async function GET(request: NextRequest) {
+  if (!rateLimit(request)) {
+    return new NextResponse("Too many requests. Slow down!", { status: 429 });
+  }
+
   const requestUrl = new URL(request.url);
 
   const destinationUrl = requestUrl.searchParams.get("destinationUrl");

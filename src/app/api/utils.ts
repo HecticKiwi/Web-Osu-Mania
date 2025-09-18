@@ -1,4 +1,4 @@
-import { getRequestContext } from "@cloudflare/next-on-pages";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 type OAuthTokenData = {
   token_type: string;
@@ -7,7 +7,7 @@ type OAuthTokenData = {
 };
 
 export async function getAccessToken() {
-  const TOKENS = getRequestContext().env.TOKENS;
+  const TOKENS = getCloudflareContext().env.TOKENS;
 
   let accessToken = await TOKENS.get("osu_api_access_token");
 

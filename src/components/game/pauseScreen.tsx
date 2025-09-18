@@ -2,11 +2,13 @@
 
 import { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
+import { Fullscreen } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 import { Button } from "../ui/button";
+import { toast } from "../ui/use-toast";
 
 const PauseScreen = ({
   beatmapData,
@@ -32,6 +34,21 @@ const PauseScreen = ({
   const title = preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
+
+  function handleFullscreen() {
+    const gameDiv = document.getElementById("game");
+
+    if (!document.fullscreenElement && gameDiv) {
+      gameDiv.requestFullscreen().catch((err) => {
+        toast({
+          title: "Fullscreen Error",
+          description: `Failed to enable fullscreen mode: ${err.message}`,
+        });
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
 
   return (
     <>
@@ -66,7 +83,7 @@ const PauseScreen = ({
               {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-2 py-0.5"
+                  className="rounded-full bg-primary/25 px-3 py-0.5"
                 >
                   {mod}
                 </span>
@@ -74,7 +91,16 @@ const PauseScreen = ({
             </div>
           </div>
 
-          <div className="mt-16 flex flex-col gap-12">
+          <Button
+            className="mt-16 max-w-fit gap-2 text-xl"
+            onClick={handleFullscreen}
+            variant={"outline"}
+          >
+            <Fullscreen />
+            Fullscreen
+          </Button>
+
+          <div className="mt-8 flex flex-col gap-12">
             <Button
               className="h-20 text-2xl font-semibold lg:h-28"
               onClick={() => setIsPaused(false)}

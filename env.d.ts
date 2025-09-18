@@ -1,3 +1,0 @@
-interface CloudflareEnv {
-  TOKENS: KVNamespace;
-}
