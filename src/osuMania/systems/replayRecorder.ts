@@ -3,6 +3,10 @@ import { EncodedMods, encodeMods } from "@/lib/replay";
 import { Game } from "../game";
 
 export type ReplayData = {
+  /**
+   * V1: fixes audio offset
+   */
+  version: number;
   timestamp?: number;
   beatmap: {
     id: number;
@@ -25,6 +29,7 @@ export class ReplayRecorder {
     this.game = game;
 
     this.replayData = {
+      version: 1,
       beatmap: {
         id: Number(beatmapData.beatmapId),
         setId: beatmapData.beatmapSetId,
@@ -49,7 +54,7 @@ export class ReplayRecorder {
     }
 
     this.replayData.inputs[column].push([
-      this.keyTimes[column],
+      this.keyTimes[column] + this.game.settings.audioOffset,
       time - this.keyTimes[column],
     ]);
 
