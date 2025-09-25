@@ -22,7 +22,7 @@ const MobileSidebar = () => {
         <SheetContent className="w-full max-w-[620px] bg-background/50 p-2 sm:max-w-[620px]">
           <DialogTitle className="sr-only">Sidebar</DialogTitle>
           <DialogDescription className="sr-only">
-            Edit filters, mods, and settings
+            Edit filters, mods, settings and more.
           </DialogDescription>
 
           <div className="flex h-full flex-col">
