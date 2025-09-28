@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { BeatmapSet } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
@@ -9,7 +15,7 @@ import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
 import TextLink from "../textLink";
 import DifficultyBars from "./difficultyBars";
-import HighScoreToolTip from "./highScore";
+import HighScoreEntry from "./highScoreEntry";
 
 const BeatmapList = ({
   beatmapSet,
@@ -65,42 +71,64 @@ const BeatmapList = ({
           filteredBeatmaps
             .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
             .map((beatmap) => {
-              const highScore = highScores[beatmapSet.id]?.[beatmap.id];
+              const beatmapScores =
+                highScores[beatmapSet.id]?.[beatmap.id] ?? [];
 
               return (
-                <div
-                  key={beatmap.id}
-                  className="cursor-pointer rounded bg-slate-500/5 p-2 text-start transition hover:bg-white/5"
-                  onClick={() => {
-                    stopPreview();
-                    setBeatmapSet(beatmapSet);
-                    startGame(beatmap.id);
-                  }}
-                >
-                  <div className="flex gap-3">
-                    <ManiaIcon
-                      difficultyRating={beatmap.difficulty_rating}
-                      className="shrink-0"
-                    />
+                <div key={beatmap.id}>
+                  <div
+                    className="cursor-pointer rounded bg-slate-500/5 p-2 text-start transition hover:bg-white/5"
+                    onClick={() => {
+                      stopPreview();
+                      setBeatmapSet(beatmapSet);
+                      startGame(beatmap.id);
+                    }}
+                  >
+                    <div className="flex gap-3">
+                      <ManiaIcon
+                        difficultyRating={beatmap.difficulty_rating}
+                        className="shrink-0"
+                      />
 
-                    <div className="grow overflow-hidden">
-                      <button className="max-w-full truncate text-start">
-                        {beatmap.version}
-                      </button>
+                      <div className="grow overflow-hidden">
+                        <button className="max-w-full truncate text-start">
+                          {beatmap.version}
+                        </button>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {beatmap.difficulty_rating.toFixed(2)}★
-                        </span>
-
-                        {highScore && (
-                          <HighScoreToolTip highScore={highScore} />
-                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">
+                            {beatmap.difficulty_rating.toFixed(2)}★
+                          </span>
+                        </div>
                       </div>
                     </div>
+
+                    <DifficultyBars od={beatmap.accuracy} hp={beatmap.drain} />
                   </div>
 
-                  <DifficultyBars od={beatmap.accuracy} hp={beatmap.drain} />
+                  {beatmapScores.length > 0 && (
+                    <Accordion type="single" collapsible className="mt-0.5">
+                      <AccordionItem value="scores" className="border-none">
+                        <AccordionTrigger className="p-0 px-2 text-sm text-muted-foreground">
+                          {beatmapScores.length} High Score
+                          {beatmapScores.length === 1 ? "" : "s"}
+                        </AccordionTrigger>
+                        <AccordionContent className="p-0">
+                          <div className="">
+                            {beatmapScores?.map((score, i) => (
+                              <HighScoreEntry
+                                key={i}
+                                position={i + 1}
+                                highScore={score}
+                                beatmapSet={beatmapSet}
+                                beatmap={beatmap}
+                              />
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
                 </div>
               );
             })}

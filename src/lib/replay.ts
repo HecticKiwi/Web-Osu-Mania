@@ -76,11 +76,11 @@ export async function downloadReplay(
     const replayDataString = JSON.stringify(replayData);
     const encoded = new TextEncoder().encode(replayDataString);
     const compressed = compressSync(encoded);
-    const blob = new Blob([compressed], {
+    const blob = new Blob([compressed as BlobPart], {
       type: "application/octet-stream",
     });
 
-    const filename = `${getReplayFilename(beatmapData, results)}.womr`;
+    const filename = `${getReplayFilename(beatmapData.beatmapId, beatmapData.metadata.title, beatmapData.metadata.version, results)}.womr`;
 
     await downloadBlob(blob, filename);
 
