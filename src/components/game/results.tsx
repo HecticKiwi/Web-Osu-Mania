@@ -12,12 +12,12 @@ import TimingDistributionChart from "./timingDistributionChart";
 const Results = ({
   beatmapData,
   playResults,
-  newHighScore,
+  highScorePosition,
   responsive,
 }: {
   beatmapData: BeatmapData;
   playResults: PlayResults;
-  newHighScore?: boolean;
+  highScorePosition: number | null;
   responsive?: boolean;
 }) => {
   const beatmapSet = useGameStore.use.beatmapSet();
@@ -146,9 +146,9 @@ const Results = ({
                 {playResults.score.toLocaleString()}
               </span>
 
-              {newHighScore && (
+              {highScorePosition !== null && (
                 <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
-                  New high score!
+                  New #{highScorePosition} high score!
                 </div>
               )}
             </div>

@@ -13,7 +13,10 @@ import { PlayResults } from "@/types";
 import { Camera, MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
-import { useHighScoresStore } from "../../stores/highScoresStore";
+import {
+  MAX_SCORES_PER_BEATMAP,
+  useHighScoresStore,
+} from "../../stores/highScoresStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 import Results from "./results";
@@ -34,7 +37,9 @@ const ResultsScreen = ({
   const mods = useSettingsStore.use.mods();
   const highScores = useHighScoresStore.use.highScores();
   const setHighScores = useHighScoresStore.use.setHighScores();
-  const [newHighScore, setNewHighScore] = useState(false);
+  const [highScorePosition, setHighScorePosition] = useState<number | null>(
+    null,
+  );
   const hiddenRef = useRef<HTMLDivElement>(null);
 
   // Check for new high score
@@ -44,13 +49,25 @@ const ResultsScreen = ({
     }
 
     const checkNewHighScore = async () => {
+      if (!playResults.replayData) {
+        return;
+      }
+
       const beatmapSetId = beatmapSet.id;
+      const currentScores = highScores[beatmapSetId]?.[beatmapId] ?? [];
 
-      const previousHighScore =
-        highScores[beatmapSetId]?.[beatmapId]?.results.score ?? 0;
+      let position = 0;
+      while (
+        position < currentScores.length &&
+        playResults.score <= currentScores[position].results.score
+      ) {
+        position++;
+      }
 
-      if (playResults.score > previousHighScore && playResults.replayData) {
-        await idb.saveReplay(playResults.replayData, beatmapId.toString());
+      if (position < MAX_SCORES_PER_BEATMAP && !highScorePosition) {
+        const replayId = `${beatmapId} ${crypto.randomUUID()}`;
+
+        await idb.saveReplay(playResults.replayData, replayId);
 
         // Trim out properties that don't need to be saved
         const { failed, viewingReplay, replayData, hitErrors, ...results } =
@@ -58,16 +75,21 @@ const ResultsScreen = ({
 
         setHighScores((draft) => {
           draft[beatmapSetId] ??= {};
+          draft[beatmapSetId][beatmapId] ??= [];
 
-          draft[beatmapSetId][beatmapId] = {
+          draft[beatmapSetId][beatmapId].splice(position, 0, {
             timestamp: replayData.timestamp!,
             mods: getModStrings(mods),
             results,
-            replayId: beatmapId.toString(),
-          };
+            replayId,
+          });
+
+          if (draft[beatmapSetId][beatmapId].length > MAX_SCORES_PER_BEATMAP) {
+            draft[beatmapSetId][beatmapId].pop();
+          }
         });
 
-        setNewHighScore(true);
+        setHighScorePosition(position + 1);
       }
     };
 
@@ -84,7 +106,7 @@ const ResultsScreen = ({
             <Results
               beatmapData={beatmapData}
               playResults={playResults}
-              newHighScore={newHighScore}
+              highScorePosition={highScorePosition}
             />
           </div>
         </div>
@@ -92,7 +114,7 @@ const ResultsScreen = ({
         <Results
           beatmapData={beatmapData}
           playResults={playResults}
-          newHighScore={newHighScore}
+          highScorePosition={highScorePosition}
           responsive
         />
 
@@ -131,7 +153,7 @@ const ResultsScreen = ({
                           return;
                         }
 
-                        const filename = `${getReplayFilename(beatmapData, playResults)}.png`;
+                        const filename = `${getReplayFilename(beatmapData.beatmapSetId, beatmapData.metadata.title, beatmapData.version, playResults)}.png`;
                         downloadResults(hiddenRef.current, filename);
                       }}
                     >
