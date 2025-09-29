@@ -85,7 +85,9 @@ const ResultsScreen = ({
           });
 
           if (draft[beatmapSetId][beatmapId].length > MAX_SCORES_PER_BEATMAP) {
-            draft[beatmapSetId][beatmapId].pop();
+            const replayIdToDelete =
+              draft[beatmapSetId][beatmapId].pop()!.replayId;
+            idb.deleteReplay(replayIdToDelete);
           }
         });
 
