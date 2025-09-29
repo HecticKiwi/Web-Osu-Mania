@@ -40,6 +40,7 @@ export async function downloadBackup(
     addLocalStorageFileToZip(zipWriter, "savedBeatmapSets");
   }
 
+  // Do NOT export storedBeatmapSets or beatmapFiles for Supabase backup
   if (selectedData.includes("storedBeatmapSets")) {
     addLocalStorageFileToZip(zipWriter, "storedBeatmapSets");
   }
@@ -83,7 +84,7 @@ function addLocalStorageFileToZip(
   if (!data) {
     return;
   }
-
+    
   zipWriter.add(`${localStorageKey}.json`, new TextReader(data));
 }
 
