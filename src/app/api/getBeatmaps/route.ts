@@ -2,7 +2,7 @@ import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken } from "../utils";
+import { getAccessToken, trimBeatmapSet } from "../utils";
 
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
@@ -90,6 +90,10 @@ export async function GET(request: NextRequest) {
   }
 
   const data: GetBeatmapsResponse = await response.json();
+
+  data.beatmapsets = data.beatmapsets.map((beatmapSet) =>
+    trimBeatmapSet(beatmapSet),
+  );
 
   await BEATMAP_SETS.put(cacheKey, JSON.stringify(data), {
     expirationTtl: 3600,

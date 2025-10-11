@@ -2,7 +2,7 @@ import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
-import { getAccessToken } from "../utils";
+import { getAccessToken, trimBeatmapSet } from "../utils";
 
 export async function GET(request: NextRequest) {
   if (!rateLimit(request)) {
@@ -48,11 +48,13 @@ export async function GET(request: NextRequest) {
 
   const data: BeatmapSet = await response.json();
 
-  await BEATMAP_SET_DATA.put(beatmapSetId, JSON.stringify(data), {
+  const trimmedData = trimBeatmapSet(data);
+
+  await BEATMAP_SET_DATA.put(beatmapSetId, JSON.stringify(trimmedData), {
     expirationTtl: 86400,
   });
 
-  return NextResponse.json(data, {
+  return NextResponse.json(trimmedData, {
     headers: {
       "Cache-Control": "public, max-age=3600",
     },

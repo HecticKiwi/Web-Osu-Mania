@@ -14,14 +14,16 @@ import { BASE_PATH } from "./utils";
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
-type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
+// type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
+
+// Commented properties are unused and removed before caching
 
 export type Beatmap = {
   beatmapset_id: number;
   difficulty_rating: number;
   id: number;
   mode: Ruleset;
-  status: RankStatus;
+  // status: RankStatus;
   total_length: number;
   user_id: number;
   version: string;
@@ -33,13 +35,13 @@ export type Beatmap = {
 
 type Covers = {
   cover: string;
-  "cover@2x": string;
-  card: string;
-  "card@2x": string;
-  list: string;
-  "list@2x": string;
-  slimcover: string;
-  "slimcover@2x": string;
+  // "cover@2x": string;
+  // card: string;
+  // "card@2x": string;
+  // list: string;
+  // "list@2x": string;
+  // slimcover: string;
+  // "slimcover@2x": string;
 };
 
 export type BeatmapSet = {
@@ -47,21 +49,20 @@ export type BeatmapSet = {
   artist_unicode: string;
   covers: Covers;
   creator: string;
-  favourite_count: number;
+  // favourite_count: number;
   id: number;
   nsfw: boolean;
   offset: number;
-  play_count: number;
+  // play_count: number;
   preview_url: string;
-  source: string;
-  status: string;
-  spotlight: boolean;
+  // source: string;
+  // status: string;
+  // spotlight: boolean;
   title: string;
   title_unicode: string;
-  user_id: number;
-  video: boolean;
+  // user_id: number;
+  // video: boolean;
 
-  // Optional
   beatmaps: Beatmap[];
 };
 
