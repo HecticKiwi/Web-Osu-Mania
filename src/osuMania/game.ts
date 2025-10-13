@@ -499,8 +499,6 @@ export class Game {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();
 
-    this.replayPlayer?.update();
-
     if (this.inputSystem.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
     }
@@ -526,6 +524,8 @@ export class Game {
 
       case "PLAY":
         this.timeElapsed = Math.round(this.song.seek() * 1000);
+
+        this.replayPlayer?.update();
 
         if (this.countdown.view.visible) {
           this.countdown.update(

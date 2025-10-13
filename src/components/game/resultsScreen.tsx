@@ -44,7 +44,13 @@ const ResultsScreen = ({
 
   // Check for new high score
   useEffect(() => {
-    if (!beatmapId || !beatmapSet || mods.autoplay || playResults.failed) {
+    if (
+      !beatmapId ||
+      !beatmapSet ||
+      mods.autoplay ||
+      playResults.failed ||
+      playResults.viewingReplay
+    ) {
       return;
     }
 
