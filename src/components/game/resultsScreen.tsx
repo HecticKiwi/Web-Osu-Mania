@@ -102,7 +102,15 @@ const ResultsScreen = ({
     };
 
     checkNewHighScore();
-  }, [beatmapId, beatmapSet, highScores, playResults, setHighScores, mods]);
+  }, [
+    beatmapId,
+    beatmapSet,
+    highScores,
+    playResults,
+    setHighScores,
+    mods,
+    highScorePosition,
+  ]);
 
   return (
     <>
