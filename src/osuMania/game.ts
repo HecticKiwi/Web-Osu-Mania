@@ -503,11 +503,6 @@ export class Game {
       this.setIsPaused((prev) => !prev);
     }
 
-    if (!this.settings.mods.autoplay) {
-      this.stageLights.forEach((stageLight) => stageLight.update());
-      this.keys.forEach((key) => key.update());
-    }
-
     switch (this.state) {
       case "WAIT":
         if (this.replayPlayer || this.inputSystem.anyColumnTapped()) {
@@ -526,6 +521,11 @@ export class Game {
         this.timeElapsed = Math.round(this.song.seek() * 1000);
 
         this.replayPlayer?.update();
+
+        if (!this.settings.mods.autoplay) {
+          this.stageLights.forEach((stageLight) => stageLight.update());
+          this.keys.forEach((key) => key.update());
+        }
 
         if (this.countdown.view.visible) {
           this.countdown.update(
