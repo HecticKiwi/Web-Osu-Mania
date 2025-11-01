@@ -101,7 +101,8 @@ export abstract class Tap {
 
     this.view.visible = true;
     this.view.y =
-      this.game.hitPosition -
+      this.game.hitPosition +
+      this.game.settings.noteOffset -
       this.game.getHitObjectOffset(this.game.timeElapsed, this.data.time);
 
     const column = this.game.columns[this.data.column];

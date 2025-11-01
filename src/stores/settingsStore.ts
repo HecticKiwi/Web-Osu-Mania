@@ -59,6 +59,7 @@ export type Settings = {
   upscroll: boolean;
   darkerHoldNotes: boolean;
   hitPositionOffset: number;
+  noteOffset: number;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
   proxyBeatmapDownloads: boolean;
@@ -132,6 +133,7 @@ export const defaultSettings: Settings = {
   upscroll: false,
   darkerHoldNotes: true,
   hitPositionOffset: 130,
+  noteOffset: 0,
   beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
   proxyBeatmapDownloads: false,
