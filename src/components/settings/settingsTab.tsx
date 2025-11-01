@@ -240,7 +240,7 @@ const SettingsTab = () => {
         <SliderInput
           label="Hit Position"
           selector={(state) => state.hitPositionOffset}
-          tooltip={(hitPositionOffset) => hitPositionOffset}
+          tooltip={(hitPositionOffset) => `${hitPositionOffset}px`}
           onValueChange={([hitPositionOffset]) =>
             setSettings((draft) => {
               draft.hitPositionOffset = hitPositionOffset;
@@ -250,11 +250,35 @@ const SettingsTab = () => {
           max={200}
           step={1}
         />
+
+        <p className="text-sm text-muted-foreground">
+          Affects the vertical position of the note receptors.
+        </p>
+
+        <SliderInput
+          label="Note Offset"
+          selector={(state) => state.noteOffset}
+          tooltip={(noteOffset) => `${noteOffset}px`}
+          onValueChange={([noteOffset]) =>
+            setSettings((draft) => {
+              draft.noteOffset = noteOffset;
+            })
+          }
+          min={-100}
+          max={100}
+          step={1}
+        />
+
+        <p className="text-sm text-muted-foreground">
+          Affects when notes should visually be hit relative to the note
+          receptors.
+        </p>
+
         <SliderInput
           label="Lane Width Adjustment"
           selector={(state) => state.laneWidthAdjustment}
           tooltip={(laneWidthAdjustment) =>
-            `${Math.round(laneWidthAdjustment)}`
+            `${Math.round(laneWidthAdjustment)}px`
           }
           onValueChange={([laneWidthAdjustment]) =>
             setSettings((draft) => {
