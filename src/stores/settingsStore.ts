@@ -22,6 +22,9 @@ export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
   diamonds: "◆",
 };
 
+// 105C Chocolate
+// Rey's skin
+
 export const EARLY_LATE_THRESHOLDS = [-1, 200, 300, 320] as const;
 export type EarlyLateThreshold = (typeof EARLY_LATE_THRESHOLDS)[number];
 
@@ -113,6 +116,7 @@ export type Settings = {
       };
       custom: ColumnColor[][];
     };
+    judgementSet: number;
   };
 };
 
@@ -350,6 +354,7 @@ export const defaultSettings: Settings = {
       },
       custom: getAllLaneColors(212, true),
     },
+    judgementSet: 0,
   },
 } as const;
 
@@ -417,6 +422,11 @@ function fillCallback(settings: Settings) {
   filledSettings.keybinds = {
     ...defaultSettings.keybinds,
     ...settings.keybinds,
+  };
+
+  filledSettings.skin = {
+    ...defaultSettings.skin,
+    ...settings.skin,
   };
 
   for (let i = 9; i < 18; i++) {

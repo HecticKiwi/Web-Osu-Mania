@@ -62,7 +62,7 @@ export class Judgement {
     const earlyOrLate = this.earlyOrLateToShow;
 
     this.judgement.texture = Texture.from(
-      `${BASE_PATH}/skin/mania-hit${judgement === 320 ? "300g" : judgement}-0.png`,
+      `${BASE_PATH}/skin/judgementSet${this.game.settings.skin.judgementSet}/mania-hit${judgement === 320 ? "300g" : judgement}.png`,
     );
 
     this.view.alpha = 1;
