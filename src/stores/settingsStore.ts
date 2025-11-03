@@ -22,6 +22,51 @@ export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
   diamonds: "◆",
 };
 
+export const JUDGEMENT_SET_OPTIONS: {
+  id: string;
+  label: string;
+  scale: number;
+  creator: string;
+  url: string;
+}[] = [
+  {
+    id: "azureSnowfall",
+    label: "Azure Snowfall",
+    scale: 1,
+    creator: "thetasigma's skin",
+    url: "https://osu.ppy.sh/community/forums/topics/1498492?n=1",
+  },
+  {
+    id: "chocolate",
+    label: "105°C Chocolate",
+    scale: 1,
+    creator: "Tkieen's skin",
+    url: "https://osu.ppy.sh/community/forums/topics/1496067",
+  },
+  {
+    id: "bangDream",
+    label: "BanG Dream!",
+    scale: 0.6,
+    creator: "Hello_Real's skin",
+    url: "https://www.curseforge.com/osugame/skins/reys-skin-accuracy",
+  },
+  {
+    id: "fnf",
+    label: "Friday Night Funkin'",
+    scale: 0.45,
+    creator: "Saltssaumure's skin",
+    url: "https://skins.osuck.net/skins/2058",
+  },
+  {
+    id: "osuStable",
+    label: "osu!(stable)",
+    scale: 0.35,
+    creator: "the official osu! assets",
+    url: "https://github.com/ppy/osu-resources/tree/master/osu.Game.Resources/Skins/Legacy",
+  },
+] as const;
+export type JudgementSetId = (typeof JUDGEMENT_SET_OPTIONS)[number]["id"];
+
 export const EARLY_LATE_THRESHOLDS = [-1, 200, 300, 320] as const;
 export type EarlyLateThreshold = (typeof EARLY_LATE_THRESHOLDS)[number];
 
@@ -114,6 +159,7 @@ export type Settings = {
       };
       custom: ColumnColor[][];
     };
+    judgementSet: JudgementSetId;
   };
 };
 
@@ -352,6 +398,7 @@ export const defaultSettings: Settings = {
       },
       custom: getAllLaneColors(212, true),
     },
+    judgementSet: "azureSnowfall",
   },
 } as const;
 
@@ -419,6 +466,11 @@ function fillCallback(settings: Settings) {
   filledSettings.keybinds = {
     ...defaultSettings.keybinds,
     ...settings.keybinds,
+  };
+
+  filledSettings.skin = {
+    ...defaultSettings.skin,
+    ...settings.skin,
   };
 
   for (let i = 9; i < 18; i++) {

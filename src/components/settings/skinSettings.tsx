@@ -32,6 +32,7 @@ import RadioGroupInput from "../inputs/radioGroupInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
 import { Input } from "../ui/input";
+import JudgementSet from "./judgementSet";
 
 const SkinSettings = () => {
   const setSettings = useSettingsStore.use.setSettings();
@@ -45,9 +46,12 @@ const SkinSettings = () => {
   return (
     <>
       <h3 className="mb-2 mt-6 text-lg font-semibold">Skin</h3>
+
       <div className="space-y-4">
+        <JudgementSet />
+
         <RadioGroupInput
-          label="Style"
+          label="Note Style"
           selector={(state) => state.style}
           onValueChange={(value: string) =>
             setSettings((draft) => {
