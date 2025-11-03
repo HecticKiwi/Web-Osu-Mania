@@ -1,4 +1,5 @@
-import { BASE_PATH } from "@/lib/utils";
+import { getJudgementUrl } from "@/lib/utils";
+import { JUDGEMENT_SET_OPTIONS } from "@/stores/settingsStore";
 import { Judgement as JudgementValue } from "@/types";
 import { gsap } from "gsap";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
@@ -11,6 +12,7 @@ export class Judgement {
   public judgement: Sprite;
   public earlyOrLate: BitmapText;
 
+  private judgementBaseScale: number;
   private timeout: NodeJS.Timeout | null = null;
 
   public judgementToShow: JudgementValue | null = null;
@@ -22,6 +24,16 @@ export class Judgement {
     this.view = new Container();
     this.view.alpha = 0;
     this.view.zIndex = 99;
+
+    const judgementSet = JUDGEMENT_SET_OPTIONS.find(
+      (set) => set.id === this.game.settings.skin.judgementSet,
+    );
+    if (!judgementSet) {
+      throw new Error(
+        `Judgement set not found: ${this.game.settings.skin.judgementSet}`,
+      );
+    }
+    this.judgementBaseScale = judgementSet.scale;
 
     this.judgement = new Sprite();
     this.judgement.anchor.set(0.5);
@@ -62,11 +74,11 @@ export class Judgement {
     const earlyOrLate = this.earlyOrLateToShow;
 
     this.judgement.texture = Texture.from(
-      `${BASE_PATH}/skin/judgementSet${this.game.settings.skin.judgementSet}/mania-hit${judgement === 320 ? "300g" : judgement}.png`,
+      getJudgementUrl(judgement, this.game.settings.skin.judgementSet),
     );
 
     this.view.alpha = 1;
-    this.judgement.scale.set(1);
+    this.judgement.scale.set(this.judgementBaseScale);
     this.earlyOrLate.scale.set(1);
 
     if (
@@ -99,7 +111,7 @@ export class Judgement {
     } else {
       gsap.from(this.judgement, {
         pixi: {
-          scale: 1.2,
+          scale: this.judgementBaseScale * 1.2,
         },
         duration: 0.3,
         overwrite: true,

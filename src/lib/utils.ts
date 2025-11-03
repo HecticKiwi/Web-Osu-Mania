@@ -1,6 +1,6 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import { Settings } from "@/stores/settingsStore";
-import { Results } from "@/types";
+import { JudgementSetId, Settings } from "@/stores/settingsStore";
+import { Judgement, Results } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { decodeMods, EncodedMods } from "./replay";
@@ -263,4 +263,11 @@ export function getHpOrOdAfterMods(
   }
 
   return value;
+}
+
+export function getJudgementUrl(
+  judgement: Judgement,
+  judgementSet: JudgementSetId,
+) {
+  return `${BASE_PATH}/skin/judgements-${judgementSet}/mania-hit${judgement === 320 ? "300g" : judgement}.png`;
 }
