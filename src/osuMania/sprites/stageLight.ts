@@ -38,7 +38,7 @@ export class StageLight {
   public update() {
     if (this.game.inputSystem.pressedColumns[this.columnId]) {
       gsap.killTweensOf(this.view);
-      this.view.alpha = 0.5;
+      this.view.alpha = 0.5 * this.game.settings.ui.receptorOpacity;
     }
 
     if (this.game.inputSystem.releasedColumns[this.columnId]) {
@@ -52,7 +52,7 @@ export class StageLight {
   }
 
   public light() {
-    this.view.alpha = 0.5;
+    this.view.alpha = 0.5 * this.game.settings.ui.receptorOpacity;
 
     const quickAlpha = gsap.quickTo(this.view, "alpha", {
       duration: 0.3,

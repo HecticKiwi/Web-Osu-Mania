@@ -128,7 +128,7 @@ export const parseOsz = async (
     .replace(regex, "")
     .replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
 
-  const pattern = new RegExp(`Version:${diffName}(\r|\n)`);
+  const pattern = new RegExp(`Version:\\s?${diffName}(\r|\n)`);
 
   let osuFileData;
   const osuEntries = entries.filter((entry) => entry.filename.endsWith(".osu"));

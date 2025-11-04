@@ -25,7 +25,9 @@ export class ReplayPlayer {
     this.replayData = replayData;
 
     for (const input of inputs) {
-      const [column, time, length] = input;
+      const [column, rawTime, length] = input;
+      const time =
+        replayData.version >= 1 ? rawTime - game.settings.audioOffset : rawTime;
 
       this.events.push(
         {

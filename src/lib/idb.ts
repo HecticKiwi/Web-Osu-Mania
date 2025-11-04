@@ -151,6 +151,11 @@ class Idb {
     return id;
   }
 
+  public async deleteReplay(id: string): Promise<void> {
+    const db = await this.db;
+    await db.delete("replayFiles", id);
+  }
+
   public async getReplay(id: string) {
     const db = await this.db;
     const result = await db.get("replayFiles", id);

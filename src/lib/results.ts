@@ -1,12 +1,16 @@
 import { downloadUrl } from "@/lib/utils";
 import { Results } from "@/types";
 import { domToPng } from "modern-screenshot";
-import { BeatmapData } from "./beatmapParser";
 
-export function getReplayFilename(beatmapData: BeatmapData, results: Results) {
+export function getReplayFilename(
+  beatmapSetId: number,
+  title: string,
+  version: string,
+  results: Results,
+) {
   const score = results.score.toLocaleString();
   const accuracy = (results.accuracy * 100).toFixed(2).replace(".", "-");
-  const filename = `${beatmapData.beatmapSetId} ${beatmapData.metadata.title} ${beatmapData.version} Scr${score} Acc${accuracy}`;
+  const filename = `${beatmapSetId} ${title} ${version} Scr${score} Acc${accuracy}`;
 
   return filename;
 }

@@ -60,7 +60,9 @@ export class InputSystem {
     }
 
     this.game.replayRecorder?.record(column, true);
-    this.game.columns[column][0]?.hit(timeElapsed);
+    this.game.columns[column]
+      .find((hitObject) => !hitObject.shouldRemove)
+      ?.hit(timeElapsed);
     this.game.audioSystem.playNextHitsounds(column);
   }
 
@@ -81,11 +83,14 @@ export class InputSystem {
     }
 
     this.game.replayRecorder?.record(column, false);
-    this.game.columns[column][0]?.release(timeElapsed);
+    this.game.columns[column]
+      .find((hitObject) => !hitObject.shouldRemove)
+      ?.release(timeElapsed);
   }
 
   public updateGamepadInputs() {
-    const gamepad = navigator.getGamepads().find((gp) => gp !== null) || null;
+    const gamepad =
+      Array.from(navigator.getGamepads()).find((gp) => gp !== null) || null;
     if (!gamepad) return;
 
     gamepad.buttons.forEach((button, i) => {
