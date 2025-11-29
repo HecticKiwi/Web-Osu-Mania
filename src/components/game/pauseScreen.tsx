@@ -75,7 +75,9 @@ const PauseScreen = ({
 
           <div className="mt-3 flex flex-wrap gap-2">
             <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
-              <p className="text-yellow-400">{beatmap?.difficulty_rating}★</p>
+              <p className="text-yellow-400">
+                {beatmap?.difficulty_rating.toFixed(2)}★
+              </p>
               <p className="line-clamp-1">{beatmapData.metadata.version}</p>
             </div>
 

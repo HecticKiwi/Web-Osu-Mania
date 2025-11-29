@@ -1,7 +1,7 @@
 import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
 import queryString from "query-string";
 import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
-import { Genre, GENRES } from "./searchParams/genreParam";
+import { Genre, GENRE_ID_MAP } from "./searchParams/genreParam";
 import { Language, LANGUAGE_INDEXES } from "./searchParams/languageParam";
 import {
   DEFAULT_SORT_CRITERIA,
@@ -107,7 +107,7 @@ export async function getBeatmaps({
       cursor_string: cursorString,
       s: category !== DEFAULT_CATEGORY ? category.toLowerCase() : undefined,
       nsfw,
-      g: GENRES.indexOf(genre) || undefined,
+      g: GENRE_ID_MAP[genre],
       l: LANGUAGE_INDEXES.get(language),
     },
   });
