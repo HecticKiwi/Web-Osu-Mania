@@ -14,7 +14,7 @@ export async function loadAssets() {
 
   await Promise.all([
     ...judgementPromises,
-    await Assets.load(`${BASE_PATH}/skin/arrow.svg`),
-    await Assets.load(`${BASE_PATH}/skin/arrowOutline.svg`),
+    Assets.load(`${BASE_PATH}/skin/arrow.svg`),
+    Assets.load(`${BASE_PATH}/skin/arrowOutline.svg`),
   ]);
 }
