@@ -99,7 +99,7 @@
     "@types/react-dom": "^18",
     "@types/streamsaver": "^2.0.5",
     "autoprefixer": "^10.0.1",
-    "eslint": "^8",
+    "eslint": "^9.39.1",
     "eslint-config-next": "16.0.6",
     "postcss": "^8",
     "prettier": "^3.2.5",
