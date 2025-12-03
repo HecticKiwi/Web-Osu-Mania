@@ -1,3 +1,4 @@
+import { BASE_PATH } from "@/lib/utils";
 import { arrowColumnRatio } from "@/osuMania/constants";
 import { Container, Sprite } from "pixi.js";
 import { Key } from "./key";
@@ -9,13 +10,13 @@ export class ArrowKey extends Key {
     const width = this.game.scaledColumnWidth * arrowColumnRatio;
     const height = this.game.scaledColumnWidth * arrowColumnRatio;
 
-    const bg = Sprite.from("/skin/arrowOutline.svg");
+    const bg = Sprite.from(`${BASE_PATH}/skin/arrowOutline.svg`);
     bg.anchor.set(0.5);
     bg.width = width;
     bg.height = height;
     bg.angle = this.game.laneArrowDirections[this.columnId];
 
-    this.marker = Sprite.from("/skin/arrow.svg");
+    this.marker = Sprite.from(`${BASE_PATH}/skin/arrow.svg`);
     this.marker.anchor.set(0.5);
     this.marker.angle = this.game.laneArrowDirections[this.columnId];
     this.marker.width = width;

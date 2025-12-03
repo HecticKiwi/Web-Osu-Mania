@@ -1,4 +1,5 @@
 import { TapData } from "@/lib/beatmapParser";
+import { BASE_PATH } from "@/lib/utils";
 import { arrowColumnRatio } from "@/osuMania/constants";
 import { Game } from "@/osuMania/game";
 import { Container, Sprite, Texture } from "pixi.js";
@@ -7,7 +8,7 @@ import { Tap } from "./tap";
 export class ArrowTap extends Tap {
   public static getArrowSprite(game: Game, column: number) {
     if (!Tap.renderTexture) {
-      Tap.renderTexture = Texture.from("/skin/arrow.svg");
+      Tap.renderTexture = Texture.from(`${BASE_PATH}/skin/arrow.svg`);
     }
 
     const width = game.scaledColumnWidth * arrowColumnRatio;
@@ -35,7 +36,7 @@ export class ArrowTap extends Tap {
     super(game, tapData);
 
     if (!Tap.renderTexture) {
-      Tap.renderTexture = Texture.from("/skin/arrow.svg");
+      Tap.renderTexture = Texture.from("${BASE_PATH}/skin/arrow.svg");
     }
 
     this.view = ArrowTap.getArrowSprite(game, tapData.column);
