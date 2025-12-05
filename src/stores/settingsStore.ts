@@ -113,6 +113,7 @@ export type Settings = {
   errorBarScale: number;
   preferMetadataInOriginalLanguage: boolean;
   unpauseDelay: number;
+  hideBeatmapSetCovers: boolean;
   retryOnFail: boolean;
   performanceMode: boolean;
   hue: number;
@@ -188,6 +189,7 @@ export const defaultSettings: Settings = {
   errorBarScale: 1,
   preferMetadataInOriginalLanguage: false,
   unpauseDelay: 1500,
+  hideBeatmapSetCovers: false,
   retryOnFail: false,
   performanceMode: false,
   hue: 212,
