@@ -21,6 +21,7 @@ import { Separator } from "../ui/separator";
 import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
+import HideBeatmapSetCoverWarning from "./hideBeatmapSetCoverWarning";
 import ReplaySettings from "./replaySettings";
 import SkinSettings from "./skinSettings";
 import UnpauseDelayWarning from "./unpauseDelayWarning";
@@ -53,6 +54,32 @@ const SettingsTab = () => {
           max={360}
           step={1}
         />
+
+        <SwitchInput
+          label="Prefer Metadata in Original Language"
+          selector={(state) => state.preferMetadataInOriginalLanguage}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.preferMetadataInOriginalLanguage = checked;
+            })
+          }
+        />
+
+        <SwitchInput
+          label="Hide Beatmap Set Covers"
+          selector={(state) => state.hideBeatmapSetCovers}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.hideBeatmapSetCovers = checked;
+            })
+          }
+        />
+
+        <HideBeatmapSetCoverWarning />
+      </div>
+
+      <h3 className="mt-6 text-lg font-semibold">Gameplay</h3>
+      <div className="mt-2 space-y-3">
         <SliderInput
           label="Background Dim"
           selector={(state) => state.backgroundDim}
@@ -157,19 +184,6 @@ const SettingsTab = () => {
           Enable performance mode if you are experiencing low FPS. This will
           disable animations and hitsounds.
         </p>
-      </div>
-
-      <h3 className="mt-6 text-lg font-semibold">Language</h3>
-      <div className="mt-2 space-y-3">
-        <SwitchInput
-          label="Prefer Metadata in Original Language"
-          selector={(state) => state.preferMetadataInOriginalLanguage}
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.preferMetadataInOriginalLanguage = checked;
-            })
-          }
-        />
       </div>
 
       <h3 className="mt-6 text-lg font-semibold">Touch Controls</h3>
