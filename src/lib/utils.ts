@@ -1,9 +1,5 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import {
-  COVER_TYPE_LABELS,
-  JudgementSetId,
-  Settings,
-} from "@/stores/settingsStore";
+import { JudgementSetId, Settings } from "@/stores/settingsStore";
 import { Judgement, Results } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -194,8 +190,8 @@ export function getModStrings(
       `Song Speed: ${mods.playbackRate}x`,
     mods.odOverride !== null && `Accuracy Override: ${mods.odOverride}`,
     mods.hpOverride !== null && `Health Drain Override: ${mods.hpOverride}`,
-    mods.cover &&
-      `Cover: ${mods.cover.amount * 100}% (${COVER_TYPE_LABELS[mods.cover.type]})`,
+    mods.cover?.type === "fadeIn" && `Fade In: (${mods.cover.amount * 100}%)`,
+    mods.cover?.type === "fadeOut" && `Fade Out: (${mods.cover.amount * 100}%)`,
   ].filter(Boolean) as string[];
 
   return modStrings;
