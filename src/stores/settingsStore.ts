@@ -83,6 +83,14 @@ export const earlyLateThresholdOptions: {
 export const touchModes = ["normal", "fullscreen"] as const;
 export type TouchMode = (typeof touchModes)[number];
 
+export const COVER_TYPES = ["fadeIn", "fadeOut"] as const;
+export type CoverType = (typeof COVER_TYPES)[number];
+
+export const COVER_TYPE_LABELS: Record<CoverType, string> = {
+  fadeIn: "Fade In",
+  fadeOut: "Fade Out",
+};
+
 export type ColumnColor = {
   tap: string;
   hold: string;
@@ -141,6 +149,10 @@ export type Settings = {
     suddenDeath: boolean;
     hpOverride: number | null;
     odOverride: number | null;
+    cover: {
+      amount: number;
+      type: CoverType;
+    } | null;
   };
   ui: {
     showScore: boolean;
@@ -381,6 +393,7 @@ export const defaultSettings: Settings = {
     playbackRate: 1,
     hpOverride: null,
     odOverride: null,
+    cover: null,
   },
   ui: {
     showScore: true,

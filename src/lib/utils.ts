@@ -1,5 +1,9 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import { JudgementSetId, Settings } from "@/stores/settingsStore";
+import {
+  COVER_TYPE_LABELS,
+  JudgementSetId,
+  Settings,
+} from "@/stores/settingsStore";
 import { Judgement, Results } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -190,6 +194,8 @@ export function getModStrings(
       `Song Speed: ${mods.playbackRate}x`,
     mods.odOverride !== null && `Accuracy Override: ${mods.odOverride}`,
     mods.hpOverride !== null && `Health Drain Override: ${mods.hpOverride}`,
+    mods.cover &&
+      `Cover: ${mods.cover.amount * 100}% (${COVER_TYPE_LABELS[mods.cover.type]})`,
   ].filter(Boolean) as string[];
 
   return modStrings;
@@ -226,7 +232,7 @@ export function downloadUrl(url: string, filename: string) {
 }
 
 export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
-  const { playbackRate, hpOverride, odOverride, ...booleanMods } = mods;
+  const { playbackRate, hpOverride, odOverride, cover, ...booleanMods } = mods;
 
   const compacted: Partial<Settings["mods"]> = {};
 
