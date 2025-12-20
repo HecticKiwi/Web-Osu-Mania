@@ -91,6 +91,7 @@ const HighScoreEntry = ({
       >
         #{position}
       </span>
+
       <HighScoreBadge highScore={highScore} />
 
       <div className="flex rounded-md outline outline-1 outline-border">

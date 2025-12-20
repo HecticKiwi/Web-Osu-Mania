@@ -6,13 +6,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getLetterGrade } from "@/lib/utils";
+import { cn, getClassNamesForGrade, getLetterGrade } from "@/lib/utils";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { HighScore } from "../../stores/highScoresStore";
 
 const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
   const score = highScore.results.score.toLocaleString();
   const accuracy = (highScore.results.accuracy * 100).toFixed(2);
+
+  const letterGrade = getLetterGrade(highScore.results);
 
   return (
     <TooltipProvider>
@@ -38,8 +40,13 @@ const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
             {formatDistanceToNowStrict(highScore.timestamp)} ago
           </p>
 
-          <div className="mx-auto my-2 w-fit rounded-full border-x px-2 py-1 text-base font-semibold">
-            {getLetterGrade(highScore.results)}
+          <div
+            className={cn(
+              "mx-auto my-2 w-fit rounded-full border-x px-2 py-1 text-base font-semibold",
+              getClassNamesForGrade(letterGrade),
+            )}
+          >
+            {letterGrade}
           </div>
 
           <div className="mb-2 flex justify-around text-base">
