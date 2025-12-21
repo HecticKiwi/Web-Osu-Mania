@@ -49,6 +49,7 @@ import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
 import { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
+import { StageCover } from "./sprites/stageCover";
 import { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { ArrowTap } from "./sprites/tap/arrowTap";
@@ -123,6 +124,7 @@ export class Game {
   public stageSides: Graphics;
   public stageBackground: Container;
   public stageLights: StageLight[] = [];
+  public stageCover: StageCover;
   public notesContainer: Container = new Container();
   public keysContainer: Container = new Container();
   public keys: Key[] = [];
@@ -331,6 +333,8 @@ export class Game {
     this.stageContainer.x =
       this.app.screen.width / 2 + this.stagePositionOffset;
     this.stageContainer.y = this.app.screen.height / 2;
+
+    this.stageCover?.resize();
 
     this.touchHitboxes?.resize();
 
@@ -734,13 +738,17 @@ export class Game {
 
     this.notesContainer.x = this.stageSideWidth;
     this.notesContainer.interactiveChildren = false;
-    // this.notesContainer.zIndex = 1;
 
     this.stageContainer.eventMode = "passive";
     this.stageContainer.addChild(this.notesContainer);
 
     if (this.settings.upscroll) {
       this.stageContainer.scale.y = -1;
+    }
+
+    if (this.settings.mods.cover) {
+      this.stageCover = new StageCover(this);
+      this.notesContainer.addChild(this.stageCover.view);
     }
 
     this.app.stage.addChild(this.stageContainer);
@@ -784,6 +792,12 @@ export class Game {
         return new this.holdClass(this, hitObjectData);
       }
     });
+
+    if (this.stageCover) {
+      hitObjects.forEach((hitObject) => {
+        hitObject.view.mask = this.stageCover.view;
+      });
+    }
 
     for (let i = 0; i < this.difficulty.keyCount; i++) {
       this.columns.push(

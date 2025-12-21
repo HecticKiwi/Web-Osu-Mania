@@ -1,5 +1,5 @@
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
-import { defaultSettings, Settings } from "@/stores/settingsStore";
+import { CoverType, defaultSettings, Settings } from "@/stores/settingsStore";
 import { PlayResults } from "@/types";
 import { compressSync } from "fflate";
 import { toast } from "sonner";
@@ -25,6 +25,10 @@ export type EncodedMods = {
   rate: number;
   hpOverride: number | null;
   odOverride: number | null;
+  cover: {
+    type: CoverType;
+    amount: number;
+  } | null;
 };
 
 export function encodeMods(mods: Settings["mods"]): EncodedMods {
@@ -42,6 +46,7 @@ export function encodeMods(mods: Settings["mods"]): EncodedMods {
     rate: mods.playbackRate,
     hpOverride: mods.hpOverride,
     odOverride: mods.odOverride,
+    cover: mods.cover,
   };
 }
 
@@ -50,6 +55,7 @@ export function decodeMods(data: EncodedMods): Settings["mods"] {
     playbackRate: data.rate ?? 1,
     hpOverride: data.hpOverride,
     odOverride: data.odOverride,
+    cover: data.cover,
   };
 
   for (const modName in ModBits) {

@@ -117,6 +117,11 @@ const FaqPage = () => {
                   https://hectickiwi.github.io/Web-Osu-Mania
                 </TextLink>
               </li>
+              <li>
+                <TextLink href={"https://wom.slingexe.com"} target="_blank">
+                  https://wom.slingexe.com
+                </TextLink>
+              </li>
             </ul>
 
             <h2 className="mt-8 text-2xl font-semibold tracking-tight">

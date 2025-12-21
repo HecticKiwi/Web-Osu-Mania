@@ -7,6 +7,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
+import LetterGradeCard from "./letterGradeCard";
 import TimingDistributionChart from "./timingDistributionChart";
 
 const Results = ({
@@ -117,15 +118,11 @@ const Results = ({
 
           <div className="mt-8 flex items-center text-center text-[100px] leading-none">
             <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
-
-            <div className="rounded-xl border bg-card p-6">
-              <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
-                Grade
-              </h3>
-              <span>
-                {playResults.failed ? "Failed" : getLetterGrade(playResults)}
-              </span>
-            </div>
+            <LetterGradeCard
+              grade={
+                playResults.failed ? "Failed" : getLetterGrade(playResults)
+              }
+            />
 
             <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
           </div>

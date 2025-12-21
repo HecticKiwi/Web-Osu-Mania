@@ -29,6 +29,8 @@ export type Column = (Tap | Hold)[];
 
 export type Judgement = (typeof JUDGEMENTS)[number];
 
+export type Grade = "Failed" | "D" | "C" | "B" | "A" | "S" | "SS";
+
 declare global {
   interface Window {
     __PIXI_APP__: Application;

@@ -1,7 +1,7 @@
 "use client";
 
+import { useSettingsStore } from "@/stores/settingsStore";
 import { toast } from "sonner";
-import { useSettingsStore } from "../../stores/settingsStore";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
 import { Button } from "../ui/button";
@@ -12,6 +12,7 @@ const ModsTab = () => {
   const resetMods = useSettingsStore.use.resetMods();
   const hpOverride = useSettingsStore((state) => state.mods.hpOverride);
   const odOverride = useSettingsStore((state) => state.mods.odOverride);
+  const cover = useSettingsStore((state) => state.mods.cover);
 
   return (
     <>
@@ -256,6 +257,74 @@ const ModsTab = () => {
                 min={0}
                 max={11}
                 step={0.5}
+              />
+            ) : null
+          }
+        />
+
+        <SwitchInput
+          label="Fade In"
+          selector={(state) => state.mods.cover?.type === "fadeIn"}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.cover = {
+                  type: "fadeIn",
+                  amount: 0.5,
+                };
+              } else {
+                draft.mods.cover = null;
+              }
+            })
+          }
+          extraInput={
+            cover?.type === "fadeIn" ? (
+              <SliderInput
+                containerClassName="w-full"
+                selector={(state) => state.mods.cover!.amount}
+                tooltip={(amount) => `${Math.round(amount * 100)}%`}
+                onValueChange={([amount]) =>
+                  setSettings((draft) => {
+                    draft.mods.cover!.amount = amount;
+                  })
+                }
+                min={0.1}
+                max={0.9}
+                step={0.01}
+              />
+            ) : null
+          }
+        />
+
+        <SwitchInput
+          label="Fade Out"
+          selector={(state) => state.mods.cover?.type === "fadeOut"}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.cover = {
+                  type: "fadeOut",
+                  amount: 0.5,
+                };
+              } else {
+                draft.mods.cover = null;
+              }
+            })
+          }
+          extraInput={
+            cover?.type === "fadeOut" ? (
+              <SliderInput
+                containerClassName="w-full"
+                selector={(state) => state.mods.cover!.amount}
+                tooltip={(amount) => `${Math.round(amount * 100)}%`}
+                onValueChange={([amount]) =>
+                  setSettings((draft) => {
+                    draft.mods.cover!.amount = amount;
+                  })
+                }
+                min={0.1}
+                max={0.9}
+                step={0.01}
               />
             ) : null
           }
