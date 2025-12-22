@@ -3,6 +3,7 @@ import { clamp } from "@/lib/math";
 import { getScoreMultiplier } from "@/lib/utils";
 import { Judgement } from "@/types";
 import { Game } from "../game";
+import { MIN_HEALTH } from "./health";
 
 const MAX_SCORE = 1_000_000;
 
@@ -57,6 +58,11 @@ export class ScoreSystem {
     earlyOrLate?: "early" | "late",
     isForHold?: boolean,
   ) {
+    // Ignore if health is at 0
+    if (this.game.healthSystem?.health === MIN_HEALTH) {
+      return;
+    }
+
     this.score += this.getScoreToAdd(judgement);
 
     this.game.healthSystem?.hit(judgement, isForHold);
