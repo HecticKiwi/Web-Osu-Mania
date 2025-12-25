@@ -8,15 +8,19 @@ import { toast } from "sonner";
 import {
   EarlyLateThreshold,
   earlyLateThresholdOptions,
+  judgementCounterOptions,
+  JudgementCounterPosition,
   TouchMode,
   touchModes,
   useSettingsStore,
 } from "../../stores/settingsStore";
 import RadioGroupInput from "../inputs/radioGroupInput";
+import SelectInput, { NULL_OPTION } from "../inputs/selectInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
 import { Label } from "../ui/label";
 import { RadioGroupItem } from "../ui/radio-group";
+import { SelectItem } from "../ui/select";
 import { Separator } from "../ui/separator";
 import BackupSettings from "./backupSettings";
 import BeatmapSettings from "./beatmapSettings";
@@ -379,9 +383,10 @@ const SettingsTab = () => {
             })
           }
         />
-        <RadioGroupInput
+
+        <SelectInput
           label="Early/Late Indicator"
-          selector={(state) => state.ui.earlyLateThreshold.toString()}
+          selector={(settings) => settings.ui.earlyLateThreshold.toString()}
           onValueChange={(value: string) =>
             setSettings((draft) => {
               draft.ui.earlyLateThreshold = Number(value) as EarlyLateThreshold;
@@ -391,22 +396,40 @@ const SettingsTab = () => {
               }
             })
           }
-          className="space-y-2"
         >
-          {earlyLateThresholdOptions.map((condition) => (
-            <Label
-              key={condition.id}
-              htmlFor={condition.id.toString()}
-              className="flex items-center space-x-2"
-            >
-              <RadioGroupItem
-                value={condition.id.toString()}
-                id={condition.id.toString()}
-              />
-              <span className="flex gap-2">{condition.label}</span>
-            </Label>
+          {earlyLateThresholdOptions.map((option) => (
+            <SelectItem key={option.id} value={option.id.toString()}>
+              {option.label}
+            </SelectItem>
           ))}
-        </RadioGroupInput>
+        </SelectInput>
+
+        <SelectInput
+          label="Judgement Counter"
+          selector={(state) =>
+            state.ui.judgementCounter?.toString() ?? NULL_OPTION
+          }
+          onValueChange={(
+            value: JudgementCounterPosition | typeof NULL_OPTION,
+          ) =>
+            setSettings((draft) => {
+              if (value === NULL_OPTION) {
+                draft.ui.judgementCounter = null;
+              } else {
+                draft.ui.judgementCounter = value;
+              }
+            })
+          }
+        >
+          {judgementCounterOptions.map((option) => (
+            <SelectItem
+              key={option.id}
+              value={option.id?.toString() ?? NULL_OPTION}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectInput>
 
         <SwitchInput
           label="Show Progress Bar"

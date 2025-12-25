@@ -69,6 +69,10 @@ export class ScoreSystem {
 
     this[judgement]++;
 
+    if (this.game.judgementCounter) {
+      this.game.judgementCounter.countTexts[judgement].text = this[judgement];
+    }
+
     if (
       this.game.judgement &&
       (judgement !== 320 || this.game.settings.show300g)
