@@ -43,6 +43,7 @@ import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
 import { DiamondHold } from "./sprites/hold/diamondHold";
 import { Judgement } from "./sprites/judgement";
+import { JudgementCounter } from "./sprites/judgementCounter";
 import { ArrowKey } from "./sprites/key/arrowKey";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
@@ -131,6 +132,7 @@ export class Game {
   public touchHitboxes?: TouchHitboxes;
   public stageHint: StageHint;
   public judgement?: Judgement;
+  public judgementCounter?: JudgementCounter;
   private progressBar?: ProgressBar;
   public healthBar?: HealthBar;
   public errorBar?: ErrorBar;
@@ -340,6 +342,8 @@ export class Game {
 
     this.judgement?.resize();
 
+    this.judgementCounter?.resize();
+
     if (this.comboText) {
       this.comboText.x = this.app.screen.width / 2 + this.stagePositionOffset;
 
@@ -467,6 +471,11 @@ export class Game {
     if (this.settings.ui.showJudgement) {
       this.addJudgement();
     }
+
+    if (this.settings.ui.judgementCounter !== null) {
+      this.addJudgementCounter();
+    }
+
     this.addHitObjects();
 
     if (this.settings.ui.showProgressBar) {
@@ -815,6 +824,11 @@ export class Game {
     this.judgement = new Judgement(this);
 
     this.app.stage.addChild(this.judgement.view);
+  }
+
+  private addJudgementCounter() {
+    this.judgementCounter = new JudgementCounter(this);
+    this.app.stage.addChild(this.judgementCounter.view);
   }
 
   private addFpsCounter() {

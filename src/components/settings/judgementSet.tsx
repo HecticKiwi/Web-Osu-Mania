@@ -1,18 +1,13 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SelectItem } from "@/components/ui/select";
 import { getJudgementUrl } from "@/lib/utils";
 import { JUDGEMENTS } from "@/osuMania/constants";
 import {
   JUDGEMENT_SET_OPTIONS,
   useSettingsStore,
 } from "@/stores/settingsStore";
+import SelectInput from "../inputs/selectInput";
 import TextLink from "../textLink";
 
 const JudgementSet = () => {
@@ -39,33 +34,25 @@ const JudgementSet = () => {
         ))}
       </div>
 
-      <div className="mt-4 grid grid-cols-2 items-center">
-        <div className="pr-2 text-sm font-semibold text-muted-foreground">
-          Judgement Set
-        </div>
-
-        <Select
-          value={judgementSet}
-          onValueChange={(value) => {
-            setSettings((draft) => {
-              draft.skin.judgementSet = value;
-            });
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select Judgement Set" />
-          </SelectTrigger>
-          <SelectContent>
-            {JUDGEMENT_SET_OPTIONS.sort((a, b) =>
-              a.label.localeCompare(b.label),
-            ).map((option) => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <SelectInput
+        label="Judgement Set"
+        placeholder="Select Judgement Set"
+        className="mt-4"
+        selector={(settings) => settings.skin.judgementSet}
+        onValueChange={(value) => {
+          setSettings((draft) => {
+            draft.skin.judgementSet = value;
+          });
+        }}
+      >
+        {JUDGEMENT_SET_OPTIONS.sort((a, b) =>
+          a.label.localeCompare(b.label),
+        ).map((option) => (
+          <SelectItem key={option.id} value={option.id}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectInput>
 
       <p className="mt-4 text-sm text-muted-foreground">
         Judgement images are sourced from {selectedJudgementSet.creator} found{" "}
