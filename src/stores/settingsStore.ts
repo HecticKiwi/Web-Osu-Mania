@@ -96,6 +96,16 @@ export type ColumnColor = {
   hold: string;
 };
 
+export type JudgementCounterPosition = "left" | "right";
+export const judgementCounterOptions: {
+  id: JudgementCounterPosition | null;
+  label: string;
+}[] = [
+  { id: null, label: "Off" },
+  { id: "left", label: "Left Side" },
+  { id: "right", label: "Right Side" },
+] as const;
+
 export type Settings = {
   version: number;
   volume: number;
@@ -163,6 +173,7 @@ export type Settings = {
     showProgressBar: boolean;
     showHealthBar: boolean;
     receptorOpacity: number;
+    judgementCounter: JudgementCounterPosition | null;
   };
   skin: {
     colors: {
@@ -404,6 +415,7 @@ export const defaultSettings: Settings = {
     showProgressBar: true,
     showHealthBar: true,
     receptorOpacity: 1,
+    judgementCounter: "right",
   },
   skin: {
     colors: {
