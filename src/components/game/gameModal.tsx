@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
 import { useGameStore } from "../../stores/gameStore";
@@ -23,6 +23,7 @@ const GameModal = () => {
   );
   const backgroundDim = useSettingsStore.use.backgroundDim();
   const backgroundBlur = useSettingsStore.use.backgroundBlur();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const getBeatmapSet = useBeatmapSetCacheStore.use.getBeatmapSet();
   const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
   const setStoredBeatmapSets =
@@ -134,6 +135,10 @@ const GameModal = () => {
         URL.revokeObjectURL(beatmapData.backgroundUrl);
       }
 
+      if (beatmapData.videoUrl) {
+        URL.revokeObjectURL(beatmapData.videoUrl);
+      }
+
       URL.revokeObjectURL(beatmapData.song.url);
 
       Object.values(beatmapData.sounds).forEach((sound) => {
@@ -169,7 +174,7 @@ const GameModal = () => {
       )}
       {beatmapData && (
         <>
-          {beatmapData.backgroundUrl && (
+          {beatmapData.backgroundUrl && !beatmapData.videoUrl && (
             <Image
               src={beatmapData.backgroundUrl}
               alt="Beatmap Background"
@@ -181,7 +186,23 @@ const GameModal = () => {
             />
           )}
 
-          <GameScreens key={key} beatmapData={beatmapData} retry={retry} />
+          {beatmapData.videoUrl && (
+            <video
+              ref={videoRef}
+              src={beatmapData.videoUrl}
+              className="h-full w-full object-cover"
+              style={{
+                filter: `brightness(${1 - backgroundDim})`,
+              }}
+            />
+          )}
+
+          <GameScreens
+            key={key}
+            beatmapData={beatmapData}
+            retry={retry}
+            videoRef={videoRef}
+          />
         </>
       )}
     </main>

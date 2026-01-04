@@ -128,6 +128,20 @@ const SettingsTab = () => {
           step={0.01}
         />
 
+        <SwitchInput
+          label="Background Video"
+          selector={(state) => state.backgroundVideo.enabled}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.backgroundVideo.enabled = checked;
+            })
+          }
+        />
+
+        <p className="text-sm text-muted-foreground">
+          Currently, only MP4 background videos are supported.
+        </p>
+
         <SliderInput
           label="Scroll Speed"
           selector={(state) => state.scrollSpeed}

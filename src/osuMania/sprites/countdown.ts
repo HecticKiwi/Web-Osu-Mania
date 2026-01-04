@@ -100,6 +100,12 @@ export class Countdown {
 
     // Skip intro
     if (canSkip && this.game.inputSystem.anyColumnTapped()) {
+      // 1 second before first hit object
+      const time = this.game.startTime / 1000 - 1;
+
+      if (this.game.videoEl) {
+        this.game.videoEl.currentTime = time;
+      }
       this.game.song.seek(this.game.startTime / 1000 - 1);
     }
 

@@ -114,6 +114,10 @@ export type Settings = {
   scrollSpeed: number;
   backgroundDim: number;
   backgroundBlur: number;
+  backgroundVideo: {
+    // There may be more options to convert FLV and AVI later
+    enabled: boolean;
+  };
   show300g: boolean;
   showErrorBar: boolean;
   audioOffset: number;
@@ -195,6 +199,9 @@ export const defaultSettings: Settings = {
   scrollSpeed: 20,
   backgroundDim: 0.75,
   backgroundBlur: 0,
+  backgroundVideo: {
+    enabled: true,
+  },
   show300g: true,
   showErrorBar: true,
   audioOffset: 0,

@@ -141,6 +141,9 @@ export class Game {
 
   public song: Howl;
   public timeElapsed: number = 0;
+  private delay: number;
+
+  public videoEl: HTMLVideoElement | null;
 
   public startTime: number;
   public endTime: number;
@@ -165,6 +168,7 @@ export class Game {
     setIsPaused: Dispatch<SetStateAction<boolean>>,
     replayData: ReplayData | null,
     retry: () => void,
+    videoEl: HTMLVideoElement | null,
   ) {
     this.resize = this.resize.bind(this);
     this.hitObjects = beatmapData.hitObjects;
@@ -267,6 +271,13 @@ export class Game {
       // Seek back to the end so the progress bar stays full
       this.song.seek(this.song.duration());
     });
+
+    this.videoEl = videoEl;
+    if (videoEl) {
+      videoEl.playbackRate = this.settings.mods.playbackRate;
+    }
+
+    this.delay = beatmapData.delay;
   }
 
   public dispose() {
@@ -532,6 +543,16 @@ export class Game {
 
       case "PLAY":
         this.timeElapsed = Math.round(this.song.seek() * 1000);
+
+        // Play video if it exists, accounting for audio delay
+        if (
+          this.videoEl &&
+          this.videoEl.paused &&
+          this.timeElapsed > this.delay
+        ) {
+          this.videoEl.currentTime = this.song.seek();
+          this.videoEl.play();
+        }
 
         this.replayPlayer?.update();
 
@@ -865,6 +886,7 @@ export class Game {
   }
 
   public pause() {
+    this.videoEl?.pause();
     this.song.pause();
     this.state = "PAUSE";
   }
@@ -881,6 +903,11 @@ export class Game {
 
       this.state = "UNPAUSE";
     } else {
+      if (this.videoEl) {
+        this.videoEl.currentTime = this.song.seek();
+        this.videoEl.play();
+      }
+
       this.song.play();
       this.state = "PLAY";
     }
@@ -914,6 +941,7 @@ export class Game {
 
   private async fail() {
     this.song.stop();
+    this.videoEl?.pause();
 
     if (this.settings.retryOnFail) {
       this.retry();

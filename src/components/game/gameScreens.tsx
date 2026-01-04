@@ -3,7 +3,7 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { PlayResults } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
@@ -14,9 +14,11 @@ import VolumeWidget from "./volumeWidget";
 const GameScreens = ({
   beatmapData,
   retry,
+  videoRef,
 }: {
   beatmapData: BeatmapData;
   retry: () => void;
+  videoRef: RefObject<HTMLVideoElement | null>;
 }) => {
   const replayData = useGameStore.use.replayData();
   const [game, setGame] = useState<Game | null>(null);
@@ -32,6 +34,7 @@ const GameScreens = ({
       setIsPaused,
       replayData,
       retry,
+      videoRef.current,
     );
     setGame(game);
     game.main(containerRef.current);
@@ -40,6 +43,11 @@ const GameScreens = ({
       Howler.stop();
 
       game.dispose();
+
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
     };
   }, [beatmapData, replayData, retry]);
 
@@ -78,7 +86,7 @@ const GameScreens = ({
 
   return (
     <>
-      <div ref={containerRef} className="h-full w-full">
+      <div ref={containerRef} className="absolute h-full w-full">
         {game && !results && <VolumeWidget game={game} />}
         {game && !results && <RetryWidget retry={retry} />}
         {game && !results && <PauseButton setIsPaused={setIsPaused} />}

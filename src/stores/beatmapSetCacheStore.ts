@@ -90,7 +90,6 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
 
           const destinationUrl = queryString.stringifyUrl({
             url: apiUrl,
-            query: { noVideo: true },
           });
 
           const url = queryString.stringifyUrl({
