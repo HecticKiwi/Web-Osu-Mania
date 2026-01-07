@@ -99,6 +99,34 @@ const ModsTab = () => {
           }
         />
         <SwitchInput
+          label="Perfect"
+          tooltip="300g/300 judgements only or fail."
+          selector={(state) => state.mods.perfect}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.perfect = checked;
+
+              if (checked) {
+                draft.mods.perfectSs = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
+          label="Perfect (SS)"
+          tooltip="300g judgements only or fail."
+          selector={(state) => state.mods.perfectSs}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.mods.perfectSs = checked;
+
+              if (checked) {
+                draft.mods.perfect = false;
+              }
+            })
+          }
+        />
+        <SwitchInput
           label="Double Time"
           tooltip="1.5x speed (don't ask me why it's called double time)."
           selector={(state) => state.mods.playbackRate === 1.5}

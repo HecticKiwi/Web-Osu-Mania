@@ -178,6 +178,8 @@ export function getModStrings(
     mods.playbackRate === 0.75 && "Half Time",
     mods.hardRock && "Hard Rock",
     mods.suddenDeath && "Sudden Death",
+    mods.perfect && "Perfect",
+    mods.perfectSs && "Perfect (SS)",
     mods.playbackRate === 1.5 && "Double Time",
     mods.autoplay && "Autoplay",
     mods.random && "Random",
