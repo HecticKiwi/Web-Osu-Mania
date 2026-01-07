@@ -5,6 +5,7 @@ import { Game } from "../game";
 
 type JudgementColors = {
   key: Judgement;
+  display?: string;
   color: FillInput;
 };
 
@@ -43,6 +44,7 @@ export class JudgementCounter {
     const judgements: JudgementColors[] = [
       {
         key: 320,
+        display: "300g",
         color: `hsl(${styles.getPropertyValue("--judgement-perfect")})`,
       },
       {
@@ -84,7 +86,7 @@ export class JudgementCounter {
       });
 
       const label = new BitmapText({
-        text: judgement.key,
+        text: judgement.display ?? judgement.key,
         style: labelStyle,
       });
 

@@ -150,6 +150,11 @@ export type Settings = {
     pause: string | null;
     retry: string | null;
   };
+  /**
+   * When adding mods, don't forget to
+   * 1. Add the mod strings to getModStrings()
+   * 2. Make necessary changes to replay.ts so the mod is stored in replays properly
+   */
   mods: {
     autoplay: boolean;
     easy: boolean;
@@ -161,6 +166,8 @@ export type Settings = {
     holdOff: boolean;
     noFail: boolean;
     suddenDeath: boolean;
+    perfect: boolean;
+    perfectSs: boolean;
     hpOverride: number | null;
     odOverride: number | null;
     cover: {
@@ -403,6 +410,8 @@ export const defaultSettings: Settings = {
     noFail: false,
     hardRock: false,
     suddenDeath: false,
+    perfect: false,
+    perfectSs: false,
     autoplay: false,
     random: false,
     mirror: false,

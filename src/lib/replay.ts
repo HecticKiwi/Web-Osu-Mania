@@ -17,6 +17,8 @@ const ModBits = {
   holdOff: 6,
   noFail: 7,
   suddenDeath: 8,
+  perfect: 9,
+  perfectSs: 10,
 } as const;
 type BooleanMod = keyof typeof ModBits;
 
