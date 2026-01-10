@@ -190,6 +190,7 @@ const GameModal = () => {
             <video
               ref={videoRef}
               src={beatmapData.videoUrl}
+              muted
               className="h-full w-full object-cover"
               style={{
                 filter: `brightness(${1 - backgroundDim})`,
