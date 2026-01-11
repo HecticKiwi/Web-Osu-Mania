@@ -511,8 +511,10 @@ function parseTimingPoints(
   const settings = useSettingsStore.getState();
   const baseScrollSpeed = settings.scrollSpeed;
 
+  const timingPoints: TimingPoint[] = [];
+
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#timing-points
-  const timingPoints: TimingPoint[] = timingPointLines.map((line, i) => {
+  for (const line of timingPointLines) {
     const [
       time,
       beatLength,
@@ -524,8 +526,16 @@ function parseTimingPoints(
       effects,
     ] = line.split(",").map((value) => Number(value));
 
+    const isFirstTimingPoint = line === timingPointLines[0];
+    const adjustedTime = isFirstTimingPoint ? 0 : time + delay;
+
+    if (adjustedTime > endTime) {
+      // This and subsequent timing points are past the last hit object and therefore invalid
+      break;
+    }
+
     const timingPoint: TimingPoint = {
-      time: i === 0 ? 0 : time + delay,
+      time: adjustedTime,
       beatLength,
       meter,
       sampleSet: sampleSets[sampleSet],
@@ -535,8 +545,8 @@ function parseTimingPoints(
       scrollSpeed: baseScrollSpeed,
     };
 
-    return timingPoint;
-  });
+    timingPoints.push(timingPoint);
+  }
 
   if (!mods.constantSpeed) {
     const mostCommonBeatLength = getMostCommonBeatLength(
