@@ -195,11 +195,9 @@ export class HealthSystem {
 
   public hit(judgement: Judgement, isForHold?: boolean) {
     if (
-      (this.game.settings.mods.suddenDeath && judgement === 0) ||
-      (this.game.settings.mods.perfect &&
-        judgement !== 320 &&
-        judgement !== 300) ||
-      (this.game.settings.mods.perfectSs && judgement !== 320)
+      (this.game.mods.suddenDeath && judgement === 0) ||
+      (this.game.mods.perfect && judgement !== 320 && judgement !== 300) ||
+      (this.game.mods.perfectSs && judgement !== 320)
     ) {
       this.health = MIN_HEALTH; // You die >:)
     } else {

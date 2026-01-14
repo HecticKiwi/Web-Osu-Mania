@@ -48,7 +48,7 @@ export abstract class Hold {
 
     const endTimeDelta = this.data.endTime - this.game.timeElapsed;
 
-    if (this.game.settings.mods.autoplay) {
+    if (this.game.mods.autoplay) {
       // Press key during hold
       if (this.game.timeElapsed > this.data.time) {
         this.game.keys[this.data.column].setPressed(true);

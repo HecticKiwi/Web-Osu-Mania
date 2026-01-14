@@ -34,9 +34,9 @@ export class ReplayRecorder {
         id: Number(beatmapData.beatmapId),
         setId: beatmapData.beatmapSetId,
       },
-      mods: encodeMods(this.game.settings.mods),
+      mods: encodeMods(this.game.mods),
       inputs: Array.from({ length: this.game.difficulty.keyCount }, () => []),
-      columnMap: game.settings.mods.random ? beatmapData.columnMap : undefined,
+      columnMap: game.mods.random ? beatmapData.columnMap : undefined,
     };
   }
 

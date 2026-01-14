@@ -110,7 +110,7 @@ export abstract class Tap {
       return;
     }
 
-    if (this.game.settings.mods.autoplay) {
+    if (this.game.mods.autoplay) {
       if (delta < 0) {
         this.playHitsounds();
 

@@ -50,7 +50,7 @@ export class ScoreSystem {
   constructor(game: Game, totalHitObjects: number) {
     this.game = game;
     this.totalHitObjects = totalHitObjects;
-    this.multiplier = getScoreMultiplier(game.settings.mods);
+    this.multiplier = getScoreMultiplier(game.mods);
   }
 
   public hit(

@@ -51,7 +51,7 @@ export class InputSystem {
     this.tappedColumns[column] = true;
     this.pressedColumns[column] = true;
 
-    if (this.game.state !== "PLAY" || this.game.settings.mods.autoplay) {
+    if (this.game.state !== "PLAY" || this.game.mods.autoplay) {
       return;
     }
 
@@ -74,7 +74,7 @@ export class InputSystem {
     this.pressedColumns[column] = false;
     this.releasedColumns[column] = true;
 
-    if (this.game.state !== "PLAY" || this.game.settings.mods.autoplay) {
+    if (this.game.state !== "PLAY" || this.game.mods.autoplay) {
       return;
     }
 

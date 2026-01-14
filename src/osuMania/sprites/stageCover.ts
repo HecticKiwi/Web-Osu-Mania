@@ -23,7 +23,7 @@ export class StageCover {
   }
 
   public resize() {
-    if (!this.game.settings.mods.cover) {
+    if (!this.game.mods.cover) {
       throw new Error("Cover mod not enabled");
     }
 
@@ -41,12 +41,12 @@ export class StageCover {
 
     let y: number;
     let height: number;
-    if (this.game.settings.mods.cover.type === "fadeIn") {
-      y = position * this.game.settings.mods.cover.amount;
+    if (this.game.mods.cover.type === "fadeIn") {
+      y = position * this.game.mods.cover.amount;
       height = this.game.app.screen.height;
     } else {
       y = 0;
-      height = position * (1 - this.game.settings.mods.cover.amount);
+      height = position * (1 - this.game.mods.cover.amount);
     }
 
     this.graphics.clear().rect(0, y, width, height).fill(0x110000);

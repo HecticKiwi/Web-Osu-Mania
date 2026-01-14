@@ -74,6 +74,7 @@ export class Game {
   public state: GameState = "WAIT";
 
   public settings: Settings;
+  public mods: Settings["mods"];
   public difficulty: Difficulty;
   public columnKeybinds: (string | null)[];
   public hitWindows: HitWindows;
@@ -183,6 +184,7 @@ export class Game {
     this.nextTimingPoint = this.timingPoints[1];
 
     this.settings = useSettingsStore.getState();
+    this.mods = this.settings.mods; // Replays will override this
 
     if (this.settings.skin.colors.mode === "simple") {
       this.laneColors = getAllLaneColors(this.settings.skin.colors.simple.hue)[
@@ -250,23 +252,23 @@ export class Game {
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
     if (replayData) {
-      this.settings.mods = decodeMods(replayData.mods);
+      this.mods = decodeMods(replayData.mods);
 
       this.replayPlayer = new ReplayPlayer(this, replayData);
-    } else if (!this.settings.mods.autoplay) {
+    } else if (!this.mods.autoplay) {
       this.replayRecorder = new ReplayRecorder(this, beatmapData);
     }
 
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
-    if (!this.settings.mods.noFail) {
+    if (!this.mods.noFail) {
       this.healthSystem = new HealthSystem(this);
     }
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
-    this.song.rate(this.settings.mods.playbackRate);
+    this.song.rate(this.mods.playbackRate);
     this.song.on("end", async () => {
       // Seek back to the end so the progress bar stays full
       this.song.seek(this.song.duration());
@@ -274,7 +276,7 @@ export class Game {
 
     this.videoEl = videoEl;
     if (videoEl) {
-      videoEl.playbackRate = this.settings.mods.playbackRate;
+      videoEl.playbackRate = this.mods.playbackRate;
     }
 
     this.delay = beatmapData.delay;
@@ -504,7 +506,7 @@ export class Game {
       this.addHitError();
     }
 
-    if (!this.settings.mods.noFail && this.settings.ui.showHealthBar) {
+    if (!this.mods.noFail && this.settings.ui.showHealthBar) {
       this.addHealthBar();
     }
 
@@ -556,7 +558,7 @@ export class Game {
 
         this.replayPlayer?.update();
 
-        if (!this.settings.mods.autoplay) {
+        if (!this.mods.autoplay) {
           this.stageLights.forEach((stageLight) => stageLight.update());
           this.keys.forEach((key) => key.update());
         }
@@ -776,7 +778,7 @@ export class Game {
       this.stageContainer.scale.y = -1;
     }
 
-    if (this.settings.mods.cover) {
+    if (this.mods.cover) {
       this.stageCover = new StageCover(this);
       this.notesContainer.addChild(this.stageCover.view);
     }
@@ -976,12 +978,11 @@ export class Game {
   // Returns the px offset of the hit object from the judgement line based on
   // how long it should take to reach the line
   public getHitObjectOffset(startTime: number, endTime: number) {
-    if (this.settings.mods.constantSpeed) {
+    if (this.mods.constantSpeed) {
       const speed =
         this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
 
-      const offset =
-        ((endTime - startTime) * speed) / this.settings.mods.playbackRate;
+      const offset = ((endTime - startTime) * speed) / this.mods.playbackRate;
 
       return offset;
     }
@@ -1010,7 +1011,7 @@ export class Game {
         const speed =
           this.hitPosition / (MAX_TIME_RANGE / currentTimingPoint.scrollSpeed);
 
-        totalOffset += (duration * speed) / this.settings.mods.playbackRate;
+        totalOffset += (duration * speed) / this.mods.playbackRate;
       }
     }
 
