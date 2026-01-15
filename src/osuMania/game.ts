@@ -425,9 +425,9 @@ export class Game {
       resolution: window.devicePixelRatio,
       eventMode: "none",
       eventFeatures: {
-        move: true,
+        move: this.settings.touch.enabled,
         globalMove: false,
-        click: true,
+        click: this.settings.touch.enabled,
         wheel: false,
       },
     });
@@ -477,7 +477,7 @@ export class Game {
 
     this.addKeys();
 
-    if (!this.replayPlayer) {
+    if (!this.replayPlayer && this.settings.touch.enabled) {
       this.addTouchHitboxes();
     }
 

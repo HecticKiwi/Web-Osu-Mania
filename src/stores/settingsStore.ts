@@ -142,6 +142,7 @@ export type Settings = {
   stagePosition: number;
   laneWidthAdjustment: number;
   touch: {
+    enabled: boolean;
     mode: TouchMode;
     borderOpacity: number;
   };
@@ -233,6 +234,7 @@ export const defaultSettings: Settings = {
   stagePosition: 0,
   laneWidthAdjustment: 0,
   touch: {
+    enabled: true,
     mode: "normal",
     borderOpacity: 0.1,
   },

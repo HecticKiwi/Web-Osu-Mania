@@ -206,6 +206,16 @@ const SettingsTab = () => {
 
       <h3 className="mt-6 text-lg font-semibold">Touch Controls</h3>
       <div className="mt-2 space-y-3">
+        <SwitchInput
+          label="Enable Touch Controls"
+          selector={(state) => state.touch.enabled}
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              draft.touch.enabled = checked;
+            })
+          }
+        />
+
         <RadioGroupInput
           label="Mode"
           selector={(state) => state.touch.mode}
