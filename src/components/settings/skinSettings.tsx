@@ -165,7 +165,7 @@ const SkinSettings = () => {
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
-                              className="block h-7 w-full border p-0"
+                              className="h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.tap }}
                             />
                           </PopoverTrigger>
