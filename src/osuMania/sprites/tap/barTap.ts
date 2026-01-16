@@ -13,13 +13,18 @@ export class BarTap extends Tap {
     this.view = Sprite.from(Texture.WHITE);
     this.view.width = width;
     this.view.height = height;
-    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.zIndex = 1;
     this.view.pivot.x = width / 2 / this.view.scale.x;
     this.view.pivot.y = height / this.view.scale.y;
     this.view.x =
       tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
     this.view.visible = false;
+
+    if (this.data.isHoldHead) {
+      this.view.tint = game.laneColors[tapData.column].holdHead;
+    } else {
+      this.view.tint = game.laneColors[tapData.column].tap;
+    }
 
     this.game.notesContainer.addChild(this.view);
   }

@@ -13,10 +13,10 @@ export class CircleHold extends Hold {
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = this.game.scaledColumnWidth * circleColumnRatio;
+    this.body.tint = game.laneColors[holdData.column].hold;
 
     this.view = new Container();
     this.view.addChild(this.body);
-    this.view.tint = game.laneColors[holdData.column].hold;
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +
@@ -25,15 +25,12 @@ export class CircleHold extends Hold {
 
     const tail = new Sprite(Tap.renderTexture!);
     tail.pivot.y = tail.height / 2;
+    tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
-
-    if (game.settings.darkerHoldNotes) {
-      this.body.tint = "hsl(0,0%,60%)";
-      tail.tint = "hsl(0,0%,60%)";
-    }
 
     this.head = new Sprite(Tap.renderTexture!);
     this.head.anchor.y = 0.5;
+    this.head.tint = game.laneColors[holdData.column].holdHead;
 
     this.view.addChild(this.head);
 

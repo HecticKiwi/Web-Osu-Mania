@@ -26,10 +26,7 @@ export function getAllLaneColors(
   const center = `hsl(${centerHue}, 80%, 69%)`;
   const centerDark = `hsl(${centerHue}, 36%, 41%)`;
 
-  function makeColorObject(color: string): {
-    tap: string;
-    hold: string;
-  } {
+  function makeColorObject(color: string): ColumnColor {
     let holdColor = color;
     if (darkerHoldNotes) {
       if (color === primary) {
@@ -43,6 +40,7 @@ export function getAllLaneColors(
 
     return {
       tap: color,
+      holdHead: color,
       hold: holdColor,
     };
   }

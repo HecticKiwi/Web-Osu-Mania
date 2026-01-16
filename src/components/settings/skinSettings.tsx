@@ -142,14 +142,17 @@ const SkinSettings = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-muted">
-                    <th className="w-16 px-2 py-2 text-left font-normal">
+                    <th className="w-16 px-2 py-2 text-center font-normal">
                       Column
                     </th>
-                    <th className="px-2 py-2 text-left font-normal">
-                      Note Color
+                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                      Tap
                     </th>
-                    <th className="px-2 py-2 text-left font-normal">
-                      Hold Color
+                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                      Hold Head
+                    </th>
+                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                      Hold Body
                     </th>
                   </tr>
                 </thead>
@@ -162,7 +165,7 @@ const SkinSettings = () => {
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
-                              className="h-7 w-full border p-0"
+                              className="block h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.tap }}
                             />
                           </PopoverTrigger>
@@ -199,7 +202,44 @@ const SkinSettings = () => {
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
-                              className="h-7 w-full border p-0"
+                              className="block h-7 w-full border p-0"
+                              style={{ backgroundColor: colorSet.holdHead }}
+                            />
+                          </PopoverTrigger>
+                          <PopoverContent className="w-fit">
+                            <HslStringColorPicker
+                              color={colors[i].holdHead}
+                              onChange={(color) =>
+                                setSettings((draft) => {
+                                  draft.skin.colors.custom[
+                                    Number(keyCount) - 1
+                                  ][i].holdHead = color;
+                                })
+                              }
+                            />
+                            <Input
+                              className="mt-4"
+                              value={colors[i].holdHead}
+                              onChange={(e) => {
+                                const newColor = e.target.value;
+                                if (newColor.startsWith("hsl")) {
+                                  setSettings((draft) => {
+                                    draft.skin.colors.custom[
+                                      Number(keyCount) - 1
+                                    ][i].holdHead = newColor;
+                                  });
+                                }
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </td>
+                      <td className="px-2 py-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="block h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.hold }}
                             />
                           </PopoverTrigger>

@@ -16,10 +16,10 @@ export class DiamondHold extends Hold {
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = bodyWidth;
+    this.body.tint = game.laneColors[holdData.column].hold;
 
     this.view = new Container();
     this.view.addChild(this.body);
-    this.view.tint = game.laneColors[holdData.column].hold;
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +
@@ -34,18 +34,15 @@ export class DiamondHold extends Hold {
     }
 
     const tail = new Graphics(DiamondHold.tailGraphicsContext);
+    tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
-
-    if (game.settings.darkerHoldNotes) {
-      this.body.tint = "hsl(0,0%,60%)";
-      tail.tint = "hsl(0,0%,60%)";
-    }
 
     this.head = new Sprite(Tap.renderTexture!);
     this.head.anchor.x = 0.5;
     this.head.anchor.y = 0.5;
     this.head.angle = 45;
     this.head.x = this.body.width / 2;
+    this.head.tint = game.laneColors[holdData.column].holdHead;
 
     this.view.addChild(this.head);
 

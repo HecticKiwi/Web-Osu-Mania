@@ -81,6 +81,7 @@ export type TapData = {
   endTime: number;
   hitSound: HitSound;
   hitSample: HitSample;
+  isHoldHead: boolean;
 };
 
 export type HoldData = {
@@ -352,6 +353,7 @@ export function parseHitObjects(
       hitSound,
       hitSample,
       endTime: isHoldNote && !mods.holdOff ? parseInt(sampleSet[0]) : time,
+      isHoldHead: isHoldNote,
     });
 
     if (isHoldNote && !mods.holdOff) {

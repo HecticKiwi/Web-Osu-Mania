@@ -14,10 +14,10 @@ export class ArrowHold extends Hold {
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = bodyWidth;
+    this.body.tint = game.laneColors[holdData.column].hold;
 
     this.view = new Container();
     this.view.addChild(this.body);
-    this.view.tint = game.laneColors[holdData.column].hold;
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +
@@ -32,15 +32,12 @@ export class ArrowHold extends Hold {
     }
 
     const tail = new Graphics(ArrowHold.tailGraphicsContext);
+    tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
-
-    if (game.settings.darkerHoldNotes) {
-      this.body.tint = "hsl(0,0%,60%)";
-      tail.tint = "hsl(0,0%,60%)";
-    }
 
     this.head = ArrowTap.getArrowSprite(game, holdData.column);
     this.head.x = (this.game.scaledColumnWidth * 0.6) / 2;
+    this.head.tint = game.laneColors[holdData.column].holdHead;
     this.view.addChild(this.head);
 
     this.setViewHeight();

@@ -187,9 +187,10 @@ export class Game {
     this.mods = this.settings.mods; // Replays will override this
 
     if (this.settings.skin.colors.mode === "simple") {
-      this.laneColors = getAllLaneColors(this.settings.skin.colors.simple.hue)[
-        this.difficulty.keyCount - 1
-      ];
+      this.laneColors = getAllLaneColors(
+        this.settings.skin.colors.simple.hue,
+        this.settings.darkerHoldNotes,
+      )[this.difficulty.keyCount - 1];
     } else {
       this.laneColors =
         this.settings.skin.colors.custom[this.difficulty.keyCount - 1];
