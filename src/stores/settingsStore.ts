@@ -93,6 +93,7 @@ export const COVER_TYPE_LABELS: Record<CoverType, string> = {
 
 export type ColumnColor = {
   tap: string;
+  holdHead: string;
   hold: string;
 };
 
@@ -517,6 +518,12 @@ function fillCallback(settings: Settings) {
     ...defaultSettings.skin,
     ...settings.skin,
   };
+
+  filledSettings.skin.colors.custom.forEach((colorSet) => {
+    if (!colorSet[0].holdHead) {
+      colorSet.forEach((color) => (color.holdHead = color.tap));
+    }
+  });
 
   for (let i = 9; i < 18; i++) {
     if (!filledSettings.keybinds.keyModes[i]) {

@@ -11,10 +11,10 @@ export class BarHold extends Hold {
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = this.game.scaledColumnWidth;
+    this.body.tint = game.laneColors[holdData.column].hold;
 
     this.view = new Container();
     this.view.addChild(this.body);
-    this.view.tint = game.laneColors[holdData.column].hold;
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
       holdData.column * this.game.scaledColumnWidth +
@@ -24,21 +24,23 @@ export class BarHold extends Hold {
     const width = game.scaledColumnWidth;
     const height = width * 0.4;
 
-    if (game.settings.darkerHoldNotes) {
+    if (
+      game.settings.darkerHoldNotes ||
+      game.settings.skin.colors.mode === "custom"
+    ) {
       const tail = Sprite.from(Texture.WHITE);
       tail.width = width;
       tail.height = height;
       tail.anchor.y = 1;
+      tail.tint = game.laneColors[holdData.column].hold;
       this.view.addChild(tail);
 
       this.head = Sprite.from(Texture.WHITE);
       this.head.width = width;
       this.head.height = height;
       this.head.anchor.y = 1;
+      this.head.tint = game.laneColors[holdData.column].holdHead;
       this.view.addChild(this.head);
-
-      tail.tint = "hsl(0,0%,60%)";
-      this.body.tint = "hsl(0,0%,60%)";
     }
 
     this.setViewHeight();

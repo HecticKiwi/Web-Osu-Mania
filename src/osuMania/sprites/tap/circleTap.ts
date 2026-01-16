@@ -32,13 +32,18 @@ export class CircleTap extends Tap {
     }
 
     this.view = new Sprite(Tap.renderTexture);
-    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.zIndex = 1;
     this.view.pivot.x = width / 2;
     this.view.pivot.y = height / 2;
     this.view.x =
       tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
     this.view.visible = false;
+
+    if (this.data.isHoldHead) {
+      this.view.tint = game.laneColors[tapData.column].holdHead;
+    } else {
+      this.view.tint = game.laneColors[tapData.column].tap;
+    }
 
     this.game.notesContainer.addChild(this.view);
   }

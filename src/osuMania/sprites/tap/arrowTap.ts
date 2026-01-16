@@ -40,11 +40,16 @@ export class ArrowTap extends Tap {
     }
 
     this.view = ArrowTap.getArrowSprite(game, tapData.column);
-    this.view.tint = game.laneColors[tapData.column].tap;
     this.view.x =
       tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
-
     this.view.visible = false;
+
+    if (this.data.isHoldHead) {
+      this.view.tint = game.laneColors[tapData.column].holdHead;
+    } else {
+      this.view.tint = game.laneColors[tapData.column].tap;
+    }
+    this.view.tint = "green";
 
     this.game.notesContainer.addChild(this.view);
   }
