@@ -53,10 +53,17 @@ const BeatmapList = ({
       // For mania, CS is the keycount (e.g. CS: 4 means 4K)
       (beatmap) => !keys.length || keys.includes(beatmap.cs.toString()),
     )
-    .filter(
-      (beatmap) =>
-        beatmap.difficulty_rating >= min && beatmap.difficulty_rating <= max,
-    );
+    .filter((beatmap) => {
+      if (min !== null && beatmap.difficulty_rating < min) {
+        return false;
+      }
+
+      if (max !== null && beatmap.difficulty_rating > max) {
+        return false;
+      }
+
+      return true;
+    });
 
   return (
     <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">

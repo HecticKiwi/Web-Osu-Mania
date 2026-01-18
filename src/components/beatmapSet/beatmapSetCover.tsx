@@ -6,17 +6,17 @@ import { useSettingsStore } from "../../stores/settingsStore";
 const getStatusClass = (status: Status) => {
   switch (status) {
     case "ranked":
-      return "bg-green-400";
+      return "bg-[#b3ff66] text-[#394246]"; // Green
     case "qualified":
-      return "bg-blue-400";
+      return "bg-[#66ccff] text-[#394246]"; // Blue
     case "loved":
-      return "bg-pink-400";
+      return "bg-[#ff66ab] text-[#394246]"; // Pink
     case "pending":
-      return "bg-yellow-400";
-    case "graveyard":
-      return "bg-black";
+      return "bg-[#ffd966] text-[#394246]"; // Yellow
     case "wip":
-      return "bg-orange-400";
+      return "bg-[#ff9966] text-[#394246]"; // Orange
+    case "graveyard":
+      return "bg-black text-[#5c6970]"; // Gray
   }
 };
 
@@ -55,6 +55,9 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
             fill
             className="object-cover"
             sizes="720px"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         </span>
       )}
@@ -62,7 +65,7 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       {/* Details */}
       <div
         className={cn(
-          "mt-auto w-fit rounded-full px-1.5 text-xs font-bold text-gray-900",
+          "mt-auto w-fit rounded-full px-1.5 text-xs font-bold",
           getStatusClass(beatmapSet.status),
         )}
       >

@@ -100,10 +100,12 @@ export async function getBeatmaps({
   language: Language;
 }) {
   const { min, max } = stars;
+
   const q = [
-    query,
+    stars.min !== null && `stars>=${min}`,
+    stars.max !== null && `stars<=${max}`,
     keys && keys.map((key) => `key=${key}`).join(" "),
-    stars && `stars>=${min} stars<=${max}`,
+    query,
   ]
     .filter(Boolean)
     .join(" ");
@@ -111,10 +113,14 @@ export async function getBeatmaps({
   const url = queryString.stringifyUrl({
     url: `${BASE_PATH}/api/getBeatmaps`,
     query: {
-      q,
+      q: q || undefined,
       m: 3, // 3 = mania mode
-      sort: `${sortCriteria}_${sortDirection}`,
-      cursor_string: cursorString,
+      sort:
+        sortCriteria !== DEFAULT_SORT_CRITERIA &&
+        sortDirection !== DEFAULT_SORT_DIRECTION
+          ? `${sortCriteria}_${sortDirection}`
+          : undefined,
+      cursor_string: cursorString || undefined,
       s: category !== DEFAULT_CATEGORY ? category.toLowerCase() : undefined,
       nsfw,
       g: GENRE_ID_MAP[genre],
@@ -137,6 +143,5 @@ export async function getBeatmaps({
   }
 
   const data: GetBeatmapsResponse = await res.json();
-  console.log(data);
   return data;
 }
