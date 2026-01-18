@@ -1,16 +1,18 @@
 export type Stars = {
-  min: number;
-  max: number;
+  min: number | null;
+  max: number | null;
 };
 
 export const DEFAULT_STARS: Stars = {
-  min: 0,
-  max: 10,
+  min: null,
+  max: null,
 };
 
 export function parseStarsParam(param?: string | null): Stars {
   if (param) {
-    const [min, max] = param.split("-").map((value) => Number(value));
+    const [min, max] = param
+      .split("-")
+      .map((value) => (value === "null" ? null : Number(value)));
     return { min, max };
   }
 
