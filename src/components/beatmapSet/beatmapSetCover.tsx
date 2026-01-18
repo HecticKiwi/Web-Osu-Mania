@@ -63,26 +63,28 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       )}
 
       {/* Details */}
-      {beatmapSet.status && (
-        <div
-          className={cn(
-            "mt-auto w-fit rounded-full px-1.5 text-xs font-bold",
-            getStatusClass(beatmapSet.status),
-          )}
-        >
-          {beatmapSet.status.toUpperCase()}
+      <div className="mt-auto">
+        {beatmapSet.status && (
+          <div
+            className={cn(
+              "w-fit rounded-full px-1.5 text-xs font-bold",
+              getStatusClass(beatmapSet.status),
+            )}
+          >
+            {beatmapSet.status.toUpperCase()}
+          </div>
+        )}
+        <div className="mt-0.5 w-full truncate text-xl">{title}</div>
+        <div className="flex w-full items-end justify-between gap-8">
+          <span className="truncate text-primary">by {artist}</span>
+          <span className="text-sm text-muted-foreground">
+            {secondsToMMSS(
+              Math.max(
+                ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
+              ),
+            )}
+          </span>
         </div>
-      )}
-      <div className="mt-0.5 w-full truncate text-xl">{title}</div>
-      <div className="flex w-full items-end justify-between gap-8">
-        <span className="truncate text-primary">by {artist}</span>
-        <span className="text-sm text-muted-foreground">
-          {secondsToMMSS(
-            Math.max(
-              ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
-            ),
-          )}
-        </span>
       </div>
     </>
   );
