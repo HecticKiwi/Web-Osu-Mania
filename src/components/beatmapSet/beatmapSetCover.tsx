@@ -63,14 +63,16 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       )}
 
       {/* Details */}
-      <div
-        className={cn(
-          "mt-auto w-fit rounded-full px-1.5 text-xs font-bold",
-          getStatusClass(beatmapSet.status),
-        )}
-      >
-        {beatmapSet.status.toUpperCase()}
-      </div>
+      {beatmapSet.status && (
+        <div
+          className={cn(
+            "mt-auto w-fit rounded-full px-1.5 text-xs font-bold",
+            getStatusClass(beatmapSet.status),
+          )}
+        >
+          {beatmapSet.status.toUpperCase()}
+        </div>
+      )}
       <div className="mt-0.5 w-full truncate text-xl">{title}</div>
       <div className="flex w-full items-end justify-between gap-8">
         <span className="truncate text-primary">by {artist}</span>
