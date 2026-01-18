@@ -16,6 +16,16 @@ const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
 // type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
 
+const STATUSES = [
+  "ranked",
+  "qualified",
+  "loved",
+  "pending",
+  "graveyard",
+  "wip",
+] as const;
+export type Status = (typeof STATUSES)[number];
+
 // Commented properties are unused and removed before caching
 
 export type Beatmap = {
@@ -56,7 +66,7 @@ export type BeatmapSet = {
   // play_count: number;
   preview_url: string;
   // source: string;
-  // status: string;
+  status: Status;
   // spotlight: boolean;
   title: string;
   title_unicode: string;
@@ -127,6 +137,6 @@ export async function getBeatmaps({
   }
 
   const data: GetBeatmapsResponse = await res.json();
-
+  console.log(data);
   return data;
 }

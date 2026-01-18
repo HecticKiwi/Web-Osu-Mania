@@ -1,7 +1,24 @@
-import { BeatmapSet } from "@/lib/osuApi";
-import { secondsToMMSS } from "@/lib/utils";
+import { BeatmapSet, Status } from "@/lib/osuApi";
+import { cn, secondsToMMSS } from "@/lib/utils";
 import Image from "next/image";
 import { useSettingsStore } from "../../stores/settingsStore";
+
+const getStatusClass = (status: Status) => {
+  switch (status) {
+    case "ranked":
+      return "bg-green-400";
+    case "qualified":
+      return "bg-blue-400";
+    case "loved":
+      return "bg-pink-400";
+    case "pending":
+      return "bg-yellow-400";
+    case "graveyard":
+      return "bg-black";
+    case "wip":
+      return "bg-orange-400";
+  }
+};
 
 const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   const hideBeatmapSetCovers = useSettingsStore.use.hideBeatmapSetCovers();
@@ -43,7 +60,15 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       )}
 
       {/* Details */}
-      <div className="mt-auto w-full truncate text-xl">{title}</div>
+      <div
+        className={cn(
+          "mt-auto w-fit rounded-full px-1.5 text-xs font-bold text-gray-900",
+          getStatusClass(beatmapSet.status),
+        )}
+      >
+        {beatmapSet.status.toUpperCase()}
+      </div>
+      <div className="mt-0.5 w-full truncate text-xl">{title}</div>
       <div className="flex w-full items-end justify-between gap-8">
         <span className="truncate text-primary">by {artist}</span>
         <span className="text-sm text-muted-foreground">
