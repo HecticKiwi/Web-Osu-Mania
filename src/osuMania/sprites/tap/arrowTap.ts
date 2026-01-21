@@ -49,7 +49,6 @@ export class ArrowTap extends Tap {
     } else {
       this.view.tint = game.laneColors[tapData.column].tap;
     }
-    this.view.tint = "green";
 
     this.game.notesContainer.addChild(this.view);
   }

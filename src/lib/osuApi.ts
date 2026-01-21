@@ -103,8 +103,12 @@ export async function getBeatmaps({
     query: {
       q,
       m: 3, // 3 = mania mode
-      sort: `${sortCriteria}_${sortDirection}`,
-      cursor_string: cursorString,
+      sort:
+        sortCriteria !== DEFAULT_SORT_CRITERIA ||
+        sortDirection !== DEFAULT_SORT_DIRECTION
+          ? `${sortCriteria}_${sortDirection}`
+          : undefined,
+      cursor_string: cursorString || undefined,
       s: category !== DEFAULT_CATEGORY ? category.toLowerCase() : undefined,
       nsfw,
       g: GENRE_ID_MAP[genre],
