@@ -17,13 +17,11 @@ function getNodeCache(namespace: string) {
   return cache;
 }
 
-function isCloudflare() {
-  return !!process.env.CF_PAGES;
-}
-
 export async function getCache(namespace: string): Promise<Cache> {
-  // --- Cloudflare KV ---
-  if (isCloudflare()) {
+  const isCF = process.env.IS_CF_WORKER === "true";
+  
+    // --- Cloudflare KV ---
+  if (isCF) {
     const { getCloudflareContext } = await import("@opennextjs/cloudflare");
     const kv = (getCloudflareContext().env as any)[namespace];
 
