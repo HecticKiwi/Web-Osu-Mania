@@ -1,5 +1,5 @@
+import { getCache } from "@/lib/cache";
 import { BeatmapSet } from "@/lib/osuApi";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 type OAuthTokenData = {
   token_type: string;
@@ -8,19 +8,28 @@ type OAuthTokenData = {
 };
 
 export async function getAccessToken() {
-  const TOKENS = getCloudflareContext().env.TOKENS;
+  const TOKENS = await getCache("TOKENS");
 
   let accessToken = await TOKENS.get("osu_api_access_token");
 
   if (!accessToken) {
+    const clientId = process.env.OSU_API_CLIENT_ID;
+    const clientSecret = process.env.OSU_API_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      throw new Error(
+        "Missing OSU_API_CLIENT_ID / OSU_API_CLIENT_SECRET in environment.",
+      );
+    }
+
     const response: Response = await fetch("https://osu.ppy.sh/oauth/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        client_id: process.env.OSU_API_CLIENT_ID,
-        client_secret: process.env.OSU_API_CLIENT_SECRET,
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: "client_credentials",
         scope: "public",
       }),
@@ -36,9 +45,7 @@ export async function getAccessToken() {
 
     accessToken = data.access_token;
 
-    await TOKENS.put("osu_api_access_token", accessToken, {
-      expirationTtl: data.expires_in,
-    });
+    await TOKENS.put("osu_api_access_token", accessToken, data.expires_in);
   }
 
   return accessToken;

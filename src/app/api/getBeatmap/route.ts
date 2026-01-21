@@ -1,6 +1,6 @@
 import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getCache } from "@/lib/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken, trimBeatmapSet } from "../utils";
 
@@ -10,27 +10,27 @@ export async function GET(request: NextRequest) {
   }
 
   const requestUrl = new URL(request.url);
-
   const beatmapSetId = requestUrl.searchParams.get("beatmapSetId");
 
   if (!beatmapSetId) {
-    throw new Error("URL missing beatmapSetId");
+    return new NextResponse("URL missing beatmapSetId", { status: 400 });
   }
 
-  const BEATMAP_SET_DATA = getCloudflareContext().env.BEATMAP_SET_DATA;
-  const cachedData = await BEATMAP_SET_DATA.get(beatmapSetId);
+  const cache = await getCache("BEATMAP_SET_DATA");
+  const ttlSeconds = 86400; // 24h
 
+  // --- Cache read ---
+  const cachedData = await cache.get(beatmapSetId);
   if (cachedData) {
     return new NextResponse(cachedData, {
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": `public, max-age=${ttlSeconds}`,
       },
     });
   }
 
   const accessToken = await getAccessToken();
-
   const url = `https://osu.ppy.sh/api/v2/beatmapsets/${beatmapSetId}`;
 
   const response = await fetch(url, {
@@ -41,21 +41,22 @@ export async function GET(request: NextRequest) {
   });
 
   if (!response.ok) {
-    throw new Error(
+    return new NextResponse(
       `GET getBeatmap error: ${response.status} - ${response.statusText}`,
+      { status: response.status },
     );
   }
 
   const data: BeatmapSet = await response.json();
-
   const trimmedData = trimBeatmapSet(data);
+  const body = JSON.stringify(trimmedData);
 
-  await BEATMAP_SET_DATA.put(beatmapSetId, JSON.stringify(trimmedData), {
-    expirationTtl: 86400,
-  });
+  // --- Cache write ---
+  await cache.put(beatmapSetId, body, ttlSeconds);
 
-  return NextResponse.json(trimmedData, {
+  return new NextResponse(body, {
     headers: {
+      "Content-Type": "application/json",
       "Cache-Control": "public, max-age=3600",
     },
   });
