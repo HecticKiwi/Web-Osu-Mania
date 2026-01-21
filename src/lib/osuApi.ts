@@ -16,6 +16,16 @@ const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
 // type RankStatus = "-2" | "-1" | "0" | "1" | "2" | "3" | "4;";
 
+const STATUSES = [
+  "ranked",
+  "qualified",
+  "loved",
+  "pending",
+  "graveyard",
+  "wip",
+] as const;
+export type Status = (typeof STATUSES)[number];
+
 // Commented properties are unused and removed before caching
 
 export type Beatmap = {
@@ -56,7 +66,7 @@ export type BeatmapSet = {
   // play_count: number;
   preview_url: string;
   // source: string;
-  // status: string;
+  status: Status;
   // spotlight: boolean;
   title: string;
   title_unicode: string;
@@ -90,10 +100,12 @@ export async function getBeatmaps({
   language: Language;
 }) {
   const { min, max } = stars;
+
   const q = [
-    query,
+    stars.min !== null && `stars>=${min}`,
+    stars.max !== null && `stars<=${max}`,
     keys && keys.map((key) => `key=${key}`).join(" "),
-    stars && `stars>=${min} stars<=${max}`,
+    query,
   ]
     .filter(Boolean)
     .join(" ");
@@ -101,7 +113,7 @@ export async function getBeatmaps({
   const url = queryString.stringifyUrl({
     url: `${BASE_PATH}/api/getBeatmaps`,
     query: {
-      q,
+      q: q || undefined,
       m: 3, // 3 = mania mode
       sort:
         sortCriteria !== DEFAULT_SORT_CRITERIA ||
@@ -131,6 +143,5 @@ export async function getBeatmaps({
   }
 
   const data: GetBeatmapsResponse = await res.json();
-
   return data;
 }

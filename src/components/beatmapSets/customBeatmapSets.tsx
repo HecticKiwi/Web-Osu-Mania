@@ -84,11 +84,17 @@ const CustomBeatmapSets = ({
     }
 
     if (
-      !maniaBeatmaps.some(
-        (beatmap) =>
-          beatmap.difficulty_rating >= stars.min &&
-          beatmap.difficulty_rating <= stars.max,
-      )
+      !maniaBeatmaps.some((beatmap) => {
+        if (stars.min !== null && beatmap.difficulty_rating < stars.min) {
+          return false;
+        }
+
+        if (stars.max !== null && beatmap.difficulty_rating > stars.max) {
+          return false;
+        }
+
+        return true;
+      })
     ) {
       return false;
     }

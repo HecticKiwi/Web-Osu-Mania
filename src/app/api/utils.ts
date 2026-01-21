@@ -59,6 +59,7 @@ export function trimBeatmapSet(beatmapSet: BeatmapSet): BeatmapSet {
     nsfw: beatmapSet.nsfw,
     offset: beatmapSet.offset,
     preview_url: beatmapSet.preview_url,
+    status: beatmapSet.status,
     title: beatmapSet.title,
     title_unicode: beatmapSet.title_unicode,
     beatmaps: beatmapSet.beatmaps.map((beatmap) => ({
