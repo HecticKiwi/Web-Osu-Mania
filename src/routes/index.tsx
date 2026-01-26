@@ -1,3 +1,4 @@
+//
 import { GameOverlay } from "@/components/game/gameOverlay";
 import Main from "@/components/main";
 import UploadDialog from "@/components/settings/uploadDialog";
