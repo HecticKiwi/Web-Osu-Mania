@@ -1,5 +1,3 @@
-"use client";
-
 import { cn, getScoreMultiplier } from "@/lib/utils";
 import { useSettingsStore } from "../../stores/settingsStore";
 

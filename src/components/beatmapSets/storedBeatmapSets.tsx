@@ -1,5 +1,3 @@
-"use client";
-
 import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import CustomBeatmapSets from "./customBeatmapSets";
 

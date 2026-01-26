@@ -1,5 +1,5 @@
 import { BeatmapSet } from "@/lib/osuApi";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { env } from "cloudflare:workers";
 
 type OAuthTokenData = {
   token_type: string;
@@ -7,8 +7,16 @@ type OAuthTokenData = {
   access_token: string;
 };
 
+export const corsHeaders = {
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Origin": "https://hectickiwi.github.io",
+  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+  "Access-Control-Allow-Headers":
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+};
+
 export async function getAccessToken() {
-  const TOKENS = getCloudflareContext().env.TOKENS;
+  const TOKENS = env.TOKENS;
 
   let accessToken = await TOKENS.get("osu_api_access_token");
 
@@ -19,8 +27,8 @@ export async function getAccessToken() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        client_id: process.env.OSU_API_CLIENT_ID,
-        client_secret: process.env.OSU_API_CLIENT_SECRET,
+        client_id: env.OSU_API_CLIENT_ID,
+        client_secret: env.OSU_API_CLIENT_SECRET,
         grant_type: "client_credentials",
         scope: "public",
       }),

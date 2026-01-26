@@ -1,5 +1,3 @@
-"use client";
-
 import {
   CUSTOM_CATEGORIES,
   parseCategoryParam,
@@ -12,20 +10,25 @@ import {
   parseSortDirectionParam,
 } from "@/lib/searchParams/sortParam";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 
 const SortFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const category = parseCategoryParam(searchParams.get("category"));
+  const search = useSearch({ from: "/" });
+  const category = parseCategoryParam(
+    typeof search.category === "string" ? search.category : undefined,
+  );
   const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
 
-  const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
-  const sortDirection = parseSortDirectionParam(
-    searchParams.get("sortDirection"),
+  const sortCriteria = parseSortCriteriaParam(
+    typeof search.sortCriteria === "string" ? search.sortCriteria : undefined,
   );
-  const query = parseQueryParam(searchParams.get("q"));
+  const sortDirection = parseSortDirectionParam(
+    typeof search.sortDirection === "string" ? search.sortDirection : undefined,
+  );
+  const query = parseQueryParam(
+    typeof search.q === "string" ? search.q : undefined,
+  );
 
   const options = viewingCustomCategory
     ? ["Date Saved", "title", "artist"]
@@ -54,28 +57,24 @@ const SortFilter = ({ className }: { className?: string }) => {
                 ? "asc"
                 : "desc";
 
-            const params = new URLSearchParams(searchParams);
-            params.set("sortCriteria", criteria);
-            params.set("sortDirection", newSortDirection);
-
-            if (
+            const shouldDelete =
               criteria === DEFAULT_SORT_CRITERIA &&
-              newSortDirection === DEFAULT_SORT_DIRECTION
-            ) {
-              params.delete("sortCriteria");
-              params.delete("sortDirection");
-            }
+              newSortDirection === DEFAULT_SORT_DIRECTION;
 
             return (
               <Button key={criteria} asChild variant={"link"} className="p-0">
                 <Link
-                  href={`/?${params.toString()}`}
-                  scroll={false}
+                  to="/"
+                  search={{
+                    ...search,
+                    sortCriteria: shouldDelete ? undefined : criteria,
+                    sortDirection: shouldDelete ? undefined : newSortDirection,
+                  }}
+                  preloadDelay={0}
                   className={cn(
                     "h-8",
                     sortCriteria === criteria && "text-white",
                   )}
-                  prefetch={false}
                 >
                   {capitalizeFirstLetter(criteria)}
                 </Link>

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
@@ -525,6 +523,7 @@ const SettingsTab = () => {
         onClick={() => {
           resetSettings();
           toast("Settings have been reset.");
+          console.log("test");
         }}
       >
         Reset Settings

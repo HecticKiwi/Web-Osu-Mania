@@ -15,14 +15,10 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "strictPropertyInitialization": false,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [],
     "paths": {
       "@/*": [
         "./src/*"
@@ -30,11 +26,10 @@
     },
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "worker-configuration.d.ts"
+    "worker-configuration.d.ts",
+    "tailwind.config.ts"
   ],
   "exclude": [
     "node_modules",

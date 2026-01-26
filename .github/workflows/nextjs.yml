@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_BASE_URL: "https://webosumania.com"
+      VITE_BASE_URL: "https://webosumania.com"
       NEXT_PUBLIC_BASE_PATH: "https://webosumania.com"
     steps:
       - name: Checkout

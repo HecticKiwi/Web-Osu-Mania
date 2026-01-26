@@ -1,5 +1,3 @@
-"use client";
-
 import { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { PlayResults } from "@/types";

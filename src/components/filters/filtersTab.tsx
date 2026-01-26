@@ -1,11 +1,9 @@
-"use client";
-
 import {
   CUSTOM_CATEGORIES,
   parseCategoryParam,
 } from "@/lib/searchParams/categoryParam";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Route } from "@/routes";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CategoryFilter from "./categoryFilter";
@@ -18,8 +16,9 @@ import SortFilter from "./sortFilter";
 import DifficultyFilter from "./starsFilter";
 
 const FiltersTab = () => {
-  const searchParams = useSearchParams();
-  const category = parseCategoryParam(searchParams.get("category"));
+  const search = Route.useSearch();
+
+  const category = parseCategoryParam(search.category);
   const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
 
   return (
@@ -40,8 +39,7 @@ const FiltersTab = () => {
 
         <Button variant={"destructive"} className="mt-4 w-full" asChild>
           <Link
-            href={"/"}
-            prefetch={false}
+            to={"/"}
             onClick={() => {
               toast("Filters have been reset.");
             }}

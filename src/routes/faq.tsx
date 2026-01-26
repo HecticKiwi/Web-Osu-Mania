@@ -1,20 +1,25 @@
 import TextLink from "@/components/textLink";
 import { Card, CardContent } from "@/components/ui/card";
+import { createFileRoute } from "@tanstack/react-router";
 
-const FaqPage = () => {
+export const Route = createFileRoute("/faq")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   return (
     <main className="p-2 pb-4 sm:p-6">
       <div className="mx-auto max-w-2xl">
         <p className="text-muted-foreground">
           Website made with 💗 by{" "}
-          <TextLink href={"https://github.com/HecticKiwi"} target="_blank">
+          <TextLink to={"https://github.com/HecticKiwi"} target="_blank">
             HecticKiwi
           </TextLink>
         </p>
 
         <p className="mt-1 text-muted-foreground">
           If you like this website, please consider donating on{" "}
-          <TextLink href="https://ko-fi.com/hectickiwi" target="_blank">
+          <TextLink to="https://ko-fi.com/hectickiwi" target="_blank">
             Ko-fi
           </TextLink>
         </p>
@@ -25,7 +30,7 @@ const FaqPage = () => {
               What is osu!mania?
             </h2>
             <p className="mt-3 text-muted-foreground">
-              <TextLink href={"https://osu.ppy.sh/"} target="_blank">
+              <TextLink to={"https://osu.ppy.sh/"} target="_blank">
                 osu!
               </TextLink>{" "}
               is a popular rhythm game with 4 gameplay modes: osu!, osu!taiko,
@@ -71,14 +76,14 @@ const FaqPage = () => {
               However, while the circle, arrow, and diamond skins are my own
               design, the bar skin is based on{" "}
               <TextLink
-                href={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
+                to={"https://osu.ppy.sh/community/forums/topics/1458549?n=1"}
                 target="_blank"
               >
                 Miketacular
               </TextLink>
               . The judgement elements are from{" "}
               <TextLink
-                href={"https://osu.ppy.sh/community/forums/topics/1498492?n=1"}
+                to={"https://osu.ppy.sh/community/forums/topics/1498492?n=1"}
                 target="_blank"
               >
                 Azure Snowfall
@@ -96,14 +101,14 @@ const FaqPage = () => {
             </p>
             <ul className="mt-3 list-inside list-disc space-y-1 text-muted-foreground">
               <li>
-                <TextLink href={"https://webosumania.com"} target="_blank">
+                <TextLink to={"https://webosumania.com"} target="_blank">
                   https://webosumania.com
                 </TextLink>{" "}
                 (main)
               </li>
               <li>
                 <TextLink
-                  href={"https://webosumania.hectickiwi.workers.dev"}
+                  to={"https://webosumania.hectickiwi.workers.dev"}
                   target="_blank"
                 >
                   https://webosumania.hectickiwi.workers.dev
@@ -111,14 +116,14 @@ const FaqPage = () => {
               </li>
               <li>
                 <TextLink
-                  href={"https://hectickiwi.github.io/Web-Osu-Mania"}
+                  to={"https://hectickiwi.github.io/Web-Osu-Mania"}
                   target="_blank"
                 >
                   https://hectickiwi.github.io/Web-Osu-Mania
                 </TextLink>
               </li>
               <li>
-                <TextLink href={"https://wom.slingexe.com"} target="_blank">
+                <TextLink to={"https://wom.slingexe.com"} target="_blank">
                   https://wom.slingexe.com
                 </TextLink>
               </li>
@@ -130,7 +135,7 @@ const FaqPage = () => {
             <p className="mt-3 text-muted-foreground">
               Please file an issue on{" "}
               <TextLink
-                href={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
+                to={"https://github.com/HecticKiwi/Web-Osu-Mania/issues/new"}
                 target="_blank"
               >
                 GitHub
@@ -142,6 +147,4 @@ const FaqPage = () => {
       </div>
     </main>
   );
-};
-
-export default FaqPage;
+}

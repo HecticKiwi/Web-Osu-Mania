@@ -1,5 +1,3 @@
-import { NextRequest } from "next/server";
-
 type RateLimitOptions = {
   limit: number; // Number of allowed requests
   windowMs: number; // Window in ms (e.g. 60000 for 1 min)
@@ -8,7 +6,7 @@ type RateLimitOptions = {
 
 const ipCache = new Map<string, number[]>();
 
-function getClientIp(req: NextRequest): string {
+function getClientIp(req: Request): string {
   const trustCf = process.env.TRUST_CF_CONNECTING_IP === "false";
 
   const ip =
@@ -24,7 +22,7 @@ function getClientIp(req: NextRequest): string {
 }
 
 export function rateLimit(
-  req: NextRequest,
+  req: Request,
   { limit, windowMs }: RateLimitOptions = {
     limit: 25,
     windowMs: 60000, // 1 minute

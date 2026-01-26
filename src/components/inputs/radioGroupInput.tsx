@@ -1,5 +1,3 @@
-"use client";
-
 import { Settings, useSettingsStore } from "@/stores/settingsStore";
 import { ComponentProps } from "react";
 import { RadioGroup } from "../ui/radio-group";

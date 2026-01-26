@@ -2,20 +2,16 @@
   "name": "web-osu-mania",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-build": "opennextjs-cloudflare build",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
-    "@opennextjs/cloudflare": "^1.14.7",
     "@pixi/layers": "^2.1.0",
     "@pixi/react": "^7.1.2",
     "@pixi/sound": "^6.0.0",
@@ -48,6 +44,9 @@
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-query": "^5.29.2",
+    "@tanstack/react-router": "^1.154.6",
+    "@tanstack/react-start": "^1.154.6",
+    "@tanstack/zod-adapter": "^1.157.3",
     "@uidotdev/usehooks": "^2.4.1",
     "@zip.js/zip.js": "^2.7.62",
     "audiobuffer-to-wav": "^1.0.0",
@@ -66,8 +65,6 @@
     "jszip": "^3.10.1",
     "lucide-react": "^0.364.0",
     "modern-screenshot": "^4.6.0",
-    "next": "14.2.35",
-    "next-themes": "^0.3.0",
     "pixi-filters": "^6.0.0",
     "pixi.js": "^8.6.6",
     "query-string": "^9.0.0",
@@ -91,6 +88,8 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.21.1",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/audiobuffer-to-wav": "^1.0.4",
     "@types/howler": "^2.2.11",
     "@types/ini": "^4.1.1",
@@ -98,16 +97,18 @@
     "@types/react": "^18.3.22",
     "@types/react-dom": "^18",
     "@types/streamsaver": "^2.0.5",
-    "autoprefixer": "^10.0.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.6",
-    "postcss": "^8",
+    "postcss": "^8.5.6",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "tailwindcss": "^3.3.0",
+    "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5",
-    "wrangler": "^4.15.2"
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^6.0.4",
+    "wrangler": "^4.59.3"
   },
   "overrides": {
     "undici": "^5.28.5"

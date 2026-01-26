@@ -1,5 +1,3 @@
-"use client";
-
 import { setNestedProperty } from "@/lib/utils";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";

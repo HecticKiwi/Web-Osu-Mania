@@ -1,5 +1,3 @@
-"use client";
-
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";

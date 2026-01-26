@@ -3,6 +3,7 @@ import {
   BlobReader,
   BlobWriter,
   Entry,
+  FileEntry,
   TextWriter,
   ZipReader,
 } from "@zip.js/zip.js";
@@ -139,7 +140,9 @@ export const parseOsz = async (
   const pattern = new RegExp(`Version:\\s?${diffName}(\r|\n)`);
 
   let osuFileData;
-  const osuEntries = entries.filter((entry) => entry.filename.endsWith(".osu"));
+  const osuEntries = entries.filter(
+    (entry) => entry.filename.endsWith(".osu") && !entry.directory,
+  ) as FileEntry[];
   for (const entry of osuEntries) {
     const text = await entry.getData!(new TextWriter());
 
@@ -226,8 +229,8 @@ export const parseOsz = async (
   const audioExtensions = ["wav", "mp3", "ogg"];
   const audioEntries = entries.filter((entry) => {
     const extension = entry.filename.split(".").pop()?.toLowerCase();
-    return extension && audioExtensions.includes(extension);
-  });
+    return extension && audioExtensions.includes(extension) && !entry.directory;
+  }) as FileEntry[];
 
   for (const entry of audioEntries) {
     const name = removeFileExtension(entry.filename);
@@ -291,8 +294,9 @@ export const parseOsz = async (
 function findEntry(entries: Entry[], filename: string) {
   const lowercaseFilename = filename.toLowerCase();
   return entries.find(
-    (entry) => entry.filename.toLowerCase() === lowercaseFilename,
-  );
+    (entry) =>
+      entry.filename.toLowerCase() === lowercaseFilename && !entry.directory,
+  ) as FileEntry;
 }
 
 export function parseHitObjects(
@@ -645,7 +649,9 @@ export async function getBeatmapSetIdFromOsz(blob: Blob) {
   const entries = await zipReader.getEntries();
 
   // Locate any .osu file
-  const osuEntry = entries.find((entry) => entry.filename.endsWith(".osu"));
+  const osuEntry = entries.find(
+    (entry) => entry.filename.endsWith(".osu") && !entry.directory,
+  ) as FileEntry;
 
   if (!osuEntry) {
     throw new Error("No .osu files found.");

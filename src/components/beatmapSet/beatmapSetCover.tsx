@@ -1,6 +1,5 @@
 import { BeatmapSet, Status } from "@/lib/osuApi";
 import { cn, secondsToMMSS } from "@/lib/utils";
-import Image from "next/image";
 import { useSettingsStore } from "../../stores/settingsStore";
 
 const getStatusClass = (status: Status) => {
@@ -49,11 +48,11 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
             "absolute inset-0 -z-10 brightness-[0.3] transition duration-300 group-hover:brightness-[0.5]"
           }
         >
-          <Image
+          <img
             src={beatmapSet.covers.cover}
             alt="Beatmap Set Cover"
-            fill
-            className="object-cover"
+            // fill
+            className="h-full w-full object-cover"
             sizes="720px"
             onError={(e) => {
               e.currentTarget.style.display = "none";

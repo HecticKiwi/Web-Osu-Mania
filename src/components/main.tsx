@@ -1,9 +1,7 @@
-"use client";
-
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import { Route } from "@/routes";
 import { useGameStore } from "@/stores/gameStore";
 import { InfoIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import BeatmapSetsInfiniteScroll from "./beatmapSets/beatmapSetsInfiniteScroll";
 import SavedBeatmapSets from "./beatmapSets/savedBeatmapSets";
@@ -11,8 +9,9 @@ import StoredBeatmapSets from "./beatmapSets/storedBeatmapSets";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const Main = () => {
-  const searchParams = useSearchParams();
-  const category = parseCategoryParam(searchParams.get("category"));
+  // const searchParams = useSearchParams();
+  const search = Route.useSearch();
+  const category = parseCategoryParam(search.category);
   const beatmapId = useGameStore.use.beatmapId();
   const scrollPosition = useGameStore.use.scrollPosition();
 

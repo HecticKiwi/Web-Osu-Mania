@@ -1,6 +1,3 @@
-"use client";
-
-import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
 import { getBeatmaps } from "@/lib/osuApi";
 import { Category, parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { parseGenreParam } from "@/lib/searchParams/genreParam";
@@ -14,10 +11,11 @@ import {
 } from "@/lib/searchParams/sortParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { cn } from "@/lib/utils";
+import { Route } from "@/routes";
+import { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { Bookmark, HardDrive, Loader } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
 import TextLink from "../textLink";
@@ -30,19 +28,17 @@ const BeatmapSetsInfiniteScroll = ({
   initialData?: GetBeatmapsResponse;
   className?: string;
 }) => {
-  const searchParams = useSearchParams();
+  const search = Route.useSearch();
 
-  const query = parseQueryParam(searchParams.get("q"));
-  const category = parseCategoryParam(searchParams.get("category"));
-  const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
-  const sortDirection = parseSortDirectionParam(
-    searchParams.get("sortDirection"),
-  );
-  const keys = parseKeysParam(searchParams.get("keys"));
-  const stars = parseStarsParam(searchParams.get("stars"));
-  const nsfw = parseNsfwParam(searchParams.get("nsfw"));
-  const genre = parseGenreParam(searchParams.get("genre"));
-  const language = parseLanguageParam(searchParams.get("language"));
+  const query = parseQueryParam(search.q);
+  const category = parseCategoryParam(search.category);
+  const sortCriteria = parseSortCriteriaParam(search.sortCriteria);
+  const sortDirection = parseSortDirectionParam(search.sortDirection);
+  const keys = parseKeysParam(search.keys);
+  const stars = parseStarsParam(search.stars);
+  const nsfw = parseNsfwParam(search.nsfw);
+  const genre = parseGenreParam(search.genre);
+  const language = parseLanguageParam(search.language);
 
   const [ref, entry] = useIntersectionObserver();
 
@@ -132,11 +128,7 @@ const BeatmapSetsInfiniteScroll = ({
       <div className="mt-16 text-center">
         <h1 className="text-3xl font-semibold">No Beatmaps Found!</h1>
         <p className="text-lg text-muted-foreground">
-          Please adjust or{" "}
-          <TextLink href={"/"} prefetch={false}>
-            reset
-          </TextLink>{" "}
-          the filters.
+          Please adjust or <TextLink to={"/"}>reset</TextLink> the filters.
         </p>
       </div>
     );

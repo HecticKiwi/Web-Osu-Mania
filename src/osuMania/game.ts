@@ -66,7 +66,6 @@ import { ReplayPlayer } from "./systems/replayPlayer";
 import { ReplayData, ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
 
-gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export class Game {
@@ -171,6 +170,8 @@ export class Game {
     retry: () => void,
     videoEl: HTMLVideoElement | null,
   ) {
+    gsap.registerPlugin(PixiPlugin);
+
     this.resize = this.resize.bind(this);
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
@@ -324,9 +325,26 @@ export class Game {
     this.keysContainer.width = notesContainerWidth;
     this.keys.forEach((key) => key.resize());
 
-    const gradientFill = new FillGradient(0, this.app.screen.height, 0, 0);
-    gradientFill.addColorStop(0.4, "gray");
-    gradientFill.addColorStop(1, "transparent");
+    const fillGradient = new FillGradient({
+      start: {
+        x: 0,
+        y: 1,
+      },
+      end: {
+        x: 0,
+        y: 0,
+      },
+      colorStops: [
+        {
+          offset: 0.4,
+          color: "gray",
+        },
+        {
+          offset: 1,
+          color: "transparent",
+        },
+      ],
+    });
 
     this.stageContainer.removeChild(this.stageSides);
     this.stageSides
@@ -338,7 +356,7 @@ export class Game {
         this.stageSideWidth,
         this.app.screen.height,
       )
-      .fill(gradientFill);
+      .fill(fillGradient);
 
     this.stageContainer.addChild(this.stageSides);
     this.stageBackground.height = this.app.screen.height;

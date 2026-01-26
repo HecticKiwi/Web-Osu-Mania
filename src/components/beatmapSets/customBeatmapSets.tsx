@@ -1,5 +1,3 @@
-"use client";
-
 import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
@@ -10,7 +8,7 @@ import {
 } from "@/lib/searchParams/sortParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { caseInsensitiveIncludes, cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
+import { Route } from "@/routes";
 import { ReactNode } from "react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSet from "../beatmapSet/beatmapSet";
@@ -29,7 +27,7 @@ const CustomBeatmapSets = ({
   const preferMetadataInOriginalLanguage = useSettingsStore(
     (settings) => settings.preferMetadataInOriginalLanguage,
   );
-  const searchParams = useSearchParams();
+  const search = Route.useSearch();
 
   if (beatmapSets.length === 0) {
     return (
@@ -42,14 +40,12 @@ const CustomBeatmapSets = ({
     );
   }
 
-  const query = parseQueryParam(searchParams.get("q"));
-  const sortCriteria = parseSortCriteriaParam(searchParams.get("sortCriteria"));
-  const sortDirection = parseSortDirectionParam(
-    searchParams.get("sortDirection"),
-  );
-  const keys = parseKeysParam(searchParams.get("keys"));
-  const stars = parseStarsParam(searchParams.get("stars"));
-  const nsfw = parseNsfwParam(searchParams.get("nsfw"));
+  const query = parseQueryParam(search.q);
+  const sortCriteria = parseSortCriteriaParam(search.sortCriteria);
+  const sortDirection = parseSortDirectionParam(search.sortDirection);
+  const keys = parseKeysParam(search.keys);
+  const stars = parseStarsParam(search.stars);
+  const nsfw = parseNsfwParam(search.nsfw);
 
   const filteredSaves = beatmapSets.filter((beatmapSet) => {
     if (query.trim()) {

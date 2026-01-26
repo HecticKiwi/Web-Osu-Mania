@@ -1,5 +1,3 @@
-"use client";
-
 import { SelectItem } from "@/components/ui/select";
 import { getJudgementUrl } from "@/lib/utils";
 import { JUDGEMENTS } from "@/osuMania/constants";
@@ -56,7 +54,7 @@ const JudgementSet = () => {
 
       <p className="mt-4 text-sm text-muted-foreground">
         Judgement images are sourced from {selectedJudgementSet.creator} found{" "}
-        <TextLink href={selectedJudgementSet.url} target="_blank">
+        <TextLink to={selectedJudgementSet.url} target="_blank">
           here
         </TextLink>
         .

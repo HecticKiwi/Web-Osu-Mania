@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Game } from "@/osuMania/game";
 import { useEffect, useRef, useState } from "react";

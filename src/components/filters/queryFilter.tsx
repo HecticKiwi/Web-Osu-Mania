@@ -1,19 +1,20 @@
-"use client";
-
 import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import { cn } from "@/lib/utils";
+import { Route } from "@/routes";
+import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 const SearchFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const queryParam = parseQueryParam(searchParams.get("q"));
+  const { q } = Route.useSearch();
+  // const searchParams = useSearchParams();
+  const queryParam = parseQueryParam(q);
+  const navigate = useNavigate({ from: Route.fullPath });
 
-  const router = useRouter();
+  // const router = useRouter();
   const [query, setQuery] = useState(queryParam);
 
   useEffect(() => {
@@ -23,29 +24,31 @@ const SearchFilter = ({ className }: { className?: string }) => {
   const search = (e?: FormEvent) => {
     e?.preventDefault();
 
-    const params = new URLSearchParams(searchParams);
+    navigate({
+      search: (prev) => {
+        const newSearch = { ...prev };
 
-    const oldQuery = params.get("q");
+        // If adding query, change sort by to descending relevance
+        if (query && !prev.q) {
+          newSearch.sortCriteria = "relevance";
+          newSearch.sortDirection = "desc";
+        }
 
-    // If adding query, change sort by to descending relevance
-    if (query && !oldQuery) {
-      params.set("sortCriteria", "relevance");
-      params.set("sortDirection", "desc");
-    }
+        // If removing query, change sort by to descending ranked date
+        if (prev.q && !query) {
+          newSearch.sortCriteria = "ranked";
+          newSearch.sortDirection = "desc";
+        }
 
-    // If removing query, change sort by to descending ranked date
-    if (oldQuery && !query) {
-      params.set("sortCriteria", "ranked");
-      params.set("sortDirection", "desc");
-    }
+        if (query) {
+          newSearch.q = query;
+        } else {
+          newSearch.q = undefined;
+        }
 
-    if (query) {
-      params.set("q", query);
-    } else {
-      params.delete("q");
-    }
-
-    router.push(`/?${params.toString()}`);
+        return newSearch;
+      },
+    });
   };
 
   return (

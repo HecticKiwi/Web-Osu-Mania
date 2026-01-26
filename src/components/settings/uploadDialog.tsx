@@ -1,5 +1,3 @@
-"use client";
-
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
 import { Loader } from "lucide-react";

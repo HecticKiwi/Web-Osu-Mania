@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import { useSettingsStore } from "../../stores/settingsStore";
@@ -119,7 +117,7 @@ const VolumeSettings = ({
                 If using an audio offset, it is highly recommended that you mute
                 the SFX. Use a{" "}
                 <TextLink
-                  href={"https://nullvoxpopuli.github.io/latency-tester/"}
+                  to={"https://nullvoxpopuli.github.io/latency-tester/"}
                   target="_blank"
                 >
                   latency tester

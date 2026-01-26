@@ -1,5 +1,3 @@
-"use client";
-
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";

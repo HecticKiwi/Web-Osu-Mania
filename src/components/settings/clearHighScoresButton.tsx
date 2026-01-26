@@ -1,5 +1,3 @@
-"use client";
-
 import { idb } from "@/lib/idb";
 import { toast } from "sonner";
 import { useHighScoresStore } from "../../stores/highScoresStore";
