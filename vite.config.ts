@@ -14,7 +14,7 @@ export default defineConfig({
     tsconfigPaths(),
     tanstackStart({
       prerender: {
-        enabled: true,
+        enabled: false,
         crawlLinks: false,
         onSuccess: ({ page }) => {
           console.log(`Rendered ${page.path}!`);
