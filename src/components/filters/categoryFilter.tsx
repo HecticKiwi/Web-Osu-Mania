@@ -1,5 +1,3 @@
-"use client";
-
 import {
   CATEGORIES,
   CUSTOM_CATEGORIES,
@@ -11,28 +9,19 @@ import {
   DEFAULT_SORT_DIRECTION,
 } from "@/lib/searchParams/sortParam";
 import { cn } from "@/lib/utils";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Bookmark, HardDrive } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 
 const CategoryFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const categoryParam = parseCategoryParam(searchParams.get("category"));
+  const search = useSearch({ from: "/" });
+  const categoryParam = parseCategoryParam(
+    typeof search.category === "string" ? search.category : undefined,
+  );
   const storeDownloadedBeatmaps = useSettingsStore(
     (settings) => settings.storeDownloadedBeatmaps,
   );
-
-  const savedParams = new URLSearchParams(searchParams);
-  savedParams.set("category", "Saved");
-  savedParams.set("sortCriteria", "Date Saved");
-  savedParams.set("sortDirection", "desc");
-
-  const storedParams = new URLSearchParams(searchParams);
-  storedParams.set("category", "Stored");
-  storedParams.set("sortCriteria", "Date Saved");
-  storedParams.set("sortDirection", "desc");
 
   return (
     <>
@@ -41,29 +30,25 @@ const CategoryFilter = ({ className }: { className?: string }) => {
 
         <div className="flex flex-wrap gap-x-2">
           {CATEGORIES.map((category) => {
-            const params = new URLSearchParams(searchParams);
-
-            if (category === DEFAULT_CATEGORY) {
-              params.delete("category");
-            } else {
-              params.set("category", category);
-            }
-
-            if (CUSTOM_CATEGORIES.includes(categoryParam)) {
-              params.set("sortCriteria", DEFAULT_SORT_CRITERIA);
-              params.set("sortDirection", DEFAULT_SORT_DIRECTION);
-            }
+            const newSearch = {
+              ...search,
+              category: category === DEFAULT_CATEGORY ? undefined : category,
+              ...(CUSTOM_CATEGORIES.includes(categoryParam) && {
+                sortCriteria: DEFAULT_SORT_CRITERIA,
+                sortDirection: DEFAULT_SORT_DIRECTION,
+              }),
+            };
 
             return (
               <Button key={category} asChild variant={"link"} className="p-0">
                 <Link
-                  href={`/?${params.toString()}`}
-                  scroll={false}
+                  to="/"
+                  search={newSearch}
+                  preloadDelay={0}
                   className={cn(
                     "h-8",
                     categoryParam === category && "text-white",
                   )}
-                  prefetch={false}
                 >
                   {category}
                 </Link>
@@ -72,13 +57,18 @@ const CategoryFilter = ({ className }: { className?: string }) => {
           })}
           <Button asChild variant={"link"} className="p-0">
             <Link
-              href={`/?${savedParams.toString()}`}
-              scroll={false}
+              to="/"
+              search={{
+                ...search,
+                category: "Saved",
+                sortCriteria: "Date Saved",
+                sortDirection: "desc",
+              }}
+              preloadDelay={0}
               className={cn(
                 "h-8 gap-1",
                 categoryParam === "Saved" && "text-white",
               )}
-              prefetch={false}
             >
               <Bookmark
                 className="size-5"
@@ -94,13 +84,18 @@ const CategoryFilter = ({ className }: { className?: string }) => {
           {storeDownloadedBeatmaps && (
             <Button asChild variant={"link"} className="p-0">
               <Link
-                href={`/?${storedParams.toString()}`}
-                scroll={false}
+                to="/"
+                search={{
+                  ...search,
+                  category: "Stored",
+                  sortCriteria: "Date Saved",
+                  sortDirection: "desc",
+                }}
+                preloadDelay={0}
                 className={cn(
                   "h-8 gap-1",
                   categoryParam === "Stored" && "text-white",
                 )}
-                prefetch={false}
               >
                 <HardDrive className="size-5" />
                 <span>Stored</span>

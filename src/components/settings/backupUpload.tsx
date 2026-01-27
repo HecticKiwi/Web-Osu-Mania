@@ -1,5 +1,3 @@
-"use client";
-
 import { importBackup } from "@/lib/backup";
 import { cn } from "@/lib/utils";
 import { Loader, Upload } from "lucide-react";

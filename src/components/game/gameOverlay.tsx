@@ -1,5 +1,3 @@
-"use client";
-
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useGameStore } from "../../stores/gameStore";
 import GameModal from "./gameModal";

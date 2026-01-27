@@ -1,5 +1,3 @@
-"use client";
-
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Howler } from "howler";
 import { CSSProperties, ReactNode, useEffect } from "react";

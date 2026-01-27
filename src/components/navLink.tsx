@@ -1,24 +1,19 @@
-"use client";
-
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@tanstack/react-router";
 import { ComponentProps } from "react";
 
-const NavLink = ({ ...props }: ComponentProps<typeof Link>) => {
-  const pathname = usePathname();
-
+const NavLink = ({ className, ...props }: ComponentProps<typeof Link>) => {
   return (
-    <>
-      <Link
-        prefetch={false}
-        className={cn(
-          "transition-colors hover:text-foreground/80",
-          pathname === props.href ? "text-foreground" : "text-foreground/60",
-        )}
-        {...props}
-      ></Link>
-    </>
+    <Link
+      className={cn("transition-colors hover:text-foreground/80", className)}
+      activeProps={{
+        className: "text-foreground",
+      }}
+      inactiveProps={{
+        className: "text-foreground/60",
+      }}
+      {...props}
+    />
   );
 };
 

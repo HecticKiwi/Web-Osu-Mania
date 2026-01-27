@@ -1,18 +1,17 @@
-"use client";
-
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Button } from "../ui/button";
 import {
-  parseLanguageParam,
-  LANGUAGES,
   DEFAULT_LANGUAGE,
+  LANGUAGES,
+  parseLanguageParam,
 } from "@/lib/searchParams/languageParam";
+import { cn } from "@/lib/utils";
+import { Link, useSearch } from "@tanstack/react-router";
+import { Button } from "../ui/button";
 
 const LanguageFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const languageParam = parseLanguageParam(searchParams.get("language"));
+  const search = useSearch({ from: "/" });
+  const languageParam = parseLanguageParam(
+    typeof search.language === "string" ? search.language : undefined,
+  );
 
   return (
     <>
@@ -21,24 +20,20 @@ const LanguageFilter = ({ className }: { className?: string }) => {
 
         <div className="flex flex-wrap gap-x-2">
           {LANGUAGES.map((language) => {
-            const params = new URLSearchParams(searchParams);
-
-            if (language === DEFAULT_LANGUAGE) {
-              params.delete("language");
-            } else {
-              params.set("language", language);
-            }
-
             return (
               <Button key={language} asChild variant={"link"} className="p-0">
                 <Link
-                  href={`/?${params.toString()}`}
-                  scroll={false}
+                  to="/"
+                  search={{
+                    ...search,
+                    language:
+                      language === DEFAULT_LANGUAGE ? undefined : language,
+                  }}
+                  preloadDelay={0}
                   className={cn(
                     "h-8",
                     languageParam === language && "text-white",
                   )}
-                  prefetch={false}
                 >
                   {language}
                 </Link>

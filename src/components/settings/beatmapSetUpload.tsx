@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
 import { ChangeEvent, DragEvent, useState } from "react";

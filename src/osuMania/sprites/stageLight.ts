@@ -19,13 +19,30 @@ export class StageLight {
     const height = game.app.screen.height * 0.3;
 
     if (!StageLight.graphicsContext) {
-      const gradientFill = new FillGradient(0, height, 0, 0);
-      gradientFill.addColorStop(0, "white");
-      gradientFill.addColorStop(1, "transparent");
+      const fillGradient = new FillGradient({
+        start: {
+          x: 0,
+          y: 1,
+        },
+        end: {
+          x: 0,
+          y: 0,
+        },
+        colorStops: [
+          {
+            offset: 0,
+            color: "white",
+          },
+          {
+            offset: 1,
+            color: "transparent",
+          },
+        ],
+      });
 
       StageLight.graphicsContext = new GraphicsContext()
         .rect(0, 0, width, height)
-        .fill(gradientFill);
+        .fill(fillGradient);
     }
 
     this.view = new Graphics(StageLight.graphicsContext);

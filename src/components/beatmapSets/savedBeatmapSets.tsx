@@ -1,5 +1,3 @@
-"use client";
-
 import { Bookmark } from "lucide-react";
 import { useSavedBeatmapSetsStore } from "../../stores/savedBeatmapSetsStore";
 import CustomBeatmapSets from "./customBeatmapSets";

@@ -1,5 +1,3 @@
-"use client";
-
 import { clamp } from "@/lib/math";
 import { cn, getHpOrOdAfterMods } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";

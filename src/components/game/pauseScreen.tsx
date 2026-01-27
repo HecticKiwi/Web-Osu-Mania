@@ -1,5 +1,3 @@
-"use client";
-
 import { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
 import { Fullscreen } from "lucide-react";

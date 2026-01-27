@@ -5,7 +5,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { Button } from "../ui/button";
 
 const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
@@ -19,13 +18,12 @@ const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
             size={"icon"}
             className="h-8 w-8 bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
           >
-            <Link
+            <a
               href={`https://osu.ppy.sh/beatmapsets/${beatmapSetId}`}
               target="_blank"
-              prefetch={false}
             >
               <ExternalLink className="size-5" />
-            </Link>
+            </a>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

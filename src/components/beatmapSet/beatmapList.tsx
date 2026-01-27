@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +7,7 @@ import {
 import { BeatmapSet } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
-import { useSearchParams } from "next/navigation";
+import { Route } from "@/routes";
 import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
@@ -27,10 +25,10 @@ const BeatmapList = ({
   const setBeatmapSet = useGameStore.use.setBeatmapSet();
   const startGame = useGameStore.use.startGame();
   const highScores = useHighScoresStore.use.highScores();
-  const searchParams = useSearchParams();
+  const search = Route.useSearch();
 
-  const { min, max } = parseStarsParam(searchParams.get("stars"));
-  const keys = parseKeysParam(searchParams.get("keys"));
+  const { min, max } = parseStarsParam(search.stars);
+  const keys = parseKeysParam(search.keys);
 
   const maniaBeatmaps = beatmapSet.beatmaps.filter(
     (beatmap) => beatmap.mode === "mania",
@@ -71,7 +69,7 @@ const BeatmapList = ({
         {filteredBeatmaps.length === 0 && (
           <p className="text-balance p-4 text-center text-muted-foreground">
             No beatmaps found matching your filters. Please adjust or{" "}
-            <TextLink href={"/"}>reset</TextLink> your filters.
+            <TextLink to={"/"}>reset</TextLink> your filters.
           </p>
         )}
         {filteredBeatmaps.length > 0 &&

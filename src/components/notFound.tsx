@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 
 const NotFound = () => {
   return (
@@ -10,9 +10,7 @@ const NotFound = () => {
         </h1>
 
         <Button asChild className="mt-5">
-          <Link href={"/"} prefetch={false}>
-            Go Home
-          </Link>
+          <Link to={"/"}>Go Home</Link>
         </Button>
       </main>
     </>

@@ -1,9 +1,6 @@
-"use client";
-
 import { Progress } from "@/components/ui/progress";
 import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
@@ -175,11 +172,10 @@ const GameModal = () => {
       {beatmapData && (
         <>
           {beatmapData.backgroundUrl && !beatmapData.videoUrl && (
-            <Image
+            <img
               src={beatmapData.backgroundUrl}
               alt="Beatmap Background"
-              fill
-              className="-z-[1] select-none object-cover"
+              className="-z-[1] h-full w-full select-none object-cover"
               style={{
                 filter: `brightness(${1 - backgroundDim}) blur(${backgroundBlur * 30}px)`,
               }}

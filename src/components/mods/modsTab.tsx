@@ -1,5 +1,3 @@
-"use client";
-
 import { useSettingsStore } from "@/stores/settingsStore";
 import { toast } from "sonner";
 import SliderInput from "../inputs/sliderInput";

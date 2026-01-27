@@ -1,18 +1,17 @@
-"use client";
-
 import {
   DEFAULT_GENRE,
   GENRES,
   parseGenreParam,
 } from "@/lib/searchParams/genreParam";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 
 const GenreFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const genreParam = parseGenreParam(searchParams.get("genre"));
+  const search = useSearch({ from: "/" });
+  const genreParam = parseGenreParam(
+    typeof search.genre === "string" ? search.genre : undefined,
+  );
 
   return (
     <>
@@ -21,21 +20,16 @@ const GenreFilter = ({ className }: { className?: string }) => {
 
         <div className="flex flex-wrap gap-x-2">
           {GENRES.map((genre) => {
-            const params = new URLSearchParams(searchParams);
-
-            if (genre === DEFAULT_GENRE) {
-              params.delete("genre");
-            } else {
-              params.set("genre", genre);
-            }
-
             return (
               <Button key={genre} asChild variant={"link"} className="p-0">
                 <Link
-                  href={`/?${params.toString()}`}
-                  scroll={false}
+                  to="/"
+                  search={{
+                    ...search,
+                    genre: genre === DEFAULT_GENRE ? undefined : genre,
+                  }}
+                  preloadDelay={0}
                   className={cn("h-8", genreParam === genre && "text-white")}
-                  prefetch={false}
                 >
                   {genre}
                 </Link>

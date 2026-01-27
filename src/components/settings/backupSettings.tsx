@@ -1,5 +1,3 @@
-"use client";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { downloadBackup } from "@/lib/backup";
 import { cn } from "@/lib/utils";

@@ -1,20 +1,13 @@
-"use client";
-
 import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 
 const NsfwFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const nsfw = parseNsfwParam(searchParams.get("nsfw"));
-
-  const nsfwUrl = new URLSearchParams(searchParams);
-  nsfwUrl.delete("nsfw");
-
-  const noNsfwUrl = new URLSearchParams(searchParams);
-  noNsfwUrl.set("nsfw", "false");
+  const search = useSearch({ from: "/" });
+  const nsfw = parseNsfwParam(
+    typeof search.nsfw === "string" ? search.nsfw : undefined,
+  );
 
   return (
     <>
@@ -24,20 +17,20 @@ const NsfwFilter = ({ className }: { className?: string }) => {
         <div className="flex flex-wrap gap-x-2">
           <Button asChild variant={"link"} className="p-0">
             <Link
-              href={`/?${noNsfwUrl.toString()}`}
-              scroll={false}
+              to="/"
+              search={{ ...search, nsfw: "false" }}
+              preloadDelay={0}
               className={cn("h-8", !nsfw && "text-white")}
-              prefetch={false}
             >
               Hide
             </Link>
           </Button>
           <Button asChild variant={"link"} className="p-0">
             <Link
-              href={`/?${nsfwUrl.toString()}`}
-              scroll={false}
+              to="/"
+              search={{ ...search, nsfw: undefined }}
+              preloadDelay={0}
               className={cn("h-8", nsfw && "text-white")}
-              prefetch={false}
             >
               Show
             </Link>

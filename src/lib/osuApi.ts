@@ -1,4 +1,4 @@
-import { GetBeatmapsResponse } from "@/app/api/getBeatmaps/route";
+import { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import queryString from "query-string";
 import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
 import { Genre, GENRE_ID_MAP } from "./searchParams/genreParam";

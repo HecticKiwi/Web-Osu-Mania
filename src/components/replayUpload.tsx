@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { decompressSync } from "fflate";

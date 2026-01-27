@@ -1,16 +1,16 @@
-"use client";
-
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Route } from "@/routes";
+import { Link, useSearch } from "@tanstack/react-router";
 import { Toggle } from "../ui/toggle";
 
 export const keys = Array.from({ length: 18 }, (_, i) => (i + 1).toString());
 
 const KeysFilter = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams();
-  const keysParam = parseKeysParam(searchParams.get("keys"));
+  const search = useSearch({ from: Route.fullPath });
+  const keysParam = parseKeysParam(
+    typeof search.keys === "string" ? search.keys : undefined,
+  );
 
   return (
     <>
@@ -19,19 +19,11 @@ const KeysFilter = ({ className }: { className?: string }) => {
 
         <div className={"mt-2 flex flex-wrap gap-1.5"}>
           {keys.map((key: string) => {
-            const params = new URLSearchParams(searchParams.toString());
-
             let newKeysParam: string[] = [];
             if (keysParam.includes(key)) {
               newKeysParam = keysParam.filter((item) => item !== key);
             } else {
               newKeysParam = [...keysParam, key];
-            }
-
-            if (newKeysParam.length > 0) {
-              params.set("keys", newKeysParam.join(","));
-            } else {
-              params.delete("keys");
             }
 
             return (
@@ -43,8 +35,15 @@ const KeysFilter = ({ className }: { className?: string }) => {
                 asChild
               >
                 <Link
-                  href={`/?${params.toString()}`}
-                  prefetch={false}
+                  from={Route.fullPath}
+                  search={{
+                    ...search,
+                    keys:
+                      newKeysParam.length > 0
+                        ? newKeysParam.join(",")
+                        : undefined,
+                  }}
+                  preloadDelay={0}
                   className="w-[43px] px-0"
                 >
                   {key}K
