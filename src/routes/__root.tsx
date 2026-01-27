@@ -16,7 +16,7 @@ import appCss from "../styles/globals.css?url";
 
 const title = "Web osu!mania";
 const description = "Play osu!mania beatmaps in your web browser.";
-const ogImageUrl = `${import.meta.env.VITE_BASE_URL}/opengraph-image.png`;
+const ogImageUrl = `https://webosumania.com/opengraph-image.png`;
 
 export const Route = createRootRoute({
   head: () => ({

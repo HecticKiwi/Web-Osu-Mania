@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_BASE_URL: "https://webosumania.com"
-      VITE_BASE_ASSETS_URL: "https://webosumania.com"
       VITE_PRERENDER: "true"
     steps:
       - name: Checkout

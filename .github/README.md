@@ -49,8 +49,6 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 - Add a `.env` to the project's root:
 
 ```
-VITE_BASE_URL=https://webosumania.com
-
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=
 OSU_API_CLIENT_SECRET=
