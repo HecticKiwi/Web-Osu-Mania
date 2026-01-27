@@ -5,7 +5,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { decodeMods, EncodedMods } from "./replay";
 
-export const BASE_PATH = process.env.VITE_BASE_ASSETS_URL ?? "";
+export const BASE_PATH = import.meta.env.VITE_BASE_ASSETS_URL ?? "";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

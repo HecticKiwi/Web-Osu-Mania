@@ -523,7 +523,6 @@ const SettingsTab = () => {
         onClick={() => {
           resetSettings();
           toast("Settings have been reset.");
-          console.log("test");
         }}
       >
         Reset Settings

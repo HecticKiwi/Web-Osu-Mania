@@ -7,7 +7,7 @@ const ReactScan = () => {
   useEffect(() => {
     scan({
       // Can be laggy when enabled, so only enable if needed
-      enabled: false, // process.env.NODE_ENV === "development",
+      enabled: false, // import.meta.env.NODE_ENV === "development",
     });
   }, []);
 
