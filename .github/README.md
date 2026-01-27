@@ -50,7 +50,6 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 
 ```
 NEXT_PUBLIC_BASE_URL=https://webosumania.com
-IS_CF_WORKER=false # Set to true if deploying as a Cloudflare Worker
 
 # Get these values by following these instructions: https://osu.ppy.sh/docs/index.html#registering-an-oauth-application
 OSU_API_CLIENT_ID=

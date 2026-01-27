@@ -1,6 +1,6 @@
 import { rateLimit } from "@/lib/api/ratelimit";
 import { BeatmapSet } from "@/lib/osuApi";
-import { getCache } from "@/lib/cache";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken, trimBeatmapSet } from "../utils";
 
@@ -46,21 +46,21 @@ export async function GET(request: NextRequest) {
   params.sort();
 
   const cacheKey = params.toString();
-  const cache = await getCache("BEATMAP_SETS");
-  const ttlSeconds = 3600;
 
-  // --- Cache read ---
-  const cachedData = await cache.get(cacheKey);
+  const BEATMAP_SETS = getCloudflareContext().env.BEATMAP_SETS;
+  const cachedData = await BEATMAP_SETS.get(cacheKey);
+
   if (cachedData) {
     return new NextResponse(cachedData, {
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": `public, max-age=${ttlSeconds}`,
+        "Cache-Control": "public, max-age=3600",
       },
     });
   }
 
   const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
+
   const accessToken = await getAccessToken();
 
   const response = await fetch(url, {
@@ -95,13 +95,14 @@ export async function GET(request: NextRequest) {
     trimBeatmapSet(beatmapSet),
   );
 
-  // --- Cache write ---
-  await cache.put(cacheKey, JSON.stringify(data), ttlSeconds);
+  await BEATMAP_SETS.put(cacheKey, JSON.stringify(data), {
+    expirationTtl: 3600,
+  });
 
   return NextResponse.json(data, {
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": `public, max-age=${ttlSeconds}`,
+      "Cache-Control": "public, max-age=3600",
     },
   });
 }
