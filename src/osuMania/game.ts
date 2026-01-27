@@ -7,7 +7,7 @@ import {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
-import { scaleWidth } from "@/lib/utils";
+import { BASE_PATH, scaleWidth } from "@/lib/utils";
 import {
   ColumnColor,
   Settings,
@@ -977,7 +977,7 @@ export class Game {
     }
 
     new Howl({
-      src: [`/skin/failsound.mp3`],
+      src: [`${BASE_PATH}/skin/failsound.mp3`],
       format: "mp3",
       preload: true,
       autoplay: true,
