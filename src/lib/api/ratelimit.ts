@@ -28,6 +28,10 @@ export function rateLimit(
     windowMs: 60000, // 1 minute
   },
 ): boolean {
+  if (process.env.NODE_ENV === "development") {
+    return true;
+  }
+
   const now = Date.now();
   const ip = getClientIp(req);
 
