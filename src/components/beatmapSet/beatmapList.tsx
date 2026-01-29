@@ -96,7 +96,10 @@ const BeatmapList = ({
                       />
 
                       <div className="grow overflow-hidden">
-                        <button className="max-w-full truncate text-start">
+                        <button
+                          className="max-w-full truncate text-start"
+                          title={beatmap.version}
+                        >
                           {beatmap.version}
                         </button>
 

@@ -73,7 +73,9 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
             {beatmapSet.status.toUpperCase()}
           </div>
         )}
-        <div className="mt-0.5 w-full truncate text-xl">{title}</div>
+        <div className="mt-0.5 w-full truncate text-xl" title={title}>
+          {title}
+        </div>
         <div className="flex w-full items-end justify-between gap-8">
           <span className="truncate text-primary">by {artist}</span>
           <span className="text-sm text-muted-foreground">
