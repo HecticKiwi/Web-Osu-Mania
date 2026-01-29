@@ -105,7 +105,6 @@ const ResultsScreen = ({
   }, [
     beatmapId,
     beatmapSet,
-    highScores,
     playResults,
     setHighScores,
     mods,
