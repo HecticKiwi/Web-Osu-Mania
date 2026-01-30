@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useGameStore } from "../../stores/gameStore";
 import { HighScore } from "../../stores/highScoresStore";
 import { Button } from "../ui/button";
+import DeleteHighScoreButton from "./deleteHighScoreButton";
 import HighScoreBadge from "./highScoreBadge";
 
 const HighScoreEntry = ({
@@ -78,7 +79,7 @@ const HighScoreEntry = ({
   };
 
   return (
-    <div className="ml-2 flex items-center justify-between  px-2 py-2">
+    <div className="ml-0 flex items-center justify-between py-2 pl-2">
       <span
         className={cn(
           "text-muted-foreground",
@@ -131,6 +132,13 @@ const HighScoreEntry = ({
           </Tooltip>
         </TooltipProvider>
       </div>
+
+      <DeleteHighScoreButton
+        highScore={highScore}
+        position={position}
+        beatmapSetId={beatmapSet.id}
+        beatmapId={beatmap.id}
+      />
     </div>
   );
 };
