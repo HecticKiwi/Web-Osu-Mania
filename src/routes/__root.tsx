@@ -37,6 +37,7 @@ export const Route = createRootRoute({
         defer: true,
         src: "https://umami-37qe.onrender.com/script.js",
         "data-website-id": "1f4308a9-454f-4529-8e28-1d3cb64f58e6",
+        "data-exclude-search": "true",
       },
     ],
     links: [
