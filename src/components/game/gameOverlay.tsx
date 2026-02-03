@@ -8,7 +8,7 @@ export const GameOverlay = () => {
   return (
     <Dialog open={!!beatmapId}>
       <DialogContent
-        className="h-full w-full max-w-full border-none p-0 focus:outline-none"
+        className="h-full w-full max-w-full border-none p-0 focus:outline-hidden"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">Game Window</DialogTitle>

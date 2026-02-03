@@ -42,7 +42,7 @@ function Home() {
         </Suspense>
       </div>
 
-      <div className="w-full max-w-screen-xl px-2 py-4 pt-0 sm:px-4 lg:px-8 lg:pb-8">
+      <div className="w-full max-w-(--breakpoint-xl) px-2 py-4 pt-0 sm:px-4 lg:px-8 lg:pb-8">
         <Suspense>
           <Main />
         </Suspense>

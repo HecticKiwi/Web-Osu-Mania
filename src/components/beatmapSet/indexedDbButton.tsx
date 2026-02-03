@@ -29,11 +29,10 @@ const IndexedDbButton = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
     <>
       <TooltipProvider>
         <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
+          <TooltipTrigger asChild className={cn("h-8 w-8")}>
             <Button
               variant={"ghost"}
               size={"icon"}
-              className={cn("h-8 w-8 ")}
               onClick={async () => {
                 await idb.deleteBeatmap(beatmapSet.id);
                 setStoredBeatmapSets((draft) => {

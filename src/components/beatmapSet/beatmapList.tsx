@@ -37,8 +37,8 @@ const BeatmapList = ({
   if (maniaBeatmaps.length === 0) {
     return (
       <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
-        <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
-          <p className="text-balance p-4 text-center text-muted-foreground">
+        <div className="scrollbar scrollbar-track-card flex flex-col gap-2 overflow-auto p-2">
+          <p className="text-muted-foreground p-4 text-center text-balance">
             This beatmap set doesn't have any osu!mania beatmaps.
           </p>
         </div>
@@ -65,9 +65,9 @@ const BeatmapList = ({
 
   return (
     <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
-      <div className="flex flex-col gap-2 overflow-auto p-2 scrollbar scrollbar-track-card">
+      <div className="scrollbar scrollbar-track-card flex flex-col gap-2 overflow-auto p-2">
         {filteredBeatmaps.length === 0 && (
-          <p className="text-balance p-4 text-center text-muted-foreground">
+          <p className="text-muted-foreground p-4 text-center text-balance">
             No beatmaps found matching your filters. Please adjust or{" "}
             <TextLink to={"/"}>reset</TextLink> your filters.
           </p>
@@ -104,7 +104,7 @@ const BeatmapList = ({
                         </button>
 
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-muted-foreground text-sm">
                             {beatmap.difficulty_rating.toFixed(2)}★
                           </span>
                         </div>
@@ -117,7 +117,7 @@ const BeatmapList = ({
                   {beatmapScores.length > 0 && (
                     <Accordion type="single" collapsible className="mt-0.5">
                       <AccordionItem value="scores" className="border-none">
-                        <AccordionTrigger className="p-0 px-2 text-sm text-muted-foreground">
+                        <AccordionTrigger className="text-muted-foreground p-0 px-2 text-sm">
                           {beatmapScores.length} High Score
                           {beatmapScores.length === 1 ? "" : "s"}
                         </AccordionTrigger>

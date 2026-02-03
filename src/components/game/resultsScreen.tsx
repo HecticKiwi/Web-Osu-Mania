@@ -114,9 +114,9 @@ const ResultsScreen = ({
   return (
     <>
       {/* Top of -1px since it wasn't covering the top for some reason */}
-      <div className="fixed inset-0 -inset-y-[1px] overflow-auto bg-background duration-1000 animate-in fade-in scrollbar">
+      <div className="bg-background animate-in fade-in scrollbar fixed inset-0 -inset-y-px overflow-auto duration-1000">
         {/* Hidden results at a fixed width for getting screenshots */}
-        <div className="max-h-[0px] overflow-hidden" aria-hidden tabIndex={-1}>
+        <div className="max-h-0 overflow-hidden" aria-hidden tabIndex={-1}>
           <div ref={hiddenRef} className="w-[1280px]">
             <Results
               beatmapData={beatmapData}
@@ -134,7 +134,7 @@ const ResultsScreen = ({
         />
 
         {/* Footer actions */}
-        <div className="mx-auto mt-8 flex max-w-screen-xl flex-col justify-center p-8 pt-0">
+        <div className="mx-auto mt-8 flex max-w-(--breakpoint-xl) flex-col justify-center p-8 pt-0">
           <div className="flex flex-wrap items-center justify-between gap-8">
             <div className="flex gap-4">
               <Button
@@ -159,10 +159,9 @@ const ResultsScreen = ({
             <div className="flex gap-4">
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger asChild className="text-xl">
                     <Button
                       variant={"outline"}
-                      className="text-xl"
                       onClick={() => {
                         if (!hiddenRef.current) {
                           return;
@@ -182,13 +181,15 @@ const ResultsScreen = ({
               </TooltipProvider>
 
               {playResults.replayData && (
-                <div className="rounded-md outline outline-1 outline-border">
+                <div className="outline-border rounded-md outline-1 outline-solid">
                   <TooltipProvider>
                     <Tooltip delayDuration={0}>
-                      <TooltipTrigger asChild>
+                      <TooltipTrigger
+                        asChild
+                        className="rounded-r-none text-xl"
+                      >
                         <Button
                           variant={"ghost"}
-                          className="rounded-r-none text-xl"
                           onClick={() => {
                             setReplayData(playResults.replayData!);
                             retry();
@@ -205,10 +206,12 @@ const ResultsScreen = ({
 
                   <TooltipProvider>
                     <Tooltip delayDuration={0}>
-                      <TooltipTrigger asChild>
+                      <TooltipTrigger
+                        asChild
+                        className="rounded-l-none border-l text-xl"
+                      >
                         <Button
                           variant={"ghost"}
-                          className="rounded-l-none border-l text-xl"
                           onClick={() =>
                             downloadReplay(
                               playResults.replayData!,

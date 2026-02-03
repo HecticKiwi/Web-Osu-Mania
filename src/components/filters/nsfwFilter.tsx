@@ -15,22 +15,24 @@ const NsfwFilter = ({ className }: { className?: string }) => {
         <span className="text-muted-foreground">Explicit Content</span>
 
         <div className="flex flex-wrap gap-x-2">
-          <Button asChild variant={"link"} className="p-0">
-            <Link
-              to="/"
-              search={{ ...search, nsfw: "false" }}
-              preloadDelay={0}
-              className={cn("h-8", !nsfw && "text-white")}
-            >
+          <Button
+            asChild
+            variant={"link"}
+            className={cn("h-8 p-0", !nsfw && "text-white")}
+          >
+            <Link to="/" search={{ ...search, nsfw: "false" }} preloadDelay={0}>
               Hide
             </Link>
           </Button>
-          <Button asChild variant={"link"} className="p-0">
+          <Button
+            asChild
+            variant={"link"}
+            className={cn("h-8 p-0", nsfw && "text-white")}
+          >
             <Link
               to="/"
               search={{ ...search, nsfw: undefined }}
               preloadDelay={0}
-              className={cn("h-8", nsfw && "text-white")}
             >
               Show
             </Link>

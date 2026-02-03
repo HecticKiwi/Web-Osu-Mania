@@ -154,7 +154,7 @@ const GameModal = () => {
     <main id="game" className="relative grid">
       {!beatmapData && (
         <div className="flex w-full items-center text-center">
-          <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+          <div className="h-px grow bg-linear-to-r from-transparent to-primary"></div>
 
           <div className="rounded-xl border bg-card p-3 sm:p-6">
             <h1 className="text-2xl text-white sm:text-4xl">
@@ -166,7 +166,7 @@ const GameModal = () => {
             )}
           </div>
 
-          <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
+          <div className="h-px grow bg-linear-to-l from-transparent to-primary"></div>
         </div>
       )}
       {beatmapData && (
@@ -175,7 +175,7 @@ const GameModal = () => {
             <img
               src={beatmapData.backgroundUrl}
               alt="Beatmap Background"
-              className="-z-[1] h-full w-full select-none object-cover"
+              className="-z-1 h-full w-full select-none object-cover"
               style={{
                 filter: `brightness(${1 - backgroundDim}) blur(${backgroundBlur * 30}px)`,
               }}

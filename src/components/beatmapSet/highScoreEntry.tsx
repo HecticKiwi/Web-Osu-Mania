@@ -93,14 +93,13 @@ const HighScoreEntry = ({
 
       <HighScoreBadge highScore={highScore} />
 
-      <div className="flex rounded-md outline outline-1 outline-border">
+      <div className="outline-border outline-solid flex rounded-md outline-1">
         <TooltipProvider>
           <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
+            <TooltipTrigger asChild className="h-6 rounded-r-none">
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="h-6 rounded-r-none"
                 onClick={() => watchReplay()}
                 disabled={!highScore.replayId}
               >
@@ -115,11 +114,10 @@ const HighScoreEntry = ({
 
         <TooltipProvider>
           <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
+            <TooltipTrigger asChild className="h-6 rounded-l-none border-l">
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="h-6 rounded-l-none border-l"
                 onClick={() => downloadReplay()}
                 disabled={!highScore.replayId}
               >

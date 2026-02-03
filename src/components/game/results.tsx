@@ -44,7 +44,7 @@ const Results = ({
     <div
       className={cn(
         "w-screen-xl mx-auto flex min-h-screen flex-col justify-center",
-        responsive && "max-w-screen-xl",
+        responsive && "max-w-(--breakpoint-xl)",
       )}
     >
       <div
@@ -61,8 +61,7 @@ const Results = ({
               linear-gradient(to right, hsl(var(--background)), hsl(var(--background) / 0.45) 25%)
             `,
           }}
-          // Fixes a bug with a sliver of the BG peeking out below the gradients when downloading screenshot
-          className="-m-[1px] p-[calc(2rem+1px)]"
+          className="p-8"
         >
           <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
             <div>
@@ -75,7 +74,7 @@ const Results = ({
                 {title}
               </h1>
 
-              <div className="text-xl text-muted-foreground">
+              <div className="text-muted-foreground text-xl">
                 Beatmap by {beatmapData.metadata.creator}
               </div>
             </div>
@@ -90,7 +89,7 @@ const Results = ({
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
+            <div className="bg-card flex w-fit items-center gap-2 rounded border p-1.5">
               <p className="text-yellow-400">
                 {beatmap?.difficulty_rating.toFixed(2)}★
               </p>
@@ -101,7 +100,7 @@ const Results = ({
               {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-3 py-0.5"
+                  className="bg-primary/25 rounded-full px-3 py-0.5"
                 >
                   {mod}
                 </span>
@@ -110,21 +109,21 @@ const Results = ({
           </div>
 
           {playResults.replayData?.timestamp && (
-            <p className="mt-1 text-muted-foreground">
+            <p className="text-muted-foreground mt-1">
               Set on{" "}
               {format(playResults.replayData.timestamp, "d MMMM yyyy h:mm a")}
             </p>
           )}
 
           <div className="mt-8 flex items-center text-center text-[100px] leading-none">
-            <div className="h-[1px] grow bg-gradient-to-r from-transparent to-primary"></div>
+            <div className="to-primary h-px grow bg-linear-to-r from-transparent"></div>
             <LetterGradeCard
               grade={
                 playResults.failed ? "Failed" : getLetterGrade(playResults)
               }
             />
 
-            <div className="h-[1px] grow bg-gradient-to-l from-transparent to-primary"></div>
+            <div className="to-primary h-px grow bg-linear-to-l from-transparent"></div>
           </div>
         </div>
       </div>
@@ -132,13 +131,13 @@ const Results = ({
       <div className="p-8 pt-0">
         <div
           className={cn(
-            "grid grid-cols-2 gap-6 gap-y-12 rounded-xl border bg-card p-8 ",
+            "bg-card grid grid-cols-2 gap-6 gap-y-12 rounded-xl border p-8",
             responsive && "grid-cols-1 xl:grid-cols-2",
           )}
         >
           <div className="grid gap-6">
             <div className="rounded-xl">
-              <h2 className="mb-4 text-3xl font-semibold text-primary">
+              <h2 className="text-primary mb-4 text-3xl font-semibold">
                 Score
               </h2>
               <span className="text-5xl">
@@ -159,14 +158,14 @@ const Results = ({
               )}
             >
               <div className="rounded-xl">
-                <h3 className="mb-4 text-3xl font-semibold text-primary">
+                <h3 className="text-primary mb-4 text-3xl font-semibold">
                   Max Combo
                 </h3>
                 <span className="text-5xl">{playResults.maxCombo}x</span>
               </div>
 
               <div className="rounded-xl">
-                <h3 className="mb-4 text-3xl font-semibold text-primary">
+                <h3 className="text-primary mb-4 text-3xl font-semibold">
                   Accuracy
                 </h3>
                 <span className="text-5xl">
@@ -177,7 +176,7 @@ const Results = ({
           </div>
 
           <div className="rounded-xl">
-            <h2 className="mb-4 text-3xl font-semibold text-primary">
+            <h2 className="text-primary mb-4 text-3xl font-semibold">
               Breakdown
             </h2>
 
@@ -188,35 +187,35 @@ const Results = ({
               )}
             >
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-great">300</span>
+                <span className="text-judgement-great w-16">300</span>
                 <span className="text-5xl">{playResults[300]}x</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-perfect">300g</span>
+                <span className="text-judgement-perfect w-16">300g</span>
                 <span className="text-5xl">{playResults[320]}x</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-good">200</span>
+                <span className="text-judgement-good w-16">200</span>
                 <span className="text-5xl">{playResults[200]}x</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-ok">100</span>
+                <span className="text-judgement-ok w-16">100</span>
                 <span className="text-5xl">{playResults[100]}x</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-meh">50</span>
+                <span className="text-judgement-meh w-16">50</span>
                 <span className="text-5xl">{playResults[50]}x</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="w-16 text-judgement-miss">miss!</span>
+                <span className="text-judgement-miss w-16">miss!</span>
                 <span className="text-5xl">{playResults[0]}x</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 w-full rounded-xl border bg-card p-6">
-          <h2 className="mb-4 text-3xl font-semibold text-primary">
+        <div className="bg-card mt-8 w-full rounded-xl border p-6">
+          <h2 className="text-primary mb-4 text-3xl font-semibold">
             Timing Distribution
           </h2>
 
@@ -229,7 +228,7 @@ const Results = ({
             )}
           >
             <div className="rounded-xl">
-              <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
+              <h3 className="text-muted-foreground mb-3 text-2xl font-medium">
                 Average Hit Error
               </h3>
               <span className="text-3xl">
@@ -240,7 +239,7 @@ const Results = ({
             </div>
 
             <div className="rounded-xl">
-              <h3 className="mb-3 text-2xl font-medium text-muted-foreground">
+              <h3 className="text-muted-foreground mb-3 text-2xl font-medium">
                 Unstable Rate
               </h3>
               <span className="text-3xl">{unstableRate.toFixed(2)}</span>

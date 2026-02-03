@@ -30,10 +30,12 @@ const KeybindButton = ({
         }
       }}
     >
-      <ContextMenuTrigger asChild>
+      <ContextMenuTrigger
+        asChild
+        className={cn("h-8", keybind === null && "italic")}
+      >
         <Button
           size={"sm"}
-          className={cn("h-8", keybind === null && "italic")}
           onClick={() => setSelectedKeybindPath(keybindPath)}
           variant={
             selectedKeybindPath === keybindPath ? "default" : "secondary"

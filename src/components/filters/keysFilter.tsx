@@ -33,6 +33,7 @@ const KeysFilter = ({ className }: { className?: string }) => {
                 key={key}
                 variant={"outline"}
                 asChild
+                className="w-[43px] px-0"
               >
                 <Link
                   from={Route.fullPath}
@@ -44,7 +45,6 @@ const KeysFilter = ({ className }: { className?: string }) => {
                         : undefined,
                   }}
                   preloadDelay={0}
-                  className="w-[43px] px-0"
                 >
                   {key}K
                 </Link>

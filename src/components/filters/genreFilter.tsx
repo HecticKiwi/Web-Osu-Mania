@@ -21,7 +21,12 @@ const GenreFilter = ({ className }: { className?: string }) => {
         <div className="flex flex-wrap gap-x-2">
           {GENRES.map((genre) => {
             return (
-              <Button key={genre} asChild variant={"link"} className="p-0">
+              <Button
+                key={genre}
+                asChild
+                variant={"link"}
+                className={cn("h-8 p-0", genreParam === genre && "text-white")}
+              >
                 <Link
                   to="/"
                   search={{
@@ -29,7 +34,6 @@ const GenreFilter = ({ className }: { className?: string }) => {
                     genre: genre === DEFAULT_GENRE ? undefined : genre,
                   }}
                   preloadDelay={0}
-                  className={cn("h-8", genreParam === genre && "text-white")}
                 >
                   {genre}
                 </Link>

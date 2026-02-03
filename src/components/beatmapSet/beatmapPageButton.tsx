@@ -16,7 +16,7 @@ const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
             asChild
             variant={"secondary"}
             size={"icon"}
-            className="h-8 w-8 bg-secondary/60 focus-within:bg-secondary hover:bg-secondary"
+            className="bg-secondary/60 focus-within:bg-secondary hover:bg-secondary h-8 w-8"
           >
             <a
               href={`https://osu.ppy.sh/beatmapsets/${beatmapSetId}`}

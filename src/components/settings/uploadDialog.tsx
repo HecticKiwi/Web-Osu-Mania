@@ -44,7 +44,7 @@ const UploadDialog = () => {
         }}
       >
         <DialogContent
-          className="gap-0 overflow-hidden p-0 focus:outline-none"
+          className="gap-0 overflow-hidden p-0 focus:outline-hidden"
           aria-describedby={undefined}
         >
           <DialogTitle className="sr-only">Beatmap Set Upload</DialogTitle>

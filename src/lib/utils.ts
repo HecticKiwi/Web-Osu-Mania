@@ -279,7 +279,7 @@ export function getJudgementUrl(
 export function getClassNamesForGrade(grade: Grade) {
   switch (grade) {
     case "Failed":
-      return "bg-gradient-to-b from-gray-50 to-gray-500 text-transparent bg-clip-text";
+      return "bg-linear-to-b from-gray-50 to-gray-500 text-transparent bg-clip-text";
     case "D":
       return "";
     case "C":
@@ -287,10 +287,10 @@ export function getClassNamesForGrade(grade: Grade) {
     case "B":
       return "text-blue-300 drop-shadow-[0_0_8px_rgba(147,197,253,0.5)]";
     case "A":
-      return "bg-gradient-to-br from-purple-200 via-fuschia-300 to-purple-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(216,180,254,0.8)]";
+      return "bg-linear-to-br from-purple-200 via-fuschia-300 to-purple-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(216,180,254,0.8)]";
     case "S":
-      return "bg-gradient-to-br from-yellow-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(253,224,71,1)]";
+      return "bg-linear-to-br from-yellow-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(253,224,71,1)]";
     case "SS":
-      return "bg-gradient-to-br from-yellow-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(253,224,71,1)]";
+      return "bg-linear-to-br from-yellow-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(253,224,71,1)]";
   }
 }

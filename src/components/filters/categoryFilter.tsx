@@ -40,22 +40,29 @@ const CategoryFilter = ({ className }: { className?: string }) => {
             };
 
             return (
-              <Button key={category} asChild variant={"link"} className="p-0">
-                <Link
-                  to="/"
-                  search={newSearch}
-                  preloadDelay={0}
-                  className={cn(
-                    "h-8",
-                    categoryParam === category && "text-white",
-                  )}
-                >
+              <Button
+                key={category}
+                asChild
+                variant={"link"}
+                className={cn(
+                  "h-8 p-0",
+                  categoryParam === category && "text-white",
+                )}
+              >
+                <Link to="/" search={newSearch} preloadDelay={0}>
                   {category}
                 </Link>
               </Button>
             );
           })}
-          <Button asChild variant={"link"} className="p-0">
+          <Button
+            asChild
+            variant={"link"}
+            className={cn(
+              "h-8 gap-1 p-0",
+              categoryParam === "Saved" && "text-white",
+            )}
+          >
             <Link
               to="/"
               search={{
@@ -65,10 +72,6 @@ const CategoryFilter = ({ className }: { className?: string }) => {
                 sortDirection: "desc",
               }}
               preloadDelay={0}
-              className={cn(
-                "h-8 gap-1",
-                categoryParam === "Saved" && "text-white",
-              )}
             >
               <Bookmark
                 className="size-5"
@@ -82,7 +85,14 @@ const CategoryFilter = ({ className }: { className?: string }) => {
             </Link>
           </Button>
           {storeDownloadedBeatmaps && (
-            <Button asChild variant={"link"} className="p-0">
+            <Button
+              asChild
+              variant={"link"}
+              className={cn(
+                "h-8 gap-1 p-0",
+                categoryParam === "Stored" && "text-white",
+              )}
+            >
               <Link
                 to="/"
                 search={{
@@ -92,10 +102,6 @@ const CategoryFilter = ({ className }: { className?: string }) => {
                   sortDirection: "desc",
                 }}
                 preloadDelay={0}
-                className={cn(
-                  "h-8 gap-1",
-                  categoryParam === "Stored" && "text-white",
-                )}
               >
                 <HardDrive className="size-5" />
                 <span>Stored</span>

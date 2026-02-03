@@ -7,11 +7,11 @@ import SocialButtons from "./socialButtons";
 const Header = () => {
   return (
     <>
-      <header className="sticky top-0 z-10 bg-background sm:py-6">
+      <header className="bg-background sticky top-0 z-10 sm:py-6">
         <div className="flex items-center">
-          <div className="hidden h-[1px] grow bg-gradient-to-r from-transparent to-primary sm:block"></div>
+          <div className="to-primary hidden h-px grow bg-linear-to-r from-transparent sm:block"></div>
 
-          <nav className="flex grow items-center gap-4 p-2 sm:grow-0 sm:gap-8 sm:rounded-xl sm:border sm:px-6">
+          <nav className="flex grow items-center gap-4 border p-2 sm:grow-0 sm:gap-8 sm:rounded-xl sm:border sm:px-6">
             <Link to={"/"}>
               <div className="flex items-center gap-2">
                 <ManiaIcon difficultyRating={6} className="shrink-0" />
@@ -21,7 +21,7 @@ const Header = () => {
               </div>
             </Link>
 
-            <div className=" flex items-center gap-4">
+            <div className="flex items-center gap-4">
               <NavLink to="/">Play</NavLink>
               <NavLink to="/faq">FAQ</NavLink>
             </div>
@@ -33,7 +33,7 @@ const Header = () => {
             </div>
           </nav>
 
-          <div className="hidden h-[1px] grow bg-gradient-to-l from-transparent to-primary sm:block"></div>
+          <div className="to-primary hidden h-px grow bg-linear-to-l from-transparent sm:block"></div>
         </div>
       </header>
     </>

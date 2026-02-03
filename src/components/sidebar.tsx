@@ -28,7 +28,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </TabsList>
 
         <TabsContent value="filters" className="h-0 grow">
-          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+          <Card className="flex max-h-full flex-col overflow-hidden">
             <CardContent className="overflow-auto p-4 scrollbar scrollbar-track-card sm:p-6">
               <FiltersTab />
             </CardContent>
@@ -36,7 +36,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </TabsContent>
 
         <TabsContent value="mods" className="h-0 grow">
-          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+          <Card className="flex max-h-full flex-col overflow-hidden">
             <CardContent className="overflow-auto p-4 scrollbar scrollbar-track-card sm:p-6">
               <ModsTab />
             </CardContent>
@@ -44,7 +44,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </TabsContent>
 
         <TabsContent value="settings" className="h-0 grow">
-          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+          <Card className="flex max-h-full flex-col overflow-hidden">
             <CardContent className="overflow-auto p-4 scrollbar scrollbar-track-card sm:p-6">
               <SettingsTab />
             </CardContent>
@@ -52,7 +52,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </TabsContent>
 
         <TabsContent value="keybinds" className="h-0 grow">
-          <Card className="flex max-h-[100%] flex-col overflow-hidden">
+          <Card className="flex max-h-full flex-col overflow-hidden">
             <CardContent className="overflow-auto p-4 scrollbar scrollbar-track-card sm:p-6">
               <KeybindsTab />
             </CardContent>

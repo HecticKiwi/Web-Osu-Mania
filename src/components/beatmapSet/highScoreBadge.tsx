@@ -19,12 +19,12 @@ const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
       <Tooltip delayDuration={0}>
         <TooltipTrigger
           asChild
-          className="group relative overflow-hidden rounded-full border border-primary p-0 text-xs text-primary"
+          className="group border-primary text-primary relative flex items-center overflow-hidden rounded-full border p-0 text-xs"
         >
-          <div className="flex items-center">
+          <div className="">
             <span className="px-2 pl-2.5">{score}</span>
 
-            <span className="-skew-x-12 bg-primary px-2 pr-2.5 text-background">
+            <span className="bg-primary text-background -skew-x-12 px-2 pr-2.5">
               <div className="skew-x-12">{accuracy}%</div>
             </span>
           </div>
@@ -52,31 +52,31 @@ const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
             <span className="text-muted-foreground">{accuracy}%</span>
           </div>
 
-          <div className=" flex gap-1">
+          <div className="flex gap-1">
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-perfect">300g</span>
+              <span className="text-judgement-perfect w-8 text-end">300g</span>
               <span className="w-9">{highScore.results[320]}</span>
             </div>
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-great">300</span>
+              <span className="text-judgement-great w-8 text-end">300</span>
               <span className="w-9">{highScore.results[300]}</span>
             </div>
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-good">200</span>
+              <span className="text-judgement-good w-8 text-end">200</span>
               <span className="w-9">{highScore.results[200]}</span>
             </div>
           </div>
           <div className="mt-1 flex gap-1">
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-ok">100</span>
+              <span className="text-judgement-ok w-8 text-end">100</span>
               <span className="w-9">{highScore.results[100]}</span>
             </div>
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-meh">50</span>
+              <span className="text-judgement-meh w-8 text-end">50</span>
               <span className="w-9">{highScore.results[50]}</span>
             </div>
             <div className="flex gap-1">
-              <span className="w-8 text-end text-judgement-miss">x</span>
+              <span className="text-judgement-miss w-8 text-end">x</span>
               <span className="w-9">{highScore.results[0]}</span>
             </div>
           </div>
@@ -86,7 +86,7 @@ const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
               {highScore.mods.map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-2 py-0.5"
+                  className="bg-primary/25 rounded-full px-2 py-0.5"
                 >
                   {mod}
                 </span>

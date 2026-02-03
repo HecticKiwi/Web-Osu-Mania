@@ -21,7 +21,15 @@ const LanguageFilter = ({ className }: { className?: string }) => {
         <div className="flex flex-wrap gap-x-2">
           {LANGUAGES.map((language) => {
             return (
-              <Button key={language} asChild variant={"link"} className="p-0">
+              <Button
+                key={language}
+                asChild
+                variant={"link"}
+                className={cn(
+                  "h-8 p-0",
+                  languageParam === language && "text-white",
+                )}
+              >
                 <Link
                   to="/"
                   search={{
@@ -30,10 +38,6 @@ const LanguageFilter = ({ className }: { className?: string }) => {
                       language === DEFAULT_LANGUAGE ? undefined : language,
                   }}
                   preloadDelay={0}
-                  className={cn(
-                    "h-8",
-                    languageParam === language && "text-white",
-                  )}
                 >
                   {language}
                 </Link>

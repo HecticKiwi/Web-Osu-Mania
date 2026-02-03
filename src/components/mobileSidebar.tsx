@@ -9,17 +9,13 @@ const MobileSidebar = () => {
   return (
     <>
       <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            size={"icon"}
-            variant={"outline"}
-            className="h-12 w-12 rounded-full lg:hidden"
-          >
+        <SheetTrigger asChild className="h-12 w-12 rounded-full lg:hidden">
+          <Button size={"icon"} variant={"outline"}>
             <Menu />
           </Button>
         </SheetTrigger>
 
-        <SheetContent className="w-full max-w-[620px] bg-background/50 p-2 sm:max-w-[620px]">
+        <SheetContent className="bg-background/50 w-full max-w-[620px] p-2 sm:max-w-[620px]">
           <DialogTitle className="sr-only">Sidebar</DialogTitle>
           <DialogDescription className="sr-only">
             Edit filters, mods, and settings

@@ -43,7 +43,7 @@ const SkinSettings = () => {
 
   return (
     <>
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Skin</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Skin</h3>
 
       <div className="space-y-4">
         <JudgementSet />
@@ -119,7 +119,7 @@ const SkinSettings = () => {
           </TabsContent>
           <TabsContent value={"custom"} className="space-y-4">
             <div className="grid grid-cols-2 items-center">
-              <div className="pr-2 text-sm font-semibold text-muted-foreground">
+              <div className="text-muted-foreground pr-2 text-sm font-semibold">
                 Mode
               </div>
 
@@ -160,10 +160,12 @@ const SkinSettings = () => {
                       <td className="px-2 py-2 text-center">{i + 1}</td>
                       <td className="px-2 py-2">
                         <Popover>
-                          <PopoverTrigger asChild>
+                          <PopoverTrigger
+                            asChild
+                            className="block h-7 w-full border p-0"
+                          >
                             <Button
                               variant="outline"
-                              className="block h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.tap }}
                             />
                           </PopoverTrigger>
@@ -197,10 +199,12 @@ const SkinSettings = () => {
                       </td>
                       <td className="px-2 py-2">
                         <Popover>
-                          <PopoverTrigger asChild>
+                          <PopoverTrigger
+                            asChild
+                            className="block h-7 w-full border p-0"
+                          >
                             <Button
                               variant="outline"
-                              className="block h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.holdHead }}
                             />
                           </PopoverTrigger>
@@ -234,10 +238,12 @@ const SkinSettings = () => {
                       </td>
                       <td className="px-2 py-2">
                         <Popover>
-                          <PopoverTrigger asChild>
+                          <PopoverTrigger
+                            asChild
+                            className="block h-7 w-full border p-0"
+                          >
                             <Button
                               variant="outline"
-                              className="block h-7 w-full border p-0"
                               style={{ backgroundColor: colorSet.hold }}
                             />
                           </PopoverTrigger>

@@ -41,7 +41,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   return (
     <Popover onOpenChange={handleOpenChange}>
       <div className="group relative">
-        <PopoverTrigger className="relative flex h-[150px] w-full flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300 group-hover:border-primary">
+        <PopoverTrigger className="group-hover:border-primary relative flex h-[150px] w-full flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300">
           <BeatmapSetCover beatmapSet={beatmapSet} />
 
           {preview && (
@@ -51,11 +51,11 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
           )}
         </PopoverTrigger>
 
-        <div className="absolute left-4 top-4 flex gap-2">
+        <div className="absolute top-4 left-4 flex gap-2">
           <IndexedDbButton beatmapSet={beatmapSet} />
         </div>
 
-        <div className="absolute right-4 top-4 flex gap-2">
+        <div className="absolute top-4 right-4 flex gap-2">
           <SaveBeatmapSetButton beatmapSet={beatmapSet} />
 
           <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />

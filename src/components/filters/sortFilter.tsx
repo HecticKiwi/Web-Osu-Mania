@@ -62,7 +62,15 @@ const SortFilter = ({ className }: { className?: string }) => {
               newSortDirection === DEFAULT_SORT_DIRECTION;
 
             return (
-              <Button key={criteria} asChild variant={"link"} className="p-0">
+              <Button
+                key={criteria}
+                asChild
+                variant={"link"}
+                className={cn(
+                  "h-8 p-0",
+                  sortCriteria === criteria && "text-white",
+                )}
+              >
                 <Link
                   to="/"
                   search={{
@@ -71,10 +79,6 @@ const SortFilter = ({ className }: { className?: string }) => {
                     sortDirection: shouldDelete ? undefined : newSortDirection,
                   }}
                   preloadDelay={0}
-                  className={cn(
-                    "h-8",
-                    sortCriteria === criteria && "text-white",
-                  )}
                 >
                   {capitalizeFirstLetter(criteria)}
                 </Link>
