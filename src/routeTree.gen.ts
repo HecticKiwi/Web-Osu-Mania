@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiGetBeatmapsRouteImport } from './routes/api/getBeatmaps'
 import { Route as ApiGetBeatmapRouteImport } from './routes/api/getBeatmap'
 import { Route as ApiDownloadBeatmapRouteImport } from './routes/api/downloadBeatmap'
 
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -44,6 +50,7 @@ const ApiDownloadBeatmapRoute = ApiDownloadBeatmapRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
   '/api/getBeatmap': typeof ApiGetBeatmapRoute
   '/api/getBeatmaps': typeof ApiGetBeatmapsRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
   '/api/getBeatmap': typeof ApiGetBeatmapRoute
   '/api/getBeatmaps': typeof ApiGetBeatmapsRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
   '/api/getBeatmap': typeof ApiGetBeatmapRoute
   '/api/getBeatmaps': typeof ApiGetBeatmapsRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/faq'
+    | '/updates'
     | '/api/downloadBeatmap'
     | '/api/getBeatmap'
     | '/api/getBeatmaps'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/faq'
+    | '/updates'
     | '/api/downloadBeatmap'
     | '/api/getBeatmap'
     | '/api/getBeatmaps'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/faq'
+    | '/updates'
     | '/api/downloadBeatmap'
     | '/api/getBeatmap'
     | '/api/getBeatmaps'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FaqRoute: typeof FaqRoute
+  UpdatesRoute: typeof UpdatesRoute
   ApiDownloadBeatmapRoute: typeof ApiDownloadBeatmapRoute
   ApiGetBeatmapRoute: typeof ApiGetBeatmapRoute
   ApiGetBeatmapsRoute: typeof ApiGetBeatmapsRoute
@@ -97,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FaqRoute: FaqRoute,
+  UpdatesRoute: UpdatesRoute,
   ApiDownloadBeatmapRoute: ApiDownloadBeatmapRoute,
   ApiGetBeatmapRoute: ApiGetBeatmapRoute,
   ApiGetBeatmapsRoute: ApiGetBeatmapsRoute,

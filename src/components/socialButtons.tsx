@@ -6,8 +6,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Heart } from "lucide-react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
-import { SiKofi } from "react-icons/si";
 
 const SocialButtons = ({ className }: { className?: string }) => {
   return (
@@ -47,13 +47,13 @@ const SocialButtons = ({ className }: { className?: string }) => {
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-              <a href="https://ko-fi.com/hectickiwi" target="_blank">
-                <SiKofi className="h-5 w-5" />
+              <a href="https://github.com/sponsors/HecticKiwi" target="_blank">
+                <Heart className="h-5 w-5" fill="white" />
               </a>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Donate on Ko-fi</p>
+            <p>Sponsor Project</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

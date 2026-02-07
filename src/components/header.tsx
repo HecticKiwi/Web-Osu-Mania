@@ -24,6 +24,7 @@ const Header = () => {
             <div className="flex items-center gap-4">
               <NavLink to="/">Play</NavLink>
               <NavLink to="/faq">FAQ</NavLink>
+              <NavLink to="/updates">Updates</NavLink>
             </div>
 
             <div className="ml-auto flex items-center gap-2">

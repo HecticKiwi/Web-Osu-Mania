@@ -2,5 +2,6 @@ User-agent: *
 Disallow: /*?*
 Allow: /$
 Allow: /faq$
+Allow: /updates$
 Allow: /api/getBeatmaps
 Sitemap: https://webosumania.com/sitemap.xml
