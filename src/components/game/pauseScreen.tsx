@@ -1,6 +1,6 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
-import { Fullscreen } from "lucide-react";
+import { Eye, EyeOff, Fullscreen } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
@@ -12,10 +12,14 @@ const PauseScreen = ({
   beatmapData,
   setIsPaused,
   retry,
+  showHud,
+  toggleHud,
 }: {
   beatmapData: BeatmapData;
   setIsPaused: (newValue: boolean) => void;
   retry: () => void;
+  showHud: boolean;
+  toggleHud: () => void;
 }) => {
   const closeGame = useGameStore.use.closeGame();
   const beatmapSet = useGameStore.use.beatmapSet();
@@ -33,7 +37,7 @@ const PauseScreen = ({
     ? beatmapData.metadata.titleUnicode
     : beatmapData.metadata.title;
 
-  function handleFullscreen() {
+  const handleFullscreen = () => {
     const gameDiv = document.getElementById("game");
 
     if (!document.fullscreenElement && gameDiv) {
@@ -46,18 +50,18 @@ const PauseScreen = ({
     } else {
       document.exitFullscreen();
     }
-  }
+  };
 
   return (
     <>
       {/* Inset of -1px since it wasn't covering the top for some reason */}
-      <div className="fixed -inset-y-px left-0 h-[calc(100dvh+2px)] w-dvw overflow-auto bg-background/90 duration-300 animate-in fade-in scrollbar">
+      <div className="bg-background/90 animate-in fade-in scrollbar fixed -inset-y-px left-0 h-[calc(100dvh+2px)] w-dvw overflow-auto duration-300">
         <div className="mx-auto flex min-h-screen max-w-(--breakpoint-xl) flex-col justify-center p-8">
           <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
             <div>
               <h1 className="text-3xl font-semibold md:text-5xl">{title}</h1>
 
-              <div className="text-xl text-muted-foreground">
+              <div className="text-muted-foreground text-xl">
                 Beatmap by {beatmapData.metadata.creator}
               </div>
             </div>
@@ -72,7 +76,7 @@ const PauseScreen = ({
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <div className="flex w-fit items-center gap-2 rounded border bg-card p-1.5">
+            <div className="bg-card flex w-fit items-center gap-2 rounded border p-1.5">
               <p className="text-yellow-400">
                 {beatmap?.difficulty_rating.toFixed(2)}★
               </p>
@@ -83,7 +87,7 @@ const PauseScreen = ({
               {getModStrings(mods, replayData?.mods).map((mod) => (
                 <span
                   key={mod}
-                  className="rounded-full bg-primary/25 px-3 py-0.5"
+                  className="bg-primary/25 rounded-full px-3 py-0.5"
                 >
                   {mod}
                 </span>
@@ -91,14 +95,34 @@ const PauseScreen = ({
             </div>
           </div>
 
-          <Button
-            className="mt-16 max-w-fit gap-2 text-xl"
-            onClick={handleFullscreen}
-            variant={"outline"}
-          >
-            <Fullscreen />
-            Fullscreen
-          </Button>
+          <div className="mt-16 flex flex-wrap gap-4">
+            <Button
+              className="max-w-fit gap-2 text-xl"
+              onClick={handleFullscreen}
+              variant={"outline"}
+            >
+              <Fullscreen />
+              Fullscreen
+            </Button>
+
+            <Button
+              className="max-w-fit gap-2 text-xl"
+              onClick={() => toggleHud()}
+              variant={"outline"}
+            >
+              {showHud ? (
+                <>
+                  <EyeOff />
+                  Hide HUD
+                </>
+              ) : (
+                <>
+                  <Eye />
+                  Show HUD
+                </>
+              )}
+            </Button>
+          </div>
 
           <div className="mt-8 flex flex-col gap-12">
             <Button

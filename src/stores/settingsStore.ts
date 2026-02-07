@@ -151,6 +151,7 @@ export type Settings = {
     keyModes: (string | null)[][];
     pause: string | null;
     retry: string | null;
+    toggleHud: string | null;
   };
   /**
    * When adding mods, don't forget to
@@ -407,6 +408,7 @@ export const defaultSettings: Settings = {
     ],
     pause: null,
     retry: "Backquote",
+    toggleHud: null,
   },
   mods: {
     easy: false,
