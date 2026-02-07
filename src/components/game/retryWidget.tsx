@@ -64,11 +64,11 @@ function RetryWidget({ retry }: { retry: () => void }) {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed bottom-[50px] left-[50px] z-20 w-[200px] rounded-lg border bg-background p-4 opacity-0 transition",
+        "bg-background pointer-events-none fixed bottom-[50px] left-[50px] z-20 w-[200px] rounded-lg border p-4 opacity-0 transition",
         holdDuration > 0 && "pointer-events-auto opacity-100",
       )}
     >
-      <p className="mb-1 text-muted-foreground">Retrying...</p>
+      <p className="text-muted-foreground mb-1">Retrying...</p>
       <Progress value={(holdDuration / retryTime) * 100} className="h-2" />
     </div>
   );

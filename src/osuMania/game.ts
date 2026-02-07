@@ -71,6 +71,7 @@ PixiPlugin.registerPIXI(PIXI);
 export class Game {
   public app = new Application();
   public state: GameState = "WAIT";
+  public showHud: boolean;
 
   public settings: Settings;
   public mods: Settings["mods"];
@@ -411,6 +412,29 @@ export class Game {
     }
   }
 
+  public setShowHud(showHud: boolean) {
+    this.showHud = showHud;
+
+    [
+      this.scoreText,
+      this.comboText,
+      this.accuracyText,
+      this.judgementCounter,
+      this.progressBar,
+      this.healthBar,
+      this.errorBar,
+      this.fps,
+    ]
+      .filter((item) => !!item)
+      .map((item) => {
+        if (item instanceof Container) {
+          item.visible = showHud;
+        } else {
+          item.view.visible = showHud;
+        }
+      });
+  }
+
   private recalculateLayout() {
     this.stagePositionOffset =
       (this.settings.stagePosition *
@@ -434,7 +458,7 @@ export class Game {
     }
   }
 
-  async main(ref: HTMLDivElement) {
+  async main(ref: HTMLDivElement, showHud: boolean) {
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
@@ -533,6 +557,7 @@ export class Game {
     this.updateHitObjects();
 
     this.resize();
+    this.setShowHud(showHud);
 
     window.addEventListener("resize", this.resize);
 

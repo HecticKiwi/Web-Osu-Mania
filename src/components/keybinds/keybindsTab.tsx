@@ -75,19 +75,19 @@ const KeybindsTab = () => {
 
   return (
     <div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Supports keyboard and gamepad inputs. If you're using touch controls,
         you don't need to do anything here - just tap on the lanes (´• ω •`)
       </p>
 
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-2 text-sm">
         Use right-click to clear a keybind.
       </p>
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">General</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">General</h3>
       <div className="flex flex-col gap-1">
-        <div className="grid grid-cols-2 items-center rounded bg-background/50 p-1">
-          <div className="text-sm font-semibold text-muted-foreground">
+        <div className="bg-background/50 grid grid-cols-2 items-center rounded p-1">
+          <div className="text-muted-foreground text-sm font-semibold">
             Pause / resume gameplay
           </div>
 
@@ -104,8 +104,8 @@ const KeybindsTab = () => {
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 items-center rounded bg-background/50 p-1">
-          <div className="text-sm font-semibold text-muted-foreground">
+        <div className="bg-background/50 grid grid-cols-2 items-center rounded p-1">
+          <div className="text-muted-foreground text-sm font-semibold">
             Quick retry (hold)
           </div>
 
@@ -116,19 +116,31 @@ const KeybindsTab = () => {
             setSelectedKeybindPath={setSelectedKeybindPath}
           />
         </div>
+        <div className="bg-background/50 grid grid-cols-2 items-center rounded p-1">
+          <div className="text-muted-foreground text-sm font-semibold">
+            Toggle HUD
+          </div>
+
+          <KeybindButton
+            keybind={keybinds.toggleHud}
+            keybindPath={"keybinds.toggleHud"}
+            selectedKeybindPath={selectedKeybindPath}
+            setSelectedKeybindPath={setSelectedKeybindPath}
+          />
+        </div>
       </div>
 
       {keybinds.keyModes.map((keyMode, i) => (
         <Fragment key={i}>
-          <h3 className="mb-2 mt-6 text-lg font-semibold">{i + 1}K</h3>
+          <h3 className="mt-6 mb-2 text-lg font-semibold">{i + 1}K</h3>
 
           <div className="flex flex-col gap-1">
             {keyMode.map((key, j) => (
               <div
                 key={`${i + 1}K: ${j}`}
-                className="grid grid-cols-2 items-center rounded bg-background/50 p-1"
+                className="bg-background/50 grid grid-cols-2 items-center rounded p-1"
               >
-                <div className="text-sm font-semibold text-muted-foreground">
+                <div className="text-muted-foreground text-sm font-semibold">
                   Key {j + 1}
                 </div>
 

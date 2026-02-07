@@ -94,7 +94,7 @@ export class ScoreSystem {
         this.maxCombo = this.combo;
       }
 
-      if (this.game.comboText) {
+      if (this.game.comboText && this.game.showHud) {
         this.game.comboText.visible = true;
         this.game.comboText.text = this.combo;
       }

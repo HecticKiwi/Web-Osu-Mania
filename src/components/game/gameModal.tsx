@@ -31,7 +31,9 @@ const GameModal = () => {
     "Downloading Beatmap...",
   );
   const [downloadPercent, setDownloadPercent] = useState(0);
+  const [showHud, setShowHud] = useState(true);
 
+  // Fetch beatmap and parse data
   useEffect(() => {
     if (!beatmapId) {
       return;
@@ -154,9 +156,9 @@ const GameModal = () => {
     <main id="game" className="relative grid">
       {!beatmapData && (
         <div className="flex w-full items-center text-center">
-          <div className="h-px grow bg-linear-to-r from-transparent to-primary"></div>
+          <div className="to-primary h-px grow bg-linear-to-r from-transparent"></div>
 
-          <div className="rounded-xl border bg-card p-3 sm:p-6">
+          <div className="bg-card rounded-xl border p-3 sm:p-6">
             <h1 className="text-2xl text-white sm:text-4xl">
               {loadingMessage}
             </h1>
@@ -166,7 +168,7 @@ const GameModal = () => {
             )}
           </div>
 
-          <div className="h-px grow bg-linear-to-l from-transparent to-primary"></div>
+          <div className="to-primary h-px grow bg-linear-to-l from-transparent"></div>
         </div>
       )}
       {beatmapData && (
@@ -175,7 +177,7 @@ const GameModal = () => {
             <img
               src={beatmapData.backgroundUrl}
               alt="Beatmap Background"
-              className="-z-1 h-full w-full select-none object-cover"
+              className="-z-1 h-full w-full object-cover select-none"
               style={{
                 filter: `brightness(${1 - backgroundDim}) blur(${backgroundBlur * 30}px)`,
               }}
@@ -199,6 +201,8 @@ const GameModal = () => {
             beatmapData={beatmapData}
             retry={retry}
             videoRef={videoRef}
+            showHud={showHud}
+            setShowHud={setShowHud}
           />
         </>
       )}
