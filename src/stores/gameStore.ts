@@ -1,5 +1,5 @@
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
-import { BeatmapSet } from "@/lib/osuApi";
+import { BeatmapSet, getBeatmapSet } from "@/lib/osuApi";
 import { BASE_PATH } from "@/lib/utils";
 import { createSelectors } from "@/lib/zustand";
 import { ReplayData } from "@/osuMania/systems/replayRecorder";
@@ -44,19 +44,7 @@ const useGameStoreBase = create<GameState>()(
       const beatmapSetId = replay.beatmap.setId;
       const beatmapId = Number(replay.beatmap.id);
 
-      const url = queryString.stringifyUrl({
-        url: `${BASE_PATH}/api/getBeatmap`,
-        query: { beatmapSetId },
-      });
-
-      const beatmapSetRes = await fetch(url);
-
-      if (!beatmapSetRes.ok) {
-        const message = await beatmapSetRes.text();
-        throw new Error(message);
-      }
-
-      const beatmapSet: BeatmapSet = await beatmapSetRes.json();
+      const beatmapSet = await getBeatmapSet(beatmapSetId);
 
       set((state) => {
         state.beatmapId = beatmapId;

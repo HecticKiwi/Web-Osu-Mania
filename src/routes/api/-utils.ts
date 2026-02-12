@@ -81,6 +81,8 @@ export function trimBeatmapSet(beatmapSet: BeatmapSet): BeatmapSet {
       cs: beatmap.cs,
       accuracy: beatmap.accuracy,
       drain: beatmap.drain,
+      count_circles: beatmap.count_circles,
+      count_sliders: beatmap.count_sliders,
     })),
   };
 }

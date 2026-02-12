@@ -4,7 +4,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
-import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
+import { BeatmapSet as BeatmapSetData, getBeatmapSet } from "@/lib/osuApi";
+import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import { Route } from "@/routes";
+import { useSavedBeatmapSetsStore } from "@/stores/savedBeatmapSetsStore";
+import { useStoredBeatmapSetsStore } from "@/stores/storedBeatmapSetsStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapList from "./beatmapList";
@@ -15,11 +20,41 @@ import PreviewProgressBar from "./previewProgressBar";
 import SaveBeatmapSetButton from "./saveBeatmapSetButton";
 
 const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
+  const search = Route.useSearch();
+  const category = parseCategoryParam(search.category);
+  const setStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
+  const setSavedBeatmapSets =
+    useSavedBeatmapSetsStore.use.setSavedBeatmapSets();
+  const queryClient = useQueryClient();
   const [preview, setPreview] = useState<Howl | null>(null);
 
-  const handleOpenChange = (isOpen: boolean) => {
+  const handleOpenChange = async (isOpen: boolean) => {
     if (isOpen) {
       playPreview();
+
+      // If the category is "Saved" or "Stored", fetch the beatmap set data
+      // in case the stored data is out of date
+      if (category === "Saved" || category === "Stored") {
+        const beatmapSetData = await queryClient.fetchQuery({
+          queryKey: ["beatmapSets", beatmapSet.id],
+          queryFn: () => getBeatmapSet(beatmapSet.id),
+          staleTime: Infinity,
+          retry: 1,
+        });
+
+        if (category === "Saved") {
+          setSavedBeatmapSets((draft) => {
+            const index = draft.findIndex((set) => set.id === beatmapSet.id);
+            draft.splice(index, 1, beatmapSetData);
+          });
+        } else {
+          setStoredBeatmapSets((draft) => {
+            const index = draft.findIndex((set) => set.id === beatmapSet.id);
+            draft.splice(index, 1, beatmapSetData);
+          });
+        }
+      }
     } else {
       stopPreview();
     }

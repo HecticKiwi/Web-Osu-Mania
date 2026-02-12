@@ -41,6 +41,9 @@ export type Beatmap = {
   cs: number; // Key count
   accuracy: number; // OD
   drain: number; // HP
+
+  count_circles: number; // Tap note count
+  count_sliders: number; // Hold note count
 };
 
 type Covers = {
@@ -76,7 +79,7 @@ export type BeatmapSet = {
   beatmaps: Beatmap[];
 };
 
-export async function getBeatmaps({
+export async function getBeatmapSets({
   query,
   category,
   sortCriteria = DEFAULT_SORT_CRITERIA,
@@ -144,4 +147,23 @@ export async function getBeatmaps({
 
   const data: GetBeatmapsResponse = await res.json();
   return data;
+}
+
+export async function getBeatmapSet(beatmapSetId: number) {
+  const url = queryString.stringifyUrl({
+    url: `${BASE_PATH}/api/getBeatmap`,
+    query: { beatmapSetId },
+  });
+
+  const beatmapSetRes = await fetch(url);
+
+  if (!beatmapSetRes.ok) {
+    const message = await beatmapSetRes.text();
+
+    throw new Error(message);
+  }
+
+  const beatmapSet: BeatmapSet = await beatmapSetRes.json();
+
+  return beatmapSet;
 }

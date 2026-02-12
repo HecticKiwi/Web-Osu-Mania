@@ -1,4 +1,4 @@
-import { getBeatmaps } from "@/lib/osuApi";
+import { getBeatmapSets } from "@/lib/osuApi";
 import { Category, parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { parseGenreParam } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
@@ -69,7 +69,7 @@ const BeatmapSetsInfiniteScroll = ({
       },
     ],
     queryFn: ({ pageParam }) =>
-      getBeatmaps({
+      getBeatmapSets({
         query,
         sortCriteria,
         sortDirection,
@@ -104,12 +104,12 @@ const BeatmapSetsInfiniteScroll = ({
   if (isError) {
     return (
       <div className="my-8">
-        <p className="text-center text-muted-foreground">
+        <p className="text-muted-foreground text-center">
           Failed to fetch beatmaps. Please try again later.
         </p>
-        <p className="text-center text-muted-foreground">({error.message})</p>
+        <p className="text-muted-foreground text-center">({error.message})</p>
         {error.message.startsWith("Code 200") && (
-          <p className="mt-4 text-balance text-center text-orange-500">
+          <p className="mt-4 text-center text-balance text-orange-500">
             While I look into this issue, consider{" "}
             <Bookmark className="inline size-5" /> saving beatmaps or enabling
             IndexedDB caching in the settings the next time the beatmap listing
@@ -127,7 +127,7 @@ const BeatmapSetsInfiniteScroll = ({
     return (
       <div className="mt-16 text-center">
         <h1 className="text-3xl font-semibold">No Beatmaps Found!</h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-muted-foreground text-lg">
           Please adjust or <TextLink to={"/"}>reset</TextLink> the filters.
         </p>
       </div>
