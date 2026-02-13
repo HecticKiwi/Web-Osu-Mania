@@ -31,6 +31,7 @@ const GameScreens = ({
   showHud: boolean;
   setShowHud: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const beatmapId = useGameStore.use.beatmapId();
   const keybinds = useSettingsStore.use.keybinds();
   const replayData = useGameStore.use.replayData();
   const [game, setGame] = useState<Game | null>(null);
@@ -49,6 +50,11 @@ const GameScreens = ({
 
   // Game creation
   useEffect(() => {
+    if (!beatmapId) {
+      // Don't create game when closing modal and beatmap ID is nulled
+      return;
+    }
+
     const game = new Game(
       beatmapData,
       setResults,
@@ -70,7 +76,7 @@ const GameScreens = ({
         videoRef.current.currentTime = 0;
       }
     };
-  }, [beatmapData, replayData, retry]);
+  }, [beatmapData, replayData, retry, beatmapId]);
 
   // Pause logic
   useEffect(() => {
