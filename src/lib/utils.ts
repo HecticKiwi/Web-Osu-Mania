@@ -294,3 +294,49 @@ export function getClassNamesForGrade(grade: Grade) {
       return "bg-linear-to-br from-yellow-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_24px_rgba(253,224,71,1)]";
   }
 }
+
+// https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/ManiaPerformanceCalculator.cs#L58
+export function calculatePp(
+  starRating: number,
+  results: Results,
+  totalHits: number,
+  mods: {
+    noFail: boolean;
+    easy: boolean;
+  },
+) {
+  // Unlike displayed accuracy, PP uses an accuracy value that weighs perfects as 320
+  const accuracyWeight =
+    320 * results[320] +
+    300 * results[300] +
+    200 * results[200] +
+    100 * results[100] +
+    50 * results[50];
+
+  const highestPossibleAccuracyWeight =
+    320 *
+    (results[320] +
+      results[300] +
+      results[200] +
+      results[100] +
+      results[50] +
+      results[0]);
+
+  const accuracy = accuracyWeight / highestPossibleAccuracyWeight;
+
+  let value =
+    8 *
+    Math.max(starRating - 0.15, 0.05) ** 2.2 *
+    Math.max(0, 5 * accuracy - 4) *
+    (1 + 0.1 * Math.min(1, totalHits / 1500));
+
+  if (mods.noFail) {
+    value *= 0.75;
+  }
+
+  if (mods.easy) {
+    value *= 0.5;
+  }
+
+  return Math.round(value);
+}

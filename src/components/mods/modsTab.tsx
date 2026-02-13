@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
 import { Button } from "../ui/button";
+import PpWarning from "./ppWarning";
 import ScoreMultiplier from "./scoreMultiplier";
 
 const ModsTab = () => {
@@ -16,7 +17,9 @@ const ModsTab = () => {
     <>
       <ScoreMultiplier />
 
-      <h3 className="mb-2 text-lg font-semibold">Difficulty Reduction</h3>
+      <PpWarning />
+
+      <h3 className="mt-4 mb-2 text-lg font-semibold">Difficulty Reduction</h3>
       <div className="space-y-4">
         <SwitchInput
           label="Easy"
@@ -64,7 +67,7 @@ const ModsTab = () => {
         />
       </div>
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Difficulty Increase</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Difficulty Increase</h3>
       <div className="space-y-4">
         <SwitchInput
           label="Hard Rock"
@@ -140,7 +143,7 @@ const ModsTab = () => {
         />
       </div>
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Special</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Special</h3>
       <div className="space-y-4">
         <SwitchInput
           label="Autoplay"
@@ -154,7 +157,7 @@ const ModsTab = () => {
         />
       </div>
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Conversion</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Conversion</h3>
       <div className="space-y-4">
         <SwitchInput
           label="Random"
@@ -206,7 +209,7 @@ const ModsTab = () => {
         />
       </div>
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Custom</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Custom</h3>
       <div className="space-y-4">
         <SliderInput
           label="Song Speed"

@@ -4,15 +4,44 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn, getClassNamesForGrade, getLetterGrade } from "@/lib/utils";
+import { Beatmap } from "@/lib/osuApi";
+import {
+  calculatePp,
+  cn,
+  getClassNamesForGrade,
+  getLetterGrade,
+} from "@/lib/utils";
 import { format, formatDistanceToNowStrict } from "date-fns";
 import { HighScore } from "../../stores/highScoresStore";
 
-const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
+const HighScoreBadge = ({
+  highScore,
+  beatmap,
+}: {
+  highScore: HighScore;
+  beatmap: Beatmap;
+}) => {
   const score = highScore.results.score.toLocaleString();
   const accuracy = (highScore.results.accuracy * 100).toFixed(2);
 
   const letterGrade = getLetterGrade(highScore.results);
+
+  const mods = highScore.mods;
+  const pp =
+    !mods.includes("Half Time") &&
+    !mods.includes("Double Time") &&
+    !mods.some((mod) => mod.startsWith("Song Speed"))
+      ? calculatePp(
+          beatmap.difficulty_rating,
+          highScore.results,
+          beatmap.count_circles + beatmap.count_sliders,
+          {
+            // I should've made the HighScore mods typesafe...
+            noFail: mods.includes("No Fail"),
+            easy: mods.includes("Easy"),
+          },
+        )
+      : null;
 
   return (
     <TooltipProvider>
@@ -30,13 +59,27 @@ const HighScoreBadge = ({ highScore }: { highScore: HighScore }) => {
           </div>
         </TooltipTrigger>
 
-        <TooltipContent className="text-xs">
-          <p className="">
-            {format(highScore.timestamp, "d MMMM yyyy h:mm a")}
-          </p>
-          <p className="text-muted-foreground">
-            {formatDistanceToNowStrict(highScore.timestamp)} ago
-          </p>
+        <TooltipContent className="px-2 text-xs">
+          <div className="flex justify-between">
+            <div>
+              <p>{format(highScore.timestamp, "d MMMM yyyy h:mm a")}</p>
+              <p className="text-muted-foreground">
+                {formatDistanceToNowStrict(highScore.timestamp)} ago
+              </p>
+            </div>
+
+            <span
+              className="bg-background text-muted-foreground self-start rounded px-2 py-1 font-mono"
+              title={
+                pp === null
+                  ? "PP cannot be calculated for scores with speed mods."
+                  : undefined
+              }
+            >
+              {pp ?? "-"}
+              <span className="text-xs">pp</span>
+            </span>
+          </div>
 
           <div
             className={cn(

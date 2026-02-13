@@ -1,6 +1,6 @@
 import { BeatmapData } from "@/lib/beatmapParser";
 import { mean, stdev } from "@/lib/math";
-import { cn, getLetterGrade, getModStrings } from "@/lib/utils";
+import { calculatePp, cn, getLetterGrade, getModStrings } from "@/lib/utils";
 import { PlayResults } from "@/types";
 import { format } from "date-fns";
 import { useGameStore } from "../../stores/gameStore";
@@ -39,6 +39,21 @@ const Results = ({
   const errors = playResults.hitErrors.map((timingError) => timingError.error);
   const averageError = mean(errors);
   const unstableRate = stdev(errors) * 10; // https://osu.ppy.sh/wiki/en/Gameplay/Unstable_rate
+
+  console.log(mods.playbackRate);
+
+  const pp =
+    beatmap && mods.playbackRate === 1
+      ? calculatePp(
+          beatmap.difficulty_rating,
+          playResults,
+          beatmap.count_circles + beatmap.count_sliders,
+          {
+            noFail: mods.noFail,
+            easy: mods.easy,
+          },
+        )
+      : null;
 
   return (
     <div
@@ -136,19 +151,37 @@ const Results = ({
           )}
         >
           <div className="grid gap-6">
-            <div className="rounded-xl">
-              <h2 className="text-primary mb-4 text-3xl font-semibold">
-                Score
-              </h2>
-              <span className="text-5xl">
-                {playResults.score.toLocaleString()}
-              </span>
-
-              {highScorePosition !== null && (
-                <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
-                  New #{highScorePosition} high score!
-                </div>
+            <div
+              className={cn(
+                "grid grid-cols-2 gap-6",
+                responsive && "grid-cols-1 sm:grid-cols-2",
               )}
+            >
+              <div className="rounded-xl">
+                <h2 className="text-primary mb-4 text-3xl font-semibold">
+                  Score
+                </h2>
+                <div>
+                  <span className="text-5xl">
+                    {playResults.score.toLocaleString()}
+                  </span>
+
+                  {highScorePosition !== null && (
+                    <div className="mt-2 block w-fit rounded-full bg-yellow-900 px-3 py-1 text-sm text-yellow-400">
+                      New #{highScorePosition} high score!
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-xl">
+                <h3 className="text-primary mb-4 text-3xl font-semibold">
+                  Accuracy
+                </h3>
+                <span className="text-5xl">
+                  {(playResults.accuracy * 100).toFixed(2)}%
+                </span>
+              </div>
             </div>
 
             <div
@@ -164,13 +197,16 @@ const Results = ({
                 <span className="text-5xl">{playResults.maxCombo}x</span>
               </div>
 
-              <div className="rounded-xl">
-                <h3 className="text-primary mb-4 text-3xl font-semibold">
-                  Accuracy
-                </h3>
-                <span className="text-5xl">
-                  {(playResults.accuracy * 100).toFixed(2)}%
-                </span>
+              <div
+                className="rounded-xl"
+                title={
+                  pp == null
+                    ? "PP cannot be calculated for scores with speed mods."
+                    : undefined
+                }
+              >
+                <h3 className="text-primary mb-4 text-3xl font-semibold">PP</h3>
+                <span className="text-5xl">{pp ?? "-"}</span>
               </div>
             </div>
           </div>

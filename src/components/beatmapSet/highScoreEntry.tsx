@@ -91,9 +91,9 @@ const HighScoreEntry = ({
         #{position}
       </span>
 
-      <HighScoreBadge highScore={highScore} />
+      <HighScoreBadge highScore={highScore} beatmap={beatmap} />
 
-      <div className="outline-border outline-solid flex rounded-md outline-1">
+      <div className="outline-border flex rounded-md outline-1 outline-solid">
         <TooltipProvider>
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild className="h-6 rounded-r-none">

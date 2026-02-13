@@ -7,7 +7,7 @@ const ScoreMultiplier = () => {
   const multiplier = getScoreMultiplier(mods);
 
   return (
-    <h3 className="mx-auto mb-4 w-fit rounded-full border px-3 py-2 text-center text-sm">
+    <h3 className="mx-auto w-fit rounded-full border px-3 py-2 text-center text-sm">
       Score Multiplier:{" "}
       <span className={cn(multiplier < 1 && "text-green-400")}>
         {multiplier.toFixed(2)}x
