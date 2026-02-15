@@ -59,14 +59,10 @@ export function trimBeatmapSet(beatmapSet: BeatmapSet): BeatmapSet {
   return {
     artist: beatmapSet.artist,
     artist_unicode: beatmapSet.artist_unicode,
-    covers: {
-      cover: beatmapSet.covers.cover,
-    },
     creator: beatmapSet.creator,
     id: beatmapSet.id,
     nsfw: beatmapSet.nsfw,
     offset: beatmapSet.offset,
-    preview_url: beatmapSet.preview_url,
     status: beatmapSet.status,
     title: beatmapSet.title,
     title_unicode: beatmapSet.title_unicode,

@@ -46,28 +46,28 @@ export type Beatmap = {
   count_sliders: number; // Hold note count
 };
 
-type Covers = {
-  cover: string;
-  // "cover@2x": string;
-  // card: string;
-  // "card@2x": string;
-  // list: string;
-  // "list@2x": string;
-  // slimcover: string;
-  // "slimcover@2x": string;
-};
+// type Covers = {
+// cover: string;
+// "cover@2x": string;
+// card: string;
+// "card@2x": string;
+// list: string;
+// "list@2x": string;
+// slimcover: string;
+// "slimcover@2x": string;
+// };
 
 export type BeatmapSet = {
   artist: string;
   artist_unicode: string;
-  covers: Covers;
+  // covers: Covers;
   creator: string;
   // favourite_count: number;
   id: number;
   nsfw: boolean;
   offset: number;
   // play_count: number;
-  preview_url: string;
+  // preview_url: string;
   // source: string;
   status: Status;
   // spotlight: boolean;

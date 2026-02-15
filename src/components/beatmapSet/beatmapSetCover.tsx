@@ -38,7 +38,7 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
       {hideBeatmapSetCovers && (
         <span
           className={
-            "absolute inset-0 -z-10 bg-card transition duration-300 group-hover:brightness-[0.5]"
+            "bg-card absolute inset-0 -z-10 transition duration-300 group-hover:brightness-[0.5]"
           }
         ></span>
       )}
@@ -49,7 +49,7 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
           }
         >
           <img
-            src={beatmapSet.covers.cover}
+            src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover.jpg`}
             alt="Beatmap Set Cover"
             // fill
             className="h-full w-full object-cover"
@@ -77,8 +77,8 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
           {title}
         </div>
         <div className="flex w-full items-end justify-between gap-8">
-          <span className="truncate text-primary">by {artist}</span>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-primary truncate">by {artist}</span>
+          <span className="text-muted-foreground text-sm">
             {secondsToMMSS(
               Math.max(
                 ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),

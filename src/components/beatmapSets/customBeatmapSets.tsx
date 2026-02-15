@@ -35,7 +35,7 @@ const CustomBeatmapSets = ({
         <h1 className="text-3xl font-semibold">
           You Haven't {label} any Beatmaps!
         </h1>
-        <p className="text-lg text-muted-foreground">{helpText}</p>
+        <p className="text-muted-foreground text-lg">{helpText}</p>
       </div>
     );
   }
@@ -106,7 +106,7 @@ const CustomBeatmapSets = ({
     return (
       <div className="mt-16 text-center">
         <h1 className="text-3xl font-semibold">No {label} Beatmaps Found!</h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-muted-foreground text-lg">
           Please adjust the filters.
         </p>
       </div>
