@@ -88,7 +88,7 @@ const SettingsTab = () => {
           graphic={(backgroundDim) => (
             <div className="relative">
               <div
-                className="absolute inset-0 rounded-full bg-primary"
+                className="bg-primary absolute inset-0 rounded-full"
                 style={{ opacity: backgroundDim }}
               ></div>
               <PersonStanding />
@@ -136,7 +136,7 @@ const SettingsTab = () => {
           }
         />
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Currently, only MP4 background videos are supported.
         </p>
 
@@ -153,7 +153,7 @@ const SettingsTab = () => {
           }
           min={1}
           max={40}
-          step={1}
+          step={0.1}
         />
 
         <SliderInput
@@ -196,7 +196,7 @@ const SettingsTab = () => {
           }}
         />
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Enable performance mode if you are experiencing low FPS. This will
           disable animations and hitsounds.
         </p>
@@ -256,7 +256,7 @@ const SettingsTab = () => {
 
       <SkinSettings />
 
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Display</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Display</h3>
       <div className="space-y-4">
         <SliderInput
           label="Stage Position"
@@ -291,7 +291,7 @@ const SettingsTab = () => {
           step={1}
         />
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Affects the vertical position of the note receptors.
         </p>
 
@@ -309,7 +309,7 @@ const SettingsTab = () => {
           step={1}
         />
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Affects when notes should visually be hit relative to the note
           receptors.
         </p>
