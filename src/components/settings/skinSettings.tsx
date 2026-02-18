@@ -143,13 +143,13 @@ const SkinSettings = () => {
                     <th className="w-16 px-2 py-2 text-center font-normal">
                       Column
                     </th>
-                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                    <th className="w-125 px-2 py-2 text-center font-normal">
                       Tap
                     </th>
-                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                    <th className="w-125 px-2 py-2 text-center font-normal">
                       Hold Head
                     </th>
-                    <th className="w-[500px] px-2 py-2 text-center font-normal">
+                    <th className="w-125 px-2 py-2 text-center font-normal">
                       Hold Body
                     </th>
                   </tr>

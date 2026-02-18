@@ -11,14 +11,14 @@ const ManiaIcon = ({
     <>
       <div
         className={cn(
-          "flex h-[40px] w-[40px] items-center justify-center gap-[4px] rounded-full border-[3px] border-white",
+          "flex h-10 w-10 items-center justify-center gap-1 rounded-full border-[3px] border-white",
           className,
         )}
         style={{ backgroundColor: difficultyRatingToRgba(difficultyRating) }}
       >
-        <div className="h-[12px] w-[4px] rounded-full bg-white"></div>
-        <div className="h-[25px] w-[4px] rounded-full bg-white"></div>
-        <div className="h-[12px] w-[4px] rounded-full bg-white"></div>
+        <div className="h-3 w-1 rounded-full bg-white"></div>
+        <div className="h-6.25 w-1 rounded-full bg-white"></div>
+        <div className="h-3 w-1 rounded-full bg-white"></div>
       </div>
     </>
   );

@@ -77,7 +77,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   return (
     <Popover onOpenChange={handleOpenChange}>
       <div className="group relative">
-        <PopoverTrigger className="group-hover:border-primary relative flex h-[150px] w-full flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300">
+        <PopoverTrigger className="group-hover:border-primary relative flex h-37.5 w-full flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300">
           <BeatmapSetCover beatmapSet={beatmapSet} />
 
           {preview && (

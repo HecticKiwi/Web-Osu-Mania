@@ -117,7 +117,7 @@ const ResultsScreen = ({
       <div className="bg-background animate-in fade-in scrollbar fixed inset-0 -inset-y-px overflow-auto duration-1000">
         {/* Hidden results at a fixed width for getting screenshots */}
         <div className="max-h-0 overflow-hidden" aria-hidden tabIndex={-1}>
-          <div ref={hiddenRef} className="w-[1280px]">
+          <div ref={hiddenRef} className="w-7xl">
             <Results
               beatmapData={beatmapData}
               playResults={playResults}

@@ -36,7 +36,7 @@ const BeatmapList = ({
 
   if (maniaBeatmaps.length === 0) {
     return (
-      <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
+      <div className="flex max-h-125 flex-col gap-2 overflow-hidden rounded-xl">
         <div className="scrollbar scrollbar-track-card flex flex-col gap-2 overflow-auto p-2">
           <p className="text-muted-foreground p-4 text-center text-balance">
             This beatmap set doesn't have any osu!mania beatmaps.
@@ -64,7 +64,7 @@ const BeatmapList = ({
     });
 
   return (
-    <div className="flex max-h-[500px] flex-col gap-2 overflow-hidden rounded-xl">
+    <div className="flex max-h-125 flex-col gap-2 overflow-hidden rounded-xl">
       <div className="scrollbar scrollbar-track-card flex flex-col gap-2 overflow-auto p-2">
         {filteredBeatmaps.length === 0 && (
           <p className="text-muted-foreground p-4 text-center text-balance">

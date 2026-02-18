@@ -15,7 +15,7 @@ const MobileSidebar = () => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent className="bg-background/50 w-full max-w-[620px] p-2 sm:max-w-[620px]">
+        <SheetContent className="bg-background/50 w-full max-w-155 p-2 sm:max-w-155">
           <DialogTitle className="sr-only">Sidebar</DialogTitle>
           <DialogDescription className="sr-only">
             Edit filters, mods, and settings

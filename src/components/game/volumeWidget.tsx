@@ -61,7 +61,7 @@ function VolumeWidget({ game }: { game: Game }) {
     <>
       <div
         className={cn(
-          "bg-background pointer-events-none fixed right-[50px] bottom-[50px] z-20 w-[300px] rounded-lg border p-4 opacity-0 transition",
+          "bg-background pointer-events-none fixed right-12.5 bottom-12.5 z-20 w-75 rounded-lg border p-4 opacity-0 transition",
           isVisible && "pointer-events-auto opacity-100",
         )}
         onMouseMoveCapture={() => {

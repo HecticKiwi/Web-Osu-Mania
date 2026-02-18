@@ -59,7 +59,7 @@ const UploadDialog = () => {
           )}
           {uploadedBeatmapSet && beatmapSet && (
             <>
-              <div className="group relative flex h-[150px] flex-col p-4 text-start">
+              <div className="group relative flex h-37.5 flex-col p-4 text-start">
                 <BeatmapSetCover beatmapSet={beatmapSet} />
 
                 {preview && (
