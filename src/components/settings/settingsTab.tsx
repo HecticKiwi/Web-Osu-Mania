@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import type {
   EarlyLateThreshold,
   JudgementCounterPosition,
-  TouchMode} from "../../stores/settingsStore";
+  TouchMode,
+} from "../../stores/settingsStore";
 import {
   earlyLateThresholdOptions,
   judgementCounterOptions,
@@ -275,6 +276,21 @@ const SettingsTab = () => {
             })
           }
           min={-1}
+          max={1}
+          step={0.01}
+        />
+        <SliderInput
+          label="Stage Opacity"
+          selector={(state) => state.stageOpacity}
+          tooltip={(stageOpacity) => {
+            return `${Math.round(stageOpacity * 100)}%`;
+          }}
+          onValueChange={([stageOpacity]) =>
+            setSettings((draft) => {
+              draft.stageOpacity = stageOpacity;
+            })
+          }
+          min={0}
           max={1}
           step={0.01}
         />

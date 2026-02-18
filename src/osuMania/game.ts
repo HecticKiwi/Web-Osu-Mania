@@ -803,8 +803,8 @@ export class Game {
 
     this.stageBackground = new Graphics()
       .rect(0, 0, notesContainerWidth, this.app.screen.height)
-      .fill(0x000000);
-    this.stageBackground.alpha = 0.5;
+      .fill(0x111111);
+    this.stageBackground.alpha = this.settings.stageOpacity;
     this.notesContainer.addChild(this.stageBackground);
 
     this.stageSides = new Graphics();

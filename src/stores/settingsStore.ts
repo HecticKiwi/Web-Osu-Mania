@@ -141,6 +141,7 @@ export type Settings = {
   performanceMode: boolean;
   hue: number;
   stagePosition: number;
+  stageOpacity: number;
   laneWidthAdjustment: number;
   touch: {
     enabled: boolean;
@@ -234,6 +235,7 @@ export const defaultSettings: Settings = {
   performanceMode: false,
   hue: 212,
   stagePosition: 0,
+  stageOpacity: 0.5,
   laneWidthAdjustment: 0,
   touch: {
     enabled: true,
