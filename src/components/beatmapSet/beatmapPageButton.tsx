@@ -20,7 +20,7 @@ const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
           >
             <a
               href={`https://osu.ppy.sh/beatmapsets/${beatmapSetId}`}
-              target="_blank"
+              target="_blank" rel="noreferrer"
             >
               <ExternalLink className="size-5" />
             </a>

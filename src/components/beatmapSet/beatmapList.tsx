@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { Route } from "@/routes";

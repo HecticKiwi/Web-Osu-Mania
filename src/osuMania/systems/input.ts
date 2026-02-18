@@ -1,4 +1,4 @@
-import { Game } from "../game";
+import type { Game } from "../game";
 
 export class InputSystem {
   private game: Game;
@@ -10,7 +10,7 @@ export class InputSystem {
   public pressedColumns: boolean[];
   public releasedColumns: boolean[];
 
-  public pauseTapped: boolean = false;
+  public pauseTapped = false;
 
   constructor(game: Game) {
     this.game = game;

@@ -1,5 +1,5 @@
 import { rateLimit } from "@/lib/api/ratelimit";
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
 import { corsHeaders, getAccessToken, trimBeatmapSet } from "./-utils";

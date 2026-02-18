@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { idb } from "@/lib/idb";
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { HardDrive } from "lucide-react";
 import { toast } from "sonner";

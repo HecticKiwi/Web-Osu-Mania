@@ -7,9 +7,9 @@ import { filesize } from "filesize";
 import { HardDrive, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
+import type { BeatmapProvider } from "../../stores/settingsStore";
 import {
   BEATMAP_API_PROVIDERS,
-  BeatmapProvider,
   useSettingsStore,
 } from "../../stores/settingsStore";
 import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
@@ -35,9 +35,9 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
         <RadioGroupInput
           label="Beatmap Provider"
           selector={(state) => state.beatmapProvider}
-          onValueChange={(beatmapProvider) =>
+          onValueChange={(newBeatmapProvider) =>
             setSettings((draft) => {
-              draft.beatmapProvider = beatmapProvider as BeatmapProvider;
+              draft.beatmapProvider = newBeatmapProvider as BeatmapProvider;
             })
           }
           className="space-y-2"
@@ -101,21 +101,21 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           }}
         />
 
-        <p className="mt-4 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-4 text-sm">
           If the beatmap providers are blocked on your network, bypass it by
           proxying beatmap downloads through this website's server. ONLY ENABLE
           IF YOU HAVE TO; may result in delayed downloads or rate limiting.
         </p>
 
         <div className="mt-8 grid grid-cols-2 items-center">
-          <div className="text-sm font-semibold text-muted-foreground">
+          <div className="text-muted-foreground text-sm font-semibold">
             Upload Beatmap
           </div>
 
           <BeatmapSetUpload />
         </div>
 
-        <p className="mt-4 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-4 text-sm">
           If you have beatmap files (.osz format) downloaded already, you can
           load them directly. Click the dashed box or drag a beatmap file into
           it.
@@ -135,7 +135,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           }}
         />
 
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           By default, downloaded beatmaps are discarded when you leave or
           refresh the page. If you enable caching via IndexedDB, downloaded
           beatmaps will be stored in the browser across visits. View stored

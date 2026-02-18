@@ -4,8 +4,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
-import { ComponentProps, ReactNode } from "react";
+import type { Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { ComponentProps, ReactNode } from "react";
 
 const SwitchInput = ({
   label,
@@ -24,7 +25,7 @@ const SwitchInput = ({
   return (
     <>
       <div className="grid grid-cols-2 items-center">
-        <div className="pr-2 text-sm font-semibold text-muted-foreground">
+        <div className="text-muted-foreground pr-2 text-sm font-semibold">
           {label}
         </div>
 

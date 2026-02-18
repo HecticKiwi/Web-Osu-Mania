@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 
 const TextLink = ({ ...props }: ComponentProps<typeof Link>) => {
   return (

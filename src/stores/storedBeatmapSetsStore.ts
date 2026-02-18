@@ -1,4 +1,4 @@
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

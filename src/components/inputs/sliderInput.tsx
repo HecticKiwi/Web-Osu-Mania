@@ -5,8 +5,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
-import { ComponentProps, ReactNode, useState } from "react";
+import type { Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { ComponentProps, ReactNode } from "react";
+import { useState } from "react";
 
 const SliderInput = ({
   label,
@@ -19,7 +21,7 @@ const SliderInput = ({
 }: {
   label?: string;
   selector: (settings: Settings) => number;
-  tooltip?: string | ((value: any) => string);
+  tooltip?: string | ((value: any) => string | number);
   graphic?: (value: any) => ReactNode;
   inWidget?: boolean;
   containerClassName?: string;
@@ -50,7 +52,7 @@ const SliderInput = ({
         )}
       >
         {label !== undefined && (
-          <div className="pr-2 text-sm font-semibold text-muted-foreground">
+          <div className="text-muted-foreground pr-2 text-sm font-semibold">
             {label}
           </div>
         )}

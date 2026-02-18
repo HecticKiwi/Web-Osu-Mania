@@ -1,4 +1,4 @@
-import { ColumnColor } from "@/stores/settingsStore";
+import type { ColumnColor } from "@/stores/settingsStore";
 
 export const JUDGEMENTS = [320, 300, 200, 100, 50, 0] as const;
 

@@ -1,16 +1,12 @@
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
-import {
-  BlobReader,
-  BlobWriter,
-  Entry,
-  FileEntry,
-  TextWriter,
-  ZipReader,
-} from "@zip.js/zip.js";
+import type { Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { Entry, FileEntry } from "@zip.js/zip.js";
+import { BlobReader, BlobWriter, TextWriter, ZipReader } from "@zip.js/zip.js";
 import { Howl } from "howler";
 import { addDelay } from "./audio";
-import { Beatmap } from "./osuApi";
-import { decodeMods, EncodedMods } from "./replay";
+import type { Beatmap } from "./osuApi";
+import type { EncodedMods } from "./replay";
+import { decodeMods } from "./replay";
 import { getHpOrOdAfterMods, removeFileExtension, shuffle } from "./utils";
 
 export type HitObject = TapData | HoldData;
@@ -135,7 +131,7 @@ export const parseOsz = async (
   const regex = /^\[\d+K\] /; // Removes "[4K] " prefix that the API response sometimes adds
   const diffName = beatmap.version
     .replace(regex, "")
-    .replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+    .replace(/[.*+?^=!:${}()|[\]/\\]/g, "\\$&");
 
   const pattern = new RegExp(`Version:\\s?${diffName}(\r|\n)`);
 
@@ -144,7 +140,7 @@ export const parseOsz = async (
     (entry) => entry.filename.endsWith(".osu") && !entry.directory,
   ) as FileEntry[];
   for (const entry of osuEntries) {
-    const text = await entry.getData!(new TextWriter());
+    const text = await entry.getData(new TextWriter());
 
     if (pattern.test(text)) {
       osuFileData = text;
@@ -199,7 +195,7 @@ export const parseOsz = async (
   let songUrl: string;
   const songFile = findEntry(entries, songFilename);
   if (songFile) {
-    const audioBlob = await songFile.getData!(new BlobWriter());
+    const audioBlob = await songFile.getData(new BlobWriter());
 
     const delayedAudioBlob = await addDelay(audioBlob, delay / 1000);
 
@@ -240,7 +236,7 @@ export const parseOsz = async (
       continue;
     }
 
-    const fileData = await entry.getData!(new BlobWriter());
+    const fileData = await entry.getData(new BlobWriter());
     const url = URL.createObjectURL(fileData);
 
     sounds[name] = {
@@ -265,7 +261,7 @@ export const parseOsz = async (
     const backgroundEntry = findEntry(entries, backgroundFilename);
 
     if (backgroundEntry) {
-      const backgroundBlob = await backgroundEntry?.getData!(new BlobWriter());
+      const backgroundBlob = await backgroundEntry?.getData(new BlobWriter());
       backgroundUrl = URL.createObjectURL(backgroundBlob);
     }
   }
@@ -326,7 +322,7 @@ export function parseHitObjects(
       .split(",")
       .map((number) => Number(number));
 
-    let column = Math.floor((x * columnCount) / 512);
+    const column = Math.floor((x * columnCount) / 512);
 
     const hitSoundBinaryString = hitSoundDecimal.toString(2).padStart(4, "0");
     const hitSound = {
@@ -337,7 +333,7 @@ export function parseHitObjects(
       clap: hitSoundBinaryString[0] === "1",
     };
 
-    let sampleSet = hitObject.split(",")[5].split(":");
+    const sampleSet = hitObject.split(",")[5].split(":");
 
     const isHoldNote = type === 128;
     const sampleSetStartIndex = isHoldNote ? 1 : 0;
@@ -474,7 +470,7 @@ async function parseEvents(
         const videoEntry = findEntry(entries, parsedFilename);
 
         if (videoEntry) {
-          const videoBlob = await videoEntry.getData!(
+          const videoBlob = await videoEntry.getData(
             new BlobWriter("video/mp4"),
           );
 
@@ -619,7 +615,7 @@ function getMostCommonBeatLength(
 }
 
 function getLineValue(lines: string[], key: string) {
-  const line = lines.find((line) => line.startsWith(`${key}:`));
+  const line = lines.find((l) => l.startsWith(`${key}:`));
 
   if (!line) {
     throw new Error(`No lines found with key: ${key}`);
@@ -657,7 +653,7 @@ export async function getBeatmapSetIdFromOsz(blob: Blob) {
     throw new Error("No .osu files found.");
   }
 
-  const text = await osuEntry.getData!(new TextWriter());
+  const text = await osuEntry.getData(new TextWriter());
   const lines = text?.split(/\r\n|\n\r|\n/);
 
   const beatmapSetId = getLineValue(lines, "BeatmapSetID");

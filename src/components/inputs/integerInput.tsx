@@ -1,7 +1,7 @@
 import { roundToPrecision } from "@/lib/math";
 import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
@@ -50,7 +50,7 @@ const IntegerInput = ({
   return (
     <>
       <div className={cn("grid grid-cols-2 items-center", className)}>
-        <div className="text-sm font-semibold text-muted-foreground">
+        <div className="text-muted-foreground text-sm font-semibold">
           {label}
         </div>
 

@@ -1,9 +1,9 @@
-import { HitObject } from "@/lib/beatmapParser";
+import type { HitObject } from "@/lib/beatmapParser";
 import { clamp } from "@/lib/math";
 import { getHpOrOdAfterMods } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { Judgement } from "@/types";
-import { Game } from "../game";
+import type { Judgement } from "@/types";
+import type { Game } from "../game";
 
 // Try to match the official osu code where convenient (some of it may be redundant but it's a lot easier to match functionality)
 // https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Scoring/LegacyDrainingHealthProcessor.cs

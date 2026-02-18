@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
-import { ChangeEvent, DragEvent, useState } from "react";
+import type { ChangeEvent, DragEvent } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useGameStore } from "../../stores/gameStore";
 
@@ -56,7 +57,7 @@ const BeatmapSetUpload = () => {
       <label
         htmlFor="beatmapSetUpload"
         className={cn(
-          "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors hover:bg-accent",
+          "hover:bg-accent flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors",
           isDraggingOver && "bg-accent",
         )}
       >

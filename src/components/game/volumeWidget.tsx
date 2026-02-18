@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Game } from "@/osuMania/game";
+import type { Game } from "@/osuMania/game";
 import { useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import VolumeSettings from "../settings/volumeSettings";
@@ -54,14 +54,14 @@ function VolumeWidget({ game }: { game: Game }) {
   }, [game.song, musicVolume]);
 
   useEffect(() => {
-    game.settings.sfxVolume = sfxVolume;
-  }, [game.settings, sfxVolume]);
+    game.setSfxVolume(sfxVolume);
+  }, [game.settings, sfxVolume, game]);
 
   return (
     <>
       <div
         className={cn(
-          "pointer-events-none fixed bottom-[50px] right-[50px] z-20 w-[300px] rounded-lg border bg-background p-4 opacity-0 transition",
+          "bg-background pointer-events-none fixed right-[50px] bottom-[50px] z-20 w-[300px] rounded-lg border p-4 opacity-0 transition",
           isVisible && "pointer-events-auto opacity-100",
         )}
         onMouseMoveCapture={() => {

@@ -1,13 +1,13 @@
-import { StoreApi, UseBoundStore } from "zustand";
-import { PersistStorage } from "zustand/middleware";
+import type { StoreApi, UseBoundStore } from "zustand";
+import type { PersistStorage } from "zustand/middleware";
 
-type WithSelectors<S> = S extends { getState: () => infer T }
-  ? S & { use: { [K in keyof T]: () => T[K] } }
+type WithSelectors<TStore> = TStore extends { getState: () => infer TState }
+  ? TStore & { use: { [TKey in keyof TState]: () => TState[TKey] } }
   : never;
 
 // Adds selector hooks on the "use" property
-export const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
-  _store: S,
+export const createSelectors = <T extends UseBoundStore<StoreApi<object>>>(
+  _store: T,
 ) => {
   const store = _store as WithSelectors<typeof _store>;
   store.use = {};

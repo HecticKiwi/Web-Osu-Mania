@@ -18,11 +18,11 @@ import { capitalizeFirstLetter } from "@/lib/utils";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
 import { toast } from "sonner";
+import type { SkinStyle } from "../../stores/settingsStore";
 import {
-  defaultSettings,
-  SKIN_STYLE_ICONS,
   SKIN_STYLES,
-  SkinStyle,
+  SKIN_STYLE_ICONS,
+  defaultSettings,
   useSettingsStore,
 } from "../../stores/settingsStore";
 import { keys } from "../filters/keysFilter";

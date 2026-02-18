@@ -1,6 +1,7 @@
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Howler } from "howler";
-import { CSSProperties, ReactNode, useEffect } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { useEffect } from "react";
 
 const Html = ({ children }: { children: ReactNode }) => {
   const hue = useSettingsStore.use.hue();

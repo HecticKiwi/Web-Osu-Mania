@@ -1,6 +1,7 @@
-import { BeatmapData } from "@/lib/beatmapParser";
-import { EncodedMods, encodeMods } from "@/lib/replay";
-import { Game } from "../game";
+import type { BeatmapData } from "@/lib/beatmapParser";
+import type { EncodedMods } from "@/lib/replay";
+import { encodeMods } from "@/lib/replay";
+import type { Game } from "../game";
 
 export type ReplayData = {
   /**

@@ -1,4 +1,4 @@
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { env } from "cloudflare:workers";
 
 type OAuthTokenData = {

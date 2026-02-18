@@ -1,5 +1,5 @@
 import { Container, Sprite, Texture } from "pixi.js";
-import { Game } from "../../game";
+import type { Game } from "../../game";
 
 export abstract class Key {
   public game: Game;

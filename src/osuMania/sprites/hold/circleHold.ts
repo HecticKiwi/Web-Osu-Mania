@@ -1,7 +1,7 @@
-import { HoldData } from "@/lib/beatmapParser";
+import type { HoldData } from "@/lib/beatmapParser";
 import { Container, Sprite, Texture } from "pixi.js";
 import { circleColumnRatio } from "../../constants";
-import { Game } from "../../game";
+import type { Game } from "../../game";
 import { Tap } from "../tap/tap";
 import { Hold } from "./hold";
 

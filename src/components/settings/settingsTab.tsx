@@ -3,12 +3,13 @@ import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
 import { toast } from "sonner";
-import {
+import type {
   EarlyLateThreshold,
+  JudgementCounterPosition,
+  TouchMode} from "../../stores/settingsStore";
+import {
   earlyLateThresholdOptions,
   judgementCounterOptions,
-  JudgementCounterPosition,
-  TouchMode,
   touchModes,
   useSettingsStore,
 } from "../../stores/settingsStore";

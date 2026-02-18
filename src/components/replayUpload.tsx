@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
-import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { decompressSync } from "fflate";
 import { Upload } from "lucide-react";
-import { ChangeEvent, DragEvent, useState } from "react";
+import type { ChangeEvent, DragEvent } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useGameStore } from "../stores/gameStore";
 
@@ -25,7 +26,7 @@ const ReplayUpload = () => {
 
     const reader = new FileReader();
 
-    reader.onload = async () => {
+    reader.onload = () => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
         const uint8 = new Uint8Array(arrayBuffer);
@@ -84,7 +85,7 @@ const ReplayUpload = () => {
       <label
         htmlFor="ReplayUpload"
         className={cn(
-          "flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors hover:bg-accent",
+          "hover:bg-accent flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors",
           isDraggingOver && "bg-accent",
         )}
       >

@@ -1,7 +1,6 @@
-import { Game } from "@/osuMania/game";
-import { Button } from "../ui/button";
 import { Pause } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { Button } from "../ui/button";
 
 const PauseButton = ({
   setIsPaused,
@@ -11,7 +10,7 @@ const PauseButton = ({
   return (
     <>
       <Button
-        className="fixed left-[30px] top-[30px]"
+        className="fixed top-[30px] left-[30px]"
         variant={"secondary"}
         size={"icon"}
         onClick={() => setIsPaused(true)}

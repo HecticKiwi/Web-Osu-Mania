@@ -4,7 +4,7 @@ import {
   circleColumnRatio,
   diamondColumnRatio,
 } from "../constants";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 export class StageCover {
   public game: Game;

@@ -28,6 +28,7 @@ const UploadDialog = () => {
   useEffect(() => {
     if (uploadedBeatmapSet && beatmapSet) {
       const audio = playAudioPreview(beatmapSet.id, musicVolume);
+      /* eslint-disable-next-line */
       setPreview(audio);
     }
   }, [beatmapSet, musicVolume, uploadedBeatmapSet]);
@@ -67,7 +68,7 @@ const UploadDialog = () => {
                   </div>
                 )}
 
-                <div className="absolute right-4 top-4 flex gap-2">
+                <div className="absolute top-4 right-4 flex gap-2">
                   <SaveBeatmapSetButton beatmapSet={beatmapSet} />
 
                   <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />

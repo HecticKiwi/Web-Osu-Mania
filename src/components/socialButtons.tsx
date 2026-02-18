@@ -19,6 +19,7 @@ const SocialButtons = ({ className }: { className?: string }) => {
               <a
                 href="https://github.com/HecticKiwi/Web-Osu-Mania"
                 target="_blank"
+                rel="noreferrer"
               >
                 <FaGithub className="h-5 w-5" />
               </a>
@@ -33,7 +34,11 @@ const SocialButtons = ({ className }: { className?: string }) => {
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-              <a href="https://discord.gg/8zfxCdkfTx" target="_blank">
+              <a
+                href="https://discord.gg/8zfxCdkfTx"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <FaDiscord className="h-5 w-5" />
               </a>
             </Button>
@@ -47,7 +52,11 @@ const SocialButtons = ({ className }: { className?: string }) => {
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-              <a href="https://github.com/sponsors/HecticKiwi" target="_blank">
+              <a
+                href="https://github.com/sponsors/HecticKiwi"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Heart className="h-5 w-5" fill="white" />
               </a>
             </Button>

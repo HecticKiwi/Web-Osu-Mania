@@ -1,10 +1,10 @@
 import { JUDGEMENTS } from "@/osuMania/constants";
-import { Judgement } from "@/types";
+import type { Judgement } from "@/types";
 import { Bar, BarChart, Cell, XAxis } from "recharts";
 import { ChartContainer } from "../ui/chart";
 
-const binCount = 101;
-const tickCount = 11;
+const BIN_COUNT = 101;
+const TICK_COUNT = 11;
 
 const judgementColors: Record<Judgement, string> = {
   320: "hsl(var(--judgement-perfect))",
@@ -80,11 +80,11 @@ export default function TimingDistributionChart({
     number,
   ];
 
-  const chartData = createTimingHistogram(hitErrors, binCount, domain);
-  const ticks = generateSymmetricTicks(domain, tickCount);
+  const chartData = createTimingHistogram(hitErrors, BIN_COUNT, domain);
+  const ticks = generateSymmetricTicks(domain, TICK_COUNT);
 
   return (
-    <ChartContainer config={{}} className="max-h-[300px] w-full">
+    <ChartContainer config={{}} className="max-h-75 w-full">
       <BarChart accessibilityLayer data={chartData}>
         <XAxis
           type="number"
@@ -92,8 +92,8 @@ export default function TimingDistributionChart({
           tickLine={false}
           ticks={ticks}
           domain={([dataMin, dataMax]) => {
-            const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax));
-            return [-absMax, absMax];
+            const absDomainMax = Math.max(Math.abs(dataMin), Math.abs(dataMax));
+            return [-absDomainMax, absDomainMax];
           }}
           interval={"preserveStartEnd"}
         />
@@ -105,10 +105,7 @@ export default function TimingDistributionChart({
             radius={4}
           >
             {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={judgementColors[judgement as Judgement]}
-              />
+              <Cell key={`cell-${index}`} fill={judgementColors[judgement]} />
             ))}
           </Bar>
         ))}

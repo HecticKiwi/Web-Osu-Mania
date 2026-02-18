@@ -1,9 +1,11 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import { JudgementSetId, Settings } from "@/stores/settingsStore";
-import { Grade, Judgement, Results } from "@/types";
-import { type ClassValue, clsx } from "clsx";
+import type { JudgementSetId, Settings } from "@/stores/settingsStore";
+import type { Grade, Judgement, Results } from "@/types";
+import type { ClassValue } from "clsx";
+import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { decodeMods, EncodedMods } from "./replay";
+import type { EncodedMods } from "./replay";
+import { decodeMods } from "./replay";
 
 export const BASE_PATH = import.meta.env.VITE_BASE_URL ?? "";
 
@@ -36,7 +38,7 @@ export function scaleHeight(height: number, windowHeight: number) {
 function parsePath(path: string): (string | number)[] {
   return path.split(".").flatMap((part) =>
     part
-      .split(/[\[\]]/)
+      .split(/[[\]]/)
       .filter(Boolean)
       .map((key) => (isNaN(Number(key)) ? key : Number(key))),
   );

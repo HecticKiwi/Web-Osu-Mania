@@ -1,8 +1,8 @@
-import { HitError } from "./components/game/timingDistributionChart";
-import { JUDGEMENTS } from "./osuMania/constants";
-import { Hold } from "./osuMania/sprites/hold/hold";
-import { Tap } from "./osuMania/sprites/tap/tap";
-import { ReplayData } from "./osuMania/systems/replayRecorder";
+import type { HitError } from "./components/game/timingDistributionChart";
+import type { JUDGEMENTS } from "./osuMania/constants";
+import type { Hold } from "./osuMania/sprites/hold/hold";
+import type { Tap } from "./osuMania/sprites/tap/tap";
+import type { ReplayData } from "./osuMania/systems/replayRecorder";
 
 export type GameState = "WAIT" | "PLAY" | "PAUSE" | "UNPAUSE" | "FAIL";
 

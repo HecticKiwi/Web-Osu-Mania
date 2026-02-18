@@ -1,6 +1,6 @@
-import { TapData } from "@/lib/beatmapParser";
+import type { TapData } from "@/lib/beatmapParser";
 import { circleColumnRatio } from "@/osuMania/constants";
-import { Game } from "@/osuMania/game";
+import type { Game } from "@/osuMania/game";
 import { Graphics, RenderTexture, Sprite } from "pixi.js";
 import { Tap } from "./tap";
 

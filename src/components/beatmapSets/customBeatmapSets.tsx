@@ -1,4 +1,4 @@
-import { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
+import type { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
 import { parseQueryParam } from "@/lib/searchParams/queryParam";
@@ -9,7 +9,7 @@ import {
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { caseInsensitiveIncludes, cn } from "@/lib/utils";
 import { Route } from "@/routes";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSet from "../beatmapSet/beatmapSet";
 

@@ -24,9 +24,9 @@ const VolumeSlider = ({ className }: { className?: string }) => {
           value={[volume]}
           max={1}
           step={0.01}
-          onValueChange={([volume]) =>
+          onValueChange={([newVolume]) =>
             setSettings((draft) => {
-              draft.volume = volume;
+              draft.volume = newVolume;
             })
           }
           className="w-full"

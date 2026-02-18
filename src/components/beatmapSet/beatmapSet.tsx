@@ -4,7 +4,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
-import { BeatmapSet as BeatmapSetData, getBeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
+import { getBeatmapSet } from "@/lib/osuApi";
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { Route } from "@/routes";
 import { useSavedBeatmapSetsStore } from "@/stores/savedBeatmapSetsStore";

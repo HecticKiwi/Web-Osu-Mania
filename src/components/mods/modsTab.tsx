@@ -244,10 +244,10 @@ const ModsTab = () => {
               <SliderInput
                 containerClassName="w-full"
                 selector={(state) => state.mods.odOverride!}
-                tooltip={(odOverride) => odOverride}
-                onValueChange={([odOverride]) =>
+                tooltip={() => odOverride}
+                onValueChange={([newOdOverride]) =>
                   setSettings((draft) => {
-                    draft.mods.odOverride = odOverride;
+                    draft.mods.odOverride = newOdOverride;
                   })
                 }
                 min={0}
@@ -277,10 +277,10 @@ const ModsTab = () => {
               <SliderInput
                 containerClassName="w-full"
                 selector={(state) => state.mods.hpOverride!}
-                tooltip={(hpOverride) => hpOverride}
-                onValueChange={([hpOverride]) =>
+                tooltip={() => hpOverride}
+                onValueChange={([newHpOverride]) =>
                   setSettings((draft) => {
-                    draft.mods.hpOverride = hpOverride;
+                    draft.mods.hpOverride = newHpOverride;
                   })
                 }
                 min={0}

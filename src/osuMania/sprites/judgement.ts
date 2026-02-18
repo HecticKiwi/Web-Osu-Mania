@@ -1,9 +1,9 @@
 import { getJudgementUrl } from "@/lib/utils";
 import { JUDGEMENT_SET_OPTIONS } from "@/stores/settingsStore";
-import { Judgement as JudgementValue } from "@/types";
+import type { Judgement as JudgementValue } from "@/types";
 import { gsap } from "gsap";
 import { BitmapText, Container, Sprite, Texture } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 export class Judgement {
   public game: Game;

@@ -1,8 +1,8 @@
-import { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
+import type { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
 import { BASE_PATH } from "@/lib/utils";
 import { Howl } from "howler";
-import { Game } from "../game";
-import { Tap } from "../sprites/tap/tap";
+import type { Game } from "../game";
+import type { Tap } from "../sprites/tap/tap";
 
 export class AudioSystem {
   public game: Game;

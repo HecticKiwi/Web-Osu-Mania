@@ -1,16 +1,9 @@
-import { BeatmapData } from "@/lib/beatmapParser";
+import type { BeatmapData } from "@/lib/beatmapParser";
 import { Game } from "@/osuMania/game";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { PlayResults } from "@/types";
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import type { PlayResults } from "@/types";
+import type { Dispatch, RefObject, SetStateAction } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
 import PauseButton from "./pauseButton";
 import PauseScreen from "./pauseScreen";
@@ -38,15 +31,19 @@ const GameScreens = ({
   const [isPaused, setIsPaused] = useState(false);
   const [results, setResults] = useState<PlayResults | null>(null);
   const containerRef = useRef<HTMLDivElement>(null!);
+  const initialShowHud = useRef(showHud);
 
   const toggleHud = useCallback(() => {
-    const newValue = !showHud;
-    setShowHud(newValue);
+    setShowHud((prev) => {
+      const newValue = !prev;
 
-    if (game) {
-      game.setShowHud(newValue);
-    }
-  }, [game, showHud]);
+      if (game) {
+        game.setShowHud(newValue);
+      }
+
+      return newValue;
+    });
+  }, [game, setShowHud]);
 
   // Game creation
   useEffect(() => {
@@ -55,39 +52,41 @@ const GameScreens = ({
       return;
     }
 
-    const game = new Game(
+    const videoEl = videoRef.current;
+
+    const gameInstance = new Game(
       beatmapData,
       setResults,
       setIsPaused,
       replayData,
       retry,
-      videoRef.current,
+      videoEl,
     );
-    setGame(game);
-    game.main(containerRef.current, showHud);
+    setGame(gameInstance);
+    gameInstance.main(containerRef.current, initialShowHud.current);
 
     return () => {
       Howler.stop();
 
-      game.dispose();
+      gameInstance.dispose();
 
-      if (videoRef.current) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
+      if (videoEl) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
       }
     };
-  }, [beatmapData, replayData, retry, beatmapId]);
+  }, [beatmapData, replayData, retry, beatmapId, videoRef]);
 
   // Pause logic
   useEffect(() => {
+    if (!game) {
+      return;
+    }
+
     if (isPaused) {
-      game?.pause();
-    } else if (game?.state === "PAUSE") {
-      if (game.song.seek() === 0) {
-        game.state = "WAIT";
-      } else {
-        game.play();
-      }
+      game.pause();
+    } else if (game.state === "PAUSE") {
+      game.resume();
     }
   }, [isPaused, game]);
 

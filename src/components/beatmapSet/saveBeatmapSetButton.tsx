@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { BeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
 import { cn } from "@/lib/utils";
 import { Bookmark } from "lucide-react";
 import { useSavedBeatmapSetsStore } from "../../stores/savedBeatmapSetsStore";

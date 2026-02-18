@@ -1,6 +1,6 @@
 import { gsap } from "gsap";
 import { BitmapText, Container, Graphics } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 // Used for intro countdown and unpause countdown
 // Time values are in milliseconds

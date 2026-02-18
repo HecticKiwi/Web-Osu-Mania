@@ -4,12 +4,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { BeatmapData } from "@/lib/beatmapParser";
+import type { BeatmapData } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
 import { downloadReplay } from "@/lib/replay";
 import { downloadResults, getReplayFilename } from "@/lib/results";
 import { getModStrings } from "@/lib/utils";
-import { PlayResults } from "@/types";
+import type { PlayResults } from "@/types";
 import { Camera, MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
@@ -35,7 +35,6 @@ const ResultsScreen = ({
   const beatmapId = useGameStore.use.beatmapId();
   const setReplayData = useGameStore.use.setReplayData();
   const mods = useSettingsStore.use.mods();
-  const highScores = useHighScoresStore.use.highScores();
   const setHighScores = useHighScoresStore.use.setHighScores();
   const [highScorePosition, setHighScorePosition] = useState<number | null>(
     null,
@@ -59,6 +58,7 @@ const ResultsScreen = ({
         return;
       }
 
+      const highScores = useHighScoresStore.getState().highScores;
       const beatmapSetId = beatmapSet.id;
       const currentScores = highScores[beatmapSetId]?.[beatmapId] ?? [];
 

@@ -1,4 +1,4 @@
-import { BeatmapSet, Status } from "@/lib/osuApi";
+import type { BeatmapSet, Status } from "@/lib/osuApi";
 import { cn, secondsToMMSS } from "@/lib/utils";
 import { useSettingsStore } from "../../stores/settingsStore";
 

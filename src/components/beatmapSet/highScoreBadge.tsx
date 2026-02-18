@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Beatmap } from "@/lib/osuApi";
+import type { Beatmap } from "@/lib/osuApi";
 import {
   calculatePp,
   cn,
@@ -12,7 +12,7 @@ import {
   getLetterGrade,
 } from "@/lib/utils";
 import { format, formatDistanceToNowStrict } from "date-fns";
-import { HighScore } from "../../stores/highScoresStore";
+import type { HighScore } from "../../stores/highScoresStore";
 
 const HighScoreBadge = ({
   highScore,

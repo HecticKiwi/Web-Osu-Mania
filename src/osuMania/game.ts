@@ -1,4 +1,4 @@
-import {
+import type {
   BeatmapData,
   Break,
   Difficulty,
@@ -8,15 +8,13 @@ import {
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
 import { BASE_PATH, scaleWidth } from "@/lib/utils";
-import {
-  ColumnColor,
-  Settings,
-  useSettingsStore,
-} from "@/stores/settingsStore";
-import { Column, GameState, PlayResults } from "@/types";
+import type { ColumnColor, Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
+import type { Ticker } from "pixi.js";
 import * as PIXI from "pixi.js";
 import {
   Application,
@@ -25,14 +23,13 @@ import {
   FillGradient,
   Graphics,
   TextStyle,
-  Ticker,
 } from "pixi.js";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import {
+  MAX_TIME_RANGE,
   getAllLaneColors,
   laneArrowDirections,
   laneWidths,
-  MAX_TIME_RANGE,
 } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -48,7 +45,7 @@ import { ArrowKey } from "./sprites/key/arrowKey";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
-import { Key } from "./sprites/key/key";
+import type { Key } from "./sprites/key/key";
 import { ProgressBar } from "./sprites/progressBar";
 import { StageCover } from "./sprites/stageCover";
 import { StageHint } from "./sprites/stageHint";
@@ -63,7 +60,8 @@ import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
 import { InputSystem } from "./systems/input";
 import { ReplayPlayer } from "./systems/replayPlayer";
-import { ReplayData, ReplayRecorder } from "./systems/replayRecorder";
+import type { ReplayData } from "./systems/replayRecorder";
+import { ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
 
 PixiPlugin.registerPIXI(PIXI);
@@ -141,7 +139,7 @@ export class Game {
   private countdown: Countdown;
 
   public song: Howl;
-  public timeElapsed: number = 0;
+  public timeElapsed = 0;
   private delay: number;
 
   public videoEl: HTMLVideoElement | null;
@@ -161,7 +159,7 @@ export class Game {
   private setIsPaused: Dispatch<SetStateAction<boolean>>;
   private retry: () => void;
 
-  private finished: boolean = false;
+  private finished = false;
 
   public constructor(
     beatmapData: BeatmapData,
@@ -272,7 +270,7 @@ export class Game {
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
     this.song.rate(this.mods.playbackRate);
-    this.song.on("end", async () => {
+    this.song.on("end", () => {
       // Seek back to the end so the progress bar stays full
       this.song.seek(this.song.duration());
     });
@@ -931,13 +929,25 @@ export class Game {
     this.app.stage.addChild(this.countdown.view);
   }
 
+  public setSfxVolume(volume: number) {
+    this.settings.sfxVolume = volume;
+  }
+
   public pause() {
     this.videoEl?.pause();
     this.song.pause();
     this.state = "PAUSE";
   }
 
-  public async play() {
+  public resume() {
+    if (this.song.seek() === 0) {
+      this.state = "WAIT";
+    } else {
+      this.play();
+    }
+  }
+
+  public play() {
     if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
       this.pauseCountdown = this.settings.unpauseDelay;
 

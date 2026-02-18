@@ -29,7 +29,9 @@
     "**/*.ts",
     "**/*.tsx",
     "worker-configuration.d.ts",
-    "tailwind.config.ts"
+    "tailwind.config.ts",
+    "eslint.config.js",
+    "prettier.config.js",
   ],
   "exclude": [
     "node_modules",

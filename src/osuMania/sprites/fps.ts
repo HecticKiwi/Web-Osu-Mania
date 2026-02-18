@@ -1,5 +1,5 @@
 import { BitmapText, Container, Graphics } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 const MAX_FRAMES = 30;
 

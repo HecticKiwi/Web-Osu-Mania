@@ -7,10 +7,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { seo } from "@/lib/seo";
 import {
-  createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
+  createRootRoute,
 } from "@tanstack/react-router";
 import appCss from "../styles/globals.css?url";
 

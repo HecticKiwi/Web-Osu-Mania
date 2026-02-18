@@ -1,7 +1,7 @@
 import { clamp } from "@/lib/math";
 import { gsap } from "gsap";
 import { Container, Graphics, Pool, Sprite, Texture } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 const lightBlue = 0x99eeff;
 const blue = 0x32bce7;

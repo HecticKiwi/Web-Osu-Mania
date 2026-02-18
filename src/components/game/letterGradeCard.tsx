@@ -1,5 +1,5 @@
 import { cn, getClassNamesForGrade } from "@/lib/utils";
-import { Grade } from "@/types";
+import type { Grade } from "@/types";
 
 const LetterGradeCard = ({ grade }: { grade: Grade | "Failed" }) => {
   const getEffects = () => {
@@ -49,8 +49,8 @@ const LetterGradeCard = ({ grade }: { grade: Grade | "Failed" }) => {
   const effects = getEffects();
 
   return (
-    <div className="rounded-xl border bg-card p-6">
-      <h3 className="mb-4 text-center text-3xl font-semibold text-primary">
+    <div className="bg-card rounded-xl border p-6">
+      <h3 className="text-primary mb-4 text-center text-3xl font-semibold">
         Grade
       </h3>
 

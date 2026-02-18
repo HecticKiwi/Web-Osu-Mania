@@ -1,7 +1,7 @@
-import { TapData } from "@/lib/beatmapParser";
+import type { TapData } from "@/lib/beatmapParser";
 import { BASE_PATH } from "@/lib/utils";
 import { arrowColumnRatio } from "@/osuMania/constants";
-import { Game } from "@/osuMania/game";
+import type { Game } from "@/osuMania/game";
 import { Container, Sprite, Texture } from "pixi.js";
 import { Tap } from "./tap";
 

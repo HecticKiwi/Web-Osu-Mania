@@ -1,5 +1,5 @@
-import { TapData } from "@/lib/beatmapParser";
-import { Game } from "@/osuMania/game";
+import type { TapData } from "@/lib/beatmapParser";
+import type { Game } from "@/osuMania/game";
 import { Sprite, Texture } from "pixi.js";
 import { Tap } from "./tap";
 

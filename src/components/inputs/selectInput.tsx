@@ -5,8 +5,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
-import { ComponentProps } from "react";
+import type { Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { ComponentProps } from "react";
 
 export const NULL_OPTION = "__null__";
 
@@ -28,7 +29,7 @@ const SelectInput = ({
 
   return (
     <div className={cn("grid grid-cols-2 items-center", className)}>
-      <div className="pr-2 text-sm font-semibold text-muted-foreground">
+      <div className="text-muted-foreground pr-2 text-sm font-semibold">
         {label}
       </div>
 

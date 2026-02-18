@@ -1,7 +1,8 @@
-import { Judgement } from "@/types";
-import { BitmapText, Container, FillInput, Graphics, TextStyle } from "pixi.js";
+import type { Judgement } from "@/types";
+import type { FillInput } from "pixi.js";
+import { BitmapText, Container, Graphics, TextStyle } from "pixi.js";
 import { JUDGEMENTS } from "../constants";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 type JudgementColors = {
   key: Judgement;

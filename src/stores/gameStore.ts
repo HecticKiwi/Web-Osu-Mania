@@ -1,8 +1,9 @@
 import { getBeatmapSetIdFromOsz } from "@/lib/beatmapParser";
-import { BeatmapSet, getBeatmapSet } from "@/lib/osuApi";
+import type { BeatmapSet } from "@/lib/osuApi";
+import { getBeatmapSet } from "@/lib/osuApi";
 import { BASE_PATH } from "@/lib/utils";
 import { createSelectors } from "@/lib/zustand";
-import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { Howler } from "howler";
 import queryString from "query-string";
 import { toast } from "sonner";

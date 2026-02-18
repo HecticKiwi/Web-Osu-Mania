@@ -150,11 +150,11 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
           }
         } else {
           set((state) => {
-            state.beatmapSetCache.set(beatmapSetId, beatmapSetFile!);
+            state.beatmapSetCache.set(beatmapSetId, beatmapSetFile);
           });
         }
 
-        return beatmapSetFile!;
+        return beatmapSetFile;
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error(

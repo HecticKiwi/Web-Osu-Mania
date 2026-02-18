@@ -1,5 +1,5 @@
-import { Game } from "../game";
-import { ReplayData } from "./replayRecorder";
+import type { Game } from "../game";
+import type { ReplayData } from "./replayRecorder";
 
 type Event = {
   time: number;

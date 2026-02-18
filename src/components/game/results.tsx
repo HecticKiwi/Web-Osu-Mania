@@ -1,7 +1,7 @@
-import { BeatmapData } from "@/lib/beatmapParser";
+import type { BeatmapData } from "@/lib/beatmapParser";
 import { mean, stdev } from "@/lib/math";
 import { calculatePp, cn, getLetterGrade, getModStrings } from "@/lib/utils";
-import { PlayResults } from "@/types";
+import type { PlayResults } from "@/types";
 import { format } from "date-fns";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
@@ -28,9 +28,7 @@ const Results = ({
   const preferMetadataInOriginalLanguage =
     useSettingsStore.use.preferMetadataInOriginalLanguage();
 
-  const beatmap = beatmapSet?.beatmaps.find(
-    (beatmap) => beatmap.id === beatmapId,
-  );
+  const beatmap = beatmapSet?.beatmaps.find((b) => b.id === beatmapId);
 
   const title = preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode

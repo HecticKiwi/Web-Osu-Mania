@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 import { Route } from "@/routes";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -53,7 +54,7 @@ const SearchFilter = ({ className }: { className?: string }) => {
 
   return (
     <form onSubmit={search} className={cn(className)}>
-      <Label htmlFor="search" className="text-base text-muted-foreground">
+      <Label htmlFor="search" className="text-muted-foreground text-base">
         Search
       </Label>
       <div className="mt-2 flex items-center gap-4">

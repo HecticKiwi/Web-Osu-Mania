@@ -1,7 +1,7 @@
-import { HoldData } from "@/lib/beatmapParser";
+import type { HoldData } from "@/lib/beatmapParser";
 import { gsap } from "gsap";
-import { Container } from "pixi.js";
-import { Game } from "../../game";
+import type { Container } from "pixi.js";
+import type { Game } from "../../game";
 
 // https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 export abstract class Hold {

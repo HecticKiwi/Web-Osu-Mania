@@ -1,5 +1,5 @@
 import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
-import { Results } from "@/types";
+import type { Results } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";

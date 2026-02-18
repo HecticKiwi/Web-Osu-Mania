@@ -1,6 +1,6 @@
-import { HoldData } from "@/lib/beatmapParser";
+import type { HoldData } from "@/lib/beatmapParser";
 import { Container, Sprite, Texture } from "pixi.js";
-import { Game } from "../../game";
+import type { Game } from "../../game";
 import { Hold } from "./hold";
 
 export class BarHold extends Hold {

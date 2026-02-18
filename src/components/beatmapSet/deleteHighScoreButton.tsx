@@ -1,25 +1,26 @@
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Trash2 } from "lucide-react";
-import { Button } from "../ui/button";
-
-import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { idb } from "@/lib/idb";
-import { HighScore, useHighScoresStore } from "@/stores/highScoresStore";
+import type { HighScore } from "@/stores/highScoresStore";
+import { useHighScoresStore } from "@/stores/highScoresStore";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 const DeleteHighScoreButton = ({
   highScore,

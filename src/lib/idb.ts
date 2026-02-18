@@ -1,6 +1,7 @@
-import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { compressSync } from "fflate";
-import { DBSchema, IDBPDatabase, openDB } from "idb";
+import type { DBSchema, IDBPDatabase } from "idb";
+import { openDB } from "idb";
 
 export type IdbFile = {
   file: Blob;

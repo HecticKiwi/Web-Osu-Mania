@@ -1,5 +1,5 @@
 import { Container, Graphics } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 export class StageHint {
   private game: Game;

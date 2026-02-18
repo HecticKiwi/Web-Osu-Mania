@@ -1,4 +1,4 @@
-import { BeatmapData } from "@/lib/beatmapParser";
+import type { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
 import { Eye, EyeOff, Fullscreen } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
@@ -29,9 +29,7 @@ const PauseScreen = ({
     useSettingsStore.use.preferMetadataInOriginalLanguage();
   const mods = useSettingsStore.use.mods();
 
-  const beatmap = beatmapSet?.beatmaps.find(
-    (beatmap) => beatmap.id === beatmapId,
-  );
+  const beatmap = beatmapSet?.beatmaps.find((b) => b.id === beatmapId);
 
   const title = preferMetadataInOriginalLanguage
     ? beatmapData.metadata.titleUnicode

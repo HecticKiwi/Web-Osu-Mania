@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ErrorComponentProps, Link } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 const CatchBoundary = ({ error, reset }: ErrorComponentProps) => {
   return (
@@ -9,7 +10,7 @@ const CatchBoundary = ({ error, reset }: ErrorComponentProps) => {
           An Error Occurred
         </h1>
 
-        <p className="mt-1 text-balance text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-balance">
           {error.message}
         </p>
 

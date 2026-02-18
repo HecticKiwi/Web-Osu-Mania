@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
-import { BeatmapData, parseOsz } from "@/lib/beatmapParser";
+import type { BeatmapData } from "@/lib/beatmapParser";
+import { parseOsz } from "@/lib/beatmapParser";
 import { loadAssets } from "@/osuMania/assets";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -79,9 +80,7 @@ const GameModal = () => {
       try {
         setLoadingMessage("Parsing Beatmap...");
 
-        const beatmap = beatmapSet.beatmaps.find(
-          (beatmap) => beatmap.id === beatmapId,
-        );
+        const beatmap = beatmapSet.beatmaps.find((b) => b.id === beatmapId);
 
         if (!beatmap) {
           throw new Error(
@@ -89,7 +88,7 @@ const GameModal = () => {
           );
         }
 
-        const beatmapData = await parseOsz(
+        const parsedBeatmapData = await parseOsz(
           beatmapSetFile,
           beatmap,
           replayData?.mods,
@@ -98,7 +97,7 @@ const GameModal = () => {
 
         await loadAssets();
 
-        setBeatmapData(beatmapData);
+        setBeatmapData(parsedBeatmapData);
       } catch (error: any) {
         toast("Parsing Error", {
           description: error.message,

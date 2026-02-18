@@ -1,8 +1,8 @@
-import { HitError } from "@/components/game/timingDistributionChart";
+import type { HitError } from "@/components/game/timingDistributionChart";
 import { clamp } from "@/lib/math";
 import { getScoreMultiplier } from "@/lib/utils";
-import { Judgement } from "@/types";
-import { Game } from "../game";
+import type { Judgement } from "@/types";
+import type { Game } from "../game";
 import { MIN_HEALTH } from "./health";
 
 const MAX_SCORE = 1_000_000;

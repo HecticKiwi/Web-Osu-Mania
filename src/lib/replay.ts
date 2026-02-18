@@ -1,9 +1,10 @@
-import { ReplayData } from "@/osuMania/systems/replayRecorder";
-import { CoverType, defaultSettings, Settings } from "@/stores/settingsStore";
-import { PlayResults } from "@/types";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type { CoverType, Settings } from "@/stores/settingsStore";
+import { defaultSettings } from "@/stores/settingsStore";
+import type { PlayResults } from "@/types";
 import { compressSync } from "fflate";
 import { toast } from "sonner";
-import { BeatmapData } from "./beatmapParser";
+import type { BeatmapData } from "./beatmapParser";
 import { getReplayFilename } from "./results";
 import { downloadBlob } from "./utils";
 

@@ -1,5 +1,5 @@
 import { downloadUrl } from "@/lib/utils";
-import { Results } from "@/types";
+import type { Results } from "@/types";
 import { domToPng } from "modern-screenshot";
 
 export function getReplayFilename(

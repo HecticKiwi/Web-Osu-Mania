@@ -1,15 +1,17 @@
-import { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
+import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import queryString from "query-string";
-import { Category, DEFAULT_CATEGORY } from "./searchParams/categoryParam";
-import { Genre, GENRE_ID_MAP } from "./searchParams/genreParam";
-import { Language, LANGUAGE_INDEXES } from "./searchParams/languageParam";
+import type { Category } from "./searchParams/categoryParam";
+import { DEFAULT_CATEGORY } from "./searchParams/categoryParam";
+import type { Genre } from "./searchParams/genreParam";
+import { GENRE_ID_MAP } from "./searchParams/genreParam";
+import type { Language } from "./searchParams/languageParam";
+import { LANGUAGE_INDEXES } from "./searchParams/languageParam";
+import type { SortCriteria, SortDirection } from "./searchParams/sortParam";
 import {
   DEFAULT_SORT_CRITERIA,
   DEFAULT_SORT_DIRECTION,
-  SortCriteria,
-  SortDirection,
 } from "./searchParams/sortParam";
-import { Stars } from "./searchParams/starsParam";
+import type { Stars } from "./searchParams/starsParam";
 import { BASE_PATH } from "./utils";
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
@@ -139,10 +141,9 @@ export async function getBeatmapSets({
     try {
       const message = await res.text();
       errorMessage += `: ${message}`;
-    } catch (error) {
-    } finally {
-      throw new Error(errorMessage);
-    }
+    } catch (error) {}
+
+    throw new Error(errorMessage);
   }
 
   const data: GetBeatmapsResponse = await res.json();

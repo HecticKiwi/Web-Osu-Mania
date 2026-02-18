@@ -1,8 +1,8 @@
 import { clamp } from "@/lib/math";
 import { gsap } from "gsap";
-import * as PIXI from "pixi.js";
+import type * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 import { MAX_HEALTH, MIN_HEALTH } from "../systems/health";
 
 export class HealthBar {

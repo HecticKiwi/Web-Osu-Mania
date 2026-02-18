@@ -1,5 +1,6 @@
-import { Settings, useSettingsStore } from "@/stores/settingsStore";
-import { ComponentProps } from "react";
+import type { Settings } from "@/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import type { ComponentProps } from "react";
 import { RadioGroup } from "../ui/radio-group";
 
 const RadioGroupInput = ({
@@ -15,7 +16,7 @@ const RadioGroupInput = ({
   return (
     <>
       <div className="grid grid-cols-2">
-        <div className="pr-2 text-sm font-semibold text-muted-foreground">
+        <div className="text-muted-foreground pr-2 text-sm font-semibold">
           {label}
         </div>
 

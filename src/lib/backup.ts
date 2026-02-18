@@ -1,5 +1,6 @@
-import { ExportOptionId } from "@/components/settings/backupSettings";
-import { idb, StoreName } from "@/lib/idb";
+import type { ExportOptionId } from "@/components/settings/backupSettings";
+import type { StoreName } from "@/lib/idb";
+import { idb } from "@/lib/idb";
 import { useHighScoresStore } from "@/stores/highScoresStore";
 import { useSavedBeatmapSetsStore } from "@/stores/savedBeatmapSetsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -53,7 +54,7 @@ export async function downloadBackup(
         .storedBeatmapSets.find((set) => set.id.toString() === key);
 
       if (beatmapSet) {
-        const unsafeCharacters = /[<>:"/\\|?*\[\]()]/g;
+        const unsafeCharacters = /[<>:"/\\|?*[\]()]/g;
         return `${key} ${beatmapSet.artist.replace(unsafeCharacters, "_")} - ${beatmapSet.title.replace(unsafeCharacters, "_")}.osz`;
       } else {
         return `${key}.osz`;

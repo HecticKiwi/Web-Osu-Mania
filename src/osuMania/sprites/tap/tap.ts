@@ -1,6 +1,6 @@
-import { SampleSet, TapData } from "@/lib/beatmapParser";
-import { Container, Texture } from "pixi.js";
-import { Game } from "../../game";
+import type { SampleSet, TapData } from "@/lib/beatmapParser";
+import type { Container, Texture } from "pixi.js";
+import type { Game } from "../../game";
 import { Hold } from "../hold/hold";
 
 export abstract class Tap {
@@ -15,7 +15,7 @@ export abstract class Tap {
   public additionSet: SampleSet;
   public sampleIndex: number;
   public volume: number;
-  public shouldRemove: boolean = false;
+  public shouldRemove = false;
 
   constructor(game: Game, tapData: TapData) {
     this.game = game;
@@ -27,7 +27,7 @@ export abstract class Tap {
 
   private setSoundData() {
     const timingPoint = this.game.timingPoints.find(
-      (timingPoint) => this.data.time >= timingPoint.time,
+      (tp) => this.data.time >= tp.time,
     );
 
     if (!timingPoint) {

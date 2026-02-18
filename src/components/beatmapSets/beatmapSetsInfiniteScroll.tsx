@@ -1,5 +1,6 @@
 import { getBeatmapSets } from "@/lib/osuApi";
-import { Category, parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import type { Category } from "@/lib/searchParams/categoryParam";
+import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { parseGenreParam } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseLanguageParam } from "@/lib/searchParams/languageParam";
@@ -12,7 +13,7 @@ import {
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { cn } from "@/lib/utils";
 import { Route } from "@/routes";
-import { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
+import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { Bookmark, HardDrive, Loader } from "lucide-react";

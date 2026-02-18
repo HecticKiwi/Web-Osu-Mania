@@ -1,6 +1,7 @@
 import { gsap } from "gsap";
-import { Container, FillGradient, Graphics, GraphicsContext } from "pixi.js";
-import { Game } from "../game";
+import type { Container } from "pixi.js";
+import { FillGradient, Graphics, GraphicsContext } from "pixi.js";
+import type { Game } from "../game";
 
 export class StageLight {
   static graphicsContext: GraphicsContext | null;

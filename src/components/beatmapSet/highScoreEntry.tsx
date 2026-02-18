@@ -5,15 +5,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { idb } from "@/lib/idb";
-import { Beatmap, BeatmapSet } from "@/lib/osuApi";
+import type { Beatmap, BeatmapSet } from "@/lib/osuApi";
 import { getReplayFilename } from "@/lib/results";
 import { cn, downloadBlob } from "@/lib/utils";
-import { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { decompressSync } from "fflate";
 import { Play, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useGameStore } from "../../stores/gameStore";
-import { HighScore } from "../../stores/highScoresStore";
+import type { HighScore } from "../../stores/highScoresStore";
 import { Button } from "../ui/button";
 import DeleteHighScoreButton from "./deleteHighScoreButton";
 import HighScoreBadge from "./highScoreBadge";

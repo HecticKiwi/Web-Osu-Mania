@@ -1,8 +1,8 @@
 import { clamp } from "@/lib/math";
 import { useSettingsStore } from "@/stores/settingsStore";
-import * as PIXI from "pixi.js";
+import type * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
-import { Game } from "../game";
+import type { Game } from "../game";
 
 export class ProgressBar {
   public game: Game;
