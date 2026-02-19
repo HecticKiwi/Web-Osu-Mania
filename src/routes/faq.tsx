@@ -124,8 +124,9 @@ function RouteComponent() {
               </li>
               <li>
                 <TextLink to={"https://wom.slingexe.com"} target="_blank">
-                  https://wom.slingexe.com (Old Version)
-                </TextLink>
+                  https://wom.slingexe.com
+                </TextLink>{" "}
+                (Old Version)
               </li>
             </ul>
 
