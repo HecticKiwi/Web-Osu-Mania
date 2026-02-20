@@ -62,7 +62,9 @@ function RootLayout() {
           <ReactQueryProvider>
             <Header />
 
-            <Outlet />
+            <main className="[view-transition-name:main-content]">
+              <Outlet />
+            </main>
 
             <Toaster />
             <ReactScan />

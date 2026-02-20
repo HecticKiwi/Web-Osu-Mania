@@ -1,4 +1,5 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useLocation } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import SidebarContent from "./sidebar";
 import SocialButtons from "./socialButtons";
@@ -6,6 +7,12 @@ import { Button } from "./ui/button";
 import { DialogDescription, DialogTitle } from "./ui/dialog";
 
 const MobileSidebar = () => {
+  const pathname = useLocation({ select: (location) => location.pathname });
+
+  if (pathname !== "/") {
+    return null;
+  }
+
   return (
     <>
       <Sheet>

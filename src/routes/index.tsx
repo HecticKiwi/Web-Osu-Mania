@@ -35,14 +35,14 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <main className="flex min-w-fit justify-center">
-      <div className="sticky top-[105.6px] hidden h-[calc(100dvh-105.6px)] w-[620px] shrink-0 p-8 pt-0 lg:block">
+    <div className="flex min-w-fit justify-center">
+      <div className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-[620px] shrink-0 p-8 lg:block">
         <Suspense>
           <SidebarContent />
         </Suspense>
       </div>
 
-      <div className="w-full max-w-(--breakpoint-xl) px-2 py-4 pt-0 sm:px-4 lg:px-8 lg:pb-8">
+      <div className="w-full max-w-(--breakpoint-xl) px-2 py-4 sm:px-4 lg:px-8 lg:py-8">
         <Suspense>
           <Main />
         </Suspense>
@@ -50,6 +50,6 @@ function Home() {
 
       <UploadDialog />
       <GameOverlay />
-    </main>
+    </div>
   );
 }

@@ -17,6 +17,16 @@
   }
 }
 
+@utility bg-polka {
+  background-image:
+    radial-gradient(hsl(var(--border) / 75%) 1px, transparent 1px),
+    radial-gradient(hsl(var(--border) / 75%) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    10px 10px;
+}
+
 @theme {
   --color-judgement-perfect: hsl(var(--judgement-perfect));
   --color-judgement-great: hsl(var(--judgement-great));
@@ -156,4 +166,32 @@
 
 .animate-sparkle {
   animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Page transition */
+html:active-view-transition-type(fade) {
+  &::view-transition-old(main-content) {
+    animation: 150ms both ease fade-out;
+  }
+  &::view-transition-new(main-content) {
+    animation: 150ms 150ms both ease fade-in;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

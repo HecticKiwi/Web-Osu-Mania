@@ -152,7 +152,7 @@ const GameModal = () => {
   }, []);
 
   return (
-    <main id="game" className="relative grid">
+    <div id="game" className="relative grid">
       {!beatmapData && (
         <div className="flex w-full items-center text-center">
           <div className="to-primary h-px grow bg-linear-to-r from-transparent"></div>
@@ -205,7 +205,7 @@ const GameModal = () => {
           />
         </>
       )}
-    </main>
+    </div>
   );
 };
 

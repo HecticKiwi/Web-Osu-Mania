@@ -17,24 +17,6 @@ const SocialButtons = ({ className }: { className?: string }) => {
           <TooltipTrigger asChild>
             <Button asChild variant="ghost" size="icon" className="h-8 w-8">
               <a
-                href="https://github.com/HecticKiwi/Web-Osu-Mania"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <FaGithub className="h-5 w-5" />
-              </a>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Source Code</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip delayDuration={0}>
-          <TooltipTrigger asChild>
-            <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-              <a
                 href="https://discord.gg/8zfxCdkfTx"
                 target="_blank"
                 rel="noreferrer"
@@ -45,6 +27,24 @@ const SocialButtons = ({ className }: { className?: string }) => {
           </TooltipTrigger>
           <TooltipContent>
             <p>Discord Server</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+              <a
+                href="https://github.com/HecticKiwi/Web-Osu-Mania"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FaGithub className="h-5 w-5" />
+              </a>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Source Code</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

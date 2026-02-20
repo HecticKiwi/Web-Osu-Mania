@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 const NotFound = () => {
   return (
     <>
-      <main className="p-6 text-center">
+      <div className="p-6 text-center">
         <h1 className="mt-12 text-2xl font-semibold tracking-tight">
           Page Not Found
         </h1>
@@ -12,7 +12,7 @@ const NotFound = () => {
         <Button asChild className="mt-5">
           <Link to={"/"}>Go Home</Link>
         </Button>
-      </main>
+      </div>
     </>
   );
 };

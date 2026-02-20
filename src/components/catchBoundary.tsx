@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 const CatchBoundary = ({ error, reset }: ErrorComponentProps) => {
   return (
     <>
-      <main className="p-6 text-center">
+      <div className="p-6 text-center">
         <h1 className="mt-12 text-2xl font-semibold tracking-tight">
           An Error Occurred
         </h1>
@@ -19,7 +19,7 @@ const CatchBoundary = ({ error, reset }: ErrorComponentProps) => {
             Go Home
           </Link>
         </Button>
-      </main>
+      </div>
     </>
   );
 };
