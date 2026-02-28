@@ -39,9 +39,7 @@ https://github.com/user-attachments/assets/c449893b-ea35-41b7-88c2-63e77d7b0a44
 
 ## Credits
 
-- NeriNyan for providing their [beatmap mirror API](https://nerinyan.stoplight.io/docs/nerinyan-api)
-- SayoBot for providing their [beatmap mirror API](https://osu.sayobot.cn/home)
-- Mino for providing their [beatmap mirror API](https://dev.catboy.best/docs)
+- [NeriNyan](https://nerinyan.moe/), [SayoBot](https://osu.sayobot.cn/home), [Mino](https://catboy.best/), [osu.direct](https://osu.direct/home), [Nekoha](https://mirror.nekoha.moe/), and [BeatConnect](https://beatconnect.io/) for their APIs and assets
 - Peppy and the rest of the osu! team for creating [osu!](https://osu.ppy.sh/)
 
 ## Development
