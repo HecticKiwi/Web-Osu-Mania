@@ -106,7 +106,9 @@ const useBeatmapSetCacheStoreBase = create<BeatmapSetCacheState>()(
             const retryAfter = response.headers.get("Retry-After");
 
             const statusErrorMessages: Record<number, string> = {
+              400: "Invalid beatmap set ID.",
               404: "Beatmap does not exist on the current beatmap provider, please switch to another provider in the settings.",
+              410: "Beatmap is not available on the current beatmap provider, please switch to another provider in the settings.",
               429: `The beatmap provider is experiencing too many requests, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"} or switch to another provider in the settings.`,
               500: "The beatmap provider ran into an error, try again later or switch to another provider in the settings.",
               503: "The beatmap provider is currently unavailable, try again later or switch to another provider in the settings.",

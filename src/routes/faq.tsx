@@ -157,11 +157,12 @@ const troubleshootingFaq: FaqItem[] = [
     ),
   },
   {
-    question: "Beatmaps aren't loading!",
+    question: "Beatmaps / audio previews / cover images aren't loading!",
     answer: (
       <p>
-        If you are experiencing issues loading a beatmap, try changing the
-        beatmap provider in the settings under Beatmap Management.
+        If you are experiencing issues loading a beatmap, playing audio
+        previews, or viewing beatmap cover images, try changing the providers in
+        the settings under Sources.
       </p>
     ),
   },

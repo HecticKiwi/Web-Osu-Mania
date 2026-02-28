@@ -28,6 +28,7 @@ import ClearHighScoresButton from "./clearHighScoresButton";
 import HideBeatmapSetCoverWarning from "./hideBeatmapSetCoverWarning";
 import ReplaySettings from "./replaySettings";
 import SkinSettings from "./skinSettings";
+import SourcesSettings from "./sourcesSettings";
 import UnpauseDelayWarning from "./unpauseDelayWarning";
 import VolumeSettings from "./volumeSettings";
 
@@ -526,6 +527,8 @@ const SettingsTab = () => {
       <ReplaySettings className="mt-6" />
 
       <BeatmapSettings className="mt-6" />
+
+      <SourcesSettings className="mt-6" />
 
       <BackupSettings className="mt-6" />
 
