@@ -8,9 +8,30 @@ export const BEATMAP_API_PROVIDERS = {
   "Mino (catboy.best)": "https://catboy.best/d/$setId",
   NeriNyan: "https://api.nerinyan.moe/d/$setId",
   SayoBot: "https://dl.sayobot.cn/beatmaps/download/$setId",
+  "osu.direct": "https://osu.direct/api/d/$setId",
+  Nekoha: "https://mirror.nekoha.moe/api4/download/$setId",
 } as const;
 
 export type BeatmapProvider = keyof typeof BEATMAP_API_PROVIDERS | "Custom";
+
+export const AUDIO_PREVIEW_PROVIDERS = {
+  "Official osu!": "https://b.ppy.sh/preview/$setId.mp3",
+  Beatconnect: "https://beatconnect.io/preview/$setId.mp3",
+  SayoBot: "https://cdnx.sayobot.cn:25225/preview/$setId.mp3",
+} as const;
+
+export type AudioPreviewProvider =
+  | keyof typeof AUDIO_PREVIEW_PROVIDERS
+  | "Custom";
+
+export const BEATMAP_COVER_PROVIDERS = {
+  "Official osu!": "https://assets.ppy.sh/beatmaps/$setId/covers/cover.jpg",
+  SayoBot: "https://a.sayobot.cn/beatmaps/$setId/covers/cover.webp",
+} as const;
+
+export type BeatmapCoverProvider =
+  | keyof typeof BEATMAP_COVER_PROVIDERS
+  | "Custom";
 
 export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
 export type SkinStyle = (typeof SKIN_STYLES)[number];
@@ -130,6 +151,10 @@ export type Settings = {
   noteOffset: number;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
+  audioPreviewProvider: AudioPreviewProvider;
+  customAudioPreviewProvider: string;
+  beatmapCoverProvider: BeatmapCoverProvider;
+  customBeatmapCoverProvider: string;
   proxyBeatmapDownloads: boolean;
   ignoreBeatmapHitsounds: boolean;
   style: SkinStyle;
@@ -224,6 +249,10 @@ export const defaultSettings: Settings = {
   noteOffset: 0,
   beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
+  audioPreviewProvider: "Official osu!",
+  customAudioPreviewProvider: "",
+  beatmapCoverProvider: "Official osu!",
+  customBeatmapCoverProvider: "",
   proxyBeatmapDownloads: false,
   ignoreBeatmapHitsounds: false,
   style: "bars",

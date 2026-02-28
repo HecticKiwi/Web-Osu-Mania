@@ -1,6 +1,9 @@
 import type { BeatmapSet, Status } from "@/lib/osuApi";
 import { cn, secondsToMMSS } from "@/lib/utils";
-import { useSettingsStore } from "../../stores/settingsStore";
+import {
+  BEATMAP_COVER_PROVIDERS,
+  useSettingsStore,
+} from "../../stores/settingsStore";
 
 const getStatusClass = (status: Status) => {
   switch (status) {
@@ -20,9 +23,18 @@ const getStatusClass = (status: Status) => {
 };
 
 const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
+  const beatmapCoverProvider = useSettingsStore.use.beatmapCoverProvider();
+  const customBeatmapCoverProvider =
+    useSettingsStore.use.customBeatmapCoverProvider();
   const hideBeatmapSetCovers = useSettingsStore.use.hideBeatmapSetCovers();
   const preferMetadataInOriginalLanguage =
     useSettingsStore.use.preferMetadataInOriginalLanguage();
+
+  const coverUrl = (
+    beatmapCoverProvider !== "Custom"
+      ? BEATMAP_COVER_PROVIDERS[beatmapCoverProvider]
+      : customBeatmapCoverProvider
+  ).replace("$setId", beatmapSet.id.toString());
 
   const artist = preferMetadataInOriginalLanguage
     ? beatmapSet.artist_unicode
@@ -35,21 +47,15 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   return (
     <>
       {/* Background cover */}
-      {hideBeatmapSetCovers && (
-        <span
-          className={
-            "bg-card absolute inset-0 -z-10 transition duration-300 group-hover:brightness-[0.5]"
-          }
-        ></span>
-      )}
-      {!hideBeatmapSetCovers && (
-        <span
-          className={
-            "absolute inset-0 -z-10 brightness-[0.3] transition duration-300 group-hover:brightness-[0.5]"
-          }
-        >
+      <span
+        className={cn(
+          "bg-card absolute inset-0 -z-10 transition duration-300 group-hover:brightness-[0.5]",
+          !hideBeatmapSetCovers && "brightness-[0.3]",
+        )}
+      >
+        {!hideBeatmapSetCovers && (
           <img
-            src={`https://assets.ppy.sh/beatmaps/${beatmapSet.id}/covers/cover.jpg`}
+            src={coverUrl}
             alt="Beatmap Set Cover"
             // fill
             className="h-full w-full object-cover"
@@ -58,8 +64,8 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
               e.currentTarget.style.display = "none";
             }}
           />
-        </span>
-      )}
+        )}
+      </span>
 
       {/* Details */}
       <div className="mt-auto">
