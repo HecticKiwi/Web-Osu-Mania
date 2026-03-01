@@ -1,6 +1,16 @@
 import type { ColumnColor } from "@/stores/settingsStore";
+import type { Judgement } from "@/types";
 
 export const JUDGEMENTS = [320, 300, 200, 100, 50, 0] as const;
+
+export const JUDGEMENT_COLORS: Record<Judgement, string> = {
+  320: "hsl(var(--judgement-perfect))",
+  300: "hsl(var(--judgement-great))",
+  200: "hsl(var(--judgement-good))",
+  100: "hsl(var(--judgement-ok))",
+  50: "hsl(var(--judgement-meh))",
+  0: "hsl(var(--judgement-miss))",
+};
 
 // All coordinates/sizes in osu assume the game is running at 640x480 res, or 854x480 for 16:9 aspect ratio
 export const OSU_WIDTH = 854;

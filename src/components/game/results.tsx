@@ -7,6 +7,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
+import { JudgementChart } from "./judgementChart";
 import LetterGradeCard from "./letterGradeCard";
 import TimingDistributionChart from "./timingDistributionChart";
 
@@ -214,37 +215,7 @@ const Results = ({
               Breakdown
             </h2>
 
-            <div
-              className={cn(
-                "grid grid-cols-2 gap-4 text-2xl",
-                responsive && "grid-cols-1 sm:grid-cols-2",
-              )}
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-great w-16">300</span>
-                <span className="text-5xl">{playResults[300]}x</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-perfect w-16">300g</span>
-                <span className="text-5xl">{playResults[320]}x</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-good w-16">200</span>
-                <span className="text-5xl">{playResults[200]}x</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-ok w-16">100</span>
-                <span className="text-5xl">{playResults[100]}x</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-meh w-16">50</span>
-                <span className="text-5xl">{playResults[50]}x</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-judgement-miss w-16">miss!</span>
-                <span className="text-5xl">{playResults[0]}x</span>
-              </div>
-            </div>
+            <JudgementChart playResults={playResults} />
           </div>
         </div>
 

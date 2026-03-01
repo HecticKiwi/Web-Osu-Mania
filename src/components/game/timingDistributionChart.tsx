@@ -1,19 +1,10 @@
-import { JUDGEMENTS } from "@/osuMania/constants";
+import { JUDGEMENTS, JUDGEMENT_COLORS } from "@/osuMania/constants";
 import type { Judgement } from "@/types";
 import { Bar, BarChart, Cell, XAxis } from "recharts";
 import { ChartContainer } from "../ui/chart";
 
 const BIN_COUNT = 101;
 const TICK_COUNT = 11;
-
-const judgementColors: Record<Judgement, string> = {
-  320: "hsl(var(--judgement-perfect))",
-  300: "hsl(var(--judgement-great))",
-  200: "hsl(var(--judgement-good))",
-  100: "hsl(var(--judgement-ok))",
-  50: "hsl(var(--judgement-meh))",
-  0: "hsl(var(--judgement-miss))",
-};
 
 export type HitError = {
   error: number;
@@ -105,7 +96,7 @@ export default function TimingDistributionChart({
             radius={4}
           >
             {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={judgementColors[judgement]} />
+              <Cell key={`cell-${index}`} fill={JUDGEMENT_COLORS[judgement]} />
             ))}
           </Bar>
         ))}
