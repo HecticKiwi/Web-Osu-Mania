@@ -808,6 +808,7 @@ export class Game {
     this.notesContainer.addChild(this.stageBackground);
 
     this.stageSides = new Graphics();
+    this.stageSides.alpha = this.settings.stageSidesOpacity;
     this.stageContainer.addChild(this.stageSides);
 
     this.notesContainer.x = this.stageSideWidth;
