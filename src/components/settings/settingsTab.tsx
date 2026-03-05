@@ -296,6 +296,21 @@ const SettingsTab = () => {
           step={0.01}
         />
         <SliderInput
+          label="Stage Sides Opacity"
+          selector={(state) => state.stageSidesOpacity}
+          tooltip={(stageSidesOpacity) => {
+            return `${Math.round(stageSidesOpacity * 100)}%`;
+          }}
+          onValueChange={([stageSidesOpacity]) =>
+            setSettings((draft) => {
+              draft.stageSidesOpacity = stageSidesOpacity;
+            })
+          }
+          min={0}
+          max={1}
+          step={0.01}
+        />
+        <SliderInput
           label="Hit Position"
           selector={(state) => state.hitPositionOffset}
           tooltip={(hitPositionOffset) => `${hitPositionOffset}px`}
