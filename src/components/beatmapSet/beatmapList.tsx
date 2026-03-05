@@ -103,7 +103,7 @@ const BeatmapList = ({
                           {beatmap.version}
                         </button>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center font-mono">
                           <span className="text-muted-foreground text-sm">
                             {beatmap.difficulty_rating.toFixed(2)}★
                           </span>
@@ -111,7 +111,12 @@ const BeatmapList = ({
                       </div>
                     </div>
 
-                    <DifficultyBars od={beatmap.accuracy} hp={beatmap.drain} />
+                    <DifficultyBars
+                      taps={beatmap.count_circles}
+                      holds={beatmap.count_sliders}
+                      od={beatmap.accuracy}
+                      hp={beatmap.drain}
+                    />
                   </div>
 
                   {beatmapScores.length > 0 && (
