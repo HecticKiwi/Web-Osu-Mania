@@ -116,13 +116,15 @@ export class JudgementCounter {
         this.game.app.screen.width / 2 -
         this.game.stageContainer.width / 2 -
         this.width / 2 -
-        20;
+        20 +
+        this.game.stagePositionOffset;
     } else {
       this.view.x =
         this.game.app.screen.width / 2 +
         this.game.stageContainer.width / 2 +
         this.width / 2 +
-        20;
+        20 +
+        this.game.stagePositionOffset;
     }
 
     if (this.game.settings.upscroll) {

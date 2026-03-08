@@ -66,7 +66,10 @@ export class TouchHitboxes {
       this.game.scaledColumnWidth * this.game.difficulty.keyCount;
 
     if (this.game.settings.touch.mode === "normal") {
-      this.view.x = this.game.app.screen.width / 2 - totalWidth / 2;
+      this.view.x =
+        this.game.app.screen.width / 2 -
+        totalWidth / 2 +
+        this.game.stagePositionOffset;
     }
 
     this.redrawHitAreas();
