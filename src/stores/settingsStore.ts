@@ -468,7 +468,7 @@ export const defaultSettings: Settings = {
     earlyLateThreshold: 200,
     showProgressBar: true,
     showHealthBar: true,
-    receptorOpacity: 1,
+    receptorOpacity: 0.5,
     judgementCounter: "right",
   },
   skin: {

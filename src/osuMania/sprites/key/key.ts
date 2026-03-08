@@ -26,8 +26,7 @@ export abstract class Key {
     background.width = game.scaledColumnWidth;
 
     this.view.addChild(background);
-    this.view.x =
-      this.game.stageSideWidth + this.columnId * this.game.scaledColumnWidth;
+    this.view.x = this.columnId * this.game.scaledColumnWidth;
     this.view.alpha = this.game.settings.ui.receptorOpacity;
   }
 

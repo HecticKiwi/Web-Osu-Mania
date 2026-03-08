@@ -245,10 +245,6 @@ export class Game {
       this.keyClass = DiamondKey;
     }
 
-    if (this.settings.style !== "bars") {
-      this.keysContainer.zIndex = -1;
-    }
-
     this.columnKeybinds =
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
@@ -852,7 +848,7 @@ export class Game {
       this.keysContainer.addChild(key.view);
       this.keysContainer.eventMode = "static";
 
-      this.stageContainer.addChild(this.keysContainer);
+      this.notesContainer.addChild(this.keysContainer);
       this.keys.push(key);
     }
 

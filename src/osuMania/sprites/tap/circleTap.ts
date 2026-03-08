@@ -32,7 +32,6 @@ export class CircleTap extends Tap {
     }
 
     this.view = new Sprite(Tap.renderTexture);
-    this.view.zIndex = 1;
     this.view.pivot.x = width / 2;
     this.view.pivot.y = height / 2;
     this.view.x =
