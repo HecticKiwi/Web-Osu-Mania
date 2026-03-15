@@ -11,7 +11,7 @@ export const CATEGORIES = [
 export type Category = (typeof CATEGORIES)[number];
 export const DEFAULT_CATEGORY: Category = "Has Leaderboard";
 
-export const CUSTOM_CATEGORIES = ["Saved", "Stored"];
+export const CUSTOM_CATEGORIES = ["Stored"];
 export type CustomCategory = (typeof CUSTOM_CATEGORIES)[number];
 
 export function parseCategoryParam(

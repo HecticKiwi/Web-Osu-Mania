@@ -8,7 +8,7 @@ export type IdbFile = {
   dateAdded: number;
 };
 
-export type StoreName = "beatmapFiles" | "replayFiles";
+export type StoreName = "beatmapFiles" | "replayFiles" | "userData";
 
 interface MyDB extends DBSchema {
   beatmapFiles: {
@@ -25,10 +25,14 @@ interface MyDB extends DBSchema {
       "by-date": number;
     };
   };
+  userData: {
+    key: string;
+    value: string;
+  };
 }
 
 class Idb {
-  private db: Promise<IDBPDatabase<MyDB>>;
+  public db: Promise<IDBPDatabase<MyDB>>;
 
   constructor() {
     if (typeof window === "undefined") {
@@ -39,8 +43,8 @@ class Idb {
   }
 
   public init() {
-    this.db = openDB<MyDB>("webOsuMania", 2, {
-      upgrade(db, oldVersion) {
+    this.db = openDB<MyDB>("webOsuMania", 3, {
+      upgrade(db, oldVersion, newVersion, transaction) {
         if (oldVersion < 1) {
           const beatmapStore = db.createObjectStore("beatmapFiles");
           beatmapStore.createIndex("by-date", "dateAdded");
@@ -49,6 +53,26 @@ class Idb {
         if (oldVersion < 2) {
           const replayStore = db.createObjectStore("replayFiles");
           replayStore.createIndex("by-date", "dateAdded");
+        }
+
+        if (oldVersion < 3) {
+          const userDataStore = db.createObjectStore("userData");
+
+          const savedBeatmapSetsStr = localStorage.getItem("savedBeatmapSets");
+          if (savedBeatmapSetsStr) {
+            const data = JSON.parse(savedBeatmapSetsStr);
+
+            const value = JSON.stringify({
+              state: {
+                collections: {
+                  Saved: data.state.savedBeatmapSets,
+                },
+              },
+              version: 0,
+            });
+
+            userDataStore.put(value, "collections");
+          }
         }
       },
     });

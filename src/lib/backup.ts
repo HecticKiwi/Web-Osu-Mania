@@ -1,8 +1,8 @@
 import type { ExportOptionId } from "@/components/settings/backupSettings";
-import type { StoreName } from "@/lib/idb";
+import type { IdbFile, StoreName } from "@/lib/idb";
 import { idb } from "@/lib/idb";
+import { useCollectionsStore } from "@/stores/collectionsStore";
 import { useHighScoresStore } from "@/stores/highScoresStore";
-import { useSavedBeatmapSetsStore } from "@/stores/savedBeatmapSetsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useStoredBeatmapSetsStore } from "@/stores/storedBeatmapSetsStore";
 import {
@@ -37,15 +37,19 @@ export async function downloadBackup(
     addLocalStorageFileToZip(zipWriter, "highScores");
   }
 
-  if (selectedData.includes("savedBeatmapSets")) {
-    addLocalStorageFileToZip(zipWriter, "savedBeatmapSets");
-  }
-
   if (selectedData.includes("storedBeatmapSets")) {
     addLocalStorageFileToZip(zipWriter, "storedBeatmapSets");
   }
 
   // IndexedDB
+
+  if (selectedData.includes("collections")) {
+    const data = useCollectionsStore.getState().collections;
+
+    if (data) {
+      zipWriter.add(`collections.json`, new TextReader(JSON.stringify(data)));
+    }
+  }
 
   if (selectedData.includes("storedBeatmapSets")) {
     const getFilename = (key: string) => {
@@ -97,7 +101,7 @@ async function addIdbStoreToZip(
   const keys = await idb.getStoreKeys(storeName);
 
   for (const key of keys) {
-    const value = await idb.getStoreValue(storeName, key);
+    const value = (await idb.getStoreValue(storeName, key)) as IdbFile;
 
     if (!value) {
       continue;
@@ -118,7 +122,7 @@ export async function importBackup(zipBlob: File) {
 
   let hasSettings = false;
   let hasHighScores = false;
-  let savedBeatmapCount: number | null = null;
+  let collectionCount: number | null = null;
   let storedBeatmapCount: number | null = null;
 
   for (const entry of entries) {
@@ -133,11 +137,32 @@ export async function importBackup(zipBlob: File) {
 
     const filename = entry.filename;
 
-    // Localstorage
+    // JSON
     if (filename.endsWith(".json") && !filename.includes("/")) {
       const key = filename.replace(".json", "");
       const text = await blob.text();
-      localStorage.setItem(key, text);
+
+      if (key === "collections") {
+        const collections = JSON.parse(text);
+        collectionCount = Object.keys(collections).length;
+
+        useCollectionsStore.setState((draft) => {
+          draft.collections = {
+            ...draft.collections,
+            ...collections,
+          };
+        });
+      } else if (key === "savedBeatmapSets") {
+        const data = JSON.parse(text);
+        const savedBeatmapSets = data.state.savedBeatmapSets;
+        collectionCount = 1;
+
+        useCollectionsStore.setState((draft) => {
+          draft.collections["Saved"] = savedBeatmapSets;
+        });
+      } else {
+        localStorage.setItem(key, text);
+      }
 
       if (filename === "settings.json") {
         const mods = useSettingsStore.getState().mods;
@@ -147,10 +172,6 @@ export async function importBackup(zipBlob: File) {
       } else if (filename === "highScores.json") {
         useHighScoresStore.persist.rehydrate();
         hasHighScores = true;
-      } else if (filename === "savedBeatmapSets.json") {
-        useSavedBeatmapSetsStore.persist.rehydrate();
-        savedBeatmapCount =
-          useSavedBeatmapSetsStore.getState().savedBeatmapSets.length;
       } else if (filename === "storedBeatmapSets.json") {
         useStoredBeatmapSetsStore.persist.rehydrate();
         storedBeatmapCount =
@@ -183,7 +204,7 @@ export async function importBackup(zipBlob: File) {
   if (
     hasSettings ||
     hasHighScores ||
-    savedBeatmapCount !== null ||
+    collectionCount !== null ||
     storedBeatmapCount !== null
   ) {
     toast("Backup imported successfully", {
@@ -194,12 +215,12 @@ export async function importBackup(zipBlob: File) {
         ...(hasHighScores
           ? [createElement("li", {}, "Highscores & Replays")]
           : []),
-        ...(savedBeatmapCount !== null
+        ...(collectionCount !== null
           ? [
               createElement(
                 "li",
                 {},
-                `${savedBeatmapCount} Saved Beatmap${savedBeatmapCount > 1 ? "s" : ""}`,
+                `${collectionCount} Collection${collectionCount > 1 ? "s" : ""}`,
               ),
             ]
           : []),
@@ -208,7 +229,7 @@ export async function importBackup(zipBlob: File) {
               createElement(
                 "li",
                 {},
-                `${storedBeatmapCount} Saved Beatmap${storedBeatmapCount > 1 ? "s" : ""}`,
+                `${storedBeatmapCount} Stored Beatmap${storedBeatmapCount > 1 ? "s" : ""}`,
               ),
             ]
           : []),

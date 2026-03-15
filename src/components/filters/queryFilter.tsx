@@ -57,10 +57,9 @@ const SearchFilter = ({ className }: { className?: string }) => {
       <Label htmlFor="search" className="text-muted-foreground text-base">
         Search
       </Label>
-      <div className="mt-2 flex items-center gap-4">
+      <div className="mt-2 flex items-center gap-2">
         <Input
           id="search"
-          className="rounded-xl"
           type="text"
           placeholder="Type in keywords..."
           value={query}

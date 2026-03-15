@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CategoryFilter from "./categoryFilter";
+import CollectionFilter from "./collectionFilter";
 import GenreFilter from "./genreFilter";
 import KeysFilter from "./keysFilter";
 import LanguageFilter from "./languageFilter";
@@ -19,7 +20,8 @@ const FiltersTab = () => {
   const search = Route.useSearch();
 
   const category = parseCategoryParam(search.category);
-  const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
+  const viewingCustom =
+    CUSTOM_CATEGORIES.includes(category) || search.collection;
 
   return (
     <>
@@ -27,9 +29,10 @@ const FiltersTab = () => {
         <SearchFilter />
         <KeysFilter />
         <DifficultyFilter />
-        <CategoryFilter />
+        {!search.collection && <CategoryFilter />}
+        <CollectionFilter />
         <NsfwFilter />
-        {!viewingCustomCategory && (
+        {!viewingCustom && (
           <>
             <GenreFilter />
             <LanguageFilter />

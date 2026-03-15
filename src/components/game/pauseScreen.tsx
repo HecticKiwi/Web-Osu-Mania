@@ -4,7 +4,7 @@ import { Eye, EyeOff, Fullscreen } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
-import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
+import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
 import { Button } from "../ui/button";
 import { toast } from "../ui/use-toast";
 
@@ -66,7 +66,7 @@ const PauseScreen = ({
 
             {beatmapSet && (
               <div className="flex gap-2" data-exclude>
-                <SaveBeatmapSetButton beatmapSet={beatmapSet} alwaysShow />
+                <CollectionsDropdown beatmapSet={beatmapSet} />
 
                 <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
               </div>
