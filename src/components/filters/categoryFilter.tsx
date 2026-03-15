@@ -10,7 +10,7 @@ import {
 } from "@/lib/searchParams/sortParam";
 import { cn } from "@/lib/utils";
 import { Link, useSearch } from "@tanstack/react-router";
-import { Bookmark, HardDrive } from "lucide-react";
+import { HardDrive } from "lucide-react";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { Button } from "../ui/button";
 
@@ -55,35 +55,6 @@ const CategoryFilter = ({ className }: { className?: string }) => {
               </Button>
             );
           })}
-          <Button
-            asChild
-            variant={"link"}
-            className={cn(
-              "h-8 gap-1 p-0",
-              categoryParam === "Saved" && "text-white",
-            )}
-          >
-            <Link
-              to="/"
-              search={{
-                ...search,
-                category: "Saved",
-                sortCriteria: "Date Saved",
-                sortDirection: "desc",
-              }}
-              preloadDelay={0}
-            >
-              <Bookmark
-                className="size-5"
-                fill={
-                  categoryParam === "Saved"
-                    ? "white"
-                    : "hsl(var(--hue),80%,69%)"
-                }
-              />
-              <span>Saved</span>
-            </Link>
-          </Button>
           {storeDownloadedBeatmaps && (
             <Button
               asChild
@@ -100,6 +71,7 @@ const CategoryFilter = ({ className }: { className?: string }) => {
                   category: "Stored",
                   sortCriteria: "Date Saved",
                   sortDirection: "desc",
+                  collection: undefined,
                 }}
                 preloadDelay={0}
               >

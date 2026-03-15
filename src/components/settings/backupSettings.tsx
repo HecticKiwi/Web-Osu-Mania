@@ -11,7 +11,7 @@ import BackupUpload from "./backupUpload";
 const exportOptionIds = [
   "settingsAndKeybinds",
   "highScoresAndReplays",
-  "savedBeatmapSets",
+  "collections",
   "storedBeatmapSets",
 ] as const;
 export type ExportOptionId = (typeof exportOptionIds)[number];
@@ -19,7 +19,7 @@ export type ExportOptionId = (typeof exportOptionIds)[number];
 const exportOptions: { id: ExportOptionId; label: string }[] = [
   { id: "settingsAndKeybinds", label: "Settings & Keybinds" },
   { id: "highScoresAndReplays", label: "Highscores & Replays" },
-  { id: "savedBeatmapSets", label: "Saved Beatmaps" },
+  { id: "collections", label: "Collections" },
   { id: "storedBeatmapSets", label: "Stored Beatmaps" },
 ] as const;
 
@@ -72,10 +72,10 @@ const BackupSettings = ({ className }: { className?: string }) => {
 
   return (
     <div className={cn(className)}>
-      <h3 className="mb-2 mt-6 text-lg font-semibold">Backup & Restore</h3>
+      <h3 className="mt-6 mb-2 text-lg font-semibold">Backup & Restore</h3>
 
       <div className="grid grid-cols-2 items-center">
-        <div className="text-sm font-semibold text-muted-foreground">
+        <div className="text-muted-foreground text-sm font-semibold">
           Import Backup (.zip)
         </div>
 
@@ -84,7 +84,7 @@ const BackupSettings = ({ className }: { className?: string }) => {
 
       <div className="mt-4 space-y-4">
         <div className="grid grid-cols-2">
-          <div className="pr-2 text-sm font-semibold text-muted-foreground">
+          <div className="text-muted-foreground pr-2 text-sm font-semibold">
             Export Contents
           </div>
 

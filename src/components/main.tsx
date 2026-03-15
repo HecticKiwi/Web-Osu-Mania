@@ -1,17 +1,16 @@
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { Route } from "@/routes";
 import { useGameStore } from "@/stores/gameStore";
-import { InfoIcon } from "lucide-react";
 import { useEffect } from "react";
 import BeatmapSetsInfiniteScroll from "./beatmapSets/beatmapSetsInfiniteScroll";
-import SavedBeatmapSets from "./beatmapSets/savedBeatmapSets";
+import CollectionBeatmapSets from "./beatmapSets/collectionBeatmapSets";
 import StoredBeatmapSets from "./beatmapSets/storedBeatmapSets";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const Main = () => {
   // const searchParams = useSearchParams();
   const search = Route.useSearch();
   const category = parseCategoryParam(search.category);
+  const collection = search.collection;
   const beatmapId = useGameStore.use.beatmapId();
   const scrollPosition = useGameStore.use.scrollPosition();
 
@@ -21,19 +20,10 @@ const Main = () => {
     }
   }, [beatmapId, scrollPosition]);
 
-  if (category === "Saved") {
+  if (collection) {
     return (
       <div hidden={!!beatmapId}>
-        <Alert className="bg-card">
-          <InfoIcon className="h-4 w-4" />
-          <AlertTitle>Currently Showing Your Saved Beatmaps</AlertTitle>
-          <AlertDescription>
-            Saved beatmaps are stored and filtering is done locally, so certain
-            filters may work differently or may not be available.
-          </AlertDescription>
-        </Alert>
-
-        <SavedBeatmapSets className="mt-4" />
+        <CollectionBeatmapSets className="mt-4" />
       </div>
     );
   }
@@ -41,16 +31,6 @@ const Main = () => {
   if (category === "Stored") {
     return (
       <div hidden={!!beatmapId}>
-        <Alert className="bg-card">
-          <InfoIcon className="h-4 w-4" />
-          <AlertTitle>Currently Showing Your Stored Beatmaps</AlertTitle>
-          <AlertDescription>
-            Beatmaps are automatically stored here when IndexedDB Cache is
-            enabled in the settings. Filtering is done locally, so certain
-            filters may work differently or may not be available.
-          </AlertDescription>
-        </Alert>
-
         <StoredBeatmapSets className="mt-4" />
       </div>
     );

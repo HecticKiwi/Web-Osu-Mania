@@ -1,5 +1,6 @@
 import type { StoreApi, UseBoundStore } from "zustand";
-import type { PersistStorage } from "zustand/middleware";
+import type { PersistStorage, StorageValue } from "zustand/middleware";
+import { idb } from "./idb";
 
 type WithSelectors<TStore> = TStore extends { getState: () => infer TState }
   ? TStore & { use: { [TKey in keyof TState]: () => TState[TKey] } }
@@ -22,7 +23,7 @@ export function getLocalStorageConfig<T>({
   migrateCallback,
   fillCallback,
 }: {
-  migrateCallback?: (state: any) => void; // Use for migrating to  Zustand format
+  migrateCallback?: (state: any) => void; // Use for migrating to Zustand format
   fillCallback?: (state: any) => void; // Use for adding new props to object state
 } = {}): PersistStorage<T> {
   return {
@@ -64,5 +65,23 @@ export function getLocalStorageConfig<T>({
       localStorage.setItem(name, JSON.stringify(value));
     },
     removeItem: (name) => localStorage.removeItem(name),
+  };
+}
+
+export function createIdbStorage<T>(): PersistStorage<T> {
+  return {
+    async getItem(name: string): Promise<StorageValue<T> | null> {
+      const db = await idb.db;
+      const data = await db.get("userData", name);
+      return data ? JSON.parse(data) : null;
+    },
+    async setItem(name: string, storageValue: StorageValue<T>): Promise<void> {
+      const db = await idb.db;
+      await db.put("userData", JSON.stringify(storageValue), name);
+    },
+    async removeItem(name: string): Promise<void> {
+      const db = await idb.db;
+      await db.delete("userData", name);
+    },
   };
 }

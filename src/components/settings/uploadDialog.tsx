@@ -7,8 +7,8 @@ import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapList from "../beatmapSet/beatmapList";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
+import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
 import PreviewProgressBar from "../beatmapSet/previewProgressBar";
-import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
 
 const UploadDialog = () => {
   const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
@@ -69,7 +69,7 @@ const UploadDialog = () => {
                 )}
 
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <SaveBeatmapSetButton beatmapSet={beatmapSet} />
+                  <CollectionsDropdown beatmapSet={beatmapSet} />
 
                   <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
                 </div>

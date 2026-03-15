@@ -19,7 +19,7 @@ const CustomBeatmapSets = ({
   beatmapSets,
   className,
 }: {
-  label: string;
+  label: ReactNode;
   helpText: ReactNode;
   beatmapSets: BeatmapSetData[];
   className?: string;
@@ -32,9 +32,7 @@ const CustomBeatmapSets = ({
   if (beatmapSets.length === 0) {
     return (
       <div className="mt-16 text-center">
-        <h1 className="text-3xl font-semibold">
-          You Haven't {label} any Beatmaps!
-        </h1>
+        <h1 className="text-3xl font-semibold">{label}</h1>
         <p className="text-muted-foreground text-lg">{helpText}</p>
       </div>
     );

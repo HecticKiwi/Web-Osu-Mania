@@ -18,6 +18,7 @@ const indexSearchSchema = z.object({
   language: z.string().optional(),
   sortCriteria: z.string().optional(),
   sortDirection: z.string().optional(),
+  collection: z.string().optional(),
 });
 
 export const Route = createFileRoute("/")({

@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
-import SaveBeatmapSetButton from "../beatmapSet/saveBeatmapSetButton";
+import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
 import { JudgementChart } from "./judgementChart";
 import LetterGradeCard from "./letterGradeCard";
 import TimingDistributionChart from "./timingDistributionChart";
@@ -38,8 +38,6 @@ const Results = ({
   const errors = playResults.hitErrors.map((timingError) => timingError.error);
   const averageError = mean(errors);
   const unstableRate = stdev(errors) * 10; // https://osu.ppy.sh/wiki/en/Gameplay/Unstable_rate
-
-  console.log(mods.playbackRate);
 
   const pp =
     beatmap && mods.playbackRate === 1
@@ -95,7 +93,7 @@ const Results = ({
 
             {beatmapSet && (
               <div className="flex gap-2" data-exclude>
-                <SaveBeatmapSetButton beatmapSet={beatmapSet} alwaysShow />
+                <CollectionsDropdown beatmapSet={beatmapSet} />
 
                 <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
               </div>

@@ -18,7 +18,8 @@ const SortFilter = ({ className }: { className?: string }) => {
   const category = parseCategoryParam(
     typeof search.category === "string" ? search.category : undefined,
   );
-  const viewingCustomCategory = CUSTOM_CATEGORIES.includes(category);
+  const viewingCustom =
+    CUSTOM_CATEGORIES.includes(category) || search.collection;
 
   const sortCriteria = parseSortCriteriaParam(
     typeof search.sortCriteria === "string" ? search.sortCriteria : undefined,
@@ -30,7 +31,7 @@ const SortFilter = ({ className }: { className?: string }) => {
     typeof search.q === "string" ? search.q : undefined,
   );
 
-  const options = viewingCustomCategory
+  const options = viewingCustom
     ? ["Date Saved", "title", "artist"]
     : [
         "title",
