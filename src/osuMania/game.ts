@@ -183,7 +183,7 @@ export class Game {
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
 
-    this.settings = useSettingsStore.getState();
+    this.settings = JSON.parse(JSON.stringify(useSettingsStore.getState()));
     this.mods = this.settings.mods; // Replays will override this
 
     if (this.settings.skin.colors.mode === "simple") {
