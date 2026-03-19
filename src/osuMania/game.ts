@@ -22,7 +22,9 @@ import {
   Container,
   FillGradient,
   Graphics,
+  ResizePlugin,
   TextStyle,
+  extensions,
 } from "pixi.js";
 import type { Dispatch, SetStateAction } from "react";
 import {
@@ -63,6 +65,8 @@ import { ReplayPlayer } from "./systems/replayPlayer";
 import type { ReplayData } from "./systems/replayRecorder";
 import { ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
+
+extensions.remove(ResizePlugin);
 
 PixiPlugin.registerPIXI(PIXI);
 
