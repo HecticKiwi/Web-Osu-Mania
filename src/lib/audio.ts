@@ -5,13 +5,13 @@ import {
 import toWav from "audiobuffer-to-wav";
 import { toast } from "sonner";
 
-// Adds silence to the start of the audio blob, returning the result as a .wav blob
+// Adds silence to the start and/or end of the audio blob, returning the result as a .wav blob
 // If blob arg is null, returns a silent .wav blob
-export async function addDelay(blob: Blob | null, duration: number) {
-  if (blob && duration === 0) {
-    return blob;
-  }
-
+export async function addDelay(
+  blob: Blob | null,
+  beforeDuration: number, // Silence to add before song, in seconds
+  totalDuration: number, // Total duration target, in seconds
+) {
   const audioCtx = new AudioContext();
 
   let audioBuffer: AudioBuffer;
@@ -22,12 +22,23 @@ export async function addDelay(blob: Blob | null, duration: number) {
   } else {
     const sampleRate = 44100;
 
-    audioBuffer = audioCtx.createBuffer(2, sampleRate * duration, sampleRate);
+    audioBuffer = audioCtx.createBuffer(
+      2,
+      sampleRate * totalDuration,
+      sampleRate,
+    );
   }
+
+  const duration = audioBuffer.length / audioBuffer.sampleRate;
+  if (blob && beforeDuration === 0 && duration >= totalDuration) {
+    return blob;
+  }
+
+  const totalLength = totalDuration * audioBuffer.sampleRate;
 
   const offlineCtx = new OfflineAudioContext(
     audioBuffer.numberOfChannels,
-    audioBuffer.length + duration * audioBuffer.sampleRate,
+    totalLength,
     audioBuffer.sampleRate,
   );
 
@@ -36,12 +47,12 @@ export async function addDelay(blob: Blob | null, duration: number) {
   });
 
   source.connect(offlineCtx.destination);
-  source.start(offlineCtx.currentTime + duration);
+  source.start(beforeDuration);
 
   const renderedBuffer = await offlineCtx.startRendering();
 
   const wav = toWav(renderedBuffer);
-  const newBlob = new Blob([wav]);
+  const newBlob = new Blob([wav], { type: "audio/wav" });
 
   return newBlob;
 }

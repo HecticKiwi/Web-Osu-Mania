@@ -194,16 +194,23 @@ export const parseOsz = async (
 
   let songUrl: string;
   const songFile = findEntry(entries, songFilename);
+  const totalDuration = endTime / 1000 + 2;
+
   if (songFile) {
     const audioBlob = await songFile.getData(new BlobWriter());
+    const beforeDuration = delay / 1000;
 
-    const delayedAudioBlob = await addDelay(audioBlob, delay / 1000);
+    const delayedAudioBlob = await addDelay(
+      audioBlob,
+      beforeDuration,
+      totalDuration,
+    );
 
     songUrl = URL.createObjectURL(delayedAudioBlob);
   } else {
     // If no audioFile, create a silent audio blob
     // (this is likely a BMS map)
-    const audioBlob = await addDelay(null, endTime / 1000 + 2);
+    const audioBlob = await addDelay(null, 0, totalDuration);
     songUrl = URL.createObjectURL(audioBlob);
   }
 
@@ -317,7 +324,7 @@ export function parseHitObjects(
     );
   }
 
-  hitObjectData.forEach((hitObject: string, i) => {
+  hitObjectData.forEach((hitObject: string) => {
     const [x, y, time, type, hitSoundDecimal] = hitObject
       .split(",")
       .map((number) => Number(number));
