@@ -77,6 +77,8 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           },
         });
 
+        const allHeaders = Object.fromEntries(response.headers.entries());
+
         if (!response.ok) {
           const retryAfter = response.headers.get("Retry-After");
 
@@ -97,6 +99,11 @@ export const Route = createFileRoute("/api/getBeatmaps")({
             ...corsHeaders,
           });
         }
+
+        console.log({
+          "X-RateLimit-Remaining":
+            Number(response.headers.get("X-RateLimit-Remaining")) - 1140,
+        });
 
         const data: GetBeatmapsResponse = await response.json();
 

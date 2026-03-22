@@ -53,6 +53,11 @@ export const Route = createFileRoute("/api/getBeatmap")({
           );
         }
 
+        console.log({
+          "X-RateLimit-Remaining":
+            Number(response.headers.get("X-RateLimit-Remaining")) - 1140,
+        });
+
         const data: BeatmapSet = await response.json();
 
         const trimmedData = trimBeatmapSet(data);
