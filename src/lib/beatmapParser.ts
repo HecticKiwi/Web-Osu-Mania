@@ -158,6 +158,9 @@ export const parseOsz = async (
     ? decodeMods(replayMods)
     : useSettingsStore.getState().mods;
 
+  const outputLatency = (Howler.ctx.outputLatency ?? 0) * 1000;
+  const audioOffset = useSettingsStore.getState().audioOffset - outputLatency;
+
   // Parse .osu file sections
   const metadata = parseMetadata(lines);
   const difficulty = parseDifficulty(lines);
@@ -165,6 +168,7 @@ export const parseOsz = async (
     lines,
     difficulty.keyCount,
     mods,
+    audioOffset,
     replayColumnMap,
   );
   const timingPoints = parseTimingPoints(
@@ -173,6 +177,7 @@ export const parseOsz = async (
     startTime,
     endTime,
     mods,
+    audioOffset,
   );
 
   const { videoUrl, breaks } = await parseEvents(lines, entries, delay);
@@ -306,13 +311,11 @@ export function parseHitObjects(
   lines: string[],
   columnCount: number,
   mods: Settings["mods"],
+  audioOffset: number,
   replayColumnMap?: number[],
 ) {
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
-
-  const outputLatency = (Howler.ctx.outputLatency ?? 0) * 1000;
-  const audioOffset = useSettingsStore.getState().audioOffset - outputLatency;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
@@ -512,6 +515,7 @@ function parseTimingPoints(
   startTime: number,
   endTime: number,
   mods: Settings["mods"],
+  audioOffset: number,
 ): TimingPoint[] {
   const startIndex = lines.indexOf("[TimingPoints]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
@@ -537,7 +541,8 @@ function parseTimingPoints(
     ] = line.split(",").map((value) => Number(value));
 
     const isFirstTimingPoint = line === timingPointLines[0];
-    const adjustedTime = isFirstTimingPoint ? 0 : time + delay;
+
+    const adjustedTime = isFirstTimingPoint ? 0 : time + delay - audioOffset;
 
     if (adjustedTime > endTime) {
       // This and subsequent timing points are past the last hit object and therefore invalid
