@@ -311,7 +311,8 @@ export function parseHitObjects(
   const startIndex = lines.indexOf("[HitObjects]") + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
-  const audioOffset = useSettingsStore.getState().audioOffset;
+  const outputLatency = (Howler.ctx.outputLatency ?? 0) * 1000;
+  const audioOffset = useSettingsStore.getState().audioOffset - outputLatency;
 
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];

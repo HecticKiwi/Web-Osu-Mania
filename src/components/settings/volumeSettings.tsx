@@ -14,6 +14,8 @@ const VolumeSettings = ({
 }) => {
   const setSettings = useSettingsStore.use.setSettings();
 
+  const outputLatency = Howler.ctx.outputLatency ?? null;
+
   return (
     <>
       <div className={cn(className)}>
@@ -113,7 +115,9 @@ const VolumeSettings = ({
                 step={1}
               />
 
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
+                {outputLatency != null &&
+                  `Note that the site already adjusts for your browser's reported system audio latency of ${outputLatency * 1000}ms. `}
                 If using an audio offset, it is highly recommended that you mute
                 the SFX. Use a{" "}
                 <TextLink
