@@ -66,8 +66,6 @@ import type { ReplayData } from "./systems/replayRecorder";
 import { ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
 
-extensions.remove(ResizePlugin);
-
 PixiPlugin.registerPIXI(PIXI);
 
 export class Game {
@@ -457,6 +455,7 @@ export class Game {
   }
 
   async main(ref: HTMLDivElement, showHud: boolean) {
+    extensions.remove(ResizePlugin);
     await this.app.init({
       width: window.innerWidth,
       height: window.innerHeight,
