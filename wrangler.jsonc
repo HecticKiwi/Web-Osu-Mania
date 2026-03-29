@@ -20,14 +20,6 @@
             "id": "db5d38d39f9b497f994b4783b226b338"
         }
     ],
-    "durable_objects": {
-        "bindings": [
-            {
-                "name": "API_RATE_LIMIT",
-                "class_name": "ApiRateLimit"
-            }
-        ]
-    },
     "migrations": [
         {
             "tag": "v1",

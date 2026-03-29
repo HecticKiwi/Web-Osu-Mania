@@ -1,11 +1,8 @@
-import type { ApiRateLimit } from "@/server";
-
 declare global {
   namespace Cloudflare {
     interface Env {
       OSU_API_CLIENT_ID: string;
       OSU_API_CLIENT_SECRET: string;
-      API_RATE_LIMIT: DurableObjectNamespace<ApiRateLimit>;
     }
   }
 }
