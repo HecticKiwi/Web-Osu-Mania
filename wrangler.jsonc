@@ -8,7 +8,7 @@
     ],
     "kv_namespaces": [
         {
-            "binding": "TOKENS",
+            "binding": "OSU_API",
             "id": "4c393a66c157468282b7e336b1627cd6"
         },
         {
@@ -19,6 +19,28 @@
             "binding": "BEATMAP_SET_DATA",
             "id": "db5d38d39f9b497f994b4783b226b338"
         }
+    ],
+    "durable_objects": {
+        "bindings": [
+            {
+                "name": "API_RATE_LIMIT",
+                "class_name": "ApiRateLimit"
+            }
+        ]
+    },
+    "migrations": [
+        {
+            "tag": "v1",
+            "new_sqlite_classes": [
+                "ApiRateLimit"
+            ]
+        },
+        {
+            "tag": "v2",
+            "deleted_classes": [
+                "ApiRateLimit"
+            ]
+        },
     ],
     "observability": {
         "logs": {

@@ -16,9 +16,9 @@ export const corsHeaders = {
 };
 
 export async function getAccessToken() {
-  const TOKENS = env.TOKENS;
+  const OSU_API = env.OSU_API;
 
-  let accessToken = await TOKENS.get("osu_api_access_token");
+  let accessToken = await OSU_API.get("osu_api_access_token");
 
   if (!accessToken) {
     const response: Response = await fetch("https://osu.ppy.sh/oauth/token", {
@@ -44,7 +44,7 @@ export async function getAccessToken() {
 
     accessToken = data.access_token;
 
-    await TOKENS.put("osu_api_access_token", accessToken, {
+    await OSU_API.put("osu_api_access_token", accessToken, {
       expirationTtl: data.expires_in,
     });
   }
@@ -81,4 +81,8 @@ export function trimBeatmapSet(beatmapSet: BeatmapSet): BeatmapSet {
       count_sliders: beatmap.count_sliders,
     })),
   };
+}
+
+export function getRateLimitMessage(retryAfter?: number) {
+  return `The site is being rate-limited by the osu! API, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"}.`;
 }

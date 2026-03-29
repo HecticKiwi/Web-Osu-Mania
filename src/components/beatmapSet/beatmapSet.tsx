@@ -41,7 +41,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
           queryKey: ["beatmapSets", beatmapSet.id],
           queryFn: () => getBeatmapSet(beatmapSet.id),
           staleTime: Infinity,
-          retry: 1,
+          retry: 0,
         });
 
         if (category === "Stored") {

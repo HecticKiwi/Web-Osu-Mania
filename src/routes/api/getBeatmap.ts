@@ -2,7 +2,12 @@ import { rateLimit } from "@/lib/api/ratelimit";
 import type { BeatmapSet } from "@/lib/osuApi";
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
-import { corsHeaders, getAccessToken, trimBeatmapSet } from "./-utils";
+import {
+  corsHeaders,
+  getAccessToken,
+  getRateLimitMessage,
+  trimBeatmapSet,
+} from "./-utils";
 
 export const Route = createFileRoute("/api/getBeatmap")({
   server: {
@@ -36,6 +41,22 @@ export const Route = createFileRoute("/api/getBeatmap")({
           });
         }
 
+        const blockedUntil = env.OSU_API.get("blocked_until");
+        if (blockedUntil && Date.now() < Number(blockedUntil)) {
+          const secondsLeft = Math.ceil(
+            (Number(blockedUntil) - Date.now()) / 1000,
+          );
+          const message = getRateLimitMessage();
+
+          console.log({ secondsLeft });
+
+          return new Response(message, {
+            status: 429,
+            statusText: message,
+            ...corsHeaders,
+          });
+        }
+
         const accessToken = await getAccessToken();
 
         const url = `https://osu.ppy.sh/api/v2/beatmapsets/${beatmapSetId}`;
@@ -48,9 +69,34 @@ export const Route = createFileRoute("/api/getBeatmap")({
         });
 
         if (!response.ok) {
-          throw new Error(
-            `GET getBeatmap error: ${response.status} - ${response.statusText}`,
-          );
+          const retryAfter = response.headers.get("X-Ratelimit-Remaining");
+
+          const statusErrorMessages: Record<number, string> = {
+            429: getRateLimitMessage(Number(retryAfter)),
+            500: "The osu! API ran into an error, try again later.",
+            503: "The osu! API is currently unavailable, try again later.",
+            504: "The request to the osu! API timed out.",
+          };
+
+          const message =
+            statusErrorMessages[response.status] ??
+            "An unknown error occurred.";
+
+          if (response.status === 429) {
+            // Block for 2 minutes as default
+            const expiration =
+              Date.now() + (Number(retryAfter) * 1000 || 120000);
+
+            await env.OSU_API.put("blocked_until", expiration.toString(), {
+              expiration,
+            });
+          }
+
+          return new Response(message, {
+            status: response.status,
+            statusText: message,
+            ...corsHeaders,
+          });
         }
 
         console.log({
@@ -68,6 +114,7 @@ export const Route = createFileRoute("/api/getBeatmap")({
 
         return Response.json(trimmedData, {
           headers: {
+            "Content-Type": "application/json",
             "Cache-Control": "public, max-age=3600",
             ...corsHeaders,
           },

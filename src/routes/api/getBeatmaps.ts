@@ -2,7 +2,12 @@ import { rateLimit } from "@/lib/api/ratelimit";
 import type { BeatmapSet } from "@/lib/osuApi";
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
-import { corsHeaders, getAccessToken, trimBeatmapSet } from "./-utils";
+import {
+  corsHeaders,
+  getAccessToken,
+  getRateLimitMessage,
+  trimBeatmapSet,
+} from "./-utils";
 
 export type GetBeatmapsResponse = {
   beatmapsets: BeatmapSet[];
@@ -42,11 +47,10 @@ export const Route = createFileRoute("/api/getBeatmaps")({
 
         // Params are forwarded to the osu API endpoint
         const params = new URLSearchParams(requestUrl.search);
-        params.keys().forEach((key) => {
-          if (!KEEP_KEYS.has(key)) {
-            params.delete(key);
-          }
-        });
+        const keysToDelete = Array.from(params.keys()).filter(
+          (key) => !KEEP_KEYS.has(key),
+        );
+        keysToDelete.forEach((key) => params.delete(key));
 
         // Sort so the keys are in consistent order for caching
         params.sort();
@@ -66,6 +70,22 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           });
         }
 
+        const blockedUntil = env.OSU_API.get("blocked_until");
+        if (blockedUntil && Date.now() < Number(blockedUntil)) {
+          const secondsLeft = Math.ceil(
+            (Number(blockedUntil) - Date.now()) / 1000,
+          );
+          const message = getRateLimitMessage();
+
+          console.log({ secondsLeft });
+
+          return new Response(message, {
+            status: 429,
+            statusText: message,
+            ...corsHeaders,
+          });
+        }
+
         const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
 
         const accessToken = await getAccessToken();
@@ -77,13 +97,11 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           },
         });
 
-        const allHeaders = Object.fromEntries(response.headers.entries());
-
         if (!response.ok) {
           const retryAfter = response.headers.get("Retry-After");
 
           const statusErrorMessages: Record<number, string> = {
-            429: `The site is being rate-limited by the osu! API, please try again ${retryAfter ? `after ${retryAfter} seconds` : "later"}.`,
+            429: getRateLimitMessage(Number(retryAfter)),
             500: "The osu! API ran into an error, try again later.",
             503: "The osu! API is currently unavailable, try again later.",
             504: "The request to the osu! API timed out.",
@@ -92,6 +110,16 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           const message =
             statusErrorMessages[response.status] ??
             "An unknown error occurred.";
+
+          if (response.status === 429) {
+            // Block for 2 minutes as default
+            const expiration =
+              Date.now() + (Number(retryAfter) * 1000 || 120000);
+
+            await env.OSU_API.put("blocked_until", expiration.toString(), {
+              expiration,
+            });
+          }
 
           return new Response(message, {
             status: response.status,
