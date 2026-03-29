@@ -34,6 +34,15 @@ const GameModal = () => {
   const [downloadPercent, setDownloadPercent] = useState(0);
   const [showHud, setShowHud] = useState(true);
 
+  // Prevent user from selecting while game is open
+  useEffect(() => {
+    document.body.classList.add("select-none");
+
+    return () => {
+      document.body.classList.remove("select-none");
+    };
+  }, []);
+
   // Fetch beatmap and parse data
   useEffect(() => {
     if (!beatmapId) {
