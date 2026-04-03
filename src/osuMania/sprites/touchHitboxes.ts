@@ -51,9 +51,14 @@ export class TouchHitboxes {
     const borderWidth = 1;
 
     this.hitAreas.forEach((hitArea, i) => {
+      let x = hitAreaWidth * i;
+      if (this.game.settings.touch.mode === "normal") {
+        x += this.game.settings.laneSpacing * i;
+      }
+
       hitArea.clear();
       hitArea
-        .rect(hitAreaWidth * i, 0, hitAreaWidth, this.game.app.screen.height)
+        .rect(x, 0, hitAreaWidth, this.game.app.screen.height)
         .stroke({ width: borderWidth, color: "white" })
         .fill({ color: "transparent" });
 
@@ -62,10 +67,11 @@ export class TouchHitboxes {
   }
 
   public resize() {
-    const totalWidth =
-      this.game.scaledColumnWidth * this.game.difficulty.keyCount;
-
     if (this.game.settings.touch.mode === "normal") {
+      const totalWidth =
+        this.game.scaledColumnWidth * this.game.difficulty.keyCount +
+        this.game.settings.laneSpacing * (this.game.difficulty.keyCount - 1);
+
       this.view.x =
         this.game.app.screen.width / 2 -
         totalWidth / 2 +

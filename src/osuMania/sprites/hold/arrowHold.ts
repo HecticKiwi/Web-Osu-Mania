@@ -10,7 +10,8 @@ export class ArrowHold extends Hold {
   constructor(game: Game, holdData: HoldData) {
     super(game, holdData);
 
-    const bodyWidth = this.game.scaledColumnWidth * 0.6;
+    const bodyWidth =
+      this.game.scaledColumnWidth * this.game.settings.noteScale * 0.6;
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = bodyWidth;
@@ -20,8 +21,8 @@ export class ArrowHold extends Hold {
     this.view.addChild(this.body);
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
-      holdData.column * this.game.scaledColumnWidth +
-      this.game.scaledColumnWidth / 2;
+      holdData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
+      game.scaledColumnWidth / 2;
     this.view.visible = false;
 
     if (!ArrowHold.tailGraphicsContext) {

@@ -85,6 +85,7 @@ export class Game {
   public hitPositionOffset: number;
   public stagePositionOffset: number;
   public scaledColumnWidth: number;
+  public notesContainerWidth: number;
 
   // Systems
   public healthSystem?: HealthSystem;
@@ -314,12 +315,6 @@ export class Game {
     this.stageHint?.resize();
     this.stageLights.forEach((stageLight) => stageLight.resize());
 
-    const notesContainerWidth = Math.min(
-      this.difficulty.keyCount * this.scaledColumnWidth,
-      this.app.screen.width,
-    );
-    this.notesContainer.width = notesContainerWidth;
-    this.keysContainer.width = notesContainerWidth;
     this.keys.forEach((key) => key.resize());
 
     const fillGradient = new FillGradient({
@@ -348,7 +343,7 @@ export class Game {
       .clear()
       .rect(0, 0, this.stageSideWidth, this.app.screen.height)
       .rect(
-        this.stageSideWidth + this.notesContainer.width,
+        this.stageSideWidth + this.notesContainerWidth,
         0,
         this.stageSideWidth,
         this.app.screen.height,
@@ -452,6 +447,12 @@ export class Game {
     ) {
       this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
     }
+
+    this.notesContainerWidth = Math.min(
+      this.difficulty.keyCount * this.scaledColumnWidth +
+        this.settings.laneSpacing * (this.difficulty.keyCount - 1),
+      this.app.screen.width,
+    );
   }
 
   async main(ref: HTMLDivElement, showHud: boolean) {
@@ -797,11 +798,8 @@ export class Game {
   }
 
   private addStageContainer() {
-    const notesContainerWidth =
-      this.difficulty.keyCount * this.scaledColumnWidth;
-
     this.stageBackground = new Graphics()
-      .rect(0, 0, notesContainerWidth, this.app.screen.height)
+      .rect(0, 0, this.notesContainerWidth, this.app.screen.height)
       .fill(0x111111);
     this.stageBackground.alpha = this.settings.stageOpacity;
     this.notesContainer.addChild(this.stageBackground);

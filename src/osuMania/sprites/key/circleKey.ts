@@ -1,4 +1,3 @@
-import { circleColumnRatio } from "@/osuMania/constants";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { Key } from "./key";
 
@@ -13,10 +12,11 @@ export class CircleKey extends Key {
     if (!CircleKey.bottomContainerBgGraphicsContext) {
       CircleKey.bottomContainerBgGraphicsContext =
         new GraphicsContext().roundRect(
-          (this.game.scaledColumnWidth * (1 - circleColumnRatio)) / 2,
+          (this.game.scaledColumnWidth * (1 - this.game.settings.noteScale)) /
+            2,
           0,
-          this.game.scaledColumnWidth * circleColumnRatio,
-          this.game.scaledColumnWidth * circleColumnRatio,
+          this.game.scaledColumnWidth * this.game.settings.noteScale,
+          this.game.scaledColumnWidth * this.game.settings.noteScale,
           this.game.scaledColumnWidth,
         );
 
@@ -26,7 +26,8 @@ export class CircleKey extends Key {
       });
     }
 
-    const markerSize = this.game.scaledColumnWidth * circleColumnRatio;
+    const markerSize =
+      this.game.scaledColumnWidth * this.game.settings.noteScale;
 
     if (!CircleKey.markerGraphicsContext) {
       CircleKey.markerGraphicsContext = new GraphicsContext()

@@ -348,6 +348,24 @@ const SettingsTab = () => {
         </p>
 
         <SliderInput
+          label="Note Scale"
+          selector={(state) => state.noteScale}
+          tooltip={(receptorScale) => `${Math.round(receptorScale * 100)}%`}
+          onValueChange={([receptorScale]) =>
+            setSettings((draft) => {
+              draft.noteScale = receptorScale;
+            })
+          }
+          min={0.5}
+          max={1}
+          step={0.01}
+        />
+
+        <p className="text-muted-foreground text-sm">
+          Note Scale is ignored when using the Bars Note Style.
+        </p>
+
+        <SliderInput
           label="Lane Width Adjustment"
           selector={(state) => state.laneWidthAdjustment}
           tooltip={(laneWidthAdjustment) =>
@@ -360,6 +378,19 @@ const SettingsTab = () => {
           }
           min={-20}
           max={80}
+          step={1}
+        />
+        <SliderInput
+          label="Lane Spacing"
+          selector={(state) => state.laneSpacing}
+          tooltip={(laneSpacing) => `${Math.round(laneSpacing)}px`}
+          onValueChange={([laneSpacing]) =>
+            setSettings((draft) => {
+              draft.laneSpacing = laneSpacing;
+            })
+          }
+          min={0}
+          max={50}
           step={1}
         />
         <SliderInput

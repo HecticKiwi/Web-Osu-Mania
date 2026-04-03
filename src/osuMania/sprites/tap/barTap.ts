@@ -17,7 +17,8 @@ export class BarTap extends Tap {
     this.view.pivot.x = width / 2 / this.view.scale.x;
     this.view.pivot.y = height / this.view.scale.y;
     this.view.x =
-      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
+      tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
+      game.scaledColumnWidth / 2;
     this.view.visible = false;
 
     if (this.data.isHoldHead) {

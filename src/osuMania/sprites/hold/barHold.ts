@@ -17,8 +17,8 @@ export class BarHold extends Hold {
     this.view.addChild(this.body);
     this.view.pivot.x = this.view.width / 2;
     this.view.x =
-      holdData.column * this.game.scaledColumnWidth +
-      this.game.scaledColumnWidth / 2;
+      holdData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
+      game.scaledColumnWidth / 2;
     this.view.visible = false;
 
     const width = game.scaledColumnWidth;

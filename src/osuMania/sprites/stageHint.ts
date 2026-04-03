@@ -9,7 +9,7 @@ export class StageHint {
 
   constructor(game: Game) {
     this.game = game;
-    const width = game.difficulty.keyCount * game.scaledColumnWidth;
+    const width = game.notesContainerWidth;
 
     const height = 10;
     this.graphics = new Graphics().rect(0, 0, 5, height).fill(0xcccccc);

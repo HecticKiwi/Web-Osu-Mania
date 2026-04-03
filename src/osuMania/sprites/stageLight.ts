@@ -48,7 +48,7 @@ export class StageLight {
 
     this.view = new Graphics(StageLight.graphicsContext);
     this.view.tint = game.laneColors[columnId].tap;
-    this.view.x = columnId * width;
+    this.view.x = columnId * (width + game.settings.laneSpacing);
     this.view.pivot.y = height;
     this.view.alpha = 0;
   }

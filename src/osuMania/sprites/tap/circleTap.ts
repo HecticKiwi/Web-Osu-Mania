@@ -1,5 +1,4 @@
 import type { TapData } from "@/lib/beatmapParser";
-import { circleColumnRatio } from "@/osuMania/constants";
 import type { Game } from "@/osuMania/game";
 import { Graphics, RenderTexture, Sprite } from "pixi.js";
 import { Tap } from "./tap";
@@ -8,9 +7,9 @@ export class CircleTap extends Tap {
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    const width = game.scaledColumnWidth * circleColumnRatio;
-    const height = game.scaledColumnWidth * circleColumnRatio;
-    const radius = game.scaledColumnWidth * circleColumnRatio;
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
+    const radius = game.scaledColumnWidth * game.settings.noteScale;
 
     if (!Tap.renderTexture) {
       const graphic = new Graphics()
@@ -35,7 +34,8 @@ export class CircleTap extends Tap {
     this.view.pivot.x = width / 2;
     this.view.pivot.y = height / 2;
     this.view.x =
-      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
+      tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
+      game.scaledColumnWidth / 2;
     this.view.visible = false;
 
     if (this.data.isHoldHead) {

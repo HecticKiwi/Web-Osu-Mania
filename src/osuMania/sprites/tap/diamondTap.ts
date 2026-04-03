@@ -1,5 +1,4 @@
 import type { TapData } from "@/lib/beatmapParser";
-import { diamondColumnRatio } from "@/osuMania/constants";
 import type { Game } from "@/osuMania/game";
 import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
 import { Tap } from "./tap";
@@ -8,8 +7,8 @@ export class DiamondTap extends Tap {
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    const width = game.scaledColumnWidth * diamondColumnRatio;
-    const height = game.scaledColumnWidth * diamondColumnRatio;
+    const width = game.scaledColumnWidth * this.game.settings.noteScale;
+    const height = game.scaledColumnWidth * this.game.settings.noteScale;
 
     const rectangleWidth = width / Math.sqrt(2);
     const rectangleHeight = height / Math.sqrt(2);
@@ -43,7 +42,8 @@ export class DiamondTap extends Tap {
     this.view.zIndex = 1;
     this.view.pivot.y = height / 2 / this.view.scale.y;
     this.view.x =
-      tapData.column * game.scaledColumnWidth + game.scaledColumnWidth / 2;
+      tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
+      game.scaledColumnWidth / 2;
     this.view.visible = false;
 
     if (this.data.isHoldHead) {

@@ -1,5 +1,4 @@
 import { BASE_PATH } from "@/lib/utils";
-import { arrowColumnRatio } from "@/osuMania/constants";
 import { Container, Sprite } from "pixi.js";
 import { Key } from "./key";
 
@@ -7,8 +6,8 @@ export class ArrowKey extends Key {
   protected marker: Sprite;
 
   protected override setKeyGraphics() {
-    const width = this.game.scaledColumnWidth * arrowColumnRatio;
-    const height = this.game.scaledColumnWidth * arrowColumnRatio;
+    const width = this.game.scaledColumnWidth * this.game.settings.noteScale;
+    const height = this.game.scaledColumnWidth * this.game.settings.noteScale;
 
     const bg = Sprite.from(`${BASE_PATH}/skin/arrowOutline.svg`);
     bg.anchor.set(0.5);

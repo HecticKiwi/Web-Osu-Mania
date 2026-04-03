@@ -149,6 +149,7 @@ export type Settings = {
   darkerHoldNotes: boolean;
   hitPositionOffset: number;
   noteOffset: number;
+  noteScale: number;
   beatmapProvider: BeatmapProvider;
   customBeatmapProvider: string;
   audioPreviewProvider: AudioPreviewProvider;
@@ -169,6 +170,7 @@ export type Settings = {
   stageOpacity: number;
   stageSidesOpacity: number;
   laneWidthAdjustment: number;
+  laneSpacing: number;
   touch: {
     enabled: boolean;
     mode: TouchMode;
@@ -248,6 +250,7 @@ export const defaultSettings: Settings = {
   darkerHoldNotes: true,
   hitPositionOffset: 130,
   noteOffset: 0,
+  noteScale: 0.8,
   beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
   audioPreviewProvider: "Official osu!",
@@ -268,6 +271,7 @@ export const defaultSettings: Settings = {
   stageOpacity: 0.5,
   stageSidesOpacity: 1,
   laneWidthAdjustment: 0,
+  laneSpacing: 0,
   touch: {
     enabled: true,
     mode: "normal",

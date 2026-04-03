@@ -1,4 +1,3 @@
-import { diamondColumnRatio } from "@/osuMania/constants";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { Key } from "./key";
 
@@ -10,8 +9,8 @@ export class DiamondKey extends Key {
   protected bottomContainer: Container;
 
   protected override setKeyGraphics() {
-    const width = this.game.scaledColumnWidth * diamondColumnRatio;
-    const height = this.game.scaledColumnWidth * diamondColumnRatio;
+    const width = this.game.scaledColumnWidth * this.game.settings.noteScale;
+    const height = this.game.scaledColumnWidth * this.game.settings.noteScale;
 
     const rectangleWidth = width / Math.sqrt(2);
     const rectangleHeight = height / Math.sqrt(2);
