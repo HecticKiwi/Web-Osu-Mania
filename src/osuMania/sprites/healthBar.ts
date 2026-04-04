@@ -1,6 +1,5 @@
 import { clamp } from "@/lib/math";
 import { gsap } from "gsap";
-import type * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import type { Game } from "../game";
 import { MAX_HEALTH, MIN_HEALTH } from "../systems/health";
@@ -10,8 +9,8 @@ export class HealthBar {
 
   public view: Container;
 
-  public healthBar: PIXI.Graphics;
-  public healthBarContainer: PIXI.Container;
+  public healthBar: Graphics;
+  public healthBarContainer: Container;
 
   private fullWidth = 400;
 
