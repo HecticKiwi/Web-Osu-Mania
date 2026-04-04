@@ -6,7 +6,7 @@ import SocialButtons from "./socialButtons";
 
 const Header = () => {
   return (
-    <header className="bg-card/80 sticky top-0 z-20 border-b backdrop-blur-xl">
+    <header className="bg-card/80 outline-border sticky top-0 z-20 outline backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-475 items-center justify-between px-2 sm:px-4 lg:px-8">
         <div className="flex items-center gap-8">
           <Link to={"/"}>
