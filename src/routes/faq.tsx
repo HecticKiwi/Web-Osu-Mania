@@ -137,7 +137,6 @@ const troubleshootingFaq: FaqItem[] = [
             {
               url: "https://wom.slingexe.com",
               label: "wom.slingexe.com",
-              note: "old",
             },
           ].map((mirror) => (
             <li key={mirror.url} className="flex items-center gap-2">
