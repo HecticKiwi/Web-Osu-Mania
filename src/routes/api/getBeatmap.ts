@@ -83,10 +83,12 @@ export const Route = createFileRoute("/api/getBeatmap")({
             "An unknown error occurred.";
 
           if (response.status === 429) {
-            // Block for 2 minutes as default
+            // Block for 5 minutes as default
             const expiration = Math.ceil(
-              Date.now() / 1000 + (Number(retryAfter) || 120),
+              Date.now() / 1000 + (Number(retryAfter) || 300),
             );
+
+            console.log({ expiration });
 
             await env.OSU_API.put("blocked_until", expiration.toString(), {
               expiration,
