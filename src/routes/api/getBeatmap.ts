@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/getBeatmap")({
           });
         }
 
-        const blockedUntil = env.OSU_API.get("blocked_until");
+        const blockedUntil = await env.OSU_API.get("blocked_until");
         if (blockedUntil && Date.now() / 1000 < Number(blockedUntil)) {
           const secondsLeft = Math.ceil(
             Number(blockedUntil) - Date.now() / 1000,
