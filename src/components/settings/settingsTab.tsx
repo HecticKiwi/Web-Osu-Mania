@@ -6,11 +6,13 @@ import { toast } from "sonner";
 import type {
   EarlyLateThreshold,
   JudgementCounterPosition,
+  ProgressDisplay,
   TouchMode,
 } from "../../stores/settingsStore";
 import {
   earlyLateThresholdOptions,
   judgementCounterOptions,
+  progressDisplayOptions,
   touchModes,
   useSettingsStore,
 } from "../../stores/settingsStore";
@@ -515,15 +517,29 @@ const SettingsTab = () => {
           ))}
         </SelectInput>
 
-        <SwitchInput
-          label="Show Progress Bar"
-          settingPath="ui.showProgressBar"
-          onCheckedChange={(checked) =>
+        <SelectInput
+          label="Progress Display"
+          settingPath="ui.progressDisplay"
+          onValueChange={(value: ProgressDisplay | typeof NULL_OPTION) =>
             setSettings((draft) => {
-              draft.ui.showProgressBar = checked;
+              if (value === NULL_OPTION) {
+                draft.ui.progressDisplay = null;
+              } else {
+                draft.ui.progressDisplay = value;
+              }
             })
           }
-        />
+        >
+          {progressDisplayOptions.map((option) => (
+            <SelectItem
+              key={option.id}
+              value={option.id?.toString() ?? NULL_OPTION}
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectInput>
+
         <SwitchInput
           label="Show Health Bar"
           settingPath="ui.showHealthBar"

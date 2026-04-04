@@ -128,6 +128,16 @@ export const judgementCounterOptions: {
   { id: "right", label: "Right Side" },
 ] as const;
 
+export type ProgressDisplay = "bar" | "pie";
+export const progressDisplayOptions: {
+  id: ProgressDisplay | null;
+  label: string;
+}[] = [
+  { id: null, label: "Off" },
+  { id: "bar", label: "Bar" },
+  { id: "pie", label: "Pie" },
+] as const;
+
 export type Settings = {
   version: number;
   volume: number;
@@ -213,10 +223,11 @@ export type Settings = {
     showAccuracy: boolean;
     showJudgement: boolean;
     earlyLateThreshold: EarlyLateThreshold;
-    showProgressBar: boolean;
+    showProgressBar?: boolean; // Old, replaced by progressDisplay
     showHealthBar: boolean;
     receptorOpacity: number;
     judgementCounter: JudgementCounterPosition | null;
+    progressDisplay: ProgressDisplay | null;
   };
   skin: {
     colors: {
@@ -474,6 +485,7 @@ export const defaultSettings: Settings = {
     showHealthBar: true,
     receptorOpacity: 0.5,
     judgementCounter: "right",
+    progressDisplay: "bar",
   },
   skin: {
     colors: {
@@ -537,6 +549,10 @@ function fillCallback(settings: Settings) {
     ...defaultSettings.touch,
     ...settings.touch,
   };
+
+  if (settings.ui.progressDisplay === undefined) {
+    settings.ui.progressDisplay = settings.ui.showProgressBar ? "bar" : null;
+  }
 
   filledSettings.ui = {
     ...defaultSettings.ui,

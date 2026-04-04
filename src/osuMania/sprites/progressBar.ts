@@ -1,6 +1,5 @@
 import { clamp } from "@/lib/math";
 import { useSettingsStore } from "@/stores/settingsStore";
-import type * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import type { Game } from "../game";
 
@@ -9,8 +8,8 @@ export class ProgressBar {
 
   public view: Container;
 
-  public progressBar: PIXI.Graphics;
-  public progressBarContainer: PIXI.Container;
+  public progressBar: Graphics;
+  public progressBarContainer: Container;
 
   private fullWidth = 400;
 
