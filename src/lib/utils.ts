@@ -46,7 +46,13 @@ function parsePath(path: string): (string | number)[] {
 
 export function getNestedProperty(obj: any, path: string): any {
   const keys = parsePath(path);
-  return keys.reduce((acc, key) => acc[key], obj);
+  return keys.reduce((acc, key) => {
+    if (acc == null) {
+      return acc;
+    }
+
+    return acc[key];
+  }, obj);
 }
 
 export function setNestedProperty(obj: any, path: string, value: any): void {
