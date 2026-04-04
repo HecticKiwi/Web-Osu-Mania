@@ -28,7 +28,7 @@ const SourcesSettings = ({ className }: { className?: string }) => {
       <div className="space-y-4">
         <SelectInput
           label="Beatmap Provider"
-          selector={(state) => state.beatmapProvider}
+          settingPath="beatmapProvider"
           onValueChange={(newBeatmapProvider: string) =>
             setSettings((draft) => {
               draft.beatmapProvider = newBeatmapProvider as BeatmapProvider;
@@ -78,7 +78,7 @@ const SourcesSettings = ({ className }: { className?: string }) => {
 
         <SelectInput
           label="Audio Preview Provider"
-          selector={(state) => state.audioPreviewProvider}
+          settingPath="audioPreviewProvider"
           onValueChange={(newAudioPreviewProvider: string) =>
             setSettings((draft) => {
               draft.audioPreviewProvider =
@@ -123,7 +123,7 @@ const SourcesSettings = ({ className }: { className?: string }) => {
 
         <SelectInput
           label="Image Provider"
-          selector={(state) => state.beatmapCoverProvider}
+          settingPath="beatmapCoverProvider"
           onValueChange={(newBeatmapCoverProvider: string) =>
             setSettings((draft) => {
               draft.beatmapCoverProvider =
@@ -168,7 +168,7 @@ const SourcesSettings = ({ className }: { className?: string }) => {
 
         <SwitchInput
           label="Proxy Downloads"
-          selector={(state) => state.proxyBeatmapDownloads}
+          settingPath="proxyBeatmapDownloads"
           onCheckedChange={(checked) => {
             setSettings((draft) => {
               draft.proxyBeatmapDownloads = checked;

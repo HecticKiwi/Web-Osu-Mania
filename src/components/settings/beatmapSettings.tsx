@@ -38,7 +38,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
 
         <SwitchInput
           label="Enable IndexedDB Cache"
-          selector={(state) => state.storeDownloadedBeatmaps}
+          settingPath="storeDownloadedBeatmaps"
           onCheckedChange={async (checked) => {
             setSettings((draft) => {
               draft.storeDownloadedBeatmaps = checked;

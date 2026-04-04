@@ -36,7 +36,7 @@ const JudgementSet = () => {
         label="Judgement Set"
         placeholder="Select Judgement Set"
         className="mt-4"
-        selector={(settings) => settings.skin.judgementSet}
+        settingPath="skin.judgementSet"
         onValueChange={(value) => {
           setSettings((draft) => {
             draft.skin.judgementSet = value;
@@ -52,7 +52,7 @@ const JudgementSet = () => {
         ))}
       </SelectInput>
 
-      <p className="mt-4 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-4 text-sm">
         Judgement images are sourced from {selectedJudgementSet.creator} found{" "}
         <TextLink to={selectedJudgementSet.url} target="_blank">
           here

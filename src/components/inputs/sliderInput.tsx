@@ -4,33 +4,47 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, getNestedProperty, setNestedProperty } from "@/lib/utils";
 import type { Settings } from "@/stores/settingsStore";
-import { useSettingsStore } from "@/stores/settingsStore";
+import { defaultSettings, useSettingsStore } from "@/stores/settingsStore";
+import { RotateCcw } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
 
 const SliderInput = ({
   label,
-  selector,
+  settingPath,
   tooltip,
   graphic,
   inWidget,
   containerClassName,
+  hideReset,
   ...props
 }: {
   label?: string;
-  selector: (settings: Settings) => number;
+  settingPath: keyof Settings | (string & {});
   tooltip?: string | ((value: any) => string | number);
   graphic?: (value: any) => ReactNode;
   inWidget?: boolean;
   containerClassName?: string;
+  hideReset?: boolean;
 } & ComponentProps<typeof Slider>) => {
-  const value = useSettingsStore(selector);
+  const value = useSettingsStore((state) =>
+    getNestedProperty(state, settingPath),
+  );
+  const setSettings = useSettingsStore.use.setSettings();
   const [isActive, setIsActive] = useState(false);
+
+  const defaultValue = getNestedProperty(defaultSettings, settingPath);
 
   const handlePointerDown = () => setIsActive(true);
   const handlePointerUp = () => setIsActive(false);
+
+  const handleReset = () => {
+    setSettings((draft) => {
+      setNestedProperty(draft, settingPath, defaultValue);
+    });
+  };
 
   const slider = (
     <Slider
@@ -54,6 +68,17 @@ const SliderInput = ({
         {label !== undefined && (
           <div className="text-muted-foreground pr-2 text-sm font-semibold">
             {label}
+            {!hideReset && defaultValue !== value && (
+              <>
+                {" "}
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger onClick={handleReset}>
+                    <RotateCcw className="text-primary inline size-4" />
+                  </TooltipTrigger>
+                  <TooltipContent>Revert to Default</TooltipContent>
+                </Tooltip>
+              </>
+            )}
           </div>
         )}
 

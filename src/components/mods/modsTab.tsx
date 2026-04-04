@@ -24,7 +24,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Easy"
           tooltip="Larger timing windows."
-          selector={(state) => state.mods.easy}
+          settingPath="mods.easy"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.easy = checked;
@@ -40,7 +41,8 @@ const ModsTab = () => {
         <SwitchInput
           label="No Fail"
           tooltip="You can't fail, no matter what."
-          selector={(state) => state.mods.noFail}
+          settingPath="mods.noFail"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.noFail = checked;
@@ -55,6 +57,7 @@ const ModsTab = () => {
           label="Half Time"
           tooltip="0.75x speed (don't ask me why it's called half time)."
           selector={(state) => state.mods.playbackRate === 0.75}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -72,7 +75,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Hard Rock"
           tooltip="Smaller timing windows."
-          selector={(state) => state.mods.hardRock}
+          settingPath="mods.hardRock"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.hardRock = checked;
@@ -88,7 +92,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Sudden Death"
           tooltip="Miss a note and fail."
-          selector={(state) => state.mods.suddenDeath}
+          settingPath="mods.suddenDeath"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.suddenDeath = checked;
@@ -102,7 +107,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Perfect"
           tooltip="300g/300 judgements only or fail."
-          selector={(state) => state.mods.perfect}
+          settingPath="mods.perfect"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.perfect = checked;
@@ -116,7 +122,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Perfect (SS)"
           tooltip="300g judgements only or fail."
-          selector={(state) => state.mods.perfectSs}
+          settingPath="mods.perfectSs"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.perfectSs = checked;
@@ -131,6 +138,7 @@ const ModsTab = () => {
           label="Double Time"
           tooltip="1.5x speed (don't ask me why it's called double time)."
           selector={(state) => state.mods.playbackRate === 1.5}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -148,7 +156,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Autoplay"
           tooltip="Watch a perfect automated play."
-          selector={(state) => state.mods.autoplay}
+          settingPath="mods.autoplay"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.autoplay = checked;
@@ -162,7 +171,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Random"
           tooltip="Shuffle around the notes."
-          selector={(state) => state.mods.random}
+          settingPath="mods.random"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.random = checked;
@@ -176,7 +186,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Mirror"
           tooltip="Notes are flipped horizontally."
-          selector={(state) => state.mods.mirror}
+          settingPath="mods.mirror"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.mirror = checked;
@@ -190,7 +201,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Constant Speed"
           tooltip="No more scroll speed changes during a song."
-          selector={(state) => state.mods.constantSpeed}
+          settingPath="mods.constantSpeed"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.constantSpeed = checked;
@@ -200,7 +212,8 @@ const ModsTab = () => {
         <SwitchInput
           label="Hold Off"
           tooltip="All hold notes become normal notes."
-          selector={(state) => state.mods.holdOff}
+          settingPath="mods.holdOff"
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.mods.holdOff = checked;
@@ -213,7 +226,7 @@ const ModsTab = () => {
       <div className="space-y-4">
         <SliderInput
           label="Song Speed"
-          selector={(state) => state.mods.playbackRate}
+          settingPath="mods.playbackRate"
           tooltip={(playbackRate) => `${playbackRate}x`}
           onValueChange={([playbackRate]) =>
             setSettings((draft) => {
@@ -227,6 +240,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Accuracy Override"
           selector={(state) => state.mods.odOverride !== null}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -243,7 +257,7 @@ const ModsTab = () => {
             odOverride !== null ? (
               <SliderInput
                 containerClassName="w-full"
-                selector={(state) => state.mods.odOverride!}
+                settingPath="mods.odOverride"
                 tooltip={() => odOverride}
                 onValueChange={([newOdOverride]) =>
                   setSettings((draft) => {
@@ -260,6 +274,7 @@ const ModsTab = () => {
         <SwitchInput
           label="HP Drain Override"
           selector={(state) => state.mods.hpOverride !== null}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -276,7 +291,7 @@ const ModsTab = () => {
             hpOverride !== null ? (
               <SliderInput
                 containerClassName="w-full"
-                selector={(state) => state.mods.hpOverride!}
+                settingPath="mods.hpOverride"
                 tooltip={() => hpOverride}
                 onValueChange={([newHpOverride]) =>
                   setSettings((draft) => {
@@ -294,6 +309,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Fade In"
           selector={(state) => state.mods.cover?.type === "fadeIn"}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -310,7 +326,7 @@ const ModsTab = () => {
             cover?.type === "fadeIn" ? (
               <SliderInput
                 containerClassName="w-full"
-                selector={(state) => state.mods.cover!.amount}
+                settingPath="mods.cover.amount"
                 tooltip={(amount) => `${Math.round(amount * 100)}%`}
                 onValueChange={([amount]) =>
                   setSettings((draft) => {
@@ -328,6 +344,7 @@ const ModsTab = () => {
         <SwitchInput
           label="Fade Out"
           selector={(state) => state.mods.cover?.type === "fadeOut"}
+          hideReset
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               if (checked) {
@@ -344,7 +361,7 @@ const ModsTab = () => {
             cover?.type === "fadeOut" ? (
               <SliderInput
                 containerClassName="w-full"
-                selector={(state) => state.mods.cover!.amount}
+                settingPath="mods.cover.amount"
                 tooltip={(amount) => `${Math.round(amount * 100)}%`}
                 onValueChange={([amount]) =>
                   setSettings((draft) => {

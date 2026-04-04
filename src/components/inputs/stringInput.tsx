@@ -15,7 +15,7 @@ const StringInput = ({
 
   return (
     <>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 items-center">
         <div className="text-muted-foreground pr-2 text-sm font-semibold">
           {label}
         </div>

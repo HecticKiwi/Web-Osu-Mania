@@ -50,7 +50,7 @@ const SkinSettings = () => {
 
         <RadioGroupInput
           label="Note Style"
-          selector={(state) => state.style}
+          settingPath="style"
           onValueChange={(value: string) =>
             setSettings((draft) => {
               draft.style = value as SkinStyle;
@@ -90,7 +90,7 @@ const SkinSettings = () => {
           <TabsContent value="simple" className="mt-4 space-y-4">
             <SliderInput
               label="Primary Color"
-              selector={(state) => state.skin.colors.simple.hue}
+              settingPath="skin.colors.simple.hue"
               graphic={(hue) => (
                 <div
                   className="size-6 shrink-0 rounded-full"
@@ -109,7 +109,7 @@ const SkinSettings = () => {
             />
             <SwitchInput
               label="Darker Hold Notes"
-              selector={(state) => state.darkerHoldNotes}
+              settingPath="darkerHoldNotes"
               onCheckedChange={(checked) =>
                 setSettings((draft) => {
                   draft.darkerHoldNotes = checked;

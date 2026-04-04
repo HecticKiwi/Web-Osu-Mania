@@ -23,7 +23,7 @@ const VolumeSettings = ({
         <div className="space-y-4">
           <SliderInput
             label="Master"
-            selector={(state) => state.volume}
+            settingPath="volume"
             graphic={(volume) =>
               volume === 0 ? (
                 <VolumeX className="shrink-0" />
@@ -45,11 +45,12 @@ const VolumeSettings = ({
             max={1}
             step={0.01}
             inWidget={inWidget}
+            hideReset={inWidget}
           />
 
           <SliderInput
             label="Music"
-            selector={(state) => state.musicVolume}
+            settingPath="musicVolume"
             graphic={(musicVolume) =>
               musicVolume === 0 ? (
                 <VolumeX className="shrink-0" />
@@ -71,11 +72,12 @@ const VolumeSettings = ({
             max={1}
             step={0.01}
             inWidget={inWidget}
+            hideReset={inWidget}
           />
 
           <SliderInput
             label="SFX"
-            selector={(state) => state.sfxVolume}
+            settingPath="sfxVolume"
             graphic={(sfxVolume) =>
               sfxVolume === 0 ? (
                 <VolumeX className="shrink-0" />
@@ -97,13 +99,14 @@ const VolumeSettings = ({
             max={1}
             step={0.01}
             inWidget={inWidget}
+            hideReset={inWidget}
           />
 
           {!inWidget && (
             <>
               <SliderInput
                 label="Audio Offset"
-                selector={(state) => state.audioOffset}
+                settingPath="audioOffset"
                 tooltip={(audioOffset) => `${audioOffset}ms`}
                 onValueChange={([audioOffset]) =>
                   setSettings((draft) => {
@@ -131,7 +134,7 @@ const VolumeSettings = ({
 
               <SwitchInput
                 label="Ignore Beatmap Hitsounds"
-                selector={(state) => state.ignoreBeatmapHitsounds}
+                settingPath="ignoreBeatmapHitsounds"
                 onCheckedChange={(checked) =>
                   setSettings((draft) => {
                     draft.ignoreBeatmapHitsounds = checked;

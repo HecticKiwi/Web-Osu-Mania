@@ -42,7 +42,7 @@ const SettingsTab = () => {
       <div className="mt-2 space-y-3">
         <SliderInput
           label="Website Color"
-          selector={(state) => state.hue}
+          settingPath="hue"
           graphic={(hue) => (
             <div
               className="size-6 shrink-0 rounded-full"
@@ -62,7 +62,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Prefer Metadata in Original Language"
-          selector={(state) => state.preferMetadataInOriginalLanguage}
+          settingPath="preferMetadataInOriginalLanguage"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.preferMetadataInOriginalLanguage = checked;
@@ -72,7 +72,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Hide Beatmap Set Covers"
-          selector={(state) => state.hideBeatmapSetCovers}
+          settingPath="hideBeatmapSetCovers"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.hideBeatmapSetCovers = checked;
@@ -87,7 +87,7 @@ const SettingsTab = () => {
       <div className="mt-2 space-y-3">
         <SliderInput
           label="Background Dim"
-          selector={(state) => state.backgroundDim}
+          settingPath="backgroundDim"
           graphic={(backgroundDim) => (
             <div className="relative">
               <div
@@ -110,7 +110,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Background Blur"
-          selector={(state) => state.backgroundBlur}
+          settingPath="backgroundBlur"
           graphic={(backgroundBlur) => (
             <div>
               <PersonStanding
@@ -131,7 +131,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Background Video"
-          selector={(state) => state.backgroundVideo.enabled}
+          settingPath="backgroundVideo.enabled"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.backgroundVideo.enabled = checked;
@@ -145,7 +145,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Scroll Speed"
-          selector={(state) => state.scrollSpeed}
+          settingPath="scrollSpeed"
           tooltip={(scrollSpeed) =>
             `${Math.round(MAX_TIME_RANGE / scrollSpeed)}ms (speed ${scrollSpeed})`
           }
@@ -161,7 +161,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Unpause Delay"
-          selector={(state) => state.unpauseDelay}
+          settingPath="unpauseDelay"
           tooltip={(unpauseDelay) =>
             unpauseDelay === 0
               ? "No Delay"
@@ -181,7 +181,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Retry on Fail"
-          selector={(state) => state.retryOnFail}
+          settingPath="retryOnFail"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.retryOnFail = checked;
@@ -191,7 +191,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Performance Mode"
-          selector={(state) => state.performanceMode}
+          settingPath="performanceMode"
           onCheckedChange={(checked) => {
             setSettings((draft) => {
               draft.performanceMode = checked;
@@ -209,7 +209,7 @@ const SettingsTab = () => {
       <div className="mt-2 space-y-3">
         <SwitchInput
           label="Enable Touch Controls"
-          selector={(state) => state.touch.enabled}
+          settingPath="touch.enabled"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.touch.enabled = checked;
@@ -219,7 +219,7 @@ const SettingsTab = () => {
 
         <RadioGroupInput
           label="Mode"
-          selector={(state) => state.touch.mode}
+          settingPath="touch.mode"
           onValueChange={(value: TouchMode) =>
             setSettings((draft) => {
               draft.touch.mode = value;
@@ -242,7 +242,7 @@ const SettingsTab = () => {
         </RadioGroupInput>
         <SliderInput
           label="Border Opacity"
-          selector={(state) => state.touch.borderOpacity}
+          settingPath="touch.borderOpacity"
           tooltip={(borderOpacity) => {
             return `${Math.round(borderOpacity * 100)}%`;
           }}
@@ -263,7 +263,7 @@ const SettingsTab = () => {
       <div className="space-y-4">
         <SliderInput
           label="Stage Position"
-          selector={(state) => state.stagePosition}
+          settingPath="stagePosition"
           tooltip={(stagePosition) => {
             if (stagePosition === 0) {
               return "Centered";
@@ -282,7 +282,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Stage Opacity"
-          selector={(state) => state.stageOpacity}
+          settingPath="stageOpacity"
           tooltip={(stageOpacity) => {
             return `${Math.round(stageOpacity * 100)}%`;
           }}
@@ -297,7 +297,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Stage Sides Opacity"
-          selector={(state) => state.stageSidesOpacity}
+          settingPath="stageSidesOpacity"
           tooltip={(stageSidesOpacity) => {
             return `${Math.round(stageSidesOpacity * 100)}%`;
           }}
@@ -312,7 +312,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Hit Position"
-          selector={(state) => state.hitPositionOffset}
+          settingPath="hitPositionOffset"
           tooltip={(hitPositionOffset) => `${hitPositionOffset}px`}
           onValueChange={([hitPositionOffset]) =>
             setSettings((draft) => {
@@ -330,7 +330,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Note Offset"
-          selector={(state) => state.noteOffset}
+          settingPath="noteOffset"
           tooltip={(noteOffset) => `${noteOffset}px`}
           onValueChange={([noteOffset]) =>
             setSettings((draft) => {
@@ -349,7 +349,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Note Scale"
-          selector={(state) => state.noteScale}
+          settingPath="noteScale"
           tooltip={(receptorScale) => `${Math.round(receptorScale * 100)}%`}
           onValueChange={([receptorScale]) =>
             setSettings((draft) => {
@@ -367,7 +367,7 @@ const SettingsTab = () => {
 
         <SliderInput
           label="Lane Width Adjustment"
-          selector={(state) => state.laneWidthAdjustment}
+          settingPath="laneWidthAdjustment"
           tooltip={(laneWidthAdjustment) =>
             `${Math.round(laneWidthAdjustment)}px`
           }
@@ -382,7 +382,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Lane Spacing"
-          selector={(state) => state.laneSpacing}
+          settingPath="laneSpacing"
           tooltip={(laneSpacing) => `${Math.round(laneSpacing)}px`}
           onValueChange={([laneSpacing]) =>
             setSettings((draft) => {
@@ -395,7 +395,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Receptor Opacity"
-          selector={(state) => state.ui.receptorOpacity}
+          settingPath="ui.receptorOpacity"
           tooltip={(receptorOpacity) => `${Math.round(receptorOpacity * 100)}%`}
           onValueChange={([receptorOpacity]) =>
             setSettings((draft) => {
@@ -408,7 +408,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Upscroll (DDR Style)"
-          selector={(state) => state.upscroll}
+          settingPath="upscroll"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.upscroll = checked;
@@ -417,7 +417,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Score"
-          selector={(state) => state.ui.showScore}
+          settingPath="ui.showScore"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showScore = checked;
@@ -426,7 +426,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Combo"
-          selector={(state) => state.ui.showCombo}
+          settingPath="ui.showCombo"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showCombo = checked;
@@ -435,7 +435,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Accuracy"
-          selector={(state) => state.ui.showAccuracy}
+          settingPath="ui.showAccuracy"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showAccuracy = checked;
@@ -444,7 +444,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Judgement"
-          selector={(state) => state.ui.showJudgement}
+          settingPath="ui.showJudgement"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showJudgement = checked;
@@ -458,7 +458,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show 300g Judgement"
-          selector={(state) => state.show300g}
+          settingPath="show300g"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.show300g = checked;
@@ -472,7 +472,7 @@ const SettingsTab = () => {
 
         <SelectInput
           label="Early/Late Indicator"
-          selector={(settings) => settings.ui.earlyLateThreshold.toString()}
+          settingPath="ui.earlyLateThreshold"
           onValueChange={(value: string) =>
             setSettings((draft) => {
               draft.ui.earlyLateThreshold = Number(value) as EarlyLateThreshold;
@@ -492,9 +492,7 @@ const SettingsTab = () => {
 
         <SelectInput
           label="Judgement Counter"
-          selector={(state) =>
-            state.ui.judgementCounter?.toString() ?? NULL_OPTION
-          }
+          settingPath="ui.judgementCounter"
           onValueChange={(
             value: JudgementCounterPosition | typeof NULL_OPTION,
           ) =>
@@ -519,7 +517,7 @@ const SettingsTab = () => {
 
         <SwitchInput
           label="Show Progress Bar"
-          selector={(state) => state.ui.showProgressBar}
+          settingPath="ui.showProgressBar"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showProgressBar = checked;
@@ -528,7 +526,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Health Bar"
-          selector={(state) => state.ui.showHealthBar}
+          settingPath="ui.showHealthBar"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.ui.showHealthBar = checked;
@@ -537,7 +535,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show Error Bar"
-          selector={(state) => state.showErrorBar}
+          settingPath="showErrorBar"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.showErrorBar = checked;
@@ -546,7 +544,7 @@ const SettingsTab = () => {
         />
         <SliderInput
           label="Error Bar Scale"
-          selector={(state) => state.errorBarScale}
+          settingPath="errorBarScale"
           tooltip={(errorBarScale) => `${errorBarScale}x`}
           onValueChange={([errorBarScale]) =>
             setSettings((draft) => {
@@ -559,7 +557,7 @@ const SettingsTab = () => {
         />
         <SwitchInput
           label="Show FPS Counter"
-          selector={(state) => state.showFpsCounter}
+          settingPath="showFpsCounter"
           onCheckedChange={(checked) =>
             setSettings((draft) => {
               draft.showFpsCounter = checked;
