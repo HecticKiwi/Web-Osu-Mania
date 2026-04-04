@@ -71,9 +71,9 @@ export const Route = createFileRoute("/api/getBeatmaps")({
         }
 
         const blockedUntil = env.OSU_API.get("blocked_until");
-        if (blockedUntil && Date.now() < Number(blockedUntil)) {
+        if (blockedUntil && Date.now() / 1000 < Number(blockedUntil)) {
           const secondsLeft = Math.ceil(
-            (Number(blockedUntil) - Date.now()) / 1000,
+            Number(blockedUntil) - Date.now() / 1000,
           );
           const message = getRateLimitMessage();
 
@@ -113,8 +113,9 @@ export const Route = createFileRoute("/api/getBeatmaps")({
 
           if (response.status === 429) {
             // Block for 2 minutes as default
-            const expiration =
-              Date.now() + (Number(retryAfter) * 1000 || 120000);
+            const expiration = Math.ceil(
+              Date.now() / 1000 + (Number(retryAfter) || 120),
+            );
 
             await env.OSU_API.put("blocked_until", expiration.toString(), {
               expiration,
