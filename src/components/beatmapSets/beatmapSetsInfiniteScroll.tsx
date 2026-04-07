@@ -21,6 +21,7 @@ import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
 import TextLink from "../textLink";
 import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
 
 const BeatmapSetsInfiniteScroll = ({
   initialData,
@@ -108,7 +109,28 @@ const BeatmapSetsInfiniteScroll = ({
         <p className="text-muted-foreground text-center">
           Failed to fetch beatmaps.
         </p>
-        <p className="text-muted-foreground text-center">({error.message})</p>
+        <p className="text-center">({error.message})</p>
+
+        {error.message.includes("429") && (
+          <Card className="mx-auto mt-6 max-w-xl">
+            <CardContent className="text-muted-foreground space-y-4 pt-6 text-sm">
+              <p>
+                This can occur when too many users are on Web osu!mania. You can
+                still play beatmaps in the Stored category (if you have enabled
+                the IndexedDB Cache) as well as those saved in your collections.
+                Otherwise, please be patient and come back in a few hours.
+              </p>
+              <p>
+                You may also play on Sling's mirror site (
+                <TextLink to={"https://wom.slingexe.com/"} target="_blank">
+                  wom.slingexe.com
+                </TextLink>
+                ) . Transfer your data over using the backup and restore feature
+                in the settings.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
