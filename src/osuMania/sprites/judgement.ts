@@ -59,9 +59,13 @@ export class Judgement {
       this.game.app.screen.width / 2 + this.game.stagePositionOffset;
 
     if (this.game.settings.upscroll) {
-      this.view.y = (this.game.app.screen.height * 2) / 3 - 50;
+      this.view.y =
+        this.game.app.screen.height * this.game.settings.ui.stageHudYPosition -
+        50;
     } else {
-      this.view.y = this.game.app.screen.height / 3;
+      this.view.y =
+        this.game.app.screen.height *
+        (1 - this.game.settings.ui.stageHudYPosition);
     }
   }
 

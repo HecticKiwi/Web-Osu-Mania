@@ -313,6 +313,26 @@ const SettingsTab = () => {
           step={0.01}
         />
         <SliderInput
+          label="Stage HUD Vertical Position"
+          settingPath="ui.stageHudYPosition"
+          tooltip={(stageHudYPosition) =>
+            `${Math.round(stageHudYPosition * 100)}%`
+          }
+          onValueChange={([stageHudYPosition]) =>
+            setSettings((draft) => {
+              draft.ui.stageHudYPosition = stageHudYPosition;
+            })
+          }
+          min={0.3}
+          max={0.9}
+          step={0.01}
+        />
+
+        <p className="text-muted-foreground text-sm">
+          The Stage HUD includes the judgement indicator and combo counter.
+        </p>
+
+        <SliderInput
           label="Hit Position"
           settingPath="hitPositionOffset"
           tooltip={(hitPositionOffset) => `${hitPositionOffset}px`}
@@ -408,6 +428,7 @@ const SettingsTab = () => {
           max={1}
           step={0.01}
         />
+
         <SwitchInput
           label="Upscroll (DDR Style)"
           settingPath="upscroll"

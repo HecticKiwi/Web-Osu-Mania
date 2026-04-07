@@ -373,9 +373,12 @@ export class Game {
       this.comboText.x = this.app.screen.width / 2 + this.stagePositionOffset;
 
       if (this.settings.upscroll) {
-        this.comboText.y = (this.app.screen.height * 2) / 3;
+        this.comboText.y =
+          this.app.screen.height * this.settings.ui.stageHudYPosition;
       } else {
-        this.comboText.y = this.app.screen.height / 3 + 50;
+        this.comboText.y =
+          this.app.screen.height * (1 - this.settings.ui.stageHudYPosition) +
+          50;
       }
     }
 

@@ -228,6 +228,7 @@ export type Settings = {
     receptorOpacity: number;
     judgementCounter: JudgementCounterPosition | null;
     progressDisplay: ProgressDisplay | null;
+    stageHudYPosition: number;
   };
   skin: {
     colors: {
@@ -486,6 +487,7 @@ export const defaultSettings: Settings = {
     receptorOpacity: 0.5,
     judgementCounter: "right",
     progressDisplay: "bar",
+    stageHudYPosition: 0.66,
   },
   skin: {
     colors: {
