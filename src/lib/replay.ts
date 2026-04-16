@@ -32,6 +32,10 @@ export type EncodedMods = {
     type: CoverType;
     amount: number;
   } | null;
+  percy: {
+    cutoffDuration: number;
+    fadeDuration: number;
+  } | null;
 };
 
 export function encodeMods(mods: Settings["mods"]): EncodedMods {
@@ -50,6 +54,7 @@ export function encodeMods(mods: Settings["mods"]): EncodedMods {
     hpOverride: mods.hpOverride,
     odOverride: mods.odOverride,
     cover: mods.cover,
+    percy: mods.percy,
   };
 }
 
@@ -59,6 +64,7 @@ export function decodeMods(data: EncodedMods): Settings["mods"] {
     hpOverride: data.hpOverride,
     odOverride: data.odOverride,
     cover: data.cover,
+    percy: data.percy,
   };
 
   for (const modName in ModBits) {

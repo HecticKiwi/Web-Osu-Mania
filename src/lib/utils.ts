@@ -198,10 +198,11 @@ export function getModStrings(
       mods.playbackRate !== 0.75 &&
       mods.playbackRate !== 1.5 &&
       `Song Speed: ${mods.playbackRate}x`,
-    mods.odOverride !== null && `Accuracy Override: ${mods.odOverride}`,
-    mods.hpOverride !== null && `Health Drain Override: ${mods.hpOverride}`,
-    mods.cover?.type === "fadeIn" && `Fade In: (${mods.cover.amount * 100}%)`,
-    mods.cover?.type === "fadeOut" && `Fade Out: (${mods.cover.amount * 100}%)`,
+    mods.odOverride !== null && `Accuracy Override (${mods.odOverride})`,
+    mods.hpOverride !== null && `Health Drain Override (${mods.hpOverride})`,
+    mods.cover?.type === "fadeIn" && `Fade In (${mods.cover.amount * 100}%)`,
+    mods.cover?.type === "fadeOut" && `Fade Out (${mods.cover.amount * 100}%)`,
+    mods.percy && `Percy (${mods.percy.cutoffDuration}ms)`,
   ].filter(Boolean) as string[];
 
   return modStrings;
@@ -238,7 +239,8 @@ export function downloadUrl(url: string, filename: string) {
 }
 
 export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
-  const { playbackRate, hpOverride, odOverride, cover, ...booleanMods } = mods;
+  const { playbackRate, hpOverride, odOverride, cover, percy, ...booleanMods } =
+    mods;
 
   const compacted: Partial<Settings["mods"]> = {};
 

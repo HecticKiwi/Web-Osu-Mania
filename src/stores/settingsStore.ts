@@ -195,7 +195,7 @@ export type Settings = {
   /**
    * When adding mods, don't forget to
    * 1. Add the mod strings to getModStrings()
-   * 2. Make necessary changes to replay.ts so the mod is stored in replays properly
+   * 2. Make necessary changes to replay.ts and utils.ts so the mod is stored in replays properly
    */
   mods: {
     autoplay: boolean;
@@ -215,6 +215,10 @@ export type Settings = {
     cover: {
       amount: number;
       type: CoverType;
+    } | null;
+    percy: {
+      cutoffDuration: number;
+      fadeDuration: number; // Currently not implemented
     } | null;
   };
   ui: {
@@ -475,6 +479,7 @@ export const defaultSettings: Settings = {
     hpOverride: null,
     odOverride: null,
     cover: null,
+    percy: null,
   },
   ui: {
     showScore: true,
