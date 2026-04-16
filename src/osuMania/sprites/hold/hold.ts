@@ -20,7 +20,10 @@ export abstract class Hold {
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
     this.data = holdData;
-    this.height = this.game.getHitObjectOffset(holdData.time, holdData.endTime);
+    this.height = this.game.getHitObjectOffset(
+      holdData.time,
+      this.getVisualEndTime(),
+    );
   }
 
   public update() {
@@ -29,7 +32,10 @@ export abstract class Hold {
     this.view.y =
       this.game.hitPosition +
       this.game.settings.noteOffset -
-      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.endTime);
+      this.game.getHitObjectOffset(
+        this.game.timeElapsed,
+        this.getVisualEndTime(),
+      );
 
     const column = this.game.columns[this.data.column];
     if (column[0] !== this) {
@@ -37,7 +43,7 @@ export abstract class Hold {
       if (this.game.timeElapsed < this.data.time) {
         this.height = this.game.getHitObjectOffset(
           this.data.time,
-          this.data.endTime,
+          this.getVisualEndTime(),
         );
       }
 
@@ -84,7 +90,7 @@ export abstract class Hold {
         this.height = Math.max(
           this.game.getHitObjectOffset(
             this.game.timeElapsed,
-            this.data.endTime,
+            this.getVisualEndTime(),
           ),
           0,
         );
@@ -168,5 +174,16 @@ export abstract class Hold {
     if (this.head) {
       this.head.y = this.height;
     }
+  }
+
+  private getVisualEndTime() {
+    if (this.game.mods.percy) {
+      return Math.max(
+        this.data.endTime - this.game.mods.percy.cutoffDuration,
+        this.data.time,
+      );
+    }
+
+    return Math.max(this.data.endTime, this.data.time);
   }
 }

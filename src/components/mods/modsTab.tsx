@@ -12,6 +12,7 @@ const ModsTab = () => {
   const hpOverride = useSettingsStore((state) => state.mods.hpOverride);
   const odOverride = useSettingsStore((state) => state.mods.odOverride);
   const cover = useSettingsStore((state) => state.mods.cover);
+  const percy = useSettingsStore((state) => state.mods.percy);
 
   return (
     <>
@@ -375,6 +376,46 @@ const ModsTab = () => {
             ) : null
           }
         />
+
+        <SwitchInput
+          label="Percy"
+          selector={(state) => !!state.mods.percy}
+          hideReset
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.percy = {
+                  cutoffDuration: 20,
+                  fadeDuration: 0,
+                };
+              } else {
+                draft.mods.percy = null;
+              }
+            })
+          }
+          extraInput={
+            percy ? (
+              <SliderInput
+                containerClassName="w-full"
+                settingPath="mods.percy.cutoffDuration"
+                tooltip={(cutoffDuration) => `${cutoffDuration}ms`}
+                onValueChange={([cutoffDuration]) =>
+                  setSettings((draft) => {
+                    draft.mods.percy!.cutoffDuration = cutoffDuration;
+                  })
+                }
+                min={0}
+                max={150}
+                step={1}
+              />
+            ) : null
+          }
+        />
+
+        <p className="text-muted-foreground text-sm">
+          The Percy mod reduces the visual length of hold notes, which may make
+          beatmaps with dense hold notes easier to read.
+        </p>
       </div>
 
       <Button
