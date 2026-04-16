@@ -147,6 +147,12 @@ export abstract class Hold {
     if (!this.broken) {
       this.broken = true;
 
+      this.game.scoreSystem.combo = 0;
+      if (this.game.comboText) {
+        this.game.comboText.text = 0;
+        this.game.comboText.visible = false;
+      }
+
       gsap.to(this.view, {
         pixi: {
           brightness: 0.5,
