@@ -77,7 +77,7 @@ export class Game {
   public settings: Settings;
   public mods: Settings["mods"];
   public difficulty: Difficulty;
-  public columnKeybinds: (string | null)[];
+  public columnKeybinds: [string | null, string | null][];
   public hitWindows: HitWindows;
   public laneColors: readonly ColumnColor[];
   public laneArrowDirections: readonly number[]; // Only used for the arrow style

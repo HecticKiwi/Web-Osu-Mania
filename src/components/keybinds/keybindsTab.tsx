@@ -144,12 +144,21 @@ const KeybindsTab = () => {
                   Key {j + 1}
                 </div>
 
-                <KeybindButton
-                  keybind={key}
-                  keybindPath={`keybinds.keyModes[${i}][${j}]`}
-                  selectedKeybindPath={selectedKeybindPath}
-                  setSelectedKeybindPath={setSelectedKeybindPath}
-                />
+                <div className="grid grid-cols-2 gap-1">
+                  <KeybindButton
+                    keybind={key[0]}
+                    keybindPath={`keybinds.keyModes[${i}][${j}][0]`}
+                    selectedKeybindPath={selectedKeybindPath}
+                    setSelectedKeybindPath={setSelectedKeybindPath}
+                  />
+
+                  <KeybindButton
+                    keybind={key[1]}
+                    keybindPath={`keybinds.keyModes[${i}][${j}][1]`}
+                    selectedKeybindPath={selectedKeybindPath}
+                    setSelectedKeybindPath={setSelectedKeybindPath}
+                  />
+                </div>
               </div>
             ))}
           </div>

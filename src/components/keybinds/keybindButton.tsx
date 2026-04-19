@@ -32,7 +32,10 @@ const KeybindButton = ({
     >
       <ContextMenuTrigger
         asChild
-        className={cn("h-8", keybind === null && "italic")}
+        className={cn(
+          "h-8",
+          keybind === null && "text-muted-foreground italic",
+        )}
       >
         <Button
           size={"sm"}

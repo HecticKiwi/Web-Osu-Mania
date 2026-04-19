@@ -3,6 +3,7 @@ import type { Game } from "../game";
 export class InputSystem {
   private game: Game;
   private keybindsMap: Map<string, number>;
+  private columnPressCounts: number[] = [];
 
   public gamepadState: boolean[] = [];
 
@@ -16,6 +17,8 @@ export class InputSystem {
     this.game = game;
     this.keybindsMap = new Map();
     this.initKeybindsMap();
+
+    this.columnPressCounts = new Array(this.game.difficulty.keyCount).fill(0);
 
     this.tappedColumns = new Array(this.game.difficulty.keyCount).fill(false);
     this.pressedColumns = new Array(this.game.difficulty.keyCount).fill(false);
@@ -36,9 +39,12 @@ export class InputSystem {
   private initKeybindsMap() {
     const keybinds =
       this.game.settings.keybinds.keyModes[this.game.difficulty.keyCount - 1];
-    keybinds.forEach((key, index) => {
-      if (key) {
-        this.keybindsMap.set(key, index);
+    keybinds.forEach(([keybind1, keybind2], index) => {
+      if (keybind1) {
+        this.keybindsMap.set(keybind1, index);
+      }
+      if (keybind2) {
+        this.keybindsMap.set(keybind2, index);
       }
     });
   }
@@ -112,9 +118,15 @@ export class InputSystem {
       }
 
       if (button.pressed && !this.gamepadState[i]) {
-        this.hit(column);
+        this.columnPressCounts[column]++;
+        if (this.columnPressCounts[column] === 1) {
+          this.hit(column);
+        }
       } else if (!button.pressed && this.gamepadState[i]) {
-        this.release(column);
+        this.columnPressCounts[column]--;
+        if (this.columnPressCounts[column] === 0) {
+          this.release(column);
+        }
       }
     });
 
@@ -143,7 +155,10 @@ export class InputSystem {
       return;
     }
 
-    this.hit(column);
+    this.columnPressCounts[column]++;
+    if (this.columnPressCounts[column] === 1) {
+      this.hit(column);
+    }
   }
 
   private handleKeyUp(event: KeyboardEvent) {
@@ -156,7 +171,10 @@ export class InputSystem {
       return;
     }
 
-    this.release(column);
+    this.columnPressCounts[column]--;
+    if (this.columnPressCounts[column] === 0) {
+      this.release(column);
+    }
   }
 
   public anyColumnTapped() {
