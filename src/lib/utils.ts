@@ -1,5 +1,6 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import type { JudgementSetId, Settings } from "@/stores/settingsStore";
+import { accuracyChallengeModeOptions } from "@/stores/settingsStore";
 import type { Grade, Judgement, Results } from "@/types";
 import type { ClassValue } from "clsx";
 import { clsx } from "clsx";
@@ -189,6 +190,8 @@ export function getModStrings(
     mods.perfect && "Perfect",
     mods.perfectSs && "Perfect (SS)",
     mods.playbackRate === 1.5 && "Double Time",
+    mods.accuracyChallenge &&
+      `Accuracy Challenge (${mods.accuracyChallenge.minAccuracy * 100}%, ${accuracyChallengeModeOptions.find((option) => option.id === mods.accuracyChallenge!.mode)?.label})`,
     mods.autoplay && "Autoplay",
     mods.random && "Random",
     mods.mirror && "Mirror",
@@ -239,8 +242,15 @@ export function downloadUrl(url: string, filename: string) {
 }
 
 export function compactMods(mods: Settings["mods"]): Partial<Settings["mods"]> {
-  const { playbackRate, hpOverride, odOverride, cover, percy, ...booleanMods } =
-    mods;
+  const {
+    playbackRate,
+    hpOverride,
+    odOverride,
+    cover,
+    percy,
+    accuracyChallenge,
+    ...booleanMods
+  } = mods;
 
   const compacted: Partial<Settings["mods"]> = {};
 

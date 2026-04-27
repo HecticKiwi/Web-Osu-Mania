@@ -119,6 +119,14 @@ export class ScoreSystem {
 
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
 
+    if (
+      this.game.healthSystem &&
+      this.game.mods.accuracyChallenge?.mode === "standard" &&
+      this.accuracy < this.game.mods.accuracyChallenge.minAccuracy
+    ) {
+      this.game.healthSystem.health = MIN_HEALTH; // Instant fail
+    }
+
     if (this.game.accuracyText) {
       this.game.accuracyText.text = `${(this.accuracy * 100).toFixed(2)}%`;
     }
