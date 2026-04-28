@@ -1,8 +1,14 @@
-import { useSettingsStore } from "@/stores/settingsStore";
+import type { AccuracyChallengeMode } from "@/stores/settingsStore";
+import {
+  accuracyChallengeModeOptions,
+  useSettingsStore,
+} from "@/stores/settingsStore";
 import { toast } from "sonner";
+import SelectInput from "../inputs/selectInput";
 import SliderInput from "../inputs/sliderInput";
 import SwitchInput from "../inputs/switchInput";
 import { Button } from "../ui/button";
+import { SelectItem } from "../ui/select";
 import PpWarning from "./ppWarning";
 import ScoreMultiplier from "./scoreMultiplier";
 
@@ -13,6 +19,9 @@ const ModsTab = () => {
   const odOverride = useSettingsStore((state) => state.mods.odOverride);
   const cover = useSettingsStore((state) => state.mods.cover);
   const percy = useSettingsStore((state) => state.mods.percy);
+  const accuracyChallenge = useSettingsStore(
+    (state) => state.mods.accuracyChallenge,
+  );
 
   return (
     <>
@@ -33,6 +42,7 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.hardRock = false;
+                draft.mods.accuracyChallenge = null;
                 draft.mods.hpOverride = null;
                 draft.mods.odOverride = null;
               }
@@ -84,6 +94,7 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.easy = false;
+                draft.mods.accuracyChallenge = null;
                 draft.mods.hpOverride = null;
                 draft.mods.odOverride = null;
               }
@@ -116,6 +127,7 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.perfectSs = false;
+                draft.mods.accuracyChallenge = null;
               }
             })
           }
@@ -131,6 +143,7 @@ const ModsTab = () => {
 
               if (checked) {
                 draft.mods.perfect = false;
+                draft.mods.accuracyChallenge = null;
               }
             })
           }
@@ -150,6 +163,67 @@ const ModsTab = () => {
             })
           }
         />
+        <SwitchInput
+          label="Accuracy Challenge"
+          tooltip="Fail if your accuracy drops too low."
+          selector={(state) => !!state.mods.accuracyChallenge}
+          hideReset
+          onCheckedChange={(checked) =>
+            setSettings((draft) => {
+              if (checked) {
+                draft.mods.accuracyChallenge = {
+                  minAccuracy: 0.9,
+                  mode: "maxAchievable",
+                };
+
+                draft.mods.easy = false;
+                draft.mods.noFail = false;
+                draft.mods.perfect = false;
+                draft.mods.perfectSs = false;
+              } else {
+                draft.mods.accuracyChallenge = null;
+              }
+            })
+          }
+        />
+        {accuracyChallenge && (
+          <>
+            <SliderInput
+              isSubInput
+              label="Minimum Accuracy"
+              settingPath="mods.accuracyChallenge.minAccuracy"
+              tooltip={(minAccuracy) => {
+                return `${Math.round(minAccuracy * 100)}%`;
+              }}
+              onValueChange={([minAccuracy]) =>
+                setSettings((draft) => {
+                  draft.mods.accuracyChallenge!.minAccuracy = minAccuracy;
+                })
+              }
+              min={0.6}
+              max={0.99}
+              step={0.01}
+              hideReset
+            />
+
+            <SelectInput
+              isSubInput
+              label="Mode"
+              selector={(state) => state.mods.accuracyChallenge!.mode}
+              onValueChange={(value: AccuracyChallengeMode) =>
+                setSettings((draft) => {
+                  draft.mods.accuracyChallenge!.mode = value;
+                })
+              }
+            >
+              {accuracyChallengeModeOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectInput>
+          </>
+        )}
       </div>
 
       <h3 className="mt-6 mb-2 text-lg font-semibold">Special</h3>
