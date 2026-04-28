@@ -63,7 +63,7 @@
     "immer": "^10.1.1",
     "input-otp": "^1.2.4",
     "jszip": "^3.10.1",
-    "lucide-react": "^0.563.0",
+    "lucide-react": "^1.11.0",
     "modern-screenshot": "^4.6.0",
     "pixi-filters": "^6.0.0",
     "pixi.js": "^8.6.6",

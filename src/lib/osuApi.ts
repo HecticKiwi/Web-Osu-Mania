@@ -39,6 +39,7 @@ export type Beatmap = {
   total_length: number;
   user_id: number;
   version: string;
+  bpm: number;
 
   cs: number; // Key count
   accuracy: number; // OD

@@ -74,6 +74,7 @@ export function trimBeatmapSet(beatmapSet: BeatmapSet): BeatmapSet {
       total_length: beatmap.total_length,
       user_id: beatmap.user_id,
       version: beatmap.version,
+      bpm: beatmap.bpm,
       cs: beatmap.cs,
       accuracy: beatmap.accuracy,
       drain: beatmap.drain,
