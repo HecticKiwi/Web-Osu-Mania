@@ -8,29 +8,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { idb } from "@/lib/idb";
 import { cn } from "@/lib/utils";
-import { useHighScoresStore } from "@/stores/highScoresStore";
+import { useBeatmapSetCacheStore } from "@/stores/beatmapSetCacheStore";
+import { useStoredBeatmapSetsStore } from "@/stores/storedBeatmapSetsStore";
+import { filesize } from "filesize";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-const ClearHighScoresButton = ({ className }: { className?: string }) => {
+const ClearCacheButton = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const resetHighScores = useHighScoresStore.use.resetHighScores();
+  const idbUsage = useBeatmapSetCacheStore.use.idbUsage();
+  const clearIdbCache = useBeatmapSetCacheStore.use.clearIdbCache();
+  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
+  const resetStoredBeatmapSets =
+    useStoredBeatmapSetsStore.use.resetStoredBeatmapSets();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="sm" className={cn(className)}>
-          Clear High Scores
+        <Button
+          variant="destructive"
+          size="sm"
+          className={cn(className)}
+          disabled={!idbUsage}
+        >
+          Clear Cache ({storedBeatmapSets.length} stored, {filesize(idbUsage)})
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Are you sure you want to clear the high scores?
+            Are you sure you want to clear the IndexedDB Cache?
           </DialogTitle>
           <DialogDescription>This action cannot be undone.</DialogDescription>
         </DialogHeader>
@@ -41,11 +51,10 @@ const ClearHighScoresButton = ({ className }: { className?: string }) => {
           <Button
             type="submit"
             variant={"destructive"}
-            onClick={async () => {
-              await idb.clearReplays();
-              resetHighScores();
-
-              toast("High scores have been cleared.");
+            onClick={() => {
+              clearIdbCache();
+              resetStoredBeatmapSets();
+              toast("Cache has been cleared.");
               setIsOpen(false);
             }}
           >
@@ -57,4 +66,4 @@ const ClearHighScoresButton = ({ className }: { className?: string }) => {
   );
 };
 
-export default ClearHighScoresButton;
+export default ClearCacheButton;
