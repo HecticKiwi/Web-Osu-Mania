@@ -56,6 +56,9 @@ Disallow: /
 User-agent: meta-externalagent
 Disallow: /
 
+User-agent: meta-webindexer
+Disallow: /
+
 # END Cloudflare Managed Content
 
 User-agent: *
