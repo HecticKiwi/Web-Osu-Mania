@@ -17,6 +17,7 @@ const SliderInput = ({
   tooltip,
   graphic,
   inWidget,
+  isSubInput,
   containerClassName,
   hideReset,
   ...props
@@ -26,6 +27,7 @@ const SliderInput = ({
   tooltip?: string | ((value: any) => string | number);
   graphic?: (value: any) => ReactNode;
   inWidget?: boolean;
+  isSubInput?: boolean;
   containerClassName?: string;
   hideReset?: boolean;
 } & ComponentProps<typeof Slider>) => {
@@ -67,7 +69,10 @@ const SliderInput = ({
       >
         {label !== undefined && (
           <div className="text-muted-foreground pr-2 text-sm font-semibold">
-            {label}
+            {isSubInput && (
+              <span className="text-muted-foreground/50 mr-2">└─</span>
+            )}
+            <span>{label}</span>
             {!hideReset && defaultValue !== value && (
               <>
                 {" "}

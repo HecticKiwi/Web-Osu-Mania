@@ -972,6 +972,14 @@ export class Game {
   }
 
   private async finish() {
+    if (
+      this.mods.accuracyChallenge?.mode === "maxAchievable" &&
+      this.scoreSystem.accuracy < this.mods.accuracyChallenge.minAccuracy
+    ) {
+      this.fail();
+      return;
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     this.scoreSystem.score = Math.round(this.scoreSystem.score);

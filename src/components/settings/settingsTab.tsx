@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
-import { toast } from "sonner";
 import type {
   EarlyLateThreshold,
   JudgementCounterPosition,
@@ -29,6 +27,7 @@ import BeatmapSettings from "./beatmapSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
 import HideBeatmapSetCoverWarning from "./hideBeatmapSetCoverWarning";
 import ReplaySettings from "./replaySettings";
+import ResetSettingsButton from "./resetSettingsButton";
 import SkinSettings from "./skinSettings";
 import SourcesSettings from "./sourcesSettings";
 import UnpauseDelayWarning from "./unpauseDelayWarning";
@@ -615,19 +614,9 @@ const SettingsTab = () => {
 
       <Separator className="my-8" />
 
-      <ClearHighScoresButton />
+      <ClearHighScoresButton className="w-full" />
 
-      <Button
-        className="mt-4 w-full"
-        variant={"destructive"}
-        size={"sm"}
-        onClick={() => {
-          resetSettings();
-          toast("Settings have been reset.");
-        }}
-      >
-        Reset Settings
-      </Button>
+      <ResetSettingsButton className="mt-4 w-full" />
     </>
   );
 };

@@ -22,6 +22,7 @@ const SelectInput = ({
   settingPath,
   selector,
   placeholder,
+  isSubInput,
   className,
   children,
   ...props
@@ -30,6 +31,7 @@ const SelectInput = ({
   settingPath?: keyof Settings | (string & {});
   selector?: (settings: Settings) => string;
   placeholder?: string;
+  isSubInput?: boolean;
   className?: string;
   children: React.ReactNode;
 } & ComponentProps<typeof Select>) => {
@@ -63,7 +65,10 @@ const SelectInput = ({
   return (
     <div className={cn("grid grid-cols-2 items-center", className)}>
       <div className="text-muted-foreground pr-2 text-sm font-semibold">
-        {label}
+        {isSubInput && (
+          <span className="text-muted-foreground/50 mr-2">└─</span>
+        )}
+        <span>{label}</span>
         {showReset &&
           defaultValue !== undefined &&
           currentValueForReset !== undefined &&

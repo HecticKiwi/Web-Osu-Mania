@@ -1,5 +1,5 @@
 import type { ReplayData } from "@/osuMania/systems/replayRecorder";
-import type { CoverType, Settings } from "@/stores/settingsStore";
+import type { Settings } from "@/stores/settingsStore";
 import { defaultSettings } from "@/stores/settingsStore";
 import type { PlayResults } from "@/types";
 import { compressSync } from "fflate";
@@ -25,17 +25,12 @@ type BooleanMod = keyof typeof ModBits;
 
 export type EncodedMods = {
   bits: number;
-  rate: number;
-  hpOverride: number | null;
-  odOverride: number | null;
-  cover: {
-    type: CoverType;
-    amount: number;
-  } | null;
-  percy: {
-    cutoffDuration: number;
-    fadeDuration: number;
-  } | null;
+  rate: Settings["mods"]["playbackRate"];
+  hpOverride: Settings["mods"]["hpOverride"];
+  odOverride: Settings["mods"]["odOverride"];
+  accuracyChallenge: Settings["mods"]["accuracyChallenge"];
+  cover: Settings["mods"]["cover"];
+  percy: Settings["mods"]["percy"];
 };
 
 export function encodeMods(mods: Settings["mods"]): EncodedMods {
@@ -53,6 +48,7 @@ export function encodeMods(mods: Settings["mods"]): EncodedMods {
     rate: mods.playbackRate,
     hpOverride: mods.hpOverride,
     odOverride: mods.odOverride,
+    accuracyChallenge: mods.accuracyChallenge,
     cover: mods.cover,
     percy: mods.percy,
   };
@@ -63,6 +59,7 @@ export function decodeMods(data: EncodedMods): Settings["mods"] {
     playbackRate: data.rate ?? 1,
     hpOverride: data.hpOverride,
     odOverride: data.odOverride,
+    accuracyChallenge: data.accuracyChallenge,
     cover: data.cover,
     percy: data.percy,
   };

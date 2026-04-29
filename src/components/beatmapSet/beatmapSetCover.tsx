@@ -1,5 +1,6 @@
 import type { BeatmapSet, Status } from "@/lib/osuApi";
 import { cn, secondsToMMSS } from "@/lib/utils";
+import { Clock, Metronome } from "lucide-react";
 import {
   BEATMAP_COVER_PROVIDERS,
   useSettingsStore,
@@ -82,15 +83,27 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
         <div className="mt-0.5 w-full truncate text-xl" title={title}>
           {title}
         </div>
-        <div className="flex w-full items-end justify-between gap-8">
-          <span className="text-primary truncate">by {artist}</span>
-          <span className="text-muted-foreground text-sm">
-            {secondsToMMSS(
-              Math.max(
-                ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
-              ),
-            )}
+        <div className="flex w-full items-end justify-between gap-1">
+          <span className="text-primary truncate text-sm" title={artist}>
+            by {artist}
           </span>
+
+          <div className="flex gap-2">
+            {beatmapSet.beatmaps[0].bpm != null && (
+              <span className="text-muted-foreground flex items-center gap-0.5 text-sm">
+                <Metronome className="size-5" />
+                {Math.max(...beatmapSet.beatmaps.map((beatmap) => beatmap.bpm))}
+              </span>
+            )}
+            <span className="text-muted-foreground flex items-center gap-0.5 text-sm">
+              <Clock className="size-5" />
+              {secondsToMMSS(
+                Math.max(
+                  ...beatmapSet.beatmaps.map((beatmap) => beatmap.total_length),
+                ),
+              )}
+            </span>
+          </div>
         </div>
       </div>
     </>

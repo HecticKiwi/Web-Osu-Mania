@@ -1,13 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { filesize } from "filesize";
-import { HardDrive, Loader2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { HardDrive } from "lucide-react";
 import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { useStoredBeatmapSetsStore } from "../../stores/storedBeatmapSetsStore";
 import SwitchInput from "../inputs/switchInput";
 import BeatmapSetUpload from "./beatmapSetUpload";
+import ClearCacheButton from "./clearCacheButton";
 
 const BeatmapSettings = ({ className }: { className?: string }) => {
   const setSettings = useSettingsStore.use.setSettings();
@@ -58,28 +56,7 @@ const BeatmapSettings = ({ className }: { className?: string }) => {
           Stored category.
         </p>
 
-        <Button
-          className={cn("mt-8 w-full", className)}
-          size={"sm"}
-          onClick={() => {
-            clearIdbCache();
-            resetStoredBeatmapSets();
-            toast("Cache has been cleared.");
-          }}
-          disabled={!idbUsage}
-          variant={"destructive"}
-        >
-          {idbUsage !== null ? (
-            <>
-              Clear Cache ({storedBeatmapSets.length} stored,{" "}
-              {filesize(idbUsage)})
-            </>
-          ) : (
-            <>
-              <Loader2Icon className="animate-spin" />
-            </>
-          )}
-        </Button>
+        <ClearCacheButton className="mt-4 w-full" />
       </div>
     </div>
   );
