@@ -142,7 +142,7 @@ export const parseOsz = async (
   for (const entry of osuEntries) {
     const text = await entry.getData(new TextWriter());
 
-    if (pattern.test(text)) {
+    if (pattern.test(text) || text.includes(`BeatmapID:${beatmap.id}`)) {
       osuFileData = text;
       break;
     }
