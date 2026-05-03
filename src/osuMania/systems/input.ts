@@ -159,7 +159,6 @@ export class InputSystem {
     }
 
     this.columnPressedKeybinds[column].add(event.code);
-    console.log(column, this.columnPressedKeybinds[column].size);
 
     if (this.columnPressedKeybinds[column].size === 1) {
       this.hit(column);

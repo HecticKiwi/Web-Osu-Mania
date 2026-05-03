@@ -263,9 +263,7 @@ export class Game {
     this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
     this.inputSystem = new InputSystem(this);
     this.audioSystem = new AudioSystem(this, beatmapData.sounds);
-    if (!this.mods.noFail) {
-      this.healthSystem = new HealthSystem(this);
-    }
+    this.healthSystem = new HealthSystem(this);
 
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
@@ -551,7 +549,7 @@ export class Game {
       this.addHitError();
     }
 
-    if (!this.mods.noFail && this.settings.ui.showHealthBar) {
+    if (this.settings.ui.showHealthBar) {
       this.addHealthBar();
     }
 
@@ -636,12 +634,12 @@ export class Game {
 
           this.updateHitObjects();
 
-          if (this.healthBar) {
+          if (this.healthBar && this.healthSystem.health !== oldHealth) {
             const lostHealth = this.healthSystem.health < oldHealth;
             this.healthBar.setHealth(this.healthSystem.health, lostHealth);
           }
 
-          if (this.healthSystem.health <= MIN_HEALTH) {
+          if (this.healthSystem.health <= MIN_HEALTH && !this.mods.noFail) {
             this.state = "FAIL";
           }
         } else {
@@ -1101,7 +1099,7 @@ export class Game {
         }
 
         // If you failed, you're done - no need to update any more hit objects
-        if (this.healthSystem?.health === MIN_HEALTH) {
+        if (this.healthSystem?.health === MIN_HEALTH && !this.mods.noFail) {
           return;
         }
 
