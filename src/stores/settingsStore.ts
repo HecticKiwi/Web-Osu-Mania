@@ -566,7 +566,7 @@ export const defaultSettings: Settings = {
     earlyLateThreshold: 200,
     showProgressBar: true,
     showHealthBar: true,
-    receptorOpacity: 0.5,
+    receptorOpacity: 1,
     judgementCounter: "right",
     progressDisplay: "bar",
     stageHudYPosition: 0.66,
