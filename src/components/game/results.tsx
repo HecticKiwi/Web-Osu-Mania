@@ -94,7 +94,7 @@ const Results = ({
 
             {beatmapSet && (
               <div className="flex gap-2" data-exclude>
-                <CollectionsDropdown beatmapSet={beatmapSet} />
+                <CollectionsDropdown beatmapSet={beatmapSet} alwaysShow />
 
                 <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
               </div>

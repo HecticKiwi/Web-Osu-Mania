@@ -15,7 +15,13 @@ import { Bookmark } from "lucide-react";
 import { Button } from "../ui/button";
 import CollectionsDropdownContent from "./collectionsDropdownContent";
 
-const CollectionsDropdown = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
+const CollectionsDropdown = ({
+  beatmapSet,
+  alwaysShow,
+}: {
+  beatmapSet: BeatmapSet;
+  alwaysShow?: boolean;
+}) => {
   return (
     <DropdownMenu>
       <TooltipProvider>
@@ -25,7 +31,10 @@ const CollectionsDropdown = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="h-8 w-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+                className={cn(
+                  "h-8 w-8 opacity-0 transition group-hover:opacity-100 focus:opacity-100",
+                  alwaysShow && "opacity-100",
+                )}
               >
                 <Bookmark className="size-5" />
               </Button>
