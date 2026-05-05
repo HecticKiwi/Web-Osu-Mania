@@ -116,6 +116,13 @@ export abstract class Tap {
 
         this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
         this.game.scoreSystem.hit(320);
+        this.game.timelineData.push({
+          time: this.data.time,
+          error: 0,
+          judgement: 320,
+          health: this.game.healthSystem.health,
+        });
+
         this.game.stageLights[this.data.column]?.light();
 
         this.game.errorBar?.addTimingMark(0);
@@ -139,6 +146,12 @@ export abstract class Tap {
         "late",
         this.data.endTime !== this.data.time,
       );
+      this.game.timelineData.push({
+        time: this.data.time + this.game.hitWindows[0],
+        error: -this.game.hitWindows[0],
+        judgement: 0,
+        health: this.game.healthSystem.health,
+      });
       this.shouldRemove = true;
 
       const nextHitObject = column[1];
@@ -148,8 +161,9 @@ export abstract class Tap {
     }
   }
 
-  public hit(timeElapsed?: number) {
-    const delta = this.data.time - (timeElapsed ?? this.game.timeElapsed);
+  public hit(timeElapsedOverride?: number) {
+    const timeElapsed = timeElapsedOverride ?? this.game.timeElapsed;
+    const delta = this.data.time - timeElapsed;
 
     const absDelta = Math.abs(delta);
 
@@ -179,6 +193,12 @@ export abstract class Tap {
       earlyOrLate,
       this.data.endTime !== this.data.time,
     );
+    this.game.timelineData.push({
+      time: timeElapsed,
+      error: delta,
+      judgement,
+      health: this.game.healthSystem.health,
+    });
 
     this.game.errorBar?.addTimingMark(delta);
 

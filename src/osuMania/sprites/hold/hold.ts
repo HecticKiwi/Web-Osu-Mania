@@ -68,6 +68,12 @@ export abstract class Hold {
       if (endTimeDelta < 0) {
         this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
         this.game.scoreSystem.hit(320, undefined, true);
+        this.game.timelineData.push({
+          time: this.data.endTime,
+          error: 0,
+          judgement: 320,
+          health: this.game.healthSystem.health,
+        });
 
         this.game.errorBar?.addTimingMark(0);
 
@@ -80,6 +86,12 @@ export abstract class Hold {
       // If this has passed the late miss point
       if (endTimeDelta < -this.game.hitWindows[0]) {
         this.game.scoreSystem.hit(0, "late", true);
+        this.game.timelineData.push({
+          time: this.data.endTime + this.game.hitWindows[0],
+          error: -this.game.hitWindows[0],
+          judgement: 0,
+          health: this.game.healthSystem.health,
+        });
         this.shouldRemove = true;
         return;
       }
@@ -106,9 +118,9 @@ export abstract class Hold {
 
   public hit() {}
 
-  public release(timeElapsed?: number) {
-    const endTimeDelta =
-      this.data.endTime - (timeElapsed ?? this.game.timeElapsed);
+  public release(timeElapsedOverride?: number) {
+    const timeElapsed = timeElapsedOverride ?? this.game.timeElapsed;
+    const endTimeDelta = this.data.endTime - timeElapsed;
     const absDelta = Math.abs(endTimeDelta);
 
     const earlyOrLate = endTimeDelta > 0 ? "early" : "late";
@@ -118,6 +130,12 @@ export abstract class Hold {
 
       if (this.broken) {
         this.game.scoreSystem.hit(50, earlyOrLate, true);
+        this.game.timelineData.push({
+          time: this.data.time,
+          error: endTimeDelta,
+          judgement: 50,
+          health: this.game.healthSystem.health,
+        });
         return;
       }
 
@@ -139,6 +157,12 @@ export abstract class Hold {
         judgement,
       });
       this.game.scoreSystem.hit(judgement, earlyOrLate, true);
+      this.game.timelineData.push({
+        time: this.data.endTime,
+        error: endTimeDelta,
+        judgement,
+        health: this.game.healthSystem.health,
+      });
 
       this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
 

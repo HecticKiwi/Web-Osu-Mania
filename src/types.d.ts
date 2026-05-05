@@ -1,3 +1,4 @@
+import type { TimelineDataPoint } from "./components/game/timelineGraph";
 import type { HitError } from "./components/game/timingDistributionChart";
 import type { JUDGEMENTS } from "./osuMania/constants";
 import type { Hold } from "./osuMania/sprites/hold/hold";
@@ -23,6 +24,7 @@ export type PlayResults = Results & {
   viewingReplay?: boolean;
   replayData?: ReplayData;
   hitErrors: HitError[];
+  timelineData: TimelineDataPoint[];
 };
 
 export type Column = (Tap | Hold)[];

@@ -9,6 +9,7 @@ import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
 import { JudgementChart } from "./judgementChart";
 import LetterGradeCard from "./letterGradeCard";
+import TimelineGraph from "./timelineGraph";
 import TimingDistributionChart from "./timingDistributionChart";
 
 const Results = ({
@@ -248,6 +249,12 @@ const Results = ({
               <span className="text-3xl">{unstableRate.toFixed(2)}</span>
             </div>
           </div>
+        </div>
+
+        <div className="bg-card mt-8 w-full rounded-xl border p-6">
+          <h2 className="text-primary mb-4 text-3xl font-semibold">Timeline</h2>
+
+          <TimelineGraph data={playResults.timelineData} />
         </div>
       </div>
     </div>

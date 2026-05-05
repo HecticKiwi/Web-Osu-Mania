@@ -1,3 +1,4 @@
+import type { TimelineDataPoint } from "@/components/game/timelineGraph";
 import type {
   BeatmapData,
   Break,
@@ -89,7 +90,7 @@ export class Game {
   public notesContainerWidth: number;
 
   // Systems
-  public healthSystem?: HealthSystem;
+  public healthSystem: HealthSystem;
   public scoreSystem: ScoreSystem;
   public inputSystem: InputSystem;
   public audioSystem: AudioSystem;
@@ -165,6 +166,9 @@ export class Game {
 
   private finished = false;
 
+  // Results chart data
+  public timelineData: TimelineDataPoint[] = [];
+
   public constructor(
     beatmapData: BeatmapData,
     setResults: Dispatch<SetStateAction<PlayResults | null>>,
@@ -223,6 +227,7 @@ export class Game {
         replayData: (this.replayRecorder?.replayData ??
           this.replayPlayer?.replayData)!,
         hitErrors: this.scoreSystem.hitErrors,
+        timelineData: this.timelineData,
       });
     };
 
