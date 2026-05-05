@@ -90,6 +90,7 @@ export default function TimingDistributionChart({
         />
         {JUDGEMENTS.map((judgement) => (
           <Bar
+            isAnimationActive={false}
             key={judgement}
             dataKey={judgement}
             stackId="judgement"

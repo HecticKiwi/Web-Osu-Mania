@@ -99,6 +99,7 @@ const TimelineGraph = ({ data }: { data: TimelineDataPoint[] }) => {
         opacity={0.1}
       />
       <Line
+        isAnimationActive={false}
         yAxisId={"health"}
         dataKey="health"
         strokeWidth={1.5}
@@ -106,6 +107,7 @@ const TimelineGraph = ({ data }: { data: TimelineDataPoint[] }) => {
         dot={false}
       />
       <Scatter
+        isAnimationActive={false}
         yAxisId="error"
         dataKey="error"
         activeShape={(dataPoint) => {
