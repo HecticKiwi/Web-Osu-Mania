@@ -303,7 +303,8 @@ function findEntry(entries: Entry[], filename: string) {
   const lowercaseFilename = filename.toLowerCase();
   return entries.find(
     (entry) =>
-      entry.filename.toLowerCase() === lowercaseFilename && !entry.directory,
+      entry.filename.toLowerCase().endsWith(lowercaseFilename) &&
+      !entry.directory,
   ) as FileEntry;
 }
 
