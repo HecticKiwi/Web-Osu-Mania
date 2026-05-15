@@ -762,6 +762,7 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
     const metadata = parseMetadata(lines);
     const difficulty = parseDifficulty(lines);
     const hitObjectsSection = getSectionLines(lines, "HitObjects");
+    const highestBpm = getHighestBpm(lines);
     const starRating = calculateManiaStarRating(lines);
 
     if (hitObjectsSection.length === 0) {
@@ -798,7 +799,7 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
       total_length: totalLengthSeconds,
       user_id: 0,
       version: metadata.version,
-      bpm: 0,
+      bpm: highestBpm,
       cs: difficulty.keyCount,
       accuracy: difficulty.od,
       drain: difficulty.hp,
@@ -893,4 +894,30 @@ function getBeatmapDurationMs(hitObjectLines: string[]) {
   }
 
   return maxTime;
+}
+
+function getHighestBpm(lines: string[]) {
+  const timingPointLines = getSectionLines(lines, "TimingPoints");
+  let highestBpm = 0;
+
+  for (const line of timingPointLines) {
+    const parts = line.split(",");
+    if (parts.length < 2) {
+      continue;
+    }
+
+    const msPerBeat = Number(parts[1]);
+
+    // Uninherited timing points only
+    if (!Number.isFinite(msPerBeat) || msPerBeat <= 0) {
+      continue;
+    }
+
+    const bpm = 60000 / msPerBeat;
+    if (bpm > highestBpm) {
+      highestBpm = bpm;
+    }
+  }
+
+  return Math.round(highestBpm);
 }
