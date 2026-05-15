@@ -3,8 +3,9 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 import { BlobReader, BlobWriter, TextWriter, ZipReader } from "@zip.js/zip.js";
 import { Howl } from "howler";
-import { addDelay } from "./audio";
-import type { Beatmap } from "./osuApi";
+import { addDelay, createAudioPreviewClip } from "./audio";
+import { calculateManiaStarRating } from "./maniaDifficulty";
+import type { Beatmap, BeatmapSet } from "./osuApi";
 import type { EncodedMods } from "./replay";
 import { decodeMods } from "./replay";
 import { getHpOrOdAfterMods, removeFileExtension, shuffle } from "./utils";
@@ -100,6 +101,8 @@ export type HitWindows = {
 export interface BeatmapData {
   beatmapId: number;
   beatmapSetId: number;
+  beatmapHash: string;
+  isLocalSource: boolean;
   version: string;
   timingPoints: TimingPoint[];
   hitObjects: HitObject[];
@@ -122,6 +125,7 @@ export const parseOsz = async (
   beatmap: Beatmap,
   replayMods?: EncodedMods,
   replayColumnMap?: number[],
+  isLocalSource = false,
 ): Promise<BeatmapData> => {
   const zipReader = new ZipReader(new BlobReader(blob));
   const entries = await zipReader.getEntries();
@@ -151,6 +155,8 @@ export const parseOsz = async (
   if (!osuFileData) {
     throw new Error(".osu file not found");
   }
+
+  const beatmapHash = await getStringSha256Hex(osuFileData);
 
   const lines = osuFileData?.split(/\r\n|\n\r|\n/);
 
@@ -281,6 +287,8 @@ export const parseOsz = async (
   return {
     beatmapSetId: beatmap.beatmapset_id,
     beatmapId: beatmap.id,
+    beatmapHash,
+    isLocalSource,
     version: beatmap.version,
     timingPoints,
     hitObjects,
@@ -300,12 +308,16 @@ export const parseOsz = async (
 };
 
 function findEntry(entries: Entry[], filename: string) {
-  const lowercaseFilename = filename.toLowerCase();
+  const lowercaseFilename = normalizeArchivePath(filename);
   return entries.find(
     (entry) =>
       entry.filename.toLowerCase().endsWith(lowercaseFilename) &&
       !entry.directory,
   ) as FileEntry;
+}
+
+function normalizeArchivePath(path: string) {
+  return path.replaceAll("\\", "/").replace(/^\.\//, "").trim().toLowerCase();
 }
 
 export function parseHitObjects(
@@ -475,10 +487,9 @@ async function parseEvents(
     if (videoLine) {
       const [_, startTime, filename, xOffset, yOffset] = videoLine.split(",");
 
-      // Remove quotes
-      const parsedFilename = filename.slice(1, -1);
+      const parsedFilename = filename.trim().replace(/^"|"$/g, "");
 
-      if (parsedFilename.endsWith(".mp4")) {
+      if (parsedFilename.toLowerCase().endsWith(".mp4")) {
         const videoEntry = findEntry(entries, parsedFilename);
 
         if (videoEntry) {
@@ -673,4 +684,213 @@ export async function getBeatmapSetIdFromOsz(blob: Blob) {
   const beatmapSetId = getLineValue(lines, "BeatmapSetID");
 
   return beatmapSetId;
+}
+
+export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
+  const zipReader = new ZipReader(new BlobReader(blob));
+  const entries = await zipReader.getEntries();
+
+  const osuEntries = entries.filter(
+    (entry) => entry.filename.endsWith(".osu") && !entry.directory,
+  ) as FileEntry[];
+
+  if (osuEntries.length === 0) {
+    throw new Error("No .osu files found.");
+  }
+
+  const beatmaps: Beatmap[] = [];
+  let coverUrl: string | undefined;
+  let previewUrl: string | undefined;
+
+  const firstOsuText = await osuEntries[0].getData(new TextWriter());
+  const firstOsuLines = firstOsuText.split(/\r\n|\n\r|\n/);
+  const coverFilename = firstOsuLines
+    .find((line) => line.startsWith("0,0,"))
+    ?.split(",")[2]
+    ?.replaceAll('"', "");
+
+  if (coverFilename) {
+    const coverEntry = findEntry(entries, coverFilename);
+    if (coverEntry) {
+      const coverBlob = await coverEntry.getData(new BlobWriter());
+      coverUrl = URL.createObjectURL(coverBlob);
+    }
+  }
+
+  const previewTimeMs = Number(
+    getLineValueOrDefault(firstOsuLines, "PreviewTime", "0"),
+  );
+  const previewStartTime = previewTimeMs > 0 ? previewTimeMs / 1000 : 0;
+
+  const songFilename = getLineValueOrDefault(
+    firstOsuLines,
+    "AudioFilename",
+    "",
+  );
+  if (songFilename) {
+    const songEntry = findEntry(entries, songFilename);
+    if (songEntry) {
+      const songBlob = await songEntry.getData(new BlobWriter());
+      const previewBlob = await createAudioPreviewClip(
+        songBlob,
+        previewStartTime,
+        10,
+      );
+      previewUrl = URL.createObjectURL(previewBlob);
+    }
+  }
+  let setMetadata:
+    | {
+        artist: string;
+        artistUnicode: string;
+        title: string;
+        titleUnicode: string;
+        creator: string;
+        beatmapSetId: number;
+      }
+    | undefined;
+
+  for (let i = 0; i < osuEntries.length; i++) {
+    const text = await osuEntries[i].getData(new TextWriter());
+    const lines = text.split(/\r\n|\n\r|\n/);
+
+    const mode = Number(getLineValueOrDefault(lines, "Mode", "0"));
+    if (mode !== 3) {
+      continue;
+    }
+
+    const metadata = parseMetadata(lines);
+    const difficulty = parseDifficulty(lines);
+    const hitObjectsSection = getSectionLines(lines, "HitObjects");
+    const starRating = calculateManiaStarRating(lines);
+
+    if (hitObjectsSection.length === 0) {
+      continue;
+    }
+
+    const beatmapId = Number(getLineValueOrDefault(lines, "BeatmapID", "0"));
+    const beatmapSetId = Number(
+      getLineValueOrDefault(lines, "BeatmapSetID", "0"),
+    );
+    const beatmapHash = await getStringSha256Hex(text);
+
+    if (!setMetadata) {
+      setMetadata = {
+        artist: metadata.artist,
+        artistUnicode: metadata.artistUnicode,
+        title: metadata.title,
+        titleUnicode: metadata.titleUnicode,
+        creator: metadata.creator,
+        beatmapSetId,
+      };
+    }
+
+    const totalLengthSeconds = Math.ceil(
+      getBeatmapDurationMs(hitObjectsSection) / 1000,
+    );
+
+    beatmaps.push({
+      beatmapset_id: beatmapSetId,
+      difficulty_rating: starRating,
+      id: beatmapId > 0 ? beatmapId : -(i + 1),
+      hash: beatmapHash,
+      mode: "mania",
+      total_length: totalLengthSeconds,
+      user_id: 0,
+      version: metadata.version,
+      bpm: 0,
+      cs: difficulty.keyCount,
+      accuracy: difficulty.od,
+      drain: difficulty.hp,
+      count_circles: hitObjectsSection.filter((line) => {
+        const type = Number(line.split(",")[3]);
+        return type !== 128;
+      }).length,
+      count_sliders: hitObjectsSection.filter((line) => {
+        const type = Number(line.split(",")[3]);
+        return type === 128;
+      }).length,
+    });
+  }
+
+  if (beatmaps.length === 0) {
+    throw new Error("No osu!mania difficulties found in this .osz file.");
+  }
+
+  const fallbackId = -Date.now();
+
+  return {
+    artist: setMetadata?.artist ?? "",
+    artist_unicode: setMetadata?.artistUnicode ?? "",
+    creator: setMetadata?.creator ?? "",
+    id:
+      setMetadata && setMetadata.beatmapSetId > 0
+        ? setMetadata.beatmapSetId
+        : fallbackId,
+    nsfw: false,
+    offset: 0,
+    status: "local",
+    title: setMetadata?.title ?? "",
+    title_unicode: setMetadata?.titleUnicode ?? "",
+    coverUrl,
+    previewUrl,
+    beatmaps,
+  };
+}
+
+function getSectionLines(lines: string[], sectionName: string) {
+  const startIndex = lines.indexOf(`[${sectionName}]`) + 1;
+  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
+
+  return lines.slice(startIndex, endIndex).filter(Boolean);
+}
+
+function getLineValueOrDefault(
+  lines: string[],
+  key: string,
+  defaultValue: string,
+) {
+  const line = lines.find((l) => l.startsWith(`${key}:`));
+
+  if (!line) {
+    return defaultValue;
+  }
+
+  return line.split(`${key}:`)[1].trim();
+}
+
+async function getStringSha256Hex(text: string): Promise<string> {
+  const bytes = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function getBeatmapDurationMs(hitObjectLines: string[]) {
+  let maxTime = 0;
+
+  for (const line of hitObjectLines) {
+    const parts = line.split(",");
+    if (parts.length < 4) {
+      continue;
+    }
+
+    const startTime = Number(parts[2]);
+    const type = Number(parts[3]);
+
+    let endTime = startTime;
+    if (type === 128 && parts.length > 5) {
+      const holdEndTime = Number(parts[5].split(":")[0]);
+      if (Number.isFinite(holdEndTime)) {
+        endTime = holdEndTime;
+      }
+    }
+
+    if (endTime > maxTime) {
+      maxTime = endTime;
+    }
+  }
+
+  return maxTime;
 }

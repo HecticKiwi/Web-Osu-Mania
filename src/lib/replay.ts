@@ -8,6 +8,27 @@ import type { BeatmapData } from "./beatmapParser";
 import { getReplayFilename } from "./results";
 import { downloadBlob } from "./utils";
 
+export function normalizeReplayBeatmapReference(
+  replayData: ReplayData,
+): ReplayData {
+  const hasOnlineIds =
+    replayData.beatmap.id != null && replayData.beatmap.setId != null;
+
+  return {
+    ...replayData,
+    beatmap: hasOnlineIds
+      ? {
+          id: replayData.beatmap.id,
+          setId: replayData.beatmap.setId,
+        }
+      : {
+          hash: replayData.beatmap.hash,
+          version: replayData.beatmap.version,
+          keyCount: replayData.beatmap.keyCount,
+        },
+  };
+}
+
 const ModBits = {
   autoplay: 0,
   easy: 1,
@@ -85,7 +106,8 @@ export async function downloadReplay(
   }
 
   try {
-    const replayDataString = JSON.stringify(replayData);
+    const normalizedReplay = normalizeReplayBeatmapReference(replayData);
+    const replayDataString = JSON.stringify(normalizedReplay);
     const encoded = new TextEncoder().encode(replayDataString);
     const compressed = compressSync(encoded);
     const blob = new Blob([compressed as BlobPart], {

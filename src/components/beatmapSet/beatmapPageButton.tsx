@@ -8,6 +8,10 @@ import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
 const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
+  if (beatmapSetId <= 0) {
+    return null;
+  }
+
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
@@ -20,7 +24,8 @@ const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
           >
             <a
               href={`https://osu.ppy.sh/beatmapsets/${beatmapSetId}`}
-              target="_blank" rel="noreferrer"
+              target="_blank"
+              rel="noreferrer"
             >
               <ExternalLink className="size-5" />
             </a>

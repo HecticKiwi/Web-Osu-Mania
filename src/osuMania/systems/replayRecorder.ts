@@ -6,12 +6,16 @@ import type { Game } from "../game";
 export type ReplayData = {
   /**
    * V1: fixes audio offset
+   * V2: added beatmap hash, version and keycount for beatmaps played with a local file
    */
   version: number;
   timestamp?: number;
   beatmap: {
-    id: number;
-    setId: number;
+    id?: number;
+    setId?: number;
+    hash?: string;
+    version?: string;
+    keyCount?: number;
   };
   mods: EncodedMods;
   inputs: ReplayInput[][];
@@ -30,10 +34,18 @@ export class ReplayRecorder {
     this.game = game;
 
     this.replayData = {
-      version: 1,
+      version: 2,
       beatmap: {
-        id: Number(beatmapData.beatmapId),
-        setId: beatmapData.beatmapSetId,
+        ...(beatmapData.isLocalSource
+          ? {
+              hash: beatmapData.beatmapHash,
+              version: beatmapData.metadata.version,
+              keyCount: beatmapData.difficulty.keyCount,
+            }
+          : {
+              id: Number(beatmapData.beatmapId),
+              setId: beatmapData.beatmapSetId,
+            }),
       },
       mods: encodeMods(this.game.mods),
       inputs: Array.from({ length: this.game.difficulty.keyCount }, () => []),

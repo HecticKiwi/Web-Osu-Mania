@@ -77,7 +77,9 @@ const BeatmapList = ({
             .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
             .map((beatmap) => {
               const beatmapScores =
-                highScores[beatmapSet.id]?.[beatmap.id] ?? [];
+                beatmapSet.status === "local"
+                  ? []
+                  : (highScores[beatmapSet.id]?.[beatmap.id] ?? []);
 
               return (
                 <div key={beatmap.id}>

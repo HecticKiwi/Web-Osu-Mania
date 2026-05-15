@@ -25,6 +25,7 @@ const STATUSES = [
   "pending",
   "graveyard",
   "wip",
+  "local",
 ] as const;
 export type Status = (typeof STATUSES)[number];
 
@@ -47,6 +48,7 @@ export type Beatmap = {
 
   count_circles: number; // Tap note count
   count_sliders: number; // Hold note count
+  hash?: string;
 };
 
 // type Covers = {
@@ -76,6 +78,8 @@ export type BeatmapSet = {
   // spotlight: boolean;
   title: string;
   title_unicode: string;
+  coverUrl?: string;
+  previewUrl?: string;
   // user_id: number;
   // video: boolean;
 

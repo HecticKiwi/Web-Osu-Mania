@@ -15,6 +15,7 @@ const GameModal = () => {
   const beatmapId = useGameStore.use.beatmapId();
   const closeGame = useGameStore.use.closeGame();
   const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
+  const localReplayBeatmapSet = useGameStore.use.localReplayBeatmapSet();
   const replayData = useGameStore.use.replayData();
   const storeDownloadedBeatmaps = useSettingsStore(
     (settings) => settings.storeDownloadedBeatmaps,
@@ -58,6 +59,8 @@ const GameModal = () => {
 
       if (uploadedBeatmapSet) {
         beatmapSetFile = uploadedBeatmapSet;
+      } else if (localReplayBeatmapSet) {
+        beatmapSetFile = localReplayBeatmapSet;
       } else {
         try {
           beatmapSetFile = await getBeatmapSet(
@@ -102,6 +105,7 @@ const GameModal = () => {
           beatmap,
           replayData?.mods,
           replayData?.columnMap,
+          beatmapSet.status === "local",
         );
 
         await loadAssets();
@@ -124,6 +128,7 @@ const GameModal = () => {
     closeGame,
     getBeatmapSet,
     uploadedBeatmapSet,
+    localReplayBeatmapSet,
     beatmapSet,
     storedBeatmapSets,
     setStoredBeatmapSets,

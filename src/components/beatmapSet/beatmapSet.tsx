@@ -96,7 +96,9 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
 
         <div className="absolute top-4 right-4 flex gap-2">
           <CollectionsDropdown beatmapSet={beatmapSet} />
-          <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
+          {beatmapSet.status !== "local" && (
+            <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
+          )}
         </div>
       </div>
 
