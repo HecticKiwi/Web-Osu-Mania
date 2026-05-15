@@ -1,3 +1,46 @@
+/**
+ * osu!mania star rating source references
+ *
+ * Core files:
+ * - https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/ManiaDifficultyCalculator.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Skills/Strain.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Evaluators/IndividualStrainEvaluator.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Evaluators/OverallStrainEvaluator.cs
+ *
+ * Shared difficulty framework:
+ * - https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainDecaySkill.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainSkill.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Preprocessing/DifficultyHitObject.cs
+ * - https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Utils/DifficultyCalculationUtils.cs
+ *
+ * Key line anchors used:
+ * - difficulty_multiplier = 0.018:
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/ManiaDifficultyCalculator.cs#L27
+ * - star rating formula (Strain.DifficultyValue * difficulty_multiplier):
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/ManiaDifficultyCalculator.cs#L49
+ * - individual_decay_base = 0.125:
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Skills/Strain.cs#L15
+ * - overall_decay_base = 0.30:
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Skills/Strain.cs#L16
+ * - strain processing logic:
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Skills/Strain.cs#L32
+ * - individual strain evaluator:
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Evaluators/IndividualStrainEvaluator.cs#L12
+ * - overall strain evaluator (release_threshold, logistic usage):
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Evaluators/OverallStrainEvaluator.cs#L14
+ *   https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/Evaluators/OverallStrainEvaluator.cs#L56
+ * - section decay weight / length (0.9 / 400ms):
+ *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainSkill.cs#L21
+ *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainSkill.cs#L26
+ * - weighted peak aggregation:
+ *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainSkill.cs#L124
+ * - logistic function definition:
+ *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Utils/DifficultyCalculationUtils.cs#L41
+ * 
+ * Note: This was created with the help of `GPT-5.3 Codex` becasue I (Sling) have not learned C# and was having trouble fully understanding it.
+ */
+
+
 type ManiaHitObject = {
   startTime: number;
   endTime: number;
