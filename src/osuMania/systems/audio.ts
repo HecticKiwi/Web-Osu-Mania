@@ -88,10 +88,17 @@ export class AudioSystem {
   }
 
   public playNextHitsounds(columnId: number) {
-    const nextTapNote = this.game.columns[columnId].find(
-      (hitObject): hitObject is Tap => hitObject.data.type === "tap",
-    );
+    for (
+      let i = this.game.currentColumnIndices[columnId];
+      i < this.game.columns[columnId].length;
+      i++
+    ) {
+      const hitObject = this.game.columns[columnId][i];
 
-    nextTapNote?.playHitsounds();
+      if (hitObject.data.type === "tap") {
+        (hitObject as Tap).playHitsounds();
+        return;
+      }
+    }
   }
 }

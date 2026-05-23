@@ -3,62 +3,58 @@ import type { EncodedMods } from "@/lib/replay";
 import { encodeMods } from "@/lib/replay";
 import type { Game } from "../game";
 
-export type ReplayData = {
-  /**
-   * V1: fixes audio offset
-   */
-  version: number;
+type BaseReplayData = {
   timestamp?: number;
   beatmap: {
     id: number;
     setId: number;
   };
   mods: EncodedMods;
-  inputs: ReplayInput[][];
   columnMap?: number[];
 };
 
-export type ReplayInput = [time: number, length: number];
+export type ReplayData = ReplayDataV1 | ReplayDataV2;
+
+// V1:
+// - Fix audio offset
+export type ReplayInputV1 = [time: number, length: number];
+export type ReplayDataV1 = BaseReplayData & {
+  version: undefined | 0 | 1;
+  inputs: ReplayInputV1[][];
+};
+
+// V2:
+// - Combine inputs columns into a single array to capture order of events pressed in the same frame
+// - Remove Audio Context outputLatency in time
+export type ReplayInputV2 = [column: number, time: number, isDown: boolean];
+export type ReplayDataV2 = BaseReplayData & {
+  version: 2;
+  inputs: ReplayInputV2[];
+};
 
 export class ReplayRecorder {
   private game: Game;
 
-  public replayData: ReplayData;
-  private keyTimes: Record<number, number> = {};
+  public replayData: ReplayDataV2;
 
   constructor(game: Game, beatmapData: BeatmapData) {
     this.game = game;
 
     this.replayData = {
-      version: 1,
+      version: 2,
       beatmap: {
         id: Number(beatmapData.beatmapId),
         setId: beatmapData.beatmapSetId,
       },
       mods: encodeMods(this.game.mods),
-      inputs: Array.from({ length: this.game.difficulty.keyCount }, () => []),
+      inputs: [],
       columnMap: game.mods.random ? beatmapData.columnMap : undefined,
     };
   }
 
   public record(column: number, isDown: boolean) {
-    const time = this.game.timeElapsed;
+    const time = this.game.timeElapsed + this.game.audioOffset;
 
-    if (isDown) {
-      this.keyTimes[column] = time;
-
-      return;
-    }
-
-    if (!this.keyTimes[column]) {
-      return;
-    }
-
-    this.replayData.inputs[column].push([
-      this.keyTimes[column] + this.game.settings.audioOffset,
-      time - this.keyTimes[column],
-    ]);
-
-    delete this.keyTimes[column];
+    this.replayData.inputs.push([column, time, isDown]);
   }
 }

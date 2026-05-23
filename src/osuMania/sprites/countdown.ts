@@ -98,17 +98,6 @@ export class Countdown {
       this.skipText.alpha = 0;
     }
 
-    // Skip intro
-    if (canSkip && this.game.inputSystem.anyColumnTapped()) {
-      // 1 second before first hit object
-      const time = this.game.startTime / 1000 - 1;
-
-      if (this.game.videoEl) {
-        this.game.videoEl.currentTime = time;
-      }
-      this.game.song.seek(this.game.startTime / 1000 - 1);
-    }
-
     // Show tenths of seconds when under 3s left
     if (remainingTime < 3000) {
       this.text.text = (remainingTime / 1000).toFixed(1);

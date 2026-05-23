@@ -360,3 +360,24 @@ export function calculatePp(
 
   return Math.round(value);
 }
+
+export function formatTime(ms: number, includeMs: boolean = false): string {
+  const absMs = Math.abs(ms);
+
+  const totalSeconds = Math.floor(absMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  const timestamp = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+  if (includeMs) {
+    const milliseconds = Math.floor(absMs % 1000);
+    return `${timestamp}.${milliseconds.toString().padStart(3, "0")}`;
+  }
+
+  if (ms < 0) {
+    return `-${timestamp}`;
+  }
+
+  return timestamp;
+}

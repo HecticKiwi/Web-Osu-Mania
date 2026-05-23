@@ -42,6 +42,7 @@ import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
 import { DiamondHold } from "./sprites/hold/diamondHold";
+import { Hold } from "./sprites/hold/hold";
 import { Judgement } from "./sprites/judgement";
 import { JudgementCounter } from "./sprites/judgementCounter";
 import { ArrowKey } from "./sprites/key/arrowKey";
@@ -82,6 +83,7 @@ export class Game {
   public hitWindows: HitWindows;
   public laneColors: readonly ColumnColor[];
   public laneArrowDirections: readonly number[]; // Only used for the arrow style
+  public audioOffset: number;
 
   public hitPosition: number;
   public hitPositionOffset: number;
@@ -116,14 +118,17 @@ export class Game {
     | typeof ArrowKey
     | typeof DiamondKey;
 
+  // Hitobjects
+  public hitObjects: HitObject[];
+  public columns: Column[] = [];
+  public currentColumnIndices: number[] = [];
+
   // UI Components
   public replayText?: BitmapText;
   private startMessage: BitmapText;
   public scoreText?: BitmapText;
   public comboText?: BitmapText;
   public accuracyText?: BitmapText;
-  public hitObjects: HitObject[];
-  public columns: Column[] = [];
   public stageSideWidth = 2;
   public stageContainer: Container = new Container();
   public stageSides: Graphics;
@@ -186,12 +191,19 @@ export class Game {
     this.breaks = beatmapData.breaks;
     this.hitWindows = beatmapData.hitWindows;
     this.difficulty = beatmapData.difficulty;
+    this.audioOffset = beatmapData.audioOffset;
 
     this.timingPoints = beatmapData.timingPoints;
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
 
     this.settings = JSON.parse(JSON.stringify(useSettingsStore.getState()));
+
+    // If watching a replay, there should be no unpause delay
+    if (replayData) {
+      this.settings.unpauseDelay = 0;
+    }
+
     this.mods = this.settings.mods; // Replays will override this
 
     if (this.settings.skin.colors.mode === "simple") {
@@ -211,6 +223,9 @@ export class Game {
       if (this.replayRecorder) {
         this.replayRecorder.replayData.timestamp = Date.now();
       }
+
+      // The data points should already be in order, but just in case
+      this.timelineData.sort((a, b) => a.time - b.time);
 
       setResults({
         320: this.scoreSystem[320],
@@ -261,7 +276,7 @@ export class Game {
       this.mods = decodeMods(replayData.mods);
 
       this.replayPlayer = new ReplayPlayer(this, replayData);
-    } else if (!this.mods.autoplay) {
+    } else {
       this.replayRecorder = new ReplayRecorder(this, beatmapData);
     }
 
@@ -480,6 +495,9 @@ export class Game {
       },
     });
 
+    // Remove pointer cursor default so it can be hidden on keypress
+    this.app.renderer.events.cursorStyles.pointer = "inherit";
+
     this.app.stage.eventMode = "passive";
 
     ref.appendChild(this.app.canvas);
@@ -593,66 +611,7 @@ export class Game {
         break;
 
       case "PLAY":
-        this.timeElapsed = Math.round(this.song.seek() * 1000);
-
-        // Play video if it exists, accounting for audio delay
-        if (
-          this.videoEl &&
-          this.videoEl.paused &&
-          this.timeElapsed > this.delay
-        ) {
-          this.videoEl.currentTime = this.song.seek();
-          this.videoEl.play();
-        }
-
-        this.replayPlayer?.update();
-
-        if (!this.mods.autoplay) {
-          this.stageLights.forEach((stageLight) => stageLight.update());
-          this.keys.forEach((key) => key.update());
-        }
-
-        if (this.countdown.view.visible) {
-          this.countdown.update(
-            this.startTime - this.timeElapsed,
-            this.startTime,
-          );
-        }
-
-        if (this.timeElapsed >= this.nextTimingPoint?.time) {
-          this.currentTimingPoint = this.nextTimingPoint;
-          this.nextTimingPoint =
-            this.timingPoints[
-              this.timingPoints.indexOf(this.nextTimingPoint) + 1
-            ];
-        }
-
-        this.progress?.update(this.timeElapsed, this.startTime, this.endTime);
-
-        if (this.timeElapsed > this.endTime && !this.finished) {
-          this.finished = true;
-          this.finish();
-        }
-
-        if (this.healthSystem) {
-          const oldHealth = this.healthSystem.health;
-
-          this.updateHitObjects();
-
-          if (this.healthBar && this.healthSystem.health !== oldHealth) {
-            const lostHealth = this.healthSystem.health < oldHealth;
-            this.healthBar.setHealth(this.healthSystem.health, lostHealth);
-          }
-
-          if (this.healthSystem.health <= MIN_HEALTH && !this.mods.noFail) {
-            this.state = "FAIL";
-          }
-        } else {
-          this.updateHitObjects();
-        }
-
-        this.judgement?.showJudgement();
-
+        this.playUpdate();
         break;
 
       case "PAUSE":
@@ -682,6 +641,65 @@ export class Game {
 
     this.inputSystem.clearInputs();
     this.audioSystem.playedSounds.clear();
+  }
+
+  private playUpdate(isAfterSeek?: boolean) {
+    this.timeElapsed = Math.round(this.song.seek() * 1000);
+
+    // Play video if it exists, accounting for audio delay
+    if (
+      this.state === "PLAY" &&
+      this.videoEl?.paused &&
+      this.timeElapsed > this.delay
+    ) {
+      this.videoEl.currentTime = this.song.seek();
+      this.videoEl.play();
+    }
+
+    this.replayPlayer?.update(this.timeElapsed, isAfterSeek);
+
+    if (!this.mods.autoplay) {
+      this.stageLights.forEach((stageLight) => stageLight.update());
+      this.keys.forEach((key) => key.update());
+    }
+
+    if (this.countdown.view.visible) {
+      this.countdown.update(this.startTime - this.timeElapsed, this.startTime);
+    }
+
+    while (this.timeElapsed >= this.nextTimingPoint?.time) {
+      this.currentTimingPoint = this.nextTimingPoint;
+      this.nextTimingPoint =
+        this.timingPoints[this.timingPoints.indexOf(this.nextTimingPoint) + 1];
+    }
+
+    this.progress?.update(this.timeElapsed, this.startTime, this.endTime);
+
+    if (this.timeElapsed > this.endTime && !this.finished) {
+      this.finished = true;
+      this.finish();
+    }
+
+    const oldHealth = this.healthSystem.health;
+
+    this.updateHitObjects();
+
+    if (this.healthBar && this.healthSystem.health !== oldHealth) {
+      const lostHealth = this.healthSystem.health < oldHealth;
+      this.healthBar.setHealth(this.healthSystem.health, lostHealth);
+    }
+
+    if (this.healthSystem.health <= MIN_HEALTH && !this.mods.noFail) {
+      this.state = "FAIL";
+    }
+
+    if (!isAfterSeek) {
+      this.judgement?.showJudgement();
+    }
+  }
+
+  public getNextHitObject(columnId: number) {
+    return this.columns[columnId][this.currentColumnIndices[columnId]];
   }
 
   private addReplayText() {
@@ -882,6 +900,7 @@ export class Game {
       this.columns.push(
         hitObjects.filter((hitObject) => hitObject.data.column === i),
       );
+      this.currentColumnIndices.push(0);
     }
   }
 
@@ -971,6 +990,48 @@ export class Game {
 
       this.song.play();
       this.state = "PLAY";
+    }
+  }
+
+  public seek(time: number) {
+    for (const column of this.columns) {
+      for (const hitObject of column) {
+        hitObject.view.visible = false;
+
+        if (hitObject instanceof Hold) {
+          hitObject.resetHeight();
+        }
+      }
+    }
+
+    this.currentColumnIndices = this.columns.map(() => 0);
+
+    // Reset systems
+    this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
+    this.healthSystem = new HealthSystem(this);
+    this.inputSystem.dispose();
+    this.inputSystem = new InputSystem(this);
+
+    this.currentTimingPoint = this.timingPoints[0];
+    this.nextTimingPoint = this.timingPoints[1];
+
+    this.timelineData = [];
+
+    if (this.replayPlayer) {
+      this.replayPlayer.currentEventIndex = 0;
+    }
+
+    this.song.seek(time);
+
+    this.timeElapsed = Math.round(time * 1000);
+    if (this.videoEl) {
+      this.videoEl.currentTime = time;
+    }
+
+    this.playUpdate(true);
+
+    if (this.judgement) {
+      this.judgement.judgementToShow = null;
     }
   }
 
@@ -1086,22 +1147,13 @@ export class Game {
   }
 
   public updateHitObjects() {
-    for (const column of this.columns) {
-      let i = 0;
+    this.columns.forEach((column, columnIndex) => {
+      let i = this.currentColumnIndices[columnIndex];
 
       while (i < column.length) {
         const hitObject = column[i];
 
-        // Object may already be hit during replay
-        if (!hitObject.shouldRemove) {
-          hitObject.update();
-        }
-
-        if (hitObject.shouldRemove) {
-          this.notesContainer.removeChild(hitObject.view);
-          column.shift();
-          i = 0;
-        }
+        hitObject.update();
 
         // If you failed, you're done - no need to update any more hit objects
         if (this.healthSystem?.health === MIN_HEALTH && !this.mods.noFail) {
@@ -1115,6 +1167,6 @@ export class Game {
 
         i++;
       }
-    }
+    });
   }
 }

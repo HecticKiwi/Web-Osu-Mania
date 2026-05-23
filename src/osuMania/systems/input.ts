@@ -1,4 +1,6 @@
 import type { Game } from "../game";
+import type { Hold } from "../sprites/hold/hold";
+import type { Tap } from "../sprites/tap/tap";
 
 export class InputSystem {
   private game: Game;
@@ -52,7 +54,7 @@ export class InputSystem {
     });
   }
 
-  public hit(column: number, timeElapsed?: number) {
+  public hit(column: number, timeElapsed?: number, isAfterSeek?: boolean) {
     if (this.pressedColumns[column]) {
       return;
     }
@@ -60,7 +62,7 @@ export class InputSystem {
     this.tappedColumns[column] = true;
     this.pressedColumns[column] = true;
 
-    if (this.game.state !== "PLAY" || this.game.mods.autoplay) {
+    if (!this.game.replayPlayer && this.game.state !== "PLAY") {
       return;
     }
 
@@ -68,11 +70,16 @@ export class InputSystem {
       this.game.timeElapsed = Math.round(this.game.song.seek() * 1000);
     }
 
+    this.checkLateMisses(timeElapsed ?? this.game.timeElapsed);
+
+    if (this.game.state === "PLAY" && !isAfterSeek) {
+      this.game.audioSystem.playNextHitsounds(column);
+    }
+
     this.game.replayRecorder?.record(column, true);
-    this.game.columns[column]
-      .find((hitObject) => !hitObject.shouldRemove)
-      ?.hit(timeElapsed);
-    this.game.audioSystem.playNextHitsounds(column);
+    this.game.columns[column][this.game.currentColumnIndices[column]]?.hit(
+      timeElapsed,
+    );
   }
 
   public release(column: number, timeElapsed?: number) {
@@ -83,7 +90,7 @@ export class InputSystem {
     this.pressedColumns[column] = false;
     this.releasedColumns[column] = true;
 
-    if (this.game.state !== "PLAY" || this.game.mods.autoplay) {
+    if (!this.game.replayPlayer && this.game.state !== "PLAY") {
       return;
     }
 
@@ -91,10 +98,47 @@ export class InputSystem {
       this.game.timeElapsed = Math.round(this.game.song.seek() * 1000);
     }
 
+    this.checkLateMisses(timeElapsed ?? this.game.timeElapsed);
+
     this.game.replayRecorder?.record(column, false);
-    this.game.columns[column]
-      .find((hitObject) => !hitObject.shouldRemove)
-      ?.release(timeElapsed);
+    this.game.columns[column][this.game.currentColumnIndices[column]]?.release(
+      timeElapsed,
+    );
+  }
+
+  public checkLateMisses(timeElapsed: number): void {
+    const lateHitObjects: (Tap | Hold)[] = [];
+
+    const getLateMissTime = (hitObject: Tap | Hold) => {
+      if (hitObject.data.type === "tap") {
+        return hitObject.data.time + this.game.hitWindows[0];
+      } else {
+        return hitObject.data.endTime + this.game.hitWindows[0] * 1.5;
+      }
+    };
+
+    for (let columnId = 0; columnId < this.game.columns.length; columnId++) {
+      for (
+        let i = this.game.currentColumnIndices[columnId];
+        i < this.game.columns[columnId].length;
+        i++
+      ) {
+        const hitObject = this.game.columns[columnId][i];
+        const missTime = getLateMissTime(hitObject);
+
+        if (timeElapsed > missTime) {
+          lateHitObjects.push(hitObject);
+        } else {
+          break;
+        }
+      }
+    }
+
+    if (lateHitObjects.length > 0) {
+      lateHitObjects
+        .sort((a, b) => getLateMissTime(a) - getLateMissTime(b))
+        .forEach((hitObject) => hitObject.update(timeElapsed));
+    }
   }
 
   public updateGamepadInputs() {
@@ -149,12 +193,37 @@ export class InputSystem {
       return;
     }
 
-    if (this.game.replayPlayer) {
+    if (this.game.replayPlayer && event.code === "Space") {
+      if (this.game.song.playing()) {
+        this.game.song.pause();
+      } else {
+        this.game.song.play();
+      }
+
       return;
     }
 
     const column = this.keybindsMap.get(event.code);
     if (column === undefined) {
+      return;
+    }
+
+    const shouldSkipIntro =
+      this.game.state === "PLAY" &&
+      this.game.timeElapsed < this.game.startTime - 2000;
+    if (shouldSkipIntro) {
+      // 1 second before first hit object
+      const time = this.game.startTime / 1000 - 1;
+
+      if (this.game.videoEl) {
+        this.game.videoEl.currentTime = time;
+      }
+      this.game.song.seek(this.game.startTime / 1000 - 1);
+      return;
+    }
+    console.log("test");
+
+    if (this.game.replayPlayer) {
       return;
     }
 
