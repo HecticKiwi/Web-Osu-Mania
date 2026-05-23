@@ -1,4 +1,8 @@
-import type { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type {
+  ReplayData,
+  ReplayDataV2,
+  ReplayInputV2,
+} from "@/osuMania/systems/replayRecorder";
 import type { Settings } from "@/stores/settingsStore";
 import { defaultSettings } from "@/stores/settingsStore";
 import type { PlayResults } from "@/types";
@@ -105,4 +109,31 @@ export async function downloadReplay(
       description: error.message,
     });
   }
+}
+
+export function generateAutoReplay(
+  beatmapData: BeatmapData,
+  mods: Settings["mods"],
+): ReplayDataV2 {
+  const inputs: ReplayInputV2[] = [];
+
+  for (const hitObject of beatmapData.hitObjects) {
+    if (hitObject.type === "tap") {
+      inputs.push(
+        [hitObject.column, hitObject.time + beatmapData.audioOffset, true],
+        [hitObject.column, hitObject.endTime + beatmapData.audioOffset, false],
+      );
+    }
+  }
+
+  return {
+    version: 2,
+    timestamp: Date.now(),
+    beatmap: {
+      id: beatmapData.beatmapId,
+      setId: beatmapData.beatmapSetId,
+    },
+    mods: encodeMods(mods),
+    inputs,
+  };
 }
