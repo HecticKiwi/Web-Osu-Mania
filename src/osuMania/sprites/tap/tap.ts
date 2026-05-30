@@ -15,7 +15,6 @@ export abstract class Tap {
   public additionSet: SampleSet;
   public sampleIndex: number;
   public volume: number;
-  public shouldRemove = false;
 
   constructor(game: Game, tapData: TapData) {
     this.game = game;
@@ -96,65 +95,30 @@ export abstract class Tap {
     }
   }
 
-  public update() {
-    const delta = this.data.time - this.game.timeElapsed;
+  public update(timeElapsedOverride?: number) {
+    const timeElapsed = timeElapsedOverride ?? this.game.timeElapsed;
+    const delta = this.data.time - timeElapsed;
 
     this.view.visible = true;
     this.view.y =
       this.game.hitPosition +
       this.game.settings.noteOffset -
-      this.game.getHitObjectOffset(this.game.timeElapsed, this.data.time);
-
-    const column = this.game.columns[this.data.column];
-    if (column[0] !== this) {
-      return;
-    }
-
-    if (this.game.mods.autoplay) {
-      if (delta < 0) {
-        this.playHitsounds();
-
-        this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
-        this.game.scoreSystem.hit(320);
-        this.game.timelineData.push({
-          time: this.data.time,
-          error: 0,
-          judgement: 320,
-          health: this.game.healthSystem.health,
-        });
-
-        this.game.stageLights[this.data.column]?.light();
-
-        this.game.errorBar?.addTimingMark(0);
-
-        this.shouldRemove = true;
-
-        this.game.keys[this.data.column].setPressed(true);
-        setTimeout(
-          () => this.game.keys[this.data.column].setPressed(false),
-          100,
-        );
-      }
-
-      return;
-    }
+      this.game.getHitObjectOffset(timeElapsed, this.data.time);
 
     // If this has passed the late miss point
     if (delta < -this.game.hitWindows[0]) {
-      this.game.scoreSystem.hit(
-        0,
-        "late",
-        this.data.endTime !== this.data.time,
-      );
+      this.game.scoreSystem.hit(0, "late", this.data.isHoldHead);
       this.game.timelineData.push({
         time: this.data.time + this.game.hitWindows[0],
         error: -this.game.hitWindows[0],
         judgement: 0,
         health: this.game.healthSystem.health,
       });
-      this.shouldRemove = true;
 
-      const nextHitObject = column[1];
+      this.game.currentColumnIndices[this.data.column]++;
+      this.view.visible = false;
+
+      const nextHitObject = this.game.getNextHitObject(this.data.column);
       if (nextHitObject && nextHitObject instanceof Hold) {
         nextHitObject.break();
       }
@@ -188,11 +152,7 @@ export abstract class Tap {
     const earlyOrLate = delta > 0 ? "early" : "late";
 
     this.game.scoreSystem.hitErrors.push({ error: delta, judgement });
-    this.game.scoreSystem.hit(
-      judgement,
-      earlyOrLate,
-      this.data.endTime !== this.data.time,
-    );
+    this.game.scoreSystem.hit(judgement, earlyOrLate, this.data.isHoldHead);
     this.game.timelineData.push({
       time: timeElapsed,
       error: delta,
@@ -200,9 +160,10 @@ export abstract class Tap {
       health: this.game.healthSystem.health,
     });
 
-    this.game.errorBar?.addTimingMark(delta);
+    this.game.currentColumnIndices[this.data.column]++;
+    this.view.visible = false;
 
-    this.shouldRemove = true;
+    this.game.errorBar?.addTimingMark(delta);
   }
 
   public release() {}

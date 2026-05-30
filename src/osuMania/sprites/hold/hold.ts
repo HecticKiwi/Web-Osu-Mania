@@ -1,4 +1,5 @@
 import type { HoldData } from "@/lib/beatmapParser";
+import type { Judgement } from "@/types";
 import { gsap } from "gsap";
 import type { Container } from "pixi.js";
 import type { Game } from "../../game";
@@ -13,15 +14,18 @@ export abstract class Hold {
   protected body: Container;
   protected head?: Container;
 
-  public shouldRemove: boolean;
   protected height: number;
   protected broken = false;
 
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
     this.data = holdData;
+    this.resetHeight();
+  }
+
+  public resetHeight() {
     this.height = this.game.getHitObjectOffset(
-      holdData.time,
+      this.data.time,
       this.getVisualEndTime(),
     );
   }
@@ -37,64 +41,21 @@ export abstract class Hold {
         this.getVisualEndTime(),
       );
 
-    const column = this.game.columns[this.data.column];
-    if (column[0] !== this) {
-      // Set height again in case of resize
-      if (this.game.timeElapsed < this.data.time) {
-        this.height = this.game.getHitObjectOffset(
-          this.data.time,
-          this.getVisualEndTime(),
-        );
-      }
-
-      this.setViewHeight();
-
-      return;
-    }
-
     const endTimeDelta = this.data.endTime - this.game.timeElapsed;
 
-    if (this.game.mods.autoplay) {
-      // Press key during hold
-      if (this.game.timeElapsed > this.data.time) {
-        this.game.keys[this.data.column].setPressed(true);
+    // If this has passed the late miss point
+    if (endTimeDelta < -this.game.hitWindows[0] * 1.5) {
+      this.game.scoreSystem.hit(0, "late", true);
+      this.game.timelineData.push({
+        time: this.data.endTime + this.game.hitWindows[0],
+        error: -this.game.hitWindows[0],
+        judgement: 0,
+        health: this.game.healthSystem.health,
+      });
 
-        if (this.game.stageLights[this.data.column]) {
-          this.game.stageLights[this.data.column].view.alpha = 1;
-        }
-      }
-
-      // If hold is completed
-      if (endTimeDelta < 0) {
-        this.game.scoreSystem.hitErrors.push({ error: 0, judgement: 320 });
-        this.game.scoreSystem.hit(320, undefined, true);
-        this.game.timelineData.push({
-          time: this.data.endTime,
-          error: 0,
-          judgement: 320,
-          health: this.game.healthSystem.health,
-        });
-
-        this.game.errorBar?.addTimingMark(0);
-
-        this.game.keys[this.data.column].setPressed(false);
-        this.game.stageLights[this.data.column]?.light();
-
-        this.shouldRemove = true;
-      }
-    } else {
-      // If this has passed the late miss point
-      if (endTimeDelta < -this.game.hitWindows[0]) {
-        this.game.scoreSystem.hit(0, "late", true);
-        this.game.timelineData.push({
-          time: this.data.endTime + this.game.hitWindows[0],
-          error: -this.game.hitWindows[0],
-          judgement: 0,
-          health: this.game.healthSystem.health,
-        });
-        this.shouldRemove = true;
-        return;
-      }
+      this.game.currentColumnIndices[this.data.column]++;
+      this.view.visible = false;
+      return;
     }
 
     if (!this.broken) {
@@ -126,31 +87,25 @@ export abstract class Hold {
     const earlyOrLate = endTimeDelta > 0 ? "early" : "late";
 
     if (absDelta < this.game.hitWindows[0] * 1.5) {
-      this.shouldRemove = true;
+      this.game.currentColumnIndices[this.data.column]++;
 
+      let judgement: Judgement;
       if (this.broken) {
-        this.game.scoreSystem.hit(50, earlyOrLate, true);
-        this.game.timelineData.push({
-          time: this.data.time,
-          error: endTimeDelta,
-          judgement: 50,
-          health: this.game.healthSystem.health,
-        });
-        return;
+        judgement = 50;
+      } else {
+        judgement =
+          absDelta <= this.game.hitWindows[320] * 1.5
+            ? 320
+            : absDelta <= this.game.hitWindows[300] * 1.5
+              ? 300
+              : absDelta <= this.game.hitWindows[200] * 1.5
+                ? 200
+                : absDelta <= this.game.hitWindows[100] * 1.5
+                  ? 100
+                  : absDelta <= this.game.hitWindows[50] * 1.5
+                    ? 50
+                    : 0;
       }
-
-      const judgement =
-        absDelta <= this.game.hitWindows[320] * 1.5
-          ? 320
-          : absDelta <= this.game.hitWindows[300] * 1.5
-            ? 300
-            : absDelta <= this.game.hitWindows[200] * 1.5
-              ? 200
-              : absDelta <= this.game.hitWindows[100] * 1.5
-                ? 100
-                : absDelta <= this.game.hitWindows[50] * 1.5
-                  ? 50
-                  : 0;
 
       this.game.scoreSystem.hitErrors.push({
         error: endTimeDelta,
@@ -158,13 +113,15 @@ export abstract class Hold {
       });
       this.game.scoreSystem.hit(judgement, earlyOrLate, true);
       this.game.timelineData.push({
-        time: this.data.endTime,
+        time: timeElapsed,
         error: endTimeDelta,
         judgement,
         health: this.game.healthSystem.health,
       });
 
       this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
+
+      this.view.visible = false;
 
       return;
     }

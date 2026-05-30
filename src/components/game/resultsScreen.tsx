@@ -207,30 +207,32 @@ const ResultsScreen = ({
                     </Tooltip>
                   </TooltipProvider>
 
-                  <TooltipProvider>
-                    <Tooltip delayDuration={0}>
-                      <TooltipTrigger
-                        asChild
-                        className="rounded-l-none border-l text-xl"
-                      >
-                        <Button
-                          variant={"ghost"}
-                          onClick={() =>
-                            downloadReplay(
-                              playResults.replayData!,
-                              beatmapData,
-                              playResults,
-                            )
-                          }
+                  {!mods.autoplay && (
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger
+                          asChild
+                          className="rounded-l-none border-l text-xl"
                         >
-                          <Save />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Download Replay</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                          <Button
+                            variant={"ghost"}
+                            onClick={() =>
+                              downloadReplay(
+                                playResults.replayData!,
+                                beatmapData,
+                                playResults,
+                              )
+                            }
+                          >
+                            <Save />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Download Replay</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                 </div>
               )}
             </div>

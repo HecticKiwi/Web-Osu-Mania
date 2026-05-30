@@ -1,3 +1,4 @@
+import { formatTime } from "@/lib/utils";
 import type { Judgement } from "@/types";
 import ReactECharts from "echarts-for-react";
 import { useMemo } from "react";
@@ -8,21 +9,6 @@ export type TimelineDataPoint = {
   judgement: Judgement;
   health: number;
 };
-
-function formatTime(ms: number, includeMs: boolean = false): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-
-  const timestamp = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
-  if (includeMs) {
-    const milliseconds = Math.floor(ms % 1000);
-    return `${timestamp}.${milliseconds.toString().padStart(3, "0")}`;
-  }
-
-  return timestamp;
-}
 
 const getCssVar = (name: string) => {
   if (typeof window === "undefined") {

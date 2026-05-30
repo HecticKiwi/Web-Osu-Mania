@@ -12,53 +12,65 @@ export class ReplayPlayer {
 
   public replayData: ReplayData;
   private events: Event[] = [];
-  private currentEventIndex = 0;
+  public currentEventIndex = 0;
 
   constructor(game: Game, replayData: ReplayData) {
     this.game = game;
-    const inputs = replayData.inputs
-      .map((columnInputs, column) =>
-        columnInputs.map((input) => [column, ...input]),
-      )
-      .flat();
-
     this.replayData = replayData;
 
-    for (const input of inputs) {
-      const [column, rawTime, length] = input;
-      const time =
-        replayData.version >= 1 ? rawTime - game.settings.audioOffset : rawTime;
+    if (replayData.version !== 2) {
+      const inputs = replayData.inputs
+        .map((columnInputs, column) =>
+          columnInputs.map((input) => [column, ...input]),
+        )
+        .flat();
 
-      this.events.push(
-        {
+      for (const input of inputs) {
+        const [column, rawTime, length] = input;
+        const time =
+          replayData.version && replayData.version === 1
+            ? rawTime - game.settings.audioOffset
+            : rawTime;
+
+        this.events.push(
+          {
+            column,
+            time,
+            type: "down",
+          },
+          {
+            column,
+            time: time + length,
+            type: "up",
+          },
+        );
+      }
+    } else {
+      for (const input of replayData.inputs) {
+        const [column, rawTime, isDown] = input;
+        const time = rawTime - game.audioOffset;
+
+        this.events.push({
           column,
           time,
-          type: "down",
-        },
-        {
-          column,
-          time: time + length,
-          type: "up",
-        },
-      );
+          type: isDown ? "down" : "up",
+        });
+      }
     }
 
     this.events.sort((a, b) => a.time - b.time);
   }
 
-  public update() {
-    const time = this.game.timeElapsed;
-
+  // Play all replay inputs up to the provided time
+  public update(time: number, isAfterSeek?: boolean) {
     while (
       this.currentEventIndex < this.events.length &&
       this.events[this.currentEventIndex].time <= time
     ) {
       const event = this.events[this.currentEventIndex];
 
-      const type = event.type;
-
-      if (type === "down") {
-        this.game.inputSystem.hit(event.column, event.time);
+      if (event.type === "down") {
+        this.game.inputSystem.hit(event.column, event.time, isAfterSeek);
       } else {
         this.game.inputSystem.release(event.column, event.time);
       }

@@ -118,6 +118,7 @@ export interface BeatmapData {
   metadata: Metadata;
   difficulty: Difficulty;
   sounds: SoundDictionary;
+  audioOffset: number;
 }
 
 export const parseOsz = async (
@@ -304,6 +305,7 @@ export const parseOsz = async (
     metadata,
     difficulty,
     sounds,
+    audioOffset,
   };
 };
 

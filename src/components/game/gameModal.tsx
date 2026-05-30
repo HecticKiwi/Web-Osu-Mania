@@ -1,7 +1,9 @@
 import { Progress } from "@/components/ui/progress";
 import type { BeatmapData } from "@/lib/beatmapParser";
 import { parseOsz } from "@/lib/beatmapParser";
+import { generateAutoReplay } from "@/lib/replay";
 import { loadAssets } from "@/osuMania/assets";
+import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useBeatmapSetCacheStore } from "../../stores/beatmapSetCacheStore";
@@ -16,7 +18,6 @@ const GameModal = () => {
   const closeGame = useGameStore.use.closeGame();
   const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
   const localReplayBeatmapSet = useGameStore.use.localReplayBeatmapSet();
-  const replayData = useGameStore.use.replayData();
   const storeDownloadedBeatmaps = useSettingsStore(
     (settings) => settings.storeDownloadedBeatmaps,
   );
@@ -28,6 +29,7 @@ const GameModal = () => {
   const setStoredBeatmapSets =
     useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
   const [beatmapData, setBeatmapData] = useState<BeatmapData | null>(null);
+  const [replayData, setReplayData] = useState<ReplayData | null>(null);
   const [key, setKey] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState(
     "Downloading Beatmap...",
@@ -100,17 +102,26 @@ const GameModal = () => {
           );
         }
 
+        let replay = useGameStore.getState().replayData;
+
         const parsedBeatmapData = await parseOsz(
           beatmapSetFile,
           beatmap,
-          replayData?.mods,
-          replayData?.columnMap,
+          replay?.mods,
+          replay?.columnMap,
           beatmapSet.status === "local",
         );
+
+        // If autoplay is enabled and we're not already watching a replay, use a perfect replay
+        const mods = useSettingsStore.getState().mods;
+        if (!replay && mods.autoplay) {
+          replay = generateAutoReplay(parsedBeatmapData, mods);
+        }
 
         await loadAssets();
 
         setBeatmapData(parsedBeatmapData);
+        setReplayData(replay);
       } catch (error: any) {
         toast("Parsing Error", {
           description: error.message,
@@ -133,7 +144,6 @@ const GameModal = () => {
     storedBeatmapSets,
     setStoredBeatmapSets,
     storeDownloadedBeatmaps,
-    replayData,
   ]);
 
   // Clean up object URLs
@@ -212,6 +222,7 @@ const GameModal = () => {
           <GameScreens
             key={key}
             beatmapData={beatmapData}
+            replayData={replayData}
             retry={retry}
             videoRef={videoRef}
             showHud={showHud}
