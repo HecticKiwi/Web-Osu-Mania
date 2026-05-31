@@ -8,10 +8,6 @@ import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
 const BeatmapSetPageButton = ({ beatmapSetId }: { beatmapSetId: number }) => {
-  if (beatmapSetId <= 0) {
-    return null;
-  }
-
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>

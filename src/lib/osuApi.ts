@@ -25,6 +25,8 @@ const STATUSES = [
   "pending",
   "graveyard",
   "wip",
+  // A custom status that indicates the beatmap was uploaded as a file.
+  // High scores are not recorded for local beatmaps.
   "local",
 ] as const;
 export type Status = (typeof STATUSES)[number];
@@ -48,6 +50,8 @@ export type Beatmap = {
 
   count_circles: number; // Tap note count
   count_sliders: number; // Hold note count
+
+  // Custom properties
   hash?: string;
 };
 
@@ -68,7 +72,7 @@ export type BeatmapSet = {
   // covers: Covers;
   creator: string;
   // favourite_count: number;
-  id: number;
+  id: number; // Set to 0 for local beatmaps if the set ID could not be found
   nsfw: boolean;
   offset: number;
   // play_count: number;
@@ -78,12 +82,14 @@ export type BeatmapSet = {
   // spotlight: boolean;
   title: string;
   title_unicode: string;
-  coverUrl?: string;
-  previewUrl?: string;
   // user_id: number;
   // video: boolean;
 
   beatmaps: Beatmap[];
+
+  // Custom properties
+  coverUrl?: string;
+  previewUrl?: string;
 };
 
 export async function getBeatmapSets({

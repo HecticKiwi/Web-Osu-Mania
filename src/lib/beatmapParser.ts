@@ -329,12 +329,9 @@ export function parseHitObjects(
   audioOffset: number,
   replayColumnMap?: number[],
 ) {
-  const startIndex = lines.indexOf("[HitObjects]") + 1;
-  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
-
   // https://osu.ppy.sh/wiki/en/Client/File_formats/osu_%28file_format%29#holds-(osu!mania-only)
   const hitObjects: HitObject[] = [];
-  const hitObjectData = lines.slice(startIndex, endIndex);
+  const hitObjectData = getSectionLines(lines, "HitObjects");
 
   // Hit objects may be empty when downloading from SayoBot
   if (hitObjectData.length === 0) {
@@ -473,10 +470,7 @@ async function parseEvents(
   entries: Entry[],
   delay: number,
 ): Promise<Events> {
-  const startIndex = lines.indexOf("[Events]") + 1;
-  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
-
-  const eventLines = lines.slice(startIndex, endIndex);
+  const eventLines = getSectionLines(lines, "Events");
 
   // Parse video
   let videoUrl: string | null = null;
@@ -531,10 +525,7 @@ function parseTimingPoints(
   mods: Settings["mods"],
   audioOffset: number,
 ): TimingPoint[] {
-  const startIndex = lines.indexOf("[TimingPoints]") + 1;
-  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
-
-  const timingPointLines = lines.slice(startIndex, endIndex);
+  const timingPointLines = getSectionLines(lines, "TimingPoints");
 
   const settings = useSettingsStore.getState();
   const baseScrollSpeed = settings.scrollSpeed;
@@ -652,6 +643,20 @@ function getLineValue(lines: string[], key: string) {
   return value;
 }
 
+function getLineValueOrDefault(
+  lines: string[],
+  key: string,
+  defaultValue: string,
+) {
+  const line = lines.find((l) => l.startsWith(`${key}:`));
+
+  if (!line) {
+    return defaultValue;
+  }
+
+  return line.split(`${key}:`)[1].trim();
+}
+
 // https://osu.ppy.sh/wiki/en/Gameplay/Judgement/osu%21mania#scorev2
 // Table: https://i.ppy.sh/d0319d39fbc14fb6e380264e78d1e2c839c6912c/68747470733a2f2f646c2e64726f70626f7875736572636f6e74656e742e636f6d2f732f6d757837616176393779386c7639302f6f73756d616e69612532424f442e706e67
 function getHitWindows(od: number, mods: Settings["mods"]): HitWindows {
@@ -713,6 +718,7 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
 
   if (coverFilename) {
     const coverEntry = findEntry(entries, coverFilename);
+
     if (coverEntry) {
       const coverBlob = await coverEntry.getData(new BlobWriter());
       coverUrl = URL.createObjectURL(coverBlob);
@@ -741,15 +747,11 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
       previewUrl = URL.createObjectURL(previewBlob);
     }
   }
-  let setMetadata:
-    | {
-        artist: string;
-        artistUnicode: string;
-        title: string;
-        titleUnicode: string;
-        creator: string;
+
+  let beatmapSetMetadata:
+    | (Metadata & {
         beatmapSetId: number;
-      }
+      })
     | undefined;
 
   for (let i = 0; i < osuEntries.length; i++) {
@@ -777,13 +779,9 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
     );
     const beatmapHash = await getStringSha256Hex(text);
 
-    if (!setMetadata) {
-      setMetadata = {
-        artist: metadata.artist,
-        artistUnicode: metadata.artistUnicode,
-        title: metadata.title,
-        titleUnicode: metadata.titleUnicode,
-        creator: metadata.creator,
+    if (!beatmapSetMetadata) {
+      beatmapSetMetadata = {
+        ...metadata,
         beatmapSetId,
       };
     }
@@ -820,46 +818,32 @@ export async function getBeatmapSetFromOsz(blob: Blob): Promise<BeatmapSet> {
     throw new Error("No osu!mania difficulties found in this .osz file.");
   }
 
-  const fallbackId = -Date.now();
+  const fallbackId = 0;
 
   return {
-    artist: setMetadata?.artist ?? "",
-    artist_unicode: setMetadata?.artistUnicode ?? "",
-    creator: setMetadata?.creator ?? "",
+    artist: beatmapSetMetadata?.artist ?? "",
+    artist_unicode: beatmapSetMetadata?.artistUnicode ?? "",
+    creator: beatmapSetMetadata?.creator ?? "",
     id:
-      setMetadata && setMetadata.beatmapSetId > 0
-        ? setMetadata.beatmapSetId
+      beatmapSetMetadata && beatmapSetMetadata.beatmapSetId > 0
+        ? beatmapSetMetadata.beatmapSetId
         : fallbackId,
     nsfw: false,
     offset: 0,
     status: "local",
-    title: setMetadata?.title ?? "",
-    title_unicode: setMetadata?.titleUnicode ?? "",
+    title: beatmapSetMetadata?.title ?? "",
+    title_unicode: beatmapSetMetadata?.titleUnicode ?? "",
     coverUrl,
     previewUrl,
     beatmaps,
   };
 }
 
-function getSectionLines(lines: string[], sectionName: string) {
+export function getSectionLines(lines: string[], sectionName: string) {
   const startIndex = lines.indexOf(`[${sectionName}]`) + 1;
   const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
 
   return lines.slice(startIndex, endIndex).filter(Boolean);
-}
-
-function getLineValueOrDefault(
-  lines: string[],
-  key: string,
-  defaultValue: string,
-) {
-  const line = lines.find((l) => l.startsWith(`${key}:`));
-
-  if (!line) {
-    return defaultValue;
-  }
-
-  return line.split(`${key}:`)[1].trim();
 }
 
 async function getStringSha256Hex(text: string): Promise<string> {

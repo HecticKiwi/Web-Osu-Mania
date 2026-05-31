@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -6,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import type { ReplayData } from "@/osuMania/systems/replayRecorder";
 import { decompressSync } from "fflate";
 import { Upload } from "lucide-react";
@@ -28,10 +28,7 @@ const ReplayUpload = () => {
   const verifyInputRef = useRef<HTMLInputElement>(null);
 
   const isLocalReplay = (replayData: ReplayData) => {
-    const hasOnlineIds =
-      replayData.beatmap.id != null && replayData.beatmap.setId != null;
-
-    return !hasOnlineIds && !!replayData.beatmap.hash;
+    return !("setId" in replayData.beatmap);
   };
 
   const loadFile = (file?: File) => {

@@ -36,10 +36,9 @@
  *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Skills/StrainSkill.cs#L124
  * - logistic function definition:
  *   https://github.com/ppy/osu/blob/master/osu.Game/Rulesets/Difficulty/Utils/DifficultyCalculationUtils.cs#L41
- * 
- * Note: This was created with the help of `GPT-5.3 Codex` becasue I (Sling) have not learned C# and was having trouble fully understanding it.
  */
 
+import { getSectionLines } from "./beatmapParser";
 
 type ManiaHitObject = {
   startTime: number;
@@ -89,9 +88,7 @@ function parseManiaHitObjects(
   lines: string[],
   totalColumns: number,
 ): ManiaHitObject[] {
-  const startIndex = lines.indexOf("[HitObjects]") + 1;
-  const endIndex = lines.findIndex((line, i) => line === "" && i > startIndex);
-  const sectionLines = lines.slice(startIndex, endIndex).filter(Boolean);
+  const sectionLines = getSectionLines(lines, "HitObjects");
 
   const result: ManiaHitObject[] = [];
 

@@ -34,14 +34,15 @@ const UploadDialog = () => {
       return;
     }
 
-    const audio = beatmapSet.previewUrl
-      ? playAudioPreviewFromUrl(beatmapSet.previewUrl, musicVolume)
-      : beatmapSet.id > 0
-        ? playAudioPreview(beatmapSet.id, musicVolume)
-        : null;
+    let audio: Howl | null = null;
+    if (beatmapSet.previewUrl) {
+      audio = playAudioPreviewFromUrl(beatmapSet.previewUrl, musicVolume);
+    } else if (beatmapSet.id > 0) {
+      audio = playAudioPreview(beatmapSet.id, musicVolume);
+    }
 
     if (audio) {
-      /* eslint-disable-next-line */
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreview(audio);
     }
   }, [beatmapSet, musicVolume, replayData, uploadedBeatmapSet]);

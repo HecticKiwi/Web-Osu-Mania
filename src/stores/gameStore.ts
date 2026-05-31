@@ -2,7 +2,10 @@ import { getBeatmapSetFromOsz } from "@/lib/beatmapParser";
 import type { BeatmapSet } from "@/lib/osuApi";
 import { getBeatmapSet } from "@/lib/osuApi";
 import { createSelectors } from "@/lib/zustand";
-import type { ReplayData } from "@/osuMania/systems/replayRecorder";
+import type {
+  LocalBeatmapData,
+  ReplayData,
+} from "@/osuMania/systems/replayRecorder";
 import { Howler } from "howler";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -47,11 +50,11 @@ const useGameStoreBase = create<GameState>()(
     },
 
     startReplay: async (replay: ReplayData) => {
-      const beatmapSetId = replay.beatmap.setId;
-      const beatmapId = replay.beatmap.id;
-      const beatmapHash = replay.beatmap.hash;
+      const beatmapSetId =
+        "setId" in replay.beatmap ? replay.beatmap.setId : undefined;
+      const beatmapId = "id" in replay.beatmap ? replay.beatmap.id : undefined;
 
-      // Prefer online IDs when present (backward compatible with older replays
+      // Prefer online IDs when present
       if (beatmapSetId != null && beatmapId != null) {
         const beatmapSet = await getBeatmapSet(beatmapSetId);
 
@@ -65,6 +68,7 @@ const useGameStoreBase = create<GameState>()(
         return;
       }
 
+      const beatmapHash = replay.beatmap.hash;
       if (beatmapHash) {
         const uploadedBeatmapSet = get().beatmapSet;
 
@@ -112,14 +116,17 @@ const useGameStoreBase = create<GameState>()(
         const localBeatmap = beatmapSet.beatmaps.find(
           (beatmap) => beatmap.hash === beatmapHash,
         );
+
+        const replayBeatmapData = replay.beatmap as LocalBeatmapData;
+
         const fallbackBeatmap =
           beatmapSet.beatmaps.find(
             (beatmap) =>
-              beatmap.version === replay.beatmap.version &&
-              beatmap.cs === replay.beatmap.keyCount,
+              beatmap.version === replayBeatmapData.version &&
+              beatmap.cs === replayBeatmapData.keyCount,
           ) ??
           beatmapSet.beatmaps.find(
-            (beatmap) => beatmap.cs === replay.beatmap.keyCount,
+            (beatmap) => beatmap.cs === replayBeatmapData.keyCount,
           ) ??
           beatmapSet.beatmaps[0];
 

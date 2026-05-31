@@ -1,5 +1,4 @@
 import type { ReplayData } from "@/osuMania/systems/replayRecorder";
-import { normalizeReplayBeatmapReference } from "./replay";
 import { compressSync } from "fflate";
 import type { DBSchema, IDBPDatabase } from "idb";
 import { openDB } from "idb";
@@ -158,8 +157,7 @@ class Idb {
   public async saveReplay(replayData: ReplayData, id: string): Promise<string> {
     const db = await this.db;
 
-    const normalizedReplay = normalizeReplayBeatmapReference(replayData);
-    const replayDataString = JSON.stringify(normalizedReplay);
+    const replayDataString = JSON.stringify(replayData);
     const encoded = new TextEncoder().encode(replayDataString);
     const compressed = compressSync(encoded);
     const file = new Blob([compressed as BlobPart], {

@@ -94,12 +94,12 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
           <IndexedDbButton beatmapSet={beatmapSet} />
         </div>
 
-        <div className="absolute top-4 right-4 flex gap-2">
-          <CollectionsDropdown beatmapSet={beatmapSet} />
-          {beatmapSet.status !== "local" && (
+        {beatmapSet.id > 0 && (
+          <div className="absolute top-4 right-4 flex gap-2">
+            <CollectionsDropdown beatmapSet={beatmapSet} />
             <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <PopoverContent className="p-0">
