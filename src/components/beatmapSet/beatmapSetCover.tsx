@@ -20,6 +20,8 @@ const getStatusClass = (status: Status) => {
       return "bg-[#ff9966] text-[#394246]"; // Orange
     case "graveyard":
       return "bg-black text-[#5c6970]"; // Gray
+    case "local":
+      return "bg-[#8ad4ff] text-[#1f2a33]"; // Cyan
   }
 };
 
@@ -31,11 +33,12 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
   const preferMetadataInOriginalLanguage =
     useSettingsStore.use.preferMetadataInOriginalLanguage();
 
-  const coverUrl = (
-    beatmapCoverProvider !== "Custom"
+  const coverUrl =
+    beatmapSet.coverUrl ??
+    (beatmapCoverProvider !== "Custom"
       ? BEATMAP_COVER_PROVIDERS[beatmapCoverProvider]
       : customBeatmapCoverProvider
-  ).replace("$setId", beatmapSet.id.toString());
+    ).replace("$setId", beatmapSet.id.toString());
 
   const artist = preferMetadataInOriginalLanguage
     ? beatmapSet.artist_unicode

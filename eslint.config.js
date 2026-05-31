@@ -30,4 +30,11 @@ export default defineConfig([
       "react/no-unescaped-entities": "off",
     },
   },
+  {
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
 ]);

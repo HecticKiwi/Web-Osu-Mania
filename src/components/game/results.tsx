@@ -92,7 +92,7 @@ const Results = ({
               </div>
             </div>
 
-            {beatmapSet && (
+            {beatmapSet && beatmapSet.id > 0 && (
               <div className="flex gap-2" data-exclude>
                 <CollectionsDropdown beatmapSet={beatmapSet} alwaysShow />
 
@@ -106,6 +106,11 @@ const Results = ({
               <p className="text-yellow-400">
                 {beatmap?.difficulty_rating.toFixed(2)}★
               </p>
+              {beatmapSet?.status === "local" && (
+                <span className="rounded bg-slate-500/20 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-cyan-300">
+                  LOCAL
+                </span>
+              )}
               <p className="line-clamp-1">{beatmapData.metadata.version}</p>
             </div>
 

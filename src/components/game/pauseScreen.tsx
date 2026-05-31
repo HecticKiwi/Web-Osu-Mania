@@ -64,9 +64,9 @@ const PauseScreen = ({
               </div>
             </div>
 
-            {beatmapSet && (
+            {beatmapSet && beatmapSet.id > 0 && (
               <div className="flex gap-2" data-exclude>
-                <CollectionsDropdown beatmapSet={beatmapSet} />
+                <CollectionsDropdown beatmapSet={beatmapSet} alwaysShow />
 
                 <BeatmapSetPageButton beatmapSetId={beatmapSet.id} />
               </div>

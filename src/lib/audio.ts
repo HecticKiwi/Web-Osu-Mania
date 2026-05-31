@@ -87,6 +87,58 @@ export function playAudioPreview(beatmapSetId: number, volume: number) {
   return audio;
 }
 
+export function playAudioPreviewFromUrl(audioUrl: string, volume: number) {
+  const audio = new Howl({
+    src: [audioUrl],
+    format: "wav",
+    html5: true,
+    autoplay: true,
+    volume: 0,
+    onplay: () => {
+      audio.fade(0, volume, 500);
+    },
+    onloaderror: () => {
+      toast.message("Audio preview could not be loaded.");
+    },
+  });
+
+  return audio;
+}
+
+export async function createAudioPreviewClip(
+  blob: Blob,
+  startTime: number,
+  duration = 10,
+) {
+  const audioCtx = new AudioContext();
+  const blobArrayBuffer = await blob.arrayBuffer();
+  const audioBuffer = await audioCtx.decodeAudioData(blobArrayBuffer);
+
+  const safeStartTime = Math.max(0, startTime);
+  const maxDuration = Math.max(audioBuffer.duration - safeStartTime, 0);
+  const clipDuration = Math.max(Math.min(duration, maxDuration), 0.1);
+
+  const totalLength = Math.ceil(clipDuration * audioBuffer.sampleRate);
+
+  const offlineCtx = new OfflineAudioContext(
+    audioBuffer.numberOfChannels,
+    totalLength,
+    audioBuffer.sampleRate,
+  );
+
+  const source = new AudioBufferSourceNode(offlineCtx, {
+    buffer: audioBuffer,
+  });
+
+  source.connect(offlineCtx.destination);
+  source.start(0, safeStartTime, clipDuration);
+
+  const renderedBuffer = await offlineCtx.startRendering();
+  const wav = toWav(renderedBuffer);
+
+  return new Blob([wav], { type: "audio/wav" });
+}
+
 export function stopAudioPreview(audio: Howl) {
   audio.fade(audio.volume(), 0, 500);
 

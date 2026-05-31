@@ -3,12 +3,24 @@ import type { EncodedMods } from "@/lib/replay";
 import { encodeMods } from "@/lib/replay";
 import type { Game } from "../game";
 
+export type LocalBeatmapData = {
+  hash: string;
+
+  // For local beatmaps, don't rely on the beatmap ID / set ID as they may not exist.
+  // Instead, use the difficulty name and keycount
+  version: string;
+  keyCount: number;
+};
+
+export type ApiBeatmapData = {
+  hash: string;
+  id: number;
+  setId: number;
+};
+
 type BaseReplayData = {
   timestamp?: number;
-  beatmap: {
-    id: number;
-    setId: number;
-  };
+  beatmap: LocalBeatmapData | ApiBeatmapData;
   mods: EncodedMods;
   columnMap?: number[];
 };
@@ -40,12 +52,24 @@ export class ReplayRecorder {
   constructor(game: Game, beatmapData: BeatmapData) {
     this.game = game;
 
-    this.replayData = {
-      version: 2,
-      beatmap: {
+    let beatmap: LocalBeatmapData | ApiBeatmapData;
+    if (beatmapData.isLocalSource) {
+      beatmap = {
+        hash: beatmapData.beatmapHash,
+        version: beatmapData.metadata.version,
+        keyCount: beatmapData.difficulty.keyCount,
+      };
+    } else {
+      beatmap = {
+        hash: beatmapData.beatmapHash,
         id: Number(beatmapData.beatmapId),
         setId: beatmapData.beatmapSetId,
-      },
+      };
+    }
+
+    this.replayData = {
+      version: 2,
+      beatmap,
       mods: encodeMods(this.game.mods),
       inputs: [],
       columnMap: game.mods.random ? beatmapData.columnMap : undefined,

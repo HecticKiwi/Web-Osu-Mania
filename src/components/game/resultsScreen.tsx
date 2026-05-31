@@ -34,6 +34,7 @@ const ResultsScreen = ({
   const beatmapSet = useGameStore.use.beatmapSet();
   const beatmapId = useGameStore.use.beatmapId();
   const setReplayData = useGameStore.use.setReplayData();
+  const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();
   const mods = useSettingsStore.use.mods();
   const setHighScores = useHighScoresStore.use.setHighScores();
   const [highScorePosition, setHighScorePosition] = useState<number | null>(
@@ -46,6 +47,7 @@ const ResultsScreen = ({
     if (
       !beatmapId ||
       !beatmapSet ||
+      !!uploadedBeatmapSet ||
       mods.autoplay ||
       playResults.failed ||
       playResults.viewingReplay
@@ -105,6 +107,7 @@ const ResultsScreen = ({
   }, [
     beatmapId,
     beatmapSet,
+    uploadedBeatmapSet,
     playResults,
     setHighScores,
     mods,
