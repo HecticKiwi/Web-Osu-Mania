@@ -115,7 +115,11 @@ const GameModal = () => {
         // If autoplay is enabled and we're not already watching a replay, use a perfect replay
         const mods = useSettingsStore.getState().mods;
         if (!replay && mods.autoplay) {
-          replay = generateAutoReplay(parsedBeatmapData, mods);
+          replay = generateAutoReplay(
+            parsedBeatmapData,
+            parsedBeatmapData.beatmapHash,
+            mods,
+          );
         }
 
         await loadAssets();

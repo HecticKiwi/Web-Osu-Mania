@@ -113,6 +113,7 @@ export async function downloadReplay(
 
 export function generateAutoReplay(
   beatmapData: BeatmapData,
+  hash: string,
   mods: Settings["mods"],
 ): ReplayDataV2 {
   const inputs: ReplayInputV2[] = [];
@@ -130,6 +131,7 @@ export function generateAutoReplay(
     version: 2,
     timestamp: Date.now(),
     beatmap: {
+      hash,
       id: beatmapData.beatmapId,
       setId: beatmapData.beatmapSetId,
     },
