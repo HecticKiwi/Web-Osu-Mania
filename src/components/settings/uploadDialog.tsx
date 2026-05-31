@@ -55,6 +55,16 @@ const UploadDialog = () => {
           if (!open) {
             stopPreview();
             setUploadedBeatmapSet(null);
+
+            if (beatmapSet) {
+              if (beatmapSet.coverUrl) {
+                URL.revokeObjectURL(beatmapSet.coverUrl);
+              }
+
+              if (beatmapSet.previewUrl) {
+                URL.revokeObjectURL(beatmapSet.previewUrl);
+              }
+            }
           }
         }}
       >
