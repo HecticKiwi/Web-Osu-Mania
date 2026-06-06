@@ -6,6 +6,7 @@ import {
   corsHeaders,
   getAccessToken,
   getRateLimitMessage,
+  osuApiUrl,
   trimBeatmapSet,
 } from "./-utils";
 
@@ -86,7 +87,7 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           });
         }
 
-        const url = `https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`;
+        const url = `${osuApiUrl}/api/v2/beatmapsets/search?${params.toString()}`;
 
         const accessToken = await getAccessToken();
 
@@ -94,6 +95,7 @@ export const Route = createFileRoute("/api/getBeatmaps")({
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            "X-Proxy-Key": env.OSU_API_PROXY_KEY,
           },
         });
 

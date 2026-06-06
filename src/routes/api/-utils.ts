@@ -7,6 +7,8 @@ type OAuthTokenData = {
   access_token: string;
 };
 
+export const osuApiUrl = env.OSU_API_PROXY_URL || "https://osu.ppy.sh";
+
 export const corsHeaders = {
   "Access-Control-Allow-Credentials": "true",
   "Access-Control-Allow-Origin": "https://hectickiwi.github.io",
@@ -21,10 +23,11 @@ export async function getAccessToken() {
   let accessToken = await OSU_API.get("osu_api_access_token");
 
   if (!accessToken) {
-    const response: Response = await fetch("https://osu.ppy.sh/oauth/token", {
+    const response: Response = await fetch(`${osuApiUrl}/oauth/token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Proxy-Key": env.OSU_API_PROXY_KEY,
       },
       body: JSON.stringify({
         client_id: env.OSU_API_CLIENT_ID,

@@ -221,7 +221,6 @@ export class InputSystem {
       this.game.song.seek(this.game.startTime / 1000 - 1);
       return;
     }
-    console.log("test");
 
     if (this.game.replayPlayer) {
       return;
