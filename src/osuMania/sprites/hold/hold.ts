@@ -14,20 +14,11 @@ export abstract class Hold {
   protected body: Container;
   protected head?: Container;
 
-  protected height: number;
   protected broken = false;
 
   constructor(game: Game, holdData: HoldData) {
     this.game = game;
     this.data = holdData;
-    this.resetHeight();
-  }
-
-  public resetHeight() {
-    this.height = this.game.getHitObjectOffset(
-      this.data.time,
-      this.getVisualEndTime(),
-    );
   }
 
   public update() {
@@ -58,9 +49,10 @@ export abstract class Hold {
       return;
     }
 
+    let height: number;
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
-        this.height = Math.max(
+        height = Math.max(
           this.game.getHitObjectOffset(
             this.game.timeElapsed,
             this.getVisualEndTime(),
@@ -74,7 +66,12 @@ export abstract class Hold {
       }
     }
 
-    this.setViewHeight();
+    height ??= this.game.getHitObjectOffset(
+      this.data.time,
+      this.getVisualEndTime(),
+    );
+
+    this.setViewHeight(height);
   }
 
   public hit() {}
@@ -149,11 +146,11 @@ export abstract class Hold {
     }
   }
 
-  protected setViewHeight() {
-    this.body.height = this.height;
+  protected setViewHeight(height: number) {
+    this.body.height = height;
 
     if (this.head) {
-      this.head.y = this.height;
+      this.head.y = height;
     }
   }
 

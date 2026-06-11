@@ -42,7 +42,6 @@ import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
 import { DiamondHold } from "./sprites/hold/diamondHold";
-import { Hold } from "./sprites/hold/hold";
 import { Judgement } from "./sprites/judgement";
 import { JudgementCounter } from "./sprites/judgementCounter";
 import { ArrowKey } from "./sprites/key/arrowKey";
@@ -997,10 +996,6 @@ export class Game {
     for (const column of this.columns) {
       for (const hitObject of column) {
         hitObject.view.visible = false;
-
-        if (hitObject instanceof Hold) {
-          hitObject.resetHeight();
-        }
       }
     }
 
