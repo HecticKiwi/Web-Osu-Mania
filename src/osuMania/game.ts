@@ -8,7 +8,7 @@ import type {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
-import { BASE_PATH, scaleWidth } from "@/lib/utils";
+import { BASE_PATH } from "@/lib/utils";
 import type { ColumnColor, Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { Column, GameState, PlayResults } from "@/types";
@@ -20,6 +20,7 @@ import * as PIXI from "pixi.js";
 import {
   Application,
   BitmapText,
+  Color,
   Container,
   FillGradient,
   Graphics,
@@ -32,7 +33,6 @@ import {
   MAX_TIME_RANGE,
   getAllLaneColors,
   laneArrowDirections,
-  laneWidths,
 } from "./constants";
 import { Countdown } from "./sprites/countdown";
 import { ErrorBar } from "./sprites/errorBar";
@@ -42,6 +42,7 @@ import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
 import { DiamondHold } from "./sprites/hold/diamondHold";
+import { Hold } from "./sprites/hold/hold";
 import { Judgement } from "./sprites/judgement";
 import { JudgementCounter } from "./sprites/judgementCounter";
 import { ArrowKey } from "./sprites/key/arrowKey";
@@ -455,11 +456,10 @@ export class Game {
 
     this.hitPosition = this.app.screen.height - this.hitPositionOffset;
 
-    this.scaledColumnWidth = scaleWidth(
-      laneWidths[this.difficulty.keyCount - 1] +
-        this.settings.laneWidthAdjustment,
-      this.app.screen.width,
-    );
+    this.scaledColumnWidth =
+      (this.settings.laneWidthAdjustment / 100) *
+      this.app.screen.width /
+      this.difficulty.keyCount;
 
     // Cap column width on small screen widths
     if (
@@ -824,7 +824,7 @@ export class Game {
   private addStageContainer() {
     this.stageBackground = new Graphics()
       .rect(0, 0, this.notesContainerWidth, this.app.screen.height)
-      .fill(0x111111);
+      .fill(new Color(this.settings.laneBackgroundColor).toNumber());
     this.stageBackground.alpha = this.settings.stageOpacity;
     this.notesContainer.addChild(this.stageBackground);
 
@@ -996,6 +996,9 @@ export class Game {
     for (const column of this.columns) {
       for (const hitObject of column) {
         hitObject.view.visible = false;
+        if (hitObject instanceof Hold) {
+          hitObject.resetHeight();
+        }
       }
     }
 

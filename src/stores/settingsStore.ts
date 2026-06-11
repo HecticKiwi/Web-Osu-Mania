@@ -185,6 +185,7 @@ export type Settings = {
   retryOnFail: boolean;
   performanceMode: boolean;
   hue: number;
+  laneBackgroundColor: string;
   stagePosition: number;
   stageOpacity: number;
   stageSidesOpacity: number;
@@ -299,10 +300,11 @@ export const defaultSettings: Settings = {
   retryOnFail: false,
   performanceMode: false,
   hue: 212,
+  laneBackgroundColor: "hsl(0, 0%, 7%)",
   stagePosition: 0,
   stageOpacity: 0.5,
   stageSidesOpacity: 1,
-  laneWidthAdjustment: 0,
+  laneWidthAdjustment: 50,
   laneSpacing: 0,
   touch: {
     enabled: true,
