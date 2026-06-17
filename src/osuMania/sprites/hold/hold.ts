@@ -76,6 +76,13 @@ export abstract class Hold {
 
   public hit() {}
 
+  public resetHeight() {
+    this.view.visible = true;
+    this.setViewHeight(
+      this.game.getHitObjectOffset(this.data.time, this.getVisualEndTime()),
+    );
+  }
+
   public release(timeElapsedOverride?: number) {
     const timeElapsed = timeElapsedOverride ?? this.game.timeElapsed;
     const endTimeDelta = this.data.endTime - timeElapsed;

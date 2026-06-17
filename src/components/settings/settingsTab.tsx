@@ -1,6 +1,13 @@
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { PersonStanding } from "lucide-react";
+import { HslStringColorPicker } from "react-colorful";
 import type {
   EarlyLateThreshold,
   JudgementCounterPosition,
@@ -36,6 +43,7 @@ import VolumeSettings from "./volumeSettings";
 const SettingsTab = () => {
   const setSettings = useSettingsStore.use.setSettings();
   const resetSettings = useSettingsStore.use.resetSettings();
+  const laneBackgroundColor = useSettingsStore((s) => s.laneBackgroundColor);
 
   return (
     <>
@@ -60,6 +68,18 @@ const SettingsTab = () => {
           max={360}
           step={1}
         />
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-start gap-2">
+              <span className="border-input size-4 shrink-0 rounded-full border" style={{ backgroundColor: laneBackgroundColor }} />
+              Lane Background Color
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-fit">
+            <HslStringColorPicker color={laneBackgroundColor} onChange={(c) => setSettings((d) => { d.laneBackgroundColor = c })} />
+          </PopoverContent>
+        </Popover>
 
         <SwitchInput
           label="Prefer Metadata in Original Language"
@@ -377,7 +397,7 @@ const SettingsTab = () => {
               draft.noteScale = receptorScale;
             })
           }
-          min={0.5}
+          min={0.1}
           max={1}
           step={0.01}
         />
@@ -387,18 +407,18 @@ const SettingsTab = () => {
         </p>
 
         <SliderInput
-          label="Lane Width Adjustment"
+          label="Lane Width"
           settingPath="laneWidthAdjustment"
           tooltip={(laneWidthAdjustment) =>
-            `${Math.round(laneWidthAdjustment)}px`
+            `${Math.round(laneWidthAdjustment)}%`
           }
           onValueChange={([laneWidthAdjustment]) =>
             setSettings((draft) => {
               draft.laneWidthAdjustment = laneWidthAdjustment;
             })
           }
-          min={-20}
-          max={80}
+          min={5}
+          max={100}
           step={1}
         />
         <SliderInput
