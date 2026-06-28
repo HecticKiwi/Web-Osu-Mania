@@ -8,7 +8,7 @@ import type {
   TimingPoint,
 } from "@/lib/beatmapParser";
 import { decodeMods } from "@/lib/replay";
-import { BASE_PATH, scaleWidth } from "@/lib/utils";
+import { BASE_PATH, patchLaneColors, scaleWidth } from "@/lib/utils";
 import type { ColumnColor, Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { Column, GameState, PlayResults } from "@/types";
@@ -211,8 +211,9 @@ export class Game {
         this.settings.darkerHoldNotes,
       )[this.difficulty.keyCount - 1];
     } else {
-      this.laneColors =
-        this.settings.skin.colors.custom[this.difficulty.keyCount - 1];
+      this.laneColors = patchLaneColors(
+        this.settings.skin.colors.custom[this.difficulty.keyCount - 1],
+      );
     }
 
     this.laneArrowDirections =

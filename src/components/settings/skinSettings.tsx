@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, isValidHsl } from "@/lib/utils";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
 import { toast } from "sonner";
@@ -194,6 +194,11 @@ const SkinSettings = () => {
                                 }
                               }}
                             />
+                            {!isValidHsl(colors[i].tap) && (
+                              <p className="mt-1 w-50 text-sm text-red-400">
+                                Invalid color; white will be used as a fallback.
+                              </p>
+                            )}
                           </PopoverContent>
                         </Popover>
                       </td>
@@ -233,6 +238,11 @@ const SkinSettings = () => {
                                 }
                               }}
                             />
+                            {!isValidHsl(colors[i].holdHead) && (
+                              <p className="mt-1 w-50 text-sm text-red-400">
+                                Invalid color; white will be used as a fallback.
+                              </p>
+                            )}
                           </PopoverContent>
                         </Popover>
                       </td>
@@ -272,6 +282,11 @@ const SkinSettings = () => {
                                 }
                               }}
                             />
+                            {!isValidHsl(colors[i].hold) && (
+                              <p className="mt-1 w-50 text-sm text-red-400">
+                                Invalid color; white will be used as a fallback.
+                              </p>
+                            )}
                           </PopoverContent>
                         </Popover>
                       </td>
