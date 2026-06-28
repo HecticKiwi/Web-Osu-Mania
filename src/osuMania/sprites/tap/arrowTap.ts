@@ -7,7 +7,11 @@ import { Tap } from "./tap";
 export class ArrowTap extends Tap {
   public static getArrowSprite(game: Game, column: number) {
     if (!Tap.renderTexture) {
-      Tap.renderTexture = Texture.from(`${BASE_PATH}/skin/arrow.svg`);
+      Tap.renderTexture = Texture.from(
+        game.settings.style === "arrows"
+          ? `${BASE_PATH}/skin/arrow.svg`
+          : `${BASE_PATH}/skin/arrowThick.svg`,
+      );
     }
 
     const width = game.scaledColumnWidth * game.settings.noteScale;
@@ -35,7 +39,11 @@ export class ArrowTap extends Tap {
     super(game, tapData);
 
     if (!Tap.renderTexture) {
-      Tap.renderTexture = Texture.from("${BASE_PATH}/skin/arrow.svg");
+      Tap.renderTexture = Texture.from(
+        game.settings.style === "arrows"
+          ? `${BASE_PATH}/skin/arrow.svg`
+          : `${BASE_PATH}/skin/arrowThick.svg`,
+      );
     }
 
     this.view = ArrowTap.getArrowSprite(game, tapData.column);

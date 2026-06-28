@@ -14,15 +14,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
 import { toast } from "sonner";
 import type { SkinStyle } from "../../stores/settingsStore";
 import {
-  SKIN_STYLES,
-  SKIN_STYLE_ICONS,
   defaultSettings,
+  skinStyleOptions,
   useSettingsStore,
 } from "../../stores/settingsStore";
 import { keys } from "../filters/keysFilter";
@@ -58,18 +56,16 @@ const SkinSettings = () => {
           }
           className="space-y-2"
         >
-          {SKIN_STYLES.map((style) => (
+          {skinStyleOptions.map((option) => (
             <Label
-              key={style}
-              htmlFor={style}
+              key={option.id}
+              htmlFor={option.id}
               className="flex items-center space-x-2"
             >
-              <RadioGroupItem value={style} id={style} />
+              <RadioGroupItem value={option.id} id={option.id} />
               <span className="flex gap-2">
-                <span className="w-4 text-center">
-                  {SKIN_STYLE_ICONS[style]}
-                </span>
-                {capitalizeFirstLetter(style)}
+                <span className="w-4 text-center">{option.icon}</span>
+                {option.label}
               </span>
             </Label>
           ))}

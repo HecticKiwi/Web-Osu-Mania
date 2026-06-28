@@ -4,7 +4,7 @@ import type { Game } from "../../game";
 import { Hold } from "./hold";
 
 export class BarHold extends Hold {
-  protected head?: Sprite;
+  declare protected head?: Sprite;
 
   constructor(game: Game, holdData: HoldData) {
     super(game, holdData);
@@ -43,7 +43,6 @@ export class BarHold extends Hold {
       this.view.addChild(this.head);
     }
 
-    this.setViewHeight();
     this.game.notesContainer.addChild(this.view);
   }
 }

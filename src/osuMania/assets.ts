@@ -16,5 +16,7 @@ export async function loadAssets() {
     ...judgementPromises,
     Assets.load(`${BASE_PATH}/skin/arrow.svg`),
     Assets.load(`${BASE_PATH}/skin/arrowOutline.svg`),
+    Assets.load(`${BASE_PATH}/skin/arrowThick.svg`),
+    Assets.load(`${BASE_PATH}/skin/arrowThickOutline.svg`),
   ]);
 }

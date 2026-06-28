@@ -258,7 +258,10 @@ export class Game {
       this.tapClass = CircleTap;
       this.holdClass = CircleHold;
       this.keyClass = CircleKey;
-    } else if (this.settings.style === "arrows") {
+    } else if (
+      this.settings.style === "arrows" ||
+      this.settings.style === "thickArrows"
+    ) {
       this.tapClass = ArrowTap;
       this.holdClass = ArrowHold;
       this.keyClass = ArrowKey;
