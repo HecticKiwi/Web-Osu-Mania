@@ -1,5 +1,9 @@
 import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
-import type { JudgementSetId, Settings } from "@/stores/settingsStore";
+import type {
+  ColumnColor,
+  JudgementSetId,
+  Settings,
+} from "@/stores/settingsStore";
 import { accuracyChallengeModeOptions } from "@/stores/settingsStore";
 import type { Grade, Judgement, Results } from "@/types";
 import type { ClassValue } from "clsx";
@@ -380,4 +384,42 @@ export function formatTime(ms: number, includeMs: boolean = false): string {
   }
 
   return timestamp;
+}
+
+export function isValidHsl(color: string): boolean {
+  // Regex breakdown:
+  // \d+(?:\.\d+)? - Matches one or more digits, optionally followed by a dot and more digits.
+  const decimalRegex = /\d+(?:\.\d+)?/;
+
+  // Combine into the full HSL pattern
+  const hslRegex = new RegExp(
+    `^hsl\\(\\s*(${decimalRegex.source})\\s*,\\s*(${decimalRegex.source})%\\s*,\\s*(${decimalRegex.source})%\\s*\\)$`,
+  );
+
+  const match = color.match(hslRegex);
+  if (!match) return false;
+
+  // Extract and convert to floating-point numbers
+  const h = parseFloat(match[1]);
+  const s = parseFloat(match[2]);
+  const l = parseFloat(match[3]);
+
+  // Validate the numerical ranges
+  return h <= 360 && s <= 100 && l <= 100;
+}
+
+// If any lane colors have an invalid color value, replace it with white
+export function patchLaneColors(columnColors: ColumnColor[]): ColumnColor[] {
+  const colors = JSON.parse(JSON.stringify(columnColors)) as ColumnColor[];
+
+  colors.forEach((columnColor) => {
+    const keys = Object.keys(columnColor) as (keyof ColumnColor)[];
+    keys.forEach((key) => {
+      if (!isValidHsl(columnColor[key])) {
+        columnColor[key] = "white";
+      }
+    });
+  });
+
+  return colors;
 }
