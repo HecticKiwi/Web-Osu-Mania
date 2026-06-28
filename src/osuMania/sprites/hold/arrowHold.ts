@@ -11,7 +11,9 @@ export class ArrowHold extends Hold {
     super(game, holdData);
 
     const bodyWidth =
-      this.game.scaledColumnWidth * this.game.settings.noteScale * 0.6;
+      this.game.scaledColumnWidth *
+      this.game.settings.noteScale *
+      (game.settings.style === "arrows" ? 0.6 : 0.85);
 
     this.body = Sprite.from(Texture.WHITE);
     this.body.width = bodyWidth;
@@ -37,12 +39,10 @@ export class ArrowHold extends Hold {
     this.view.addChild(tail);
 
     this.head = ArrowTap.getArrowSprite(game, holdData.column);
-    this.head.x =
-      (this.game.scaledColumnWidth * this.game.settings.noteScale * 0.6) / 2;
+    this.head.x = bodyWidth / 2;
     this.head.tint = game.laneColors[holdData.column].holdHead;
     this.view.addChild(this.head);
 
-    this.setViewHeight();
     this.game.notesContainer.addChild(this.view);
   }
 }

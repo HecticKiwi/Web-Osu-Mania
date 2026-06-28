@@ -47,7 +47,6 @@ export class DiamondHold extends Hold {
 
     this.view.addChild(this.head);
 
-    this.setViewHeight();
     this.game.notesContainer.addChild(this.view);
   }
 }

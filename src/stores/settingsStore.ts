@@ -33,15 +33,23 @@ export type BeatmapCoverProvider =
   | keyof typeof BEATMAP_COVER_PROVIDERS
   | "Custom";
 
-export const SKIN_STYLES = ["bars", "circles", "arrows", "diamonds"] as const;
-export type SkinStyle = (typeof SKIN_STYLES)[number];
-
-export const SKIN_STYLE_ICONS: Record<SkinStyle, string> = {
-  bars: "▬",
-  circles: "⬤",
-  arrows: "↗",
-  diamonds: "◆",
-};
+export type SkinStyle =
+  | "bars"
+  | "circles"
+  | "arrows"
+  | "thickArrows"
+  | "diamonds";
+export const skinStyleOptions: {
+  id: SkinStyle;
+  label: string;
+  icon: string;
+}[] = [
+  { id: "bars", label: "Bars", icon: "▬" },
+  { id: "circles", label: "Circles", icon: "⬤" },
+  { id: "arrows", label: "Arrows", icon: "→" },
+  { id: "thickArrows", label: "Thick Arrows", icon: "➡" },
+  { id: "diamonds", label: "Diamonds", icon: "◆" },
+] as const;
 
 export const JUDGEMENT_SET_OPTIONS: {
   id: string;

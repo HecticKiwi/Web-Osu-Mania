@@ -9,13 +9,21 @@ export class ArrowKey extends Key {
     const width = this.game.scaledColumnWidth * this.game.settings.noteScale;
     const height = this.game.scaledColumnWidth * this.game.settings.noteScale;
 
-    const bg = Sprite.from(`${BASE_PATH}/skin/arrowOutline.svg`);
+    const bg = Sprite.from(
+      this.game.settings.style === "arrows"
+        ? `${BASE_PATH}/skin/arrowOutline.svg`
+        : `${BASE_PATH}/skin/arrowThickOutline.svg`,
+    );
     bg.anchor.set(0.5);
     bg.width = width;
     bg.height = height;
     bg.angle = this.game.laneArrowDirections[this.columnId];
 
-    this.marker = Sprite.from(`${BASE_PATH}/skin/arrow.svg`);
+    this.marker = Sprite.from(
+      this.game.settings.style === "arrows"
+        ? `${BASE_PATH}/skin/arrow.svg`
+        : `${BASE_PATH}/skin/arrowThick.svg`,
+    );
     this.marker.anchor.set(0.5);
     this.marker.angle = this.game.laneArrowDirections[this.columnId];
     this.marker.width = width;

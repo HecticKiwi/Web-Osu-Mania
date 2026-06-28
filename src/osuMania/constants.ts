@@ -25,7 +25,7 @@ export function getAllLaneColors(
   darkerHoldNotes?: boolean,
 ): ColumnColor[][] {
   const primary = `hsl(${hue}, 80%, 69%)`;
-  const primaryDark = `hsl(${hue}, 36%, 69%)`;
+  const primaryDark = `hsl(${hue}, 36%, 41%)`;
 
   const secondary = `hsl(${hue}, 8%, 98.45%)`;
   const secondaryDark = `hsl(${hue}, 0%, 59%)`;
