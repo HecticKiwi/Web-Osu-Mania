@@ -1,8 +1,8 @@
-import { gsap } from "gsap";
+import { clamp } from "@/lib/math";
 import { BitmapText, Container, Graphics } from "pixi.js";
 import type { Game } from "../game";
 
-// Used for intro countdown and unpause countdown
+// Used for intro countdown, unpause countdown, and break countdown
 // Time values are in milliseconds
 export class Countdown {
   private game: Game;
@@ -16,6 +16,11 @@ export class Countdown {
   private progressBarContainer: Container;
 
   private fullWidth = 300;
+
+  public break: {
+    startTime: number;
+    endTime: number;
+  } | null;
 
   constructor(game: Game) {
     this.game = game;
@@ -75,22 +80,8 @@ export class Countdown {
   }
 
   public update(remainingTime: number, maxTime: number) {
-    // Fade out at 0.5s left
-    if (remainingTime < 500) {
-      if (this.game.settings.performanceMode) {
-        this.view.visible = false;
-      } else if (!gsap.isTweening(this.text)) {
-        gsap.to(this.view, {
-          pixi: {
-            alpha: 0,
-          },
-          duration: 0.5,
-          onComplete: () => {
-            this.view.visible = false;
-          },
-        });
-      }
-    }
+    // Linearly fade from 500ms to 0ms remaining
+    this.view.alpha = clamp(remainingTime / 500, 0, 1);
 
     // Hide skip when under 2 seconds left
     const canSkip = this.game.timeElapsed < this.game.startTime - 2000;
@@ -110,5 +101,44 @@ export class Countdown {
       0,
     );
     this.progressBar.x = this.fullWidth / 2 - this.progressBar.width / 2;
+  }
+
+  public updateBreak() {
+    if (!this.break) {
+      return;
+    }
+
+    const remainingTime = this.break.endTime - this.game.timeElapsed;
+
+    if (remainingTime <= 0) {
+      this.break = null;
+      return;
+    }
+
+    const maxTime = this.break.endTime - this.break.startTime;
+    this.update(remainingTime, maxTime);
+  }
+
+  public startBreakIfNeeded(timeElapsedOverride?: number) {
+    const timeElapsed = timeElapsedOverride ?? this.game.timeElapsed;
+
+    const nextHitObjectTime = Math.min(
+      ...this.game.columns.map((_, i) => {
+        return this.game.getNextHitObject(i)?.data.time ?? Infinity;
+      }),
+    );
+
+    if (!Number.isFinite(nextHitObjectTime)) {
+      return;
+    }
+
+    const timeUntilNextHitObject = nextHitObjectTime - timeElapsed;
+
+    if (timeUntilNextHitObject >= this.game.settings.breakMinDuration) {
+      this.break = {
+        startTime: timeElapsed,
+        endTime: nextHitObjectTime,
+      };
+    }
   }
 }

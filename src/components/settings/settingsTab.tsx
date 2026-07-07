@@ -178,6 +178,20 @@ const SettingsTab = () => {
           step={100}
         />
 
+        <SliderInput
+          label="Break Minimum Duration"
+          settingPath="breakMinDuration"
+          tooltip={(breakMinDuration) => `${breakMinDuration / 1000}s`}
+          onValueChange={([breakMinDuration]) =>
+            setSettings((draft) => {
+              draft.breakMinDuration = breakMinDuration;
+            })
+          }
+          min={3000}
+          max={10000}
+          step={100}
+        />
+
         <UnpauseDelayWarning />
 
         <SwitchInput
