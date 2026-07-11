@@ -255,6 +255,7 @@ export type Settings = {
     showProgressBar?: boolean; // Old, replaced by progressDisplay
     showHealthBar: boolean;
     receptorOpacity: number;
+    receptorLighting: boolean;
     judgementCounter: JudgementCounterPosition | null;
     progressDisplay: ProgressDisplay | null;
     stageHudYPosition: number;
@@ -577,6 +578,7 @@ export const defaultSettings: Settings = {
     showProgressBar: true,
     showHealthBar: true,
     receptorOpacity: 1,
+    receptorLighting: true,
     judgementCounter: "right",
     progressDisplay: "bar",
     stageHudYPosition: 0.66,

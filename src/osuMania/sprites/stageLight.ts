@@ -54,6 +54,10 @@ export class StageLight {
   }
 
   public update() {
+    if (!this.game.settings.ui.receptorLighting) {
+      return;
+    }
+
     if (this.game.inputSystem.pressedColumns[this.columnId]) {
       gsap.killTweensOf(this.view);
       this.view.alpha = 0.5 * this.game.settings.ui.receptorOpacity;

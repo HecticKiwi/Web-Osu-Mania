@@ -223,6 +223,20 @@ const DisplaySettings = ({ searchQuery }: { searchQuery?: string }) => {
           ),
         },
         {
+          label: "Receptor Lighting",
+          render: ({ label }) => (
+            <SwitchInput
+              label={label}
+              settingPath="ui.receptorLighting"
+              onCheckedChange={(checked) =>
+                setSettings((draft) => {
+                  draft.ui.receptorLighting = checked;
+                })
+              }
+            />
+          ),
+        },
+        {
           label: "Upscroll (DDR Style)",
           render: ({ label }) => (
             <SwitchInput

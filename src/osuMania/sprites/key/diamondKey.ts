@@ -66,6 +66,10 @@ export class DiamondKey extends Key {
   }
 
   public override setPressed(pressed: boolean) {
+    if (!this.game.settings.ui.receptorLighting) {
+      return;
+    }
+
     if (pressed) {
       this.marker.alpha = 0.7;
     } else {

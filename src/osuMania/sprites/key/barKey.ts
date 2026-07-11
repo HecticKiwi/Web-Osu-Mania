@@ -38,6 +38,10 @@ export class BarKey extends Key {
   }
 
   public override setPressed(pressed: boolean) {
+    if (!this.game.settings.ui.receptorLighting) {
+      return;
+    }
+
     if (pressed) {
       this.marker.tint = this.game.laneColors[this.columnId].tap;
     } else {
