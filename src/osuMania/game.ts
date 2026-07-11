@@ -145,7 +145,7 @@ export class Game {
   public healthBar?: HealthBar;
   public errorBar?: ErrorBar;
   private fps?: Fps;
-  private countdown: Countdown;
+  public countdown: Countdown;
 
   public song: Howl;
   public timeElapsed = 0;
@@ -666,8 +666,10 @@ export class Game {
       this.keys.forEach((key) => key.update());
     }
 
-    if (this.countdown.view.visible) {
+    if (this.timeElapsed < this.startTime) {
       this.countdown.update(this.startTime - this.timeElapsed, this.startTime);
+    } else {
+      this.countdown.updateBreak();
     }
 
     while (this.timeElapsed >= this.nextTimingPoint?.time) {
@@ -975,15 +977,19 @@ export class Game {
   }
 
   public play() {
-    if (this.state === "PAUSE" && this.timeElapsed > this.startTime) {
+    const shouldShowUnpauseCountdown =
+      this.state === "PAUSE" &&
+      this.timeElapsed > this.startTime &&
+      this.settings.unpauseDelay > 0 &&
+      (this.countdown.break == null ||
+        this.countdown.break.endTime - this.timeElapsed <
+          this.settings.unpauseDelay);
+
+    if (shouldShowUnpauseCountdown) {
+      // Replace break countdown, if it exists, with unpause countdown
+      this.countdown.break = null;
+
       this.pauseCountdown = this.settings.unpauseDelay;
-
-      if (this.settings.unpauseDelay >= 500) {
-        gsap.killTweensOf(this.countdown.view);
-        this.countdown.view.alpha = 1;
-        this.countdown.view.visible = true;
-      }
-
       this.state = "UNPAUSE";
     } else {
       if (this.videoEl) {

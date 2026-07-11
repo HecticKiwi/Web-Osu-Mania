@@ -45,6 +45,7 @@ export abstract class Hold {
       });
 
       this.game.currentColumnIndices[this.data.column]++;
+      this.game.countdown.startBreakIfNeeded();
       this.view.visible = false;
       return;
     }
@@ -115,6 +116,7 @@ export abstract class Hold {
         judgement,
         health: this.game.healthSystem.health,
       });
+      this.game.countdown.startBreakIfNeeded(timeElapsed);
 
       this.game.errorBar?.addTimingMark(endTimeDelta / 1.5);
 

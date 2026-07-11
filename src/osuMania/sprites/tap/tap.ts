@@ -116,6 +116,7 @@ export abstract class Tap {
       });
 
       this.game.currentColumnIndices[this.data.column]++;
+      this.game.countdown.startBreakIfNeeded(timeElapsed);
       this.view.visible = false;
 
       const nextHitObject = this.game.getNextHitObject(this.data.column);
@@ -161,6 +162,7 @@ export abstract class Tap {
     });
 
     this.game.currentColumnIndices[this.data.column]++;
+    this.game.countdown.startBreakIfNeeded(timeElapsed);
     this.view.visible = false;
 
     this.game.errorBar?.addTimingMark(delta);
