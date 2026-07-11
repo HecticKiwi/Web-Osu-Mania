@@ -1,636 +1,71 @@
-import { capitalizeFirstLetter } from "@/lib/utils";
-import { MAX_TIME_RANGE } from "@/osuMania/constants";
-import { PersonStanding } from "lucide-react";
-import type {
-  EarlyLateThreshold,
-  JudgementCounterPosition,
-  ProgressDisplay,
-  TouchMode,
-} from "../../stores/settingsStore";
-import {
-  earlyLateThresholdOptions,
-  judgementCounterOptions,
-  progressDisplayOptions,
-  touchModes,
-  useSettingsStore,
-} from "../../stores/settingsStore";
-import RadioGroupInput from "../inputs/radioGroupInput";
-import SelectInput, { NULL_OPTION } from "../inputs/selectInput";
-import SliderInput from "../inputs/sliderInput";
-import SwitchInput from "../inputs/switchInput";
-import { Label } from "../ui/label";
-import { RadioGroupItem } from "../ui/radio-group";
-import { SelectItem } from "../ui/select";
-import { Separator } from "../ui/separator";
-import BackupSettings from "./backupSettings";
-import BeatmapSettings from "./beatmapSettings";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import BackupAndRestoreSettings from "./backupAndRestore/backupAndRestoreSettings";
+import BeatmapManagementSettings from "./beatmapManagement/beatmapManagementSettings";
 import ClearHighScoresButton from "./clearHighScoresButton";
-import HideBeatmapSetCoverWarning from "./hideBeatmapSetCoverWarning";
-import ReplaySettings from "./replaySettings";
+import DisplaySettings from "./display/displaySettings";
+import FilterableList from "./filterableList";
+import GameplaySettings from "./gameplay/gameplaySettings";
+import GeneralSettings from "./general/generalSettings";
+import ReplaySettings from "./replay/replaySettings";
 import ResetSettingsButton from "./resetSettingsButton";
-import SkinSettings from "./skinSettings";
-import SourcesSettings from "./sourcesSettings";
-import UnpauseDelayWarning from "./unpauseDelayWarning";
-import VolumeSettings from "./volumeSettings";
+import SkinSettings from "./skin/skinSettings";
+import SourcesSettings from "./sources/sourcesSettings";
+import TouchControlsSettings from "./touchControls/touchControlsSettings";
+import VolumeSettings from "./volume/volumeSettings";
 
 const SettingsTab = () => {
-  const setSettings = useSettingsStore.use.setSettings();
-  const resetSettings = useSettingsStore.use.resetSettings();
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <>
-      <h3 className="text-lg font-semibold">General</h3>
-      <div className="mt-2 space-y-3">
-        <SliderInput
-          label="Website Color"
-          settingPath="hue"
-          graphic={(hue) => (
-            <div
-              className="size-6 shrink-0 rounded-full"
-              style={{ backgroundColor: `hsl(${hue}, 80%, 69%)` }}
-            ></div>
-          )}
-          tooltip={(hue) => hue}
-          onValueChange={([hue]) =>
-            setSettings((draft) => {
-              draft.hue = hue;
-            })
-          }
-          min={0}
-          max={360}
-          step={1}
-        />
-
-        <SwitchInput
-          label="Prefer Metadata in Original Language"
-          settingPath="preferMetadataInOriginalLanguage"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.preferMetadataInOriginalLanguage = checked;
-            })
-          }
-        />
-
-        <SwitchInput
-          label="Hide Beatmap Set Covers"
-          settingPath="hideBeatmapSetCovers"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.hideBeatmapSetCovers = checked;
-            })
-          }
-        />
-
-        <HideBeatmapSetCoverWarning />
-      </div>
-
-      <h3 className="mt-6 text-lg font-semibold">Gameplay</h3>
-      <div className="mt-2 space-y-3">
-        <SliderInput
-          label="Background Dim"
-          settingPath="backgroundDim"
-          graphic={(backgroundDim) => (
-            <div className="relative">
-              <div
-                className="bg-primary absolute inset-0 rounded-full"
-                style={{ opacity: backgroundDim }}
-              ></div>
-              <PersonStanding />
-            </div>
-          )}
-          tooltip={(backgroundDim) => `${(backgroundDim * 100).toFixed(0)}%`}
-          onValueChange={([backgroundDim]) =>
-            setSettings((draft) => {
-              draft.backgroundDim = backgroundDim;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
-        />
-
-        <SliderInput
-          label="Background Blur"
-          settingPath="backgroundBlur"
-          graphic={(backgroundBlur) => (
-            <div>
-              <PersonStanding
-                style={{ filter: `blur(${backgroundBlur * 4}px)` }}
-              />
-            </div>
-          )}
-          tooltip={(backgroundBlur) => `${(backgroundBlur * 100).toFixed(0)}%`}
-          onValueChange={([backgroundBlur]) =>
-            setSettings((draft) => {
-              draft.backgroundBlur = backgroundBlur;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
-        />
-
-        <SwitchInput
-          label="Background Video"
-          settingPath="backgroundVideo.enabled"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.backgroundVideo.enabled = checked;
-            })
-          }
-        />
-
-        <p className="text-muted-foreground text-sm">
-          Currently, only MP4 background videos are supported.
-        </p>
-
-        <SliderInput
-          label="Scroll Speed"
-          settingPath="scrollSpeed"
-          tooltip={(scrollSpeed) =>
-            `${Math.round(MAX_TIME_RANGE / scrollSpeed)}ms (speed ${scrollSpeed})`
-          }
-          onValueChange={([scrollSpeed]) =>
-            setSettings((draft) => {
-              draft.scrollSpeed = scrollSpeed;
-            })
-          }
-          min={1}
-          max={40}
-          step={0.1}
-        />
-
-        <SliderInput
-          label="Unpause Delay"
-          settingPath="unpauseDelay"
-          tooltip={(unpauseDelay) =>
-            unpauseDelay === 0
-              ? "No Delay"
-              : `${unpauseDelay}ms (${unpauseDelay / 1000}s)`
-          }
-          onValueChange={([unpauseDelay]) =>
-            setSettings((draft) => {
-              draft.unpauseDelay = unpauseDelay;
-            })
-          }
-          min={0}
-          max={3000}
-          step={100}
-        />
-
-        <SliderInput
-          label="Break Minimum Duration"
-          settingPath="breakMinDuration"
-          tooltip={(breakMinDuration) => `${breakMinDuration / 1000}s`}
-          onValueChange={([breakMinDuration]) =>
-            setSettings((draft) => {
-              draft.breakMinDuration = breakMinDuration;
-            })
-          }
-          min={3000}
-          max={10000}
-          step={100}
-        />
-
-        <UnpauseDelayWarning />
-
-        <SwitchInput
-          label="Retry on Fail"
-          settingPath="retryOnFail"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.retryOnFail = checked;
-            })
-          }
-        />
-
-        <SwitchInput
-          label="Performance Mode"
-          settingPath="performanceMode"
-          onCheckedChange={(checked) => {
-            setSettings((draft) => {
-              draft.performanceMode = checked;
-            });
-          }}
-        />
-
-        <p className="text-muted-foreground text-sm">
-          Enable performance mode if you are experiencing low FPS. This will
-          disable animations and hitsounds.
-        </p>
-      </div>
-
-      <h3 className="mt-6 text-lg font-semibold">Touch Controls</h3>
-      <div className="mt-2 space-y-3">
-        <SwitchInput
-          label="Enable Touch Controls"
-          settingPath="touch.enabled"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.touch.enabled = checked;
-            })
-          }
-        />
-
-        <RadioGroupInput
-          label="Mode"
-          settingPath="touch.mode"
-          onValueChange={(value: TouchMode) =>
-            setSettings((draft) => {
-              draft.touch.mode = value;
-            })
-          }
-          className="space-y-2"
-        >
-          {touchModes.map((touchMode) => (
-            <Label
-              key={touchMode}
-              htmlFor={touchMode}
-              className="flex items-center space-x-2"
-            >
-              <RadioGroupItem value={touchMode} id={touchMode} />
-              <span className="flex gap-2">
-                {capitalizeFirstLetter(touchMode)}
-              </span>
-            </Label>
-          ))}
-        </RadioGroupInput>
-        <SliderInput
-          label="Border Opacity"
-          settingPath="touch.borderOpacity"
-          tooltip={(borderOpacity) => {
-            return `${Math.round(borderOpacity * 100)}%`;
-          }}
-          onValueChange={([borderOpacity]) =>
-            setSettings((draft) => {
-              draft.touch.borderOpacity = borderOpacity;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
+      <div className="bg-card sticky -top-4 z-50 -m-4 px-4 pt-4 pb-6 sm:-top-6 sm:-m-6 sm:px-6 sm:pt-6">
+        <Input
+          type="text"
+          placeholder="Search settings..."
+          value={searchQuery}
+          onChange={({ target }) => setSearchQuery(target.value)}
         />
       </div>
 
-      <SkinSettings />
+      <GeneralSettings searchQuery={searchQuery} />
 
-      <h3 className="mt-6 mb-2 text-lg font-semibold">Display</h3>
-      <div className="space-y-4">
-        <SliderInput
-          label="Stage Position"
-          settingPath="stagePosition"
-          tooltip={(stagePosition) => {
-            if (stagePosition === 0) {
-              return "Centered";
-            }
+      <GameplaySettings searchQuery={searchQuery} />
 
-            return `${Math.abs(Math.round(stagePosition * 100))}% ${stagePosition < 0 ? "Left" : "Right"}`;
-          }}
-          onValueChange={([stagePosition]) =>
-            setSettings((draft) => {
-              draft.stagePosition = stagePosition;
-            })
-          }
-          min={-1}
-          max={1}
-          step={0.01}
-        />
-        <SliderInput
-          label="Stage Opacity"
-          settingPath="stageOpacity"
-          tooltip={(stageOpacity) => {
-            return `${Math.round(stageOpacity * 100)}%`;
-          }}
-          onValueChange={([stageOpacity]) =>
-            setSettings((draft) => {
-              draft.stageOpacity = stageOpacity;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
-        />
-        <SliderInput
-          label="Stage Sides Opacity"
-          settingPath="stageSidesOpacity"
-          tooltip={(stageSidesOpacity) => {
-            return `${Math.round(stageSidesOpacity * 100)}%`;
-          }}
-          onValueChange={([stageSidesOpacity]) =>
-            setSettings((draft) => {
-              draft.stageSidesOpacity = stageSidesOpacity;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
-        />
-        <SliderInput
-          label="Stage HUD Vertical Position"
-          settingPath="ui.stageHudYPosition"
-          tooltip={(stageHudYPosition) =>
-            `${Math.round(stageHudYPosition * 100)}%`
-          }
-          onValueChange={([stageHudYPosition]) =>
-            setSettings((draft) => {
-              draft.ui.stageHudYPosition = stageHudYPosition;
-            })
-          }
-          min={0.3}
-          max={0.9}
-          step={0.01}
-        />
+      <TouchControlsSettings searchQuery={searchQuery} />
 
-        <p className="text-muted-foreground text-sm">
-          The Stage HUD includes the judgement indicator and combo counter.
-        </p>
+      <SkinSettings searchQuery={searchQuery} />
 
-        <SliderInput
-          label="Hit Position"
-          settingPath="hitPositionOffset"
-          tooltip={(hitPositionOffset) => `${hitPositionOffset}px`}
-          onValueChange={([hitPositionOffset]) =>
-            setSettings((draft) => {
-              draft.hitPositionOffset = hitPositionOffset;
-            })
-          }
-          min={0}
-          max={200}
-          step={1}
-        />
+      <DisplaySettings searchQuery={searchQuery} />
 
-        <p className="text-muted-foreground text-sm">
-          Affects the vertical position of the note receptors.
-        </p>
+      <VolumeSettings searchQuery={searchQuery} />
+      <ReplaySettings searchQuery={searchQuery} />
+      <BeatmapManagementSettings searchQuery={searchQuery} />
+      <SourcesSettings searchQuery={searchQuery} />
+      <BackupAndRestoreSettings searchQuery={searchQuery} />
 
-        <SliderInput
-          label="Note Offset"
-          settingPath="noteOffset"
-          tooltip={(noteOffset) => `${noteOffset}px`}
-          onValueChange={([noteOffset]) =>
-            setSettings((draft) => {
-              draft.noteOffset = noteOffset;
-            })
-          }
-          min={-100}
-          max={100}
-          step={1}
-        />
-
-        <p className="text-muted-foreground text-sm">
-          Affects when notes should visually be hit relative to the note
-          receptors.
-        </p>
-
-        <SliderInput
-          label="Note Scale"
-          settingPath="noteScale"
-          tooltip={(receptorScale) => `${Math.round(receptorScale * 100)}%`}
-          onValueChange={([receptorScale]) =>
-            setSettings((draft) => {
-              draft.noteScale = receptorScale;
-            })
-          }
-          min={0.5}
-          max={1}
-          step={0.01}
-        />
-
-        <p className="text-muted-foreground text-sm">
-          Note Scale is ignored when using the Bars Note Style.
-        </p>
-
-        <SliderInput
-          label="Lane Width Adjustment"
-          settingPath="laneWidthAdjustment"
-          tooltip={(laneWidthAdjustment) =>
-            `${Math.round(laneWidthAdjustment)}px`
-          }
-          onValueChange={([laneWidthAdjustment]) =>
-            setSettings((draft) => {
-              draft.laneWidthAdjustment = laneWidthAdjustment;
-            })
-          }
-          min={-20}
-          max={80}
-          step={1}
-        />
-        <SliderInput
-          label="Lane Spacing"
-          settingPath="laneSpacing"
-          tooltip={(laneSpacing) => `${Math.round(laneSpacing)}px`}
-          onValueChange={([laneSpacing]) =>
-            setSettings((draft) => {
-              draft.laneSpacing = laneSpacing;
-            })
-          }
-          min={0}
-          max={50}
-          step={1}
-        />
-        <SliderInput
-          label="Receptor Opacity"
-          settingPath="ui.receptorOpacity"
-          tooltip={(receptorOpacity) => `${Math.round(receptorOpacity * 100)}%`}
-          onValueChange={([receptorOpacity]) =>
-            setSettings((draft) => {
-              draft.ui.receptorOpacity = receptorOpacity;
-            })
-          }
-          min={0}
-          max={1}
-          step={0.01}
-        />
-
-        <SwitchInput
-          label="Upscroll (DDR Style)"
-          settingPath="upscroll"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.upscroll = checked;
-            })
-          }
-        />
-        <SwitchInput
-          label="Show Score"
-          settingPath="ui.showScore"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.ui.showScore = checked;
-            })
-          }
-        />
-        <SwitchInput
-          label="Show Combo"
-          settingPath="ui.showCombo"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.ui.showCombo = checked;
-            })
-          }
-        />
-        <SwitchInput
-          label="Show Accuracy"
-          settingPath="ui.showAccuracy"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.ui.showAccuracy = checked;
-            })
-          }
-        />
-        <SwitchInput
-          label="Show Judgement"
-          settingPath="ui.showJudgement"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.ui.showJudgement = checked;
-
-              if (!checked) {
-                draft.show300g = false;
-                draft.ui.earlyLateThreshold = -1;
-              }
-            })
-          }
-        />
-        <SwitchInput
-          label="Show 300g Judgement"
-          settingPath="show300g"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.show300g = checked;
-
-              if (checked) {
-                draft.ui.showJudgement = true;
-              }
-            })
-          }
-        />
-
-        <SelectInput
-          label="Early/Late Indicator"
-          settingPath="ui.earlyLateThreshold"
-          onValueChange={(value: string) =>
-            setSettings((draft) => {
-              draft.ui.earlyLateThreshold = Number(value) as EarlyLateThreshold;
-
-              if (value !== "none") {
-                draft.ui.showJudgement = true;
-              }
-            })
-          }
-        >
-          {earlyLateThresholdOptions.map((option) => (
-            <SelectItem key={option.id} value={option.id.toString()}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectInput>
-
-        <SelectInput
-          label="Judgement Counter"
-          settingPath="ui.judgementCounter"
-          onValueChange={(
-            value: JudgementCounterPosition | typeof NULL_OPTION,
-          ) =>
-            setSettings((draft) => {
-              if (value === NULL_OPTION) {
-                draft.ui.judgementCounter = null;
-              } else {
-                draft.ui.judgementCounter = value;
-              }
-            })
-          }
-        >
-          {judgementCounterOptions.map((option) => (
-            <SelectItem
-              key={option.id}
-              value={option.id?.toString() ?? NULL_OPTION}
-            >
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectInput>
-
-        <SelectInput
-          label="Progress Display"
-          settingPath="ui.progressDisplay"
-          onValueChange={(value: ProgressDisplay | typeof NULL_OPTION) =>
-            setSettings((draft) => {
-              if (value === NULL_OPTION) {
-                draft.ui.progressDisplay = null;
-              } else {
-                draft.ui.progressDisplay = value;
-              }
-            })
-          }
-        >
-          {progressDisplayOptions.map((option) => (
-            <SelectItem
-              key={option.id}
-              value={option.id?.toString() ?? NULL_OPTION}
-            >
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectInput>
-
-        <SwitchInput
-          label="Show Health Bar"
-          settingPath="ui.showHealthBar"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.ui.showHealthBar = checked;
-            })
-          }
-        />
-        <SwitchInput
-          label="Show Error Bar"
-          settingPath="showErrorBar"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.showErrorBar = checked;
-            })
-          }
-        />
-        <SliderInput
-          label="Error Bar Scale"
-          settingPath="errorBarScale"
-          tooltip={(errorBarScale) => `${errorBarScale}x`}
-          onValueChange={([errorBarScale]) =>
-            setSettings((draft) => {
-              draft.errorBarScale = errorBarScale;
-            })
-          }
-          min={0.5}
-          max={2}
-          step={0.1}
-        />
-        <SwitchInput
-          label="Show FPS Counter"
-          settingPath="showFpsCounter"
-          onCheckedChange={(checked) =>
-            setSettings((draft) => {
-              draft.showFpsCounter = checked;
-            })
-          }
-        />
-      </div>
-
-      <VolumeSettings className="mt-6" />
-
-      <ReplaySettings className="mt-6" />
-
-      <BeatmapSettings className="mt-6" />
-
-      <SourcesSettings className="mt-6" />
-
-      <BackupSettings className="mt-6" />
-
-      <Separator className="my-8" />
-
-      <ClearHighScoresButton className="w-full" />
-
-      <ResetSettingsButton className="mt-4 w-full" />
+      <FilterableList
+        className="mt-8 border-t pt-8"
+        items={[
+          {
+            label: "Clear High Scores",
+            render: ({ label }) => (
+              <ClearHighScoresButton className="w-full">
+                {label}
+              </ClearHighScoresButton>
+            ),
+          },
+          {
+            label: "Reset Settings",
+            render: ({ label }) => (
+              <ResetSettingsButton className="w-full">
+                {label}
+              </ResetSettingsButton>
+            ),
+          },
+        ]}
+        searchQuery={searchQuery}
+      />
     </>
   );
 };

@@ -20,6 +20,7 @@ const SliderInput = ({
   isSubInput,
   containerClassName,
   hideReset,
+  description,
   ...props
 }: {
   label?: string;
@@ -30,6 +31,7 @@ const SliderInput = ({
   isSubInput?: boolean;
   containerClassName?: string;
   hideReset?: boolean;
+  description?: ReactNode;
 } & ComponentProps<typeof Slider>) => {
   const value = useSettingsStore((state) =>
     getNestedProperty(state, settingPath),
@@ -119,6 +121,9 @@ const SliderInput = ({
           </div>
         </div>
       </div>
+      {description && (
+        <p className="text-muted-foreground/75 mt-1 text-sm">{description}</p>
+      )}
     </>
   );
 };

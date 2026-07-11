@@ -13,7 +13,7 @@ import { cn, getNestedProperty, setNestedProperty } from "@/lib/utils";
 import type { Settings } from "@/stores/settingsStore";
 import { defaultSettings, useSettingsStore } from "@/stores/settingsStore";
 import { RotateCcw } from "lucide-react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 export const NULL_OPTION = "__null__";
 
@@ -25,6 +25,7 @@ const SelectInput = ({
   isSubInput,
   className,
   children,
+  description,
   ...props
 }: {
   label: string;
@@ -34,6 +35,7 @@ const SelectInput = ({
   isSubInput?: boolean;
   className?: string;
   children: React.ReactNode;
+  description?: ReactNode;
 } & ComponentProps<typeof Select>) => {
   // Use selector if provided, otherwise use settingPath
   // When using settingPath, convert the value to string for the Select component
@@ -63,35 +65,40 @@ const SelectInput = ({
   };
 
   return (
-    <div className={cn("grid grid-cols-2 items-center", className)}>
-      <div className="text-muted-foreground pr-2 text-sm font-semibold">
-        {isSubInput && (
-          <span className="text-muted-foreground/50 mr-2">└─</span>
-        )}
-        <span>{label}</span>
-        {showReset &&
-          defaultValue !== undefined &&
-          currentValueForReset !== undefined &&
-          defaultValue !== currentValueForReset && (
-            <>
-              {" "}
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger onClick={handleReset}>
-                  <RotateCcw className="text-primary inline size-4" />
-                </TooltipTrigger>
-                <TooltipContent>Revert to Default</TooltipContent>
-              </Tooltip>
-            </>
+    <>
+      <div className={cn("grid grid-cols-2 items-center", className)}>
+        <div className="text-muted-foreground pr-2 text-sm font-semibold">
+          {isSubInput && (
+            <span className="text-muted-foreground/50 mr-2">└─</span>
           )}
-      </div>
+          <span>{label}</span>
+          {showReset &&
+            defaultValue !== undefined &&
+            currentValueForReset !== undefined &&
+            defaultValue !== currentValueForReset && (
+              <>
+                {" "}
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger onClick={handleReset}>
+                    <RotateCcw className="text-primary inline size-4" />
+                  </TooltipTrigger>
+                  <TooltipContent>Revert to Default</TooltipContent>
+                </Tooltip>
+              </>
+            )}
+        </div>
 
-      <Select value={value ?? NULL_OPTION} {...props}>
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>{children}</SelectContent>
-      </Select>
-    </div>
+        <Select value={value ?? NULL_OPTION} {...props}>
+          <SelectTrigger>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>{children}</SelectContent>
+        </Select>
+      </div>
+      {description && (
+        <p className="text-muted-foreground/75 mt-1 text-sm">{description}</p>
+      )}
+    </>
   );
 };
 

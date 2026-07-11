@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -12,17 +13,34 @@ import { cn } from "@/lib/utils";
 import { useBeatmapSetCacheStore } from "@/stores/beatmapSetCacheStore";
 import { useStoredBeatmapSetsStore } from "@/stores/storedBeatmapSetsStore";
 import { filesize } from "filesize";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
 
-const ClearCacheButton = ({ className }: { className?: string }) => {
+export const clearCacheLabel = "Clear Cache";
+
+const ClearCacheButton = ({
+  className,
+  searchQuery,
+  children,
+}: {
+  className?: string;
+  searchQuery?: string;
+  children?: ReactNode;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const idbUsage = useBeatmapSetCacheStore.use.idbUsage();
   const clearIdbCache = useBeatmapSetCacheStore.use.clearIdbCache();
   const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
   const resetStoredBeatmapSets =
     useStoredBeatmapSetsStore.use.resetStoredBeatmapSets();
+
+  if (
+    searchQuery &&
+    !clearCacheLabel.toLowerCase().includes(searchQuery.toLowerCase())
+  ) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -33,7 +51,7 @@ const ClearCacheButton = ({ className }: { className?: string }) => {
           className={cn(className)}
           disabled={!idbUsage}
         >
-          Clear Cache ({storedBeatmapSets.length} stored, {filesize(idbUsage)})
+          {children} ({storedBeatmapSets.length} stored, {filesize(idbUsage)})
         </Button>
       </DialogTrigger>
 

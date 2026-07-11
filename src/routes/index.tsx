@@ -1,7 +1,7 @@
 //
 import { GameOverlay } from "@/components/game/gameOverlay";
 import Main from "@/components/main";
-import UploadDialog from "@/components/settings/uploadDialog";
+import UploadDialog from "@/components/settings/beatmapManagement/uploadDialog";
 import SidebarContent from "@/components/sidebar";
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";

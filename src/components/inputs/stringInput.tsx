@@ -1,15 +1,17 @@
 import type { Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Input } from "../ui/input";
 
 const StringInput = ({
   label,
   selector,
+  description,
   ...props
 }: {
   label: string;
   selector: (settings: Settings) => string;
+  description?: ReactNode;
 } & ComponentProps<typeof Input>) => {
   const value = useSettingsStore(selector);
 
@@ -22,6 +24,9 @@ const StringInput = ({
 
         <Input value={value} {...props} />
       </div>
+      {description && (
+        <p className="text-muted-foreground/75 mt-1 text-sm">{description}</p>
+      )}
     </>
   );
 };

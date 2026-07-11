@@ -1,7 +1,7 @@
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import { useSettingsStore } from "../../stores/settingsStore";
 
 const VolumeSlider = ({ className }: { className?: string }) => {
   const setSettings = useSettingsStore.use.setSettings();

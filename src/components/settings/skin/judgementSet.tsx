@@ -1,3 +1,5 @@
+import SelectInput from "@/components/inputs/selectInput";
+import TextLink from "@/components/textLink";
 import { SelectItem } from "@/components/ui/select";
 import { getJudgementUrl } from "@/lib/utils";
 import { JUDGEMENTS } from "@/osuMania/constants";
@@ -5,8 +7,11 @@ import {
   JUDGEMENT_SET_OPTIONS,
   useSettingsStore,
 } from "@/stores/settingsStore";
-import SelectInput from "../inputs/selectInput";
-import TextLink from "../textLink";
+
+export const judgementSetLabel = "Judgement Set";
+export const judgementSetOptionLabels = JUDGEMENT_SET_OPTIONS.map(
+  (o) => o.label,
+);
 
 const JudgementSet = () => {
   const judgementSet = useSettingsStore((state) => state.skin.judgementSet);
@@ -33,7 +38,7 @@ const JudgementSet = () => {
       </div>
 
       <SelectInput
-        label="Judgement Set"
+        label={judgementSetLabel}
         placeholder="Select Judgement Set"
         className="mt-4"
         settingPath="skin.judgementSet"
@@ -52,7 +57,7 @@ const JudgementSet = () => {
         ))}
       </SelectInput>
 
-      <p className="text-muted-foreground mt-4 text-sm">
+      <p className="text-muted-foreground/75 mt-4 text-sm">
         Judgement images are sourced from {selectedJudgementSet.creator} found{" "}
         <TextLink to={selectedJudgementSet.url} target="_blank">
           here
