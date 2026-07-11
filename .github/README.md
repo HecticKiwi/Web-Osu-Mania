@@ -29,9 +29,8 @@ Game mechanics attempt to match (if not come close to) the official osu!mania's 
 
 Site blocked on your network? Try these mirrors:
 
-- [Mirror 1](https://webosumania.hectickiwi.workers.dev)
-- [Mirror 2](https://hectickiwi.github.io/Web-Osu-Mania)
-- [Mirror 3](https://wom.slingexe.com)
+- [Mirror 1](https://hectickiwi.github.io/Web-Osu-Mania)
+- [Mirror 2](https://wom.slingexe.com)
 
 ## Demo
 

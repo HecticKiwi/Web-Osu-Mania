@@ -127,10 +127,6 @@ const troubleshootingFaq: FaqItem[] = [
               note: "main",
             },
             {
-              url: "https://webosumania.hectickiwi.workers.dev",
-              label: "webosumania.hectickiwi.workers.dev",
-            },
-            {
               url: "https://hectickiwi.github.io/Web-Osu-Mania",
               label: "hectickiwi.github.io/Web-Osu-Mania",
             },
