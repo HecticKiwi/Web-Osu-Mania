@@ -1,4 +1,4 @@
-import { useSettingsStore } from "../../stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 const UnpauseDelayWarning = () => {
   const unpauseDelay = useSettingsStore.use.unpauseDelay();

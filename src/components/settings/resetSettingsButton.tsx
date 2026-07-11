@@ -10,11 +10,18 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-const ResetSettingsButton = ({ className }: { className?: string }) => {
+const ResetSettingsButton = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const resetSettings = useSettingsStore.use.resetSettings();
 
@@ -22,7 +29,7 @@ const ResetSettingsButton = ({ className }: { className?: string }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="destructive" size="sm" className={cn(className)}>
-          Reset Settings
+          {children}
         </Button>
       </DialogTrigger>
 

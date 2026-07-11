@@ -18,6 +18,7 @@ const SwitchInput = ({
   extraInput,
   containerClassName,
   hideReset,
+  description,
   ...props
 }: {
   label: string;
@@ -27,6 +28,7 @@ const SwitchInput = ({
   extraInput?: ReactNode;
   containerClassName?: string;
   hideReset?: boolean;
+  description?: ReactNode;
 } & ComponentProps<typeof Switch>) => {
   const setSettings = useSettingsStore.use.setSettings();
 
@@ -98,6 +100,9 @@ const SwitchInput = ({
           {extraInput}
         </div>
       </div>
+      {description && (
+        <p className="text-muted-foreground/75 mt-1 text-sm">{description}</p>
+      )}
     </>
   );
 };

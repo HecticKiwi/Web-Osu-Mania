@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { Game } from "@/osuMania/game";
 import { useEffect, useRef, useState } from "react";
 import { useSettingsStore } from "../../stores/settingsStore";
-import VolumeSettings from "../settings/volumeSettings";
+import VolumeSettings from "../settings/volume/volumeSettings";
 
 function VolumeWidget({ game }: { game: Game }) {
   const setSettings = useSettingsStore.use.setSettings();

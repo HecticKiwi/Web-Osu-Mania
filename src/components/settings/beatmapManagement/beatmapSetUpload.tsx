@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
+import { useGameStore } from "@/stores/gameStore";
 import { Upload } from "lucide-react";
 import type { ChangeEvent, DragEvent } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useGameStore } from "../../stores/gameStore";
 
 const BeatmapSetUpload = () => {
   const setUploadedBeatmapSet = useGameStore.use.setUploadedBeatmapSet();

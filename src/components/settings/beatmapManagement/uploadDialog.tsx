@@ -1,17 +1,17 @@
+import BeatmapList from "@/components/beatmapSet/beatmapList";
+import BeatmapSetPageButton from "@/components/beatmapSet/beatmapPageButton";
+import BeatmapSetCover from "@/components/beatmapSet/beatmapSetCover";
+import PreviewProgressBar from "@/components/beatmapSet/previewProgressBar";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   playAudioPreview,
   playAudioPreviewFromUrl,
   stopAudioPreview,
 } from "@/lib/audio";
+import { useGameStore } from "@/stores/gameStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useGameStore } from "../../stores/gameStore";
-import { useSettingsStore } from "../../stores/settingsStore";
-import BeatmapList from "../beatmapSet/beatmapList";
-import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
-import BeatmapSetCover from "../beatmapSet/beatmapSetCover";
-import PreviewProgressBar from "../beatmapSet/previewProgressBar";
 
 const UploadDialog = () => {
   const uploadedBeatmapSet = useGameStore.use.uploadedBeatmapSet();

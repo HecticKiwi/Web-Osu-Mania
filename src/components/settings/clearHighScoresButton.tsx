@@ -11,11 +11,18 @@ import {
 import { idb } from "@/lib/idb";
 import { cn } from "@/lib/utils";
 import { useHighScoresStore } from "@/stores/highScoresStore";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-const ClearHighScoresButton = ({ className }: { className?: string }) => {
+const ClearHighScoresButton = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const resetHighScores = useHighScoresStore.use.resetHighScores();
 
@@ -23,7 +30,7 @@ const ClearHighScoresButton = ({ className }: { className?: string }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="destructive" size="sm" className={cn(className)}>
-          Clear High Scores
+          {children}
         </Button>
       </DialogTrigger>
 

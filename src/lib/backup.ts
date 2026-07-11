@@ -1,4 +1,4 @@
-import type { ExportOptionId } from "@/components/settings/backupSettings";
+import type { ExportOptionId } from "@/components/settings/backupAndRestore/backupAndRestoreSettings";
 import type { IdbFile, StoreName } from "@/lib/idb";
 import { idb } from "@/lib/idb";
 import { useCollectionsStore } from "@/stores/collectionsStore";
