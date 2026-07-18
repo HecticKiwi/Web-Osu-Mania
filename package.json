@@ -79,7 +79,7 @@
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.0.16",
     "react-scan": "^0.3.6",
-    "recharts": "^3.7.0",
+    "recharts": "^3.9.2",
     "rehype-raw": "^7.0.0",
     "sonner": "^1.4.41",
     "streamsaver": "^2.0.6",

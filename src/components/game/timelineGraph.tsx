@@ -1,5 +1,6 @@
 import { formatTime } from "@/lib/utils";
 import type { Judgement } from "@/types";
+import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
 import { useMemo } from "react";
 
@@ -38,7 +39,7 @@ const TimelineGraph = ({ data }: { data: TimelineDataPoint[] }) => {
   );
 
   const options = useMemo(
-    (): echarts.EChartsOption => ({
+    (): EChartsOption => ({
       animation: false,
       textStyle: {
         fontFamily: "Varela Round",

@@ -92,7 +92,7 @@ export default function TimingDistributionChart({
           <Bar
             isAnimationActive={false}
             key={judgement}
-            dataKey={judgement}
+            dataKey={judgement.toString()}
             stackId="judgement"
             radius={4}
           >
