@@ -54,7 +54,7 @@ const VolumeSettings = ({
               tooltip={(volume) => `${(volume * 100).toFixed(0)}%`}
               onValueChange={([volume]) =>
                 setSettings((draft) => {
-                  draft.volume = volume;
+                  draft[config.settingPath] = volume;
                 })
               }
               min={0}
