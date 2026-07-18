@@ -19,6 +19,7 @@ const SearchFilter = ({ className }: { className?: string }) => {
   const [query, setQuery] = useState(queryParam);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuery(queryParam);
   }, [queryParam]);
 

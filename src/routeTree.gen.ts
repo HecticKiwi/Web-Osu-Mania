@@ -9,16 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UpdatesRouteImport } from './routes/updates'
-import { Route as FaqRouteImport } from './routes/faq'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiGetBeatmapsRouteImport } from './routes/api/getBeatmaps'
-import { Route as ApiGetBeatmapRouteImport } from './routes/api/getBeatmap'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as ApiDownloadBeatmapRouteImport } from './routes/api/downloadBeatmap'
+import { Route as ApiGetBeatmapRouteImport } from './routes/api/getBeatmap'
+import { Route as ApiGetBeatmapsRouteImport } from './routes/api/getBeatmaps'
 
-const UpdatesRoute = UpdatesRouteImport.update({
-  id: '/updates',
-  path: '/updates',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -26,14 +26,14 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGetBeatmapsRoute = ApiGetBeatmapsRouteImport.update({
-  id: '/api/getBeatmaps',
-  path: '/api/getBeatmaps',
+const ApiDownloadBeatmapRoute = ApiDownloadBeatmapRouteImport.update({
+  id: '/api/downloadBeatmap',
+  path: '/api/downloadBeatmap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGetBeatmapRoute = ApiGetBeatmapRouteImport.update({
@@ -41,9 +41,9 @@ const ApiGetBeatmapRoute = ApiGetBeatmapRouteImport.update({
   path: '/api/getBeatmap',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadBeatmapRoute = ApiDownloadBeatmapRouteImport.update({
-  id: '/api/downloadBeatmap',
-  path: '/api/downloadBeatmap',
+const ApiGetBeatmapsRoute = ApiGetBeatmapsRouteImport.update({
+  id: '/api/getBeatmaps',
+  path: '/api/getBeatmaps',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -110,11 +110,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/updates': {
-      id: '/updates'
-      path: '/updates'
-      fullPath: '/updates'
-      preLoaderRoute: typeof UpdatesRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -124,18 +124,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/getBeatmaps': {
-      id: '/api/getBeatmaps'
-      path: '/api/getBeatmaps'
-      fullPath: '/api/getBeatmaps'
-      preLoaderRoute: typeof ApiGetBeatmapsRouteImport
+    '/api/downloadBeatmap': {
+      id: '/api/downloadBeatmap'
+      path: '/api/downloadBeatmap'
+      fullPath: '/api/downloadBeatmap'
+      preLoaderRoute: typeof ApiDownloadBeatmapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/getBeatmap': {
@@ -145,11 +145,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGetBeatmapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/downloadBeatmap': {
-      id: '/api/downloadBeatmap'
-      path: '/api/downloadBeatmap'
-      fullPath: '/api/downloadBeatmap'
-      preLoaderRoute: typeof ApiDownloadBeatmapRouteImport
+    '/api/getBeatmaps': {
+      id: '/api/getBeatmaps'
+      path: '/api/getBeatmaps'
+      fullPath: '/api/getBeatmaps'
+      preLoaderRoute: typeof ApiGetBeatmapsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
