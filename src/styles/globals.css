@@ -133,7 +133,7 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-border scrollbar-thumb-primary;
   }
 
   html,
