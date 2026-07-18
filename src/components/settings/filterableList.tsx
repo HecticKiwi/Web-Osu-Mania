@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Fragment } from "react/jsx-runtime";
 
 export type FilterableItem = {
   label: string;
@@ -35,7 +36,11 @@ const FilterableList = ({
     <div className={cn("mt-6 flex flex-col gap-2", className)}>
       {title && <h3 className="text-lg font-semibold">{title}</h3>}
       <div className="space-y-4">
-        {visibleItems.map((item) => item.render({ label: item.label }))}
+        {visibleItems.map((item) => (
+          <Fragment key={item.label}>
+            {item.render({ label: item.label })}
+          </Fragment>
+        ))}
       </div>
     </div>
   );
