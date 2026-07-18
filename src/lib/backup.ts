@@ -210,16 +210,16 @@ export async function importBackup(zipBlob: File) {
     toast("Backup imported successfully", {
       description: createElement("ul", { className: "list-inside list-disc" }, [
         ...(hasSettings
-          ? [createElement("li", {}, "Settings & Keybinds")]
+          ? [createElement("li", { key: "1" }, "Settings & Keybinds")]
           : []),
         ...(hasHighScores
-          ? [createElement("li", {}, "Highscores & Replays")]
+          ? [createElement("li", { key: "2" }, "Highscores & Replays")]
           : []),
         ...(collectionCount !== null
           ? [
               createElement(
                 "li",
-                {},
+                { key: "3" },
                 `${collectionCount} Collection${collectionCount > 1 ? "s" : ""}`,
               ),
             ]
@@ -228,7 +228,7 @@ export async function importBackup(zipBlob: File) {
           ? [
               createElement(
                 "li",
-                {},
+                { key: "4" },
                 `${storedBeatmapCount} Stored Beatmap${storedBeatmapCount > 1 ? "s" : ""}`,
               ),
             ]
