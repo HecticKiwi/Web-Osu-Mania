@@ -14,7 +14,7 @@ const Html = ({ children }: { children: ReactNode }) => {
   return (
     <html
       lang="en"
-      className="scrollbar scrollbar-track-background scrollbar-thumb-primary"
+      className="scrollbar"
       style={
         {
           "--hue": hue,
