@@ -1,6 +1,7 @@
 import SliderInput from "@/components/inputs/sliderInput";
 import SwitchInput from "@/components/inputs/switchInput";
 import TextLink from "@/components/textLink";
+import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import FilterableList from "../filterableList";
@@ -31,7 +32,7 @@ const VolumeSettings = ({
 
   return (
     <FilterableList
-      className={className}
+      className={cn("mt-0", className)}
       title="Volume"
       items={[
         ...VOLUME_SETTING_CONFIGS.map((config) => ({
