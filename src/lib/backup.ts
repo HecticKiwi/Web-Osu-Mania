@@ -34,11 +34,11 @@ export async function downloadBackup(
   }
 
   if (selectedData.includes("highScoresAndReplays")) {
-    addLocalStorageFileToZip(zipWriter, "highScores");
+    await addIdbUserDataToZip(zipWriter, "highScores");
   }
 
   if (selectedData.includes("storedBeatmapSets")) {
-    addLocalStorageFileToZip(zipWriter, "storedBeatmapSets");
+    await addIdbUserDataToZip(zipWriter, "storedBeatmapSets");
   }
 
   // IndexedDB
@@ -90,6 +90,15 @@ function addLocalStorageFileToZip(
   }
 
   zipWriter.add(`${localStorageKey}.json`, new TextReader(data));
+}
+
+async function addIdbUserDataToZip(zipWriter: ZipWriter<unknown>, key: string) {
+  const db = await idb.db;
+  const data = await db.get("userData", key);
+
+  if (data) {
+    zipWriter.add(`${key}.json`, new TextReader(data));
+  }
 }
 
 async function addIdbStoreToZip(

@@ -1,5 +1,5 @@
 import type { BeatmapSet } from "@/lib/osuApi";
-import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
+import { createIdbStorage, createSelectors } from "@/lib/zustand";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -9,12 +9,6 @@ type StoredBeatmapSetsState = {
   setStoredBeatmapSets: (updater: (draft: BeatmapSet[]) => void) => void;
   resetStoredBeatmapSets: () => void;
 };
-
-function migrateCallback(data: BeatmapSet[]): Partial<StoredBeatmapSetsState> {
-  return {
-    storedBeatmapSets: data,
-  };
-}
 
 const useStoredBeatmapSetsStoreBase = create<StoredBeatmapSetsState>()(
   persist(
@@ -35,7 +29,7 @@ const useStoredBeatmapSetsStoreBase = create<StoredBeatmapSetsState>()(
     })),
     {
       name: "storedBeatmapSets",
-      storage: getLocalStorageConfig({ migrateCallback }),
+      storage: createIdbStorage(),
     },
   ),
 );

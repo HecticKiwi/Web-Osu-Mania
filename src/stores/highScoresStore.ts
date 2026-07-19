@@ -1,4 +1,4 @@
-import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
+import { createIdbStorage, createSelectors } from "@/lib/zustand";
 import type { Results } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -23,14 +23,6 @@ type HighScoresState = {
   resetHighScores: () => void;
 };
 
-function migrateCallback(
-  data: Record<number, BeatmapSetHighScores>,
-): Partial<HighScoresState> {
-  return {
-    highScores: data,
-  };
-}
-
 const useHighScoresStoreBase = create<HighScoresState>()(
   persist(
     immer((set) => ({
@@ -50,7 +42,7 @@ const useHighScoresStoreBase = create<HighScoresState>()(
     })),
     {
       name: "highScores",
-      storage: getLocalStorageConfig({ migrateCallback }),
+      storage: createIdbStorage(),
       version: 1,
       migrate(persistedState: any, version) {
         if (version === 0) {

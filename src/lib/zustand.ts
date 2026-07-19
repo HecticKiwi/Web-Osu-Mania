@@ -72,6 +72,14 @@ export function createIdbStorage<T>(): PersistStorage<T> {
   return {
     async getItem(name: string): Promise<StorageValue<T> | null> {
       const db = await idb.db;
+
+      // If the data was previously stored in localStorage, move it to the userData store in IDB
+      const localStorageItem = localStorage.getItem(name);
+      if (localStorageItem) {
+        await db.put("userData", localStorageItem, name);
+        localStorage.removeItem(name);
+      }
+
       const data = await db.get("userData", name);
       return data ? JSON.parse(data) : null;
     },
