@@ -21,19 +21,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isValidHsl } from "@/lib/utils";
 import type { SkinStyle } from "@/stores/settingsStore";
-import {
-  defaultSettings,
-  skinStyleOptions,
-  useSettingsStore,
-} from "@/stores/settingsStore";
+import { skinStyleOptions, useSettingsStore } from "@/stores/settingsStore";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
-import { toast } from "sonner";
 import FilterableList from "../filterableList";
 import JudgementSet, {
   judgementSetLabel,
   judgementSetOptionLabels,
 } from "./judgementSet";
+import ResetColorsButton from "./resetColorsButton";
 
 const SkinSettings = ({ searchQuery }: { searchQuery?: string }) => {
   const setSettings = useSettingsStore.use.setSettings();
@@ -322,23 +318,10 @@ const SkinSettings = ({ searchQuery }: { searchQuery?: string }) => {
                   </table>
                 </div>
 
-                <Button
+                <ResetColorsButton
+                  keyCount={Number(keyCount) - 1}
                   className="mt-4 w-full"
-                  variant={"destructive"}
-                  size={"sm"}
-                  onClick={() => {
-                    setSettings((draft) => {
-                      draft.skin.colors.custom[Number(keyCount) - 1] =
-                        defaultSettings.skin.colors.custom[
-                          Number(keyCount) - 1
-                        ];
-                    });
-
-                    toast("Colors have been reset.");
-                  }}
-                >
-                  Reset Colors
-                </Button>
+                />
               </TabsContent>
             </Tabs>
           ),
