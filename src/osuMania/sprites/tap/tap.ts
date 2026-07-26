@@ -115,6 +115,13 @@ export abstract class Tap {
         health: this.game.healthSystem.health,
       });
 
+      // Since hold ends have a 1.5x hit window, there can possibly be
+      // an active hold note at the same time as a tap note miss. If so, just hide it.
+      const currentHitObject = this.game.getNextHitObject(this.data.column);
+      if (currentHitObject !== this) {
+        currentHitObject.view.visible = false;
+      }
+
       this.game.currentColumnIndices[this.data.column]++;
       this.game.countdown.startBreakIfNeeded(timeElapsed);
       this.view.visible = false;
