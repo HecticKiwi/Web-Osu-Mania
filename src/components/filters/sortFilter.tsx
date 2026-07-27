@@ -32,7 +32,7 @@ const SortFilter = ({ className }: { className?: string }) => {
   );
 
   const options = viewingCustom
-    ? ["Date Saved", "title", "artist"]
+    ? ["Date Saved", "title", "artist", "rating", "plays", "favourites"]
     : [
         "title",
         "artist",

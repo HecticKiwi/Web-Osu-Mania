@@ -1,7 +1,4 @@
-import {
-  CUSTOM_CATEGORIES,
-  parseCategoryParam,
-} from "@/lib/searchParams/categoryParam";
+import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
 import { Route } from "@/routes";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -20,8 +17,6 @@ const FiltersTab = () => {
   const search = Route.useSearch();
 
   const category = parseCategoryParam(search.category);
-  const viewingCustom =
-    CUSTOM_CATEGORIES.includes(category) || search.collection;
 
   return (
     <>
@@ -32,12 +27,8 @@ const FiltersTab = () => {
         {!search.collection && <CategoryFilter />}
         <CollectionFilter />
         <NsfwFilter />
-        {!viewingCustom && (
-          <>
-            <GenreFilter />
-            <LanguageFilter />
-          </>
-        )}
+        <GenreFilter />
+        <LanguageFilter />
         <SortFilter />
 
         <Button variant={"destructive"} className="mt-4 w-full" asChild>

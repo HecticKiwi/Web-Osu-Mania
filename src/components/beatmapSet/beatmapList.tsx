@@ -5,9 +5,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { BeatmapSet } from "@/lib/osuApi";
+import { DEFAULT_GENRE, GENRE_ID_MAP } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_INDEXES,
+} from "@/lib/searchParams/languageParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { Route } from "@/routes";
+import { Heart, Languages, Play, Tag, UserStar } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
 import ManiaIcon from "../maniaIcon";
@@ -63,8 +69,54 @@ const BeatmapList = ({
       return true;
     });
 
+  const genre =
+    Object.entries(GENRE_ID_MAP).find(
+      ([_, value]) => value === beatmapSet.genre_id,
+    )?.[0] || DEFAULT_GENRE;
+
+  const language =
+    LANGUAGE_INDEXES.entries().find(
+      ([_, value]) => value === beatmapSet.language_id,
+    )?.[0] || DEFAULT_LANGUAGE;
+
   return (
-    <div className="flex max-h-125 flex-col gap-2 overflow-hidden rounded-xl">
+    <div className="flex max-h-125 flex-col overflow-hidden rounded-xl">
+      {beatmapSet.play_count != null && (
+        <div className="bg-background p-2 text-sm">
+          <div className="flex justify-center gap-4 font-mono">
+            <div className="flex items-center gap-1">
+              <Play className="size-4" />
+              <span className="text-muted-foreground">
+                {beatmapSet.play_count.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Heart className="size-4" />
+              <span className="text-muted-foreground">
+                {beatmapSet.favourite_count!.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <UserStar className="size-4" />
+              <span className="text-muted-foreground">
+                {beatmapSet.rating!.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-2 flex flex-wrap justify-center gap-1 text-xs">
+            <span className="bg-primary/25 inline-flex items-center gap-1 rounded-full px-3 py-0.5">
+              <Tag className="size-3" /> {genre}
+            </span>
+            <span className="bg-primary/25 inline-flex items-center gap-1 rounded-full px-3 py-0.5">
+              <Languages className="size-3" /> {language}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="scrollbar scrollbar-track-card flex flex-col gap-2 overflow-auto p-2">
         {filteredBeatmaps.length === 0 && (
           <p className="text-muted-foreground p-4 text-center text-balance">

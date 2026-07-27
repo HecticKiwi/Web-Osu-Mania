@@ -85,6 +85,12 @@ export type BeatmapSet = {
   // user_id: number;
   // video: boolean;
 
+  play_count?: number;
+  favourite_count?: number;
+  rating?: number;
+  genre_id?: number;
+  language_id?: number;
+
   beatmaps: Beatmap[];
 
   // Custom properties
