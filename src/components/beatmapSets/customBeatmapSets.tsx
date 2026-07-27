@@ -1,5 +1,10 @@
 import type { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
+import { GENRE_ID_MAP, parseGenreParam } from "@/lib/searchParams/genreParam";
 import { parseKeysParam } from "@/lib/searchParams/keysParam";
+import {
+  LANGUAGE_INDEXES,
+  parseLanguageParam,
+} from "@/lib/searchParams/languageParam";
 import { parseNsfwParam } from "@/lib/searchParams/nsfwParam";
 import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import {
@@ -44,6 +49,11 @@ const CustomBeatmapSets = ({
   const keys = parseKeysParam(search.keys);
   const stars = parseStarsParam(search.stars);
   const nsfw = parseNsfwParam(search.nsfw);
+  const genre = parseGenreParam(search.genre);
+  const language = parseLanguageParam(search.language);
+
+  const genreId = GENRE_ID_MAP[genre];
+  const languageId = LANGUAGE_INDEXES.get(language);
 
   const filteredSaves = beatmapSets.filter((beatmapSet) => {
     if (query.trim()) {
@@ -97,6 +107,14 @@ const CustomBeatmapSets = ({
       return false;
     }
 
+    if (genreId != null && beatmapSet.genre_id !== genreId) {
+      return false;
+    }
+
+    if (languageId != null && beatmapSet.language_id !== languageId) {
+      return false;
+    }
+
     return true;
   });
 
@@ -133,6 +151,12 @@ const CustomBeatmapSets = ({
         a.artist.localeCompare(b.artist),
       );
     }
+  } else if (sortCriteria === "plays") {
+    sortedBeatmaps = filteredSaves.sort((a, b) => a.play_count - b.play_count);
+  } else if (sortCriteria === "favourites") {
+    sortedBeatmaps = filteredSaves.sort(
+      (a, b) => a.favourite_count - b.favourite_count,
+    );
   }
 
   if (sortDirection === "desc") {
