@@ -75,7 +75,7 @@ const BeatmapList = ({
     )?.[0] || DEFAULT_GENRE;
 
   const language =
-    LANGUAGE_INDEXES.entries().find(
+    Array.from(LANGUAGE_INDEXES).find(
       ([_, value]) => value === beatmapSet.language_id,
     )?.[0] || DEFAULT_LANGUAGE;
 
