@@ -195,9 +195,9 @@ export class InputSystem {
 
     if (this.game.replayPlayer && event.code === "Space") {
       if (this.game.song.playing()) {
-        this.game.song.pause();
+        this.game.pause();
       } else {
-        this.game.song.play();
+        this.game.resume();
       }
 
       return;

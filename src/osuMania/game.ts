@@ -102,20 +102,11 @@ export class Game {
 
   // Classes for skin elements
   public tapClass:
-    | typeof BarTap
-    | typeof CircleTap
-    | typeof ArrowTap
-    | typeof DiamondTap;
+    typeof BarTap | typeof CircleTap | typeof ArrowTap | typeof DiamondTap;
   public holdClass:
-    | typeof BarHold
-    | typeof CircleHold
-    | typeof ArrowHold
-    | typeof DiamondHold;
+    typeof BarHold | typeof CircleHold | typeof ArrowHold | typeof DiamondHold;
   public keyClass:
-    | typeof BarKey
-    | typeof CircleKey
-    | typeof ArrowKey
-    | typeof DiamondKey;
+    typeof BarKey | typeof CircleKey | typeof ArrowKey | typeof DiamondKey;
 
   // Hitobjects
   public hitObjects: HitObject[];
@@ -1025,6 +1016,8 @@ export class Game {
     if (this.replayPlayer) {
       this.replayPlayer.currentEventIndex = 0;
     }
+
+    this.countdown.break = null;
 
     this.song.seek(time);
 

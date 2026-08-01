@@ -144,15 +144,15 @@ const ReplayControls = ({ game }: { game: Game }) => {
           {/* Progress slider */}
           <Slider
             className="my-3"
+            onPointerDown={() => setIsDragging(true)}
+            onPointerUp={() => setIsDragging(false)}
             onValueChange={([value]) => {
-              setIsDragging(true);
               setProgress(value);
             }}
             onValueCommit={(value) => {
               const timeMs =
                 value[0] * (game.endTime - game.startTime) + game.startTime;
               game.seek(timeMs / 1000);
-              setIsDragging(false);
             }}
             value={[progress]}
             min={0}
@@ -172,7 +172,7 @@ const ReplayControls = ({ game }: { game: Game }) => {
                     variant={"ghost"}
                     size={"sm"}
                     onClick={() => {
-                      game.seek(game.song.seek() - 10);
+                      game.seek(Math.max(0, game.song.seek() - 10));
                     }}
                     onKeyDown={(e) => e.preventDefault()}
                   >
@@ -192,7 +192,7 @@ const ReplayControls = ({ game }: { game: Game }) => {
                     variant={"ghost"}
                     size={"sm"}
                     onClick={() => {
-                      game.seek(game.song.seek() - 1);
+                      game.seek(Math.max(0, game.song.seek() - 1));
                     }}
                     onKeyDown={(e) => e.preventDefault()}
                   >
