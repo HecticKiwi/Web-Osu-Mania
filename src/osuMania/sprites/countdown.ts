@@ -105,6 +105,7 @@ export class Countdown {
 
   public updateBreak() {
     if (!this.break) {
+      this.view.alpha = 0;
       return;
     }
 
