@@ -32,7 +32,7 @@ const VolumeSettings = ({
 
   return (
     <FilterableList
-      className={cn("mt-0", className)}
+      className={cn(inWidget && "mt-0", className)}
       title="Volume"
       items={[
         ...VOLUME_SETTING_CONFIGS.map((config) => ({
