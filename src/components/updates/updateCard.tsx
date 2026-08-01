@@ -5,6 +5,7 @@ import { Milestone } from "lucide-react";
 const UpdateCard = ({ entry }: { entry: UpdateEntry }) => {
   const date = new Date(`${entry.date}T00:00:00Z`);
   const formattedDate = date.toLocaleDateString("en-US", {
+    timeZone: "UTC",
     month: "long",
     day: "numeric",
     year: "numeric",
