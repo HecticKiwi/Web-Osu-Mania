@@ -49,6 +49,7 @@ import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
 import type { Key } from "./sprites/key/key";
+import { KpsCounter } from "./sprites/kpsCounter";
 import { ProgressBar } from "./sprites/progressBar";
 import { ProgressPie } from "./sprites/progressPie";
 import { StageCover } from "./sprites/stageCover";
@@ -132,6 +133,7 @@ export class Game {
   public stageHint: StageHint;
   public judgement?: Judgement;
   public judgementCounter?: JudgementCounter;
+  public kpsCounter?: KpsCounter;
   private progress?: ProgressBar | ProgressPie;
   public healthBar?: HealthBar;
   public errorBar?: ErrorBar;
@@ -381,6 +383,8 @@ export class Game {
 
     this.judgementCounter?.resize();
 
+    this.kpsCounter?.resize();
+
     if (this.comboText) {
       this.comboText.x = this.app.screen.width / 2 + this.stagePositionOffset;
 
@@ -427,6 +431,7 @@ export class Game {
       this.comboText,
       this.accuracyText,
       this.judgementCounter,
+      this.kpsCounter,
       this.progress,
       this.healthBar,
       this.errorBar,
@@ -549,6 +554,10 @@ export class Game {
       this.addJudgementCounter();
     }
 
+    if (this.settings.ui.kpsCounter !== null) {
+      this.addKpsCounter();
+    }
+
     this.addHitObjects();
 
     if (this.settings.ui.progressDisplay !== null) {
@@ -651,6 +660,8 @@ export class Game {
     }
 
     this.replayPlayer?.update(this.timeElapsed, isAfterSeek);
+
+    this.kpsCounter?.update();
 
     if (!this.mods.autoplay) {
       this.stageLights.forEach((stageLight) => stageLight.update());
@@ -916,6 +927,11 @@ export class Game {
     this.app.stage.addChild(this.judgementCounter.view);
   }
 
+  private addKpsCounter() {
+    this.kpsCounter = new KpsCounter(this);
+    this.app.stage.addChild(this.kpsCounter.view);
+  }
+
   private addFpsCounter() {
     this.fps = new Fps(this);
     this.app.stage.addChild(this.fps.view);
@@ -1018,6 +1034,10 @@ export class Game {
     }
 
     this.countdown.break = null;
+
+    if (this.kpsCounter) {
+      this.kpsCounter.timestamps.length = 0;
+    }
 
     this.song.seek(time);
 

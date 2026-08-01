@@ -4,13 +4,13 @@ import SwitchInput from "@/components/inputs/switchInput";
 import { SelectItem } from "@/components/ui/select";
 import type {
   EarlyLateThreshold,
-  JudgementCounterPosition,
   ProgressDisplay,
+  StageSidePosition,
 } from "@/stores/settingsStore";
 import {
   earlyLateThresholdOptions,
-  judgementCounterOptions,
   progressDisplayOptions,
+  stageSidePositionOptions,
   useSettingsStore,
 } from "@/stores/settingsStore";
 import FilterableList from "../filterableList";
@@ -357,15 +357,41 @@ const DisplaySettings = ({ searchQuery }: { searchQuery?: string }) => {
           ),
         },
         {
+          label: "KPS Counter",
+          searchTags: stageSidePositionOptions.map((o) => o.label),
+          render: ({ label }) => (
+            <SelectInput
+              label={label}
+              settingPath="ui.kpsCounter"
+              onValueChange={(value: StageSidePosition | typeof NULL_OPTION) =>
+                setSettings((draft) => {
+                  if (value === NULL_OPTION) {
+                    draft.ui.kpsCounter = null;
+                  } else {
+                    draft.ui.kpsCounter = value;
+                  }
+                })
+              }
+            >
+              {stageSidePositionOptions.map((option) => (
+                <SelectItem
+                  key={option.id}
+                  value={option.id?.toString() ?? NULL_OPTION}
+                >
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectInput>
+          ),
+        },
+        {
           label: "Judgement Counter",
-          searchTags: judgementCounterOptions.map((o) => o.label),
+          searchTags: stageSidePositionOptions.map((o) => o.label),
           render: ({ label }) => (
             <SelectInput
               label={label}
               settingPath="ui.judgementCounter"
-              onValueChange={(
-                value: JudgementCounterPosition | typeof NULL_OPTION,
-              ) =>
+              onValueChange={(value: StageSidePosition | typeof NULL_OPTION) =>
                 setSettings((draft) => {
                   if (value === NULL_OPTION) {
                     draft.ui.judgementCounter = null;
@@ -375,7 +401,7 @@ const DisplaySettings = ({ searchQuery }: { searchQuery?: string }) => {
                 })
               }
             >
-              {judgementCounterOptions.map((option) => (
+              {stageSidePositionOptions.map((option) => (
                 <SelectItem
                   key={option.id}
                   value={option.id?.toString() ?? NULL_OPTION}

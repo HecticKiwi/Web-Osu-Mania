@@ -80,6 +80,7 @@ export class InputSystem {
     this.game.columns[column][this.game.currentColumnIndices[column]]?.hit(
       timeElapsed,
     );
+    this.game.kpsCounter?.addKeypress(timeElapsed ?? this.game.timeElapsed);
   }
 
   public release(column: number, timeElapsed?: number) {

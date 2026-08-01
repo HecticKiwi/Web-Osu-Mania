@@ -21,8 +21,7 @@ export const AUDIO_PREVIEW_PROVIDERS = {
 } as const;
 
 export type AudioPreviewProvider =
-  | keyof typeof AUDIO_PREVIEW_PROVIDERS
-  | "Custom";
+  keyof typeof AUDIO_PREVIEW_PROVIDERS | "Custom";
 
 export const BEATMAP_COVER_PROVIDERS = {
   "Official osu!": "https://assets.ppy.sh/beatmaps/$setId/covers/cover.jpg",
@@ -30,15 +29,10 @@ export const BEATMAP_COVER_PROVIDERS = {
 } as const;
 
 export type BeatmapCoverProvider =
-  | keyof typeof BEATMAP_COVER_PROVIDERS
-  | "Custom";
+  keyof typeof BEATMAP_COVER_PROVIDERS | "Custom";
 
 export type SkinStyle =
-  | "bars"
-  | "circles"
-  | "arrows"
-  | "thickArrows"
-  | "diamonds";
+  "bars" | "circles" | "arrows" | "thickArrows" | "diamonds";
 export const skinStyleOptions: {
   id: SkinStyle;
   label: string;
@@ -126,9 +120,9 @@ export type ColumnColor = {
   hold: string;
 };
 
-export type JudgementCounterPosition = "left" | "right";
-export const judgementCounterOptions: {
-  id: JudgementCounterPosition | null;
+export type StageSidePosition = "left" | "right";
+export const stageSidePositionOptions: {
+  id: StageSidePosition | null;
   label: string;
 }[] = [
   { id: null, label: "Off" },
@@ -256,7 +250,8 @@ export type Settings = {
     showHealthBar: boolean;
     receptorOpacity: number;
     receptorLighting: boolean;
-    judgementCounter: JudgementCounterPosition | null;
+    judgementCounter: StageSidePosition | null;
+    kpsCounter: StageSidePosition | null;
     progressDisplay: ProgressDisplay | null;
     stageHudYPosition: number;
   };
@@ -580,6 +575,7 @@ export const defaultSettings: Settings = {
     receptorOpacity: 1,
     receptorLighting: true,
     judgementCounter: "right",
+    kpsCounter: "right",
     progressDisplay: "bar",
     stageHudYPosition: 0.66,
   },
