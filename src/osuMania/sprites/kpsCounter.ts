@@ -6,7 +6,7 @@ export class KpsCounter {
   public view: Container;
 
   public timestamps: number[] = [];
-  private total = 0;
+  public total = 0;
 
   public kpsText: BitmapText;
   public totalText: BitmapText;

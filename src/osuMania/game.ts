@@ -1037,6 +1037,7 @@ export class Game {
 
     if (this.kpsCounter) {
       this.kpsCounter.timestamps.length = 0;
+      this.kpsCounter.total = 0;
     }
 
     this.song.seek(time);
