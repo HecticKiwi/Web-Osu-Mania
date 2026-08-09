@@ -149,6 +149,20 @@ export const accuracyChallengeModeOptions: {
   { id: "standard", label: "Standard" },
 ] as const;
 
+export const hitSoundAdditions = [
+  "normal",
+  "whistle",
+  "finish",
+  "clap",
+] as const;
+type HitSoundAddition = (typeof hitSoundAdditions)[number];
+type HitSoundIds = {
+  normal: string | null;
+  whistle: string | null;
+  finish: string | null;
+  clap: string | null;
+};
+
 export type Settings = {
   version: number;
   volume: number;
@@ -264,6 +278,15 @@ export type Settings = {
       custom: ColumnColor[][];
     };
     judgementSet: JudgementSetId;
+    sounds: {
+      applause: string | null;
+      fail: string | null;
+      hitsounds: {
+        normal: HitSoundIds;
+        soft: HitSoundIds;
+        drum: HitSoundIds;
+      };
+    };
   };
 };
 
@@ -588,6 +611,30 @@ export const defaultSettings: Settings = {
       custom: getAllLaneColors(212, true),
     },
     judgementSet: "azureSnowfall",
+    sounds: {
+      applause: "applause.mp3",
+      fail: "failsound.mp3",
+      hitsounds: {
+        normal: {
+          normal: "normal-hitnormal.ogg",
+          whistle: "normal-hitwhistle.ogg",
+          finish: "normal-hitfinish.ogg",
+          clap: "normal-hitclap.ogg",
+        },
+        soft: {
+          normal: "soft-hitnormal.ogg",
+          whistle: "soft-hitwhistle.ogg",
+          finish: "soft-hitfinish.ogg",
+          clap: "soft-hitclap.ogg",
+        },
+        drum: {
+          normal: "drum-hitnormal.ogg",
+          whistle: "drum-hitwhistle.ogg",
+          finish: "drum-hitfinish.ogg",
+          clap: "drum-hitclap.ogg",
+        },
+      },
+    },
   },
 } as const;
 

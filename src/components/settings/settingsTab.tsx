@@ -10,6 +10,7 @@ import GeneralSettings from "./general/generalSettings";
 import ReplaySettings from "./replay/replaySettings";
 import ResetSettingsButton from "./resetSettingsButton";
 import SkinSettings from "./skin/skinSettings";
+import SoundSettings from "./sounds/soundSettings";
 import SourcesSettings from "./sources/sourcesSettings";
 import TouchControlsSettings from "./touchControls/touchControlsSettings";
 import VolumeSettings from "./volume/volumeSettings";
@@ -29,16 +30,12 @@ const SettingsTab = () => {
       </div>
 
       <GeneralSettings searchQuery={searchQuery} />
-
       <GameplaySettings searchQuery={searchQuery} />
-
       <TouchControlsSettings searchQuery={searchQuery} />
-
       <SkinSettings searchQuery={searchQuery} />
-
       <DisplaySettings searchQuery={searchQuery} />
-
       <VolumeSettings searchQuery={searchQuery} />
+      <SoundSettings searchQuery={searchQuery} />
       <ReplaySettings searchQuery={searchQuery} />
       <BeatmapManagementSettings searchQuery={searchQuery} />
       <SourcesSettings searchQuery={searchQuery} />

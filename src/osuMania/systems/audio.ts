@@ -16,11 +16,10 @@ export class AudioSystem {
 
     // Skin hitsounds will start with "skin-"
     ["normal", "soft", "drum"].forEach((sampleSet) => {
-      ["normal", "whistle", "finish", "clap"].forEach((sound) => {
-        this.load(
-          `skin-${sampleSet}-hit${sound}`,
-          `${BASE_PATH}/skin/${sampleSet}-hit${sound}.ogg`,
-        );
+      (["normal", "whistle", "finish", "clap"] as const).forEach((sound) => {
+        const key = `skin-${sampleSet}-hit${sound}`;
+        const soundUrl = `${BASE_PATH}/skin/sounds/hitsounds/${this.game.settings.skin.sounds.hitsounds["normal"][sound]}`;
+        this.load(key, soundUrl);
       });
     });
   }
@@ -83,6 +82,8 @@ export class AudioSystem {
         this.game.settings.sfxVolume * volume,
       );
     } else {
+      console.log(`skin-${prefix}${name}`);
+
       this.play(`skin-${prefix}${name}`, this.game.settings.sfxVolume * volume);
     }
   }

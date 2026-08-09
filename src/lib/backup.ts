@@ -31,6 +31,12 @@ export async function downloadBackup(
     useSettingsStore.getState().resetMods();
     addLocalStorageFileToZip(zipWriter, "settings");
     useSettingsStore.setState({ mods });
+
+    const getCustomSoundFilename = (key: string) => {
+      return key;
+    };
+
+    await addIdbStoreToZip(zipWriter, "customSounds", getCustomSoundFilename);
   }
 
   if (selectedData.includes("highScoresAndReplays")) {
@@ -187,6 +193,14 @@ export async function importBackup(zipBlob: File) {
           useStoredBeatmapSetsStore.getState().storedBeatmapSets.length;
       }
 
+      continue;
+    }
+
+    // Custom sounds
+    const customSoundMatch = filename.match(/^customSounds\/(.+)$/);
+    if (customSoundMatch) {
+      const key = customSoundMatch[1];
+      await idb.saveCustomSound(key, blob);
       continue;
     }
 

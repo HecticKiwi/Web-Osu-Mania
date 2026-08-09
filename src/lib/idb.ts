@@ -8,7 +8,8 @@ export type IdbFile = {
   dateAdded: number;
 };
 
-export type StoreName = "beatmapFiles" | "replayFiles" | "userData";
+export type StoreName =
+  "beatmapFiles" | "replayFiles" | "userData" | "customSounds";
 
 interface MyDB extends DBSchema {
   beatmapFiles: {
@@ -29,6 +30,10 @@ interface MyDB extends DBSchema {
     key: string;
     value: string;
   };
+  customSounds: {
+    key: string;
+    value: IdbFile;
+  };
 }
 
 class Idb {
@@ -43,7 +48,7 @@ class Idb {
   }
 
   public init() {
-    this.db = openDB<MyDB>("webOsuMania", 3, {
+    this.db = openDB<MyDB>("webOsuMania", 4, {
       upgrade(db, oldVersion, newVersion, transaction) {
         if (oldVersion < 1) {
           const beatmapStore = db.createObjectStore("beatmapFiles");
@@ -73,6 +78,10 @@ class Idb {
 
             userDataStore.put(value, "collections");
           }
+        }
+
+        if (oldVersion < 4) {
+          db.createObjectStore("customSounds");
         }
       },
     });
@@ -191,6 +200,30 @@ class Idb {
   public async clearReplays(): Promise<void> {
     const db = await this.db;
     await db.clear("replayFiles");
+  }
+
+  public async saveCustomSound(name: string, blob: Blob): Promise<void> {
+    const db = await this.db;
+    await db.put(
+      "customSounds",
+      {
+        file: blob,
+        dateAdded: Date.now(),
+      },
+      name,
+    );
+  }
+
+  public async getCustomSound(name: string) {
+    const db = await this.db;
+    const result = await db.get("customSounds", name);
+
+    return result;
+  }
+
+  public async deleteCustomSound(name: string): Promise<void> {
+    const db = await this.db;
+    await db.delete("customSounds", name);
   }
 }
 
