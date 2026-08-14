@@ -14,14 +14,9 @@ import {
   useSettingsStore,
 } from "@/stores/settingsStore";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 
-const SourcesSettings = ({
-  className,
-  searchQuery,
-}: {
-  className?: string;
-  searchQuery?: string;
-}) => {
+const SourcesSettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const beatmapProvider = useSettingsStore.use.beatmapProvider();
   const audioPreviewProvider = useSettingsStore.use.audioPreviewProvider();
   const beatmapCoverProvider = useSettingsStore.use.beatmapCoverProvider();
@@ -29,8 +24,7 @@ const SourcesSettings = ({
 
   return (
     <FilterableList
-      className={className}
-      title="Sources"
+      title={title}
       items={[
         {
           label: "Beatmap Provider",

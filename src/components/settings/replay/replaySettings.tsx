@@ -2,16 +2,15 @@ import ReplayUpload from "@/components/replayUpload";
 import FilterableList from "../filterableList";
 
 const ReplaySettings = ({
-  className,
+  title,
   searchQuery,
 }: {
-  className?: string;
+  title: string;
   searchQuery?: string;
 }) => {
   return (
     <FilterableList
-      className={className}
-      title="Replays"
+      title={title}
       items={[
         {
           label: "Upload Replay",

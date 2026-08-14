@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 
 type VolumeSettingConfig = {
   label: string;
@@ -18,13 +19,13 @@ const VOLUME_SETTING_CONFIGS: VolumeSettingConfig[] = [
 ] as const;
 
 const VolumeSettings = ({
+  title,
+  searchQuery,
   inWidget,
   className,
-  searchQuery,
-}: {
+}: SettingsSectionProps & {
   inWidget?: boolean;
   className?: string;
-  searchQuery?: string;
 }) => {
   const setSettings = useSettingsStore.use.setSettings();
 
@@ -33,7 +34,7 @@ const VolumeSettings = ({
   return (
     <FilterableList
       className={cn(inWidget && "mt-0", className)}
-      title="Volume"
+      title={title}
       items={[
         ...VOLUME_SETTING_CONFIGS.map((config) => ({
           label: config.label,

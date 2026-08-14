@@ -7,13 +7,17 @@ import { capitalizeFirstLetter } from "@/lib/utils";
 import type { TouchMode } from "@/stores/settingsStore";
 import { touchModes, useSettingsStore } from "@/stores/settingsStore";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 
-const TouchControlsSettings = ({ searchQuery }: { searchQuery?: string }) => {
+const TouchControlsSettings = ({
+  title,
+  searchQuery,
+}: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
 
   return (
     <FilterableList
-      title="Touch Controls"
+      title={title}
       items={[
         {
           label: "Enable Touch Controls",

@@ -5,6 +5,7 @@ import { downloadBackup } from "@/lib/backup";
 import { useState } from "react";
 import { toast } from "sonner";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 import BackupUpload from "./backupUpload";
 
 const exportOptionIds = [
@@ -23,12 +24,9 @@ const exportOptions: { id: ExportOptionId; label: string }[] = [
 ] as const;
 
 const BackupAndRestoreSettings = ({
-  className,
+  title,
   searchQuery,
-}: {
-  className?: string;
-  searchQuery?: string;
-}) => {
+}: SettingsSectionProps) => {
   const [loading, setLoading] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<
     Partial<Record<ExportOptionId, boolean>>
@@ -77,8 +75,7 @@ const BackupAndRestoreSettings = ({
 
   return (
     <FilterableList
-      className={className}
-      title="Backup & Restore"
+      title={title}
       items={[
         {
           label: "Import Backup (.zip)",

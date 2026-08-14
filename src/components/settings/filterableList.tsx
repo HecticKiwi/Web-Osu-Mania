@@ -34,7 +34,11 @@ const FilterableList = ({
 
   return (
     <div className={cn("mt-6 flex flex-col gap-2", className)}>
-      {title && <h3 className="text-lg font-semibold">{title}</h3>}
+      {title && (
+        <h3 id={title} className="text-lg font-semibold">
+          {title}
+        </h3>
+      )}
       <div className="space-y-4">
         {visibleItems.map((item) => (
           <Fragment key={item.label}>

@@ -70,7 +70,7 @@ function VolumeWidget({ game }: { game: Game }) {
           }
         }}
       >
-        <VolumeSettings inWidget />
+        <VolumeSettings title="Volume" inWidget />
       </div>
     </>
   );

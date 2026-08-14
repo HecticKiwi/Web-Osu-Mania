@@ -2,14 +2,16 @@ import SliderInput from "@/components/inputs/sliderInput";
 import SwitchInput from "@/components/inputs/switchInput";
 import { useSettingsStore } from "@/stores/settingsStore";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 
-const GeneralSettings = ({ searchQuery }: { searchQuery?: string }) => {
+const GeneralSettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
   const hideBeatmapSetCovers = useSettingsStore.use.hideBeatmapSetCovers();
 
   return (
     <FilterableList
-      title="General"
+      className="mt-0"
+      title={title}
       items={[
         {
           label: "Website Color",

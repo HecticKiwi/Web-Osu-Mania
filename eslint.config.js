@@ -28,6 +28,7 @@ export default defineConfig([
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "react/no-unescaped-entities": "off",
+      "react/prop-types": "off",
     },
   },
   {

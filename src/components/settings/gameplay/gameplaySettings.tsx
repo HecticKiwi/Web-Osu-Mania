@@ -4,14 +4,15 @@ import { MAX_TIME_RANGE } from "@/osuMania/constants";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { PersonStanding } from "lucide-react";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 import UnpauseDelayWarning from "./unpauseDelayWarning";
 
-const GameplaySettings = ({ searchQuery }: { searchQuery?: string }) => {
+const GameplaySettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
 
   return (
     <FilterableList
-      title="Gameplay"
+      title={title}
       items={[
         {
           label: "Background Dim",

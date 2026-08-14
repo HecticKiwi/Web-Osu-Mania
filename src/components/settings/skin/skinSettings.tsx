@@ -25,13 +25,14 @@ import { skinStyleOptions, useSettingsStore } from "@/stores/settingsStore";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 import JudgementSet, {
   judgementSetLabel,
   judgementSetOptionLabels,
 } from "./judgementSet";
 import ResetColorsButton from "./resetColorsButton";
 
-const SkinSettings = ({ searchQuery }: { searchQuery?: string }) => {
+const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
   const [keyCount, setKeyCount] = useState("4");
 
@@ -42,7 +43,7 @@ const SkinSettings = ({ searchQuery }: { searchQuery?: string }) => {
 
   return (
     <FilterableList
-      title="Skin"
+      title={title}
       items={[
         {
           label: judgementSetLabel,

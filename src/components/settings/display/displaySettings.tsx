@@ -14,13 +14,14 @@ import {
   useSettingsStore,
 } from "@/stores/settingsStore";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 
-const DisplaySettings = ({ searchQuery }: { searchQuery?: string }) => {
+const DisplaySettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
 
   return (
     <FilterableList
-      title="Display"
+      title={title}
       items={[
         {
           label: "Stage Position",

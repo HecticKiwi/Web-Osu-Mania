@@ -3,24 +3,21 @@ import { useBeatmapSetCacheStore } from "@/stores/beatmapSetCacheStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { HardDrive } from "lucide-react";
 import FilterableList from "../filterableList";
+import type { SettingsSectionProps } from "../settingsTab";
 import BeatmapSetUpload from "./beatmapSetUpload";
 import ClearCacheButton from "./clearCacheButton";
 
 const BeatmapManagementSettings = ({
-  className,
+  title,
   searchQuery,
-}: {
-  className?: string;
-  searchQuery?: string;
-}) => {
+}: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
   const idbUsage = useBeatmapSetCacheStore.use.idbUsage();
   const clearIdbCache = useBeatmapSetCacheStore.use.clearIdbCache();
 
   return (
     <FilterableList
-      className={className}
-      title="Beatmap Management"
+      title={title}
       items={[
         {
           label: "Upload Beatmap",

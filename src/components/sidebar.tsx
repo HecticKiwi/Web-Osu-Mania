@@ -44,8 +44,8 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </TabsContent>
 
         <TabsContent value="settings" className="h-0 grow">
-          <Card className="flex max-h-full flex-col overflow-hidden">
-            <CardContent className="scrollbar scrollbar-track-card relative overflow-auto p-4 sm:p-6">
+          <Card className="flex h-full flex-col overflow-hidden">
+            <CardContent className="relative flex max-h-full flex-col overflow-hidden p-0">
               <SettingsTab />
             </CardContent>
           </Card>
