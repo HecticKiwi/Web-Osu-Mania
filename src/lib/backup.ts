@@ -43,6 +43,18 @@ export async function downloadBackup(
 
   // IndexedDB
 
+  if (selectedData.includes("settingsAndKeybinds")) {
+    const getCustomSoundFilename = (key: string, blob: Blob) => {
+      const file = blob as File;
+      console.log(file);
+
+      const format = file.name.split(".").pop();
+      return `${key}.${format}`;
+    };
+
+    await addIdbStoreToZip(zipWriter, "customSounds", getCustomSoundFilename);
+  }
+
   if (selectedData.includes("collections")) {
     const data = useCollectionsStore.getState().collections;
 
@@ -104,7 +116,7 @@ async function addIdbUserDataToZip(zipWriter: ZipWriter<unknown>, key: string) {
 async function addIdbStoreToZip(
   zipWriter: ZipWriter<unknown>,
   storeName: StoreName,
-  getFilename: (key: string) => string,
+  getFilename: (key: string, blob: Blob) => string,
   deflate = true,
 ) {
   const keys = await idb.getStoreKeys(storeName);
@@ -117,7 +129,7 @@ async function addIdbStoreToZip(
     }
 
     const blob = value.file;
-    const path = `${storeName}/${getFilename(key)}`;
+    const path = `${storeName}/${getFilename(key, value.file)}`;
 
     await zipWriter.add(path, new BlobReader(blob), {
       level: deflate ? 6 : 0,
@@ -187,6 +199,18 @@ export async function importBackup(zipBlob: File) {
           useStoredBeatmapSetsStore.getState().storedBeatmapSets.length;
       }
 
+      continue;
+    }
+
+    // Custom sounds
+    const customSoundMatch = filename.match(/^customSounds\/(.+)$/);
+    if (customSoundMatch) {
+      const key = customSoundMatch[1];
+      const [fileName] = key.split(".");
+      const audioFile = new File([blob], entry.filename, {
+        type: blob.type,
+      });
+      await idb.saveCustomSound(fileName, audioFile);
       continue;
     }
 

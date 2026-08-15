@@ -26,6 +26,7 @@ const SelectInput = ({
   className,
   children,
   description,
+  rightElement,
   ...props
 }: {
   label: string;
@@ -36,6 +37,7 @@ const SelectInput = ({
   className?: string;
   children: React.ReactNode;
   description?: ReactNode;
+  rightElement?: (value: string) => ReactNode;
 } & ComponentProps<typeof Select>) => {
   // Use selector if provided, otherwise use settingPath
   // When using settingPath, convert the value to string for the Select component
@@ -88,12 +90,15 @@ const SelectInput = ({
             )}
         </div>
 
-        <Select value={value ?? NULL_OPTION} {...props}>
-          <SelectTrigger>
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>{children}</SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select value={value ?? NULL_OPTION} {...props}>
+            <SelectTrigger>
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>{children}</SelectContent>
+          </Select>
+          {rightElement?.(value)}
+        </div>
       </div>
       {description && (
         <p className="text-muted-foreground/75 mt-1 text-sm">{description}</p>

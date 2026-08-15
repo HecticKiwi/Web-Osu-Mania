@@ -1,3 +1,4 @@
+import { idb } from "@/lib/idb";
 import { createSelectors, getLocalStorageConfig } from "@/lib/zustand";
 import { getAllLaneColors } from "@/osuMania/constants";
 import { create } from "zustand";
@@ -264,6 +265,22 @@ export type Settings = {
       custom: ColumnColor[][];
     };
     judgementSet: JudgementSetId;
+    sounds: {
+      applause: string | null;
+      fail: string | null;
+      ["normal-normal"]: string | null;
+      ["normal-whistle"]: string | null;
+      ["normal-finish"]: string | null;
+      ["normal-clap"]: string | null;
+      ["soft-normal"]: string | null;
+      ["soft-whistle"]: string | null;
+      ["soft-finish"]: string | null;
+      ["soft-clap"]: string | null;
+      ["drum-normal"]: string | null;
+      ["drum-whistle"]: string | null;
+      ["drum-finish"]: string | null;
+      ["drum-clap"]: string | null;
+    };
   };
 };
 
@@ -588,6 +605,22 @@ export const defaultSettings: Settings = {
       custom: getAllLaneColors(212, true),
     },
     judgementSet: "azureSnowfall",
+    sounds: {
+      applause: "applause-1.mp3",
+      fail: "power-down-1.mp3",
+      ["normal-normal"]: "clack-1.ogg",
+      ["normal-whistle"]: null,
+      ["normal-finish"]: null,
+      ["normal-clap"]: null,
+      ["soft-normal"]: "clack-1.ogg",
+      ["soft-whistle"]: "tock-1.ogg",
+      ["soft-finish"]: "tock-1.ogg",
+      ["soft-clap"]: "tock-1.ogg",
+      ["drum-normal"]: "clack-1.ogg",
+      ["drum-whistle"]: null,
+      ["drum-finish"]: null,
+      ["drum-clap"]: null,
+    },
   },
 } as const;
 
@@ -603,7 +636,8 @@ const useSettingsStoreBase = create(
               fn(settings);
             }),
 
-          resetSettings: () => {
+          resetSettings: async () => {
+            await idb.clearCustomSounds();
             set((settings) => {
               return {
                 ...defaultSettings,

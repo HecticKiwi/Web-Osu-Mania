@@ -1,5 +1,8 @@
+import { CUSTOM_SOUND_OPTION } from "@/components/settings/sounds/customSoundSelect";
 import type { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
-import { BASE_PATH } from "@/lib/utils";
+import { idb } from "@/lib/idb";
+import { hitsoundSampleSets, hitsoundSamples } from "@/lib/skinParser";
+import { BASE_PATH, createObjectURLWithExtension } from "@/lib/utils";
 import { Howl } from "howler";
 import type { Game } from "../game";
 import type { Tap } from "../sprites/tap/tap";
@@ -10,22 +13,54 @@ export class AudioSystem {
   public beatmapSounds: SoundDictionary;
   public playedSounds = new Set<Howl>();
 
+  private customHitsoundUrls: string[] = [];
+
   constructor(game: Game, sounds: SoundDictionary) {
     this.game = game;
     this.sounds = sounds;
+  }
 
-    // Skin hitsounds will start with "skin-"
-    ["normal", "soft", "drum"].forEach((sampleSet) => {
-      ["normal", "whistle", "finish", "clap"].forEach((sound) => {
-        this.load(
-          `skin-${sampleSet}-hit${sound}`,
-          `${BASE_PATH}/skin/${sampleSet}-hit${sound}.ogg`,
-        );
-      });
+  public dispose() {
+    this.customHitsoundUrls.forEach((url) => {
+      URL.revokeObjectURL(url);
     });
   }
 
-  public dispose() {}
+  public async loadHitsounds() {
+    const tasks: Promise<void>[] = [];
+
+    const soundPairs = hitsoundSampleSets.flatMap((sampleSet) =>
+      hitsoundSamples.map((sample) => ({ sampleSet, sample })),
+    );
+
+    tasks.push(
+      ...soundPairs.map(async ({ sampleSet, sample }) => {
+        // Skin hitsounds will start with "skin-"
+        const key = `skin-${sampleSet}-hit${sample}`;
+
+        const soundName = `${sampleSet}-${sample}` as const;
+        const sound = this.game.settings.skin.sounds[soundName];
+        if (sound === CUSTOM_SOUND_OPTION) {
+          const customSound = await idb.getCustomSound(soundName);
+          if (!customSound) {
+            throw new Error(
+              `Custom ${sampleSet} ${sample} hitsound could not be loaded.`,
+            );
+          }
+
+          const url = createObjectURLWithExtension(customSound.file as File);
+          this.customHitsoundUrls.push(url);
+
+          this.load(key, url);
+        } else if (sound) {
+          const url = `${BASE_PATH}/skin/sounds/hitsounds/${sound}`;
+          this.load(key, url);
+        }
+      }),
+    );
+
+    await Promise.all(tasks);
+  }
 
   private load(name: string, src: string) {
     this.sounds[name] = {

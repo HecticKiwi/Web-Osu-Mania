@@ -12,6 +12,7 @@ import ReplaySettings from "./replay/replaySettings";
 import ResetSettingsButton from "./resetSettingsButton";
 import SettingsNavigation from "./settingsNavigation";
 import SkinSettings from "./skin/skinSettings";
+import SoundSettings from "./sounds/soundSettings";
 import SourcesSettings from "./sources/sourcesSettings";
 import TouchControlsSettings from "./touchControls/touchControlsSettings";
 import VolumeSettings from "./volume/volumeSettings";
@@ -50,6 +51,10 @@ const sections: {
   {
     title: "Volume",
     Component: VolumeSettings,
+  },
+  {
+    title: "Sounds",
+    Component: SoundSettings,
   },
   {
     title: "Replays",

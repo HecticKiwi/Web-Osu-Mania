@@ -1,4 +1,5 @@
 import type { TimelineDataPoint } from "@/components/game/timelineGraph";
+import { CUSTOM_SOUND_OPTION } from "@/components/settings/sounds/customSoundSelect";
 import type {
   BeatmapData,
   Break,
@@ -7,8 +8,14 @@ import type {
   HitWindows,
   TimingPoint,
 } from "@/lib/beatmapParser";
+import { idb } from "@/lib/idb";
 import { decodeMods } from "@/lib/replay";
-import { BASE_PATH, patchLaneColors, scaleWidth } from "@/lib/utils";
+import {
+  BASE_PATH,
+  createObjectURLWithExtension,
+  patchLaneColors,
+  scaleWidth,
+} from "@/lib/utils";
 import type { ColumnColor, Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { Column, GameState, PlayResults } from "@/types";
@@ -493,6 +500,8 @@ export class Game {
         wheel: false,
       },
     });
+
+    await this.audioSystem.loadHitsounds();
 
     // Remove pointer cursor default so it can be hidden on keypress
     this.app.renderer.events.cursorStyles.pointer = "inherit";
@@ -1072,18 +1081,41 @@ export class Game {
       this.replayRecorder?.record(i, false);
     }
 
-    new Howl({
-      src: [`/skin/applause.mp3`],
-      format: "mp3",
-      preload: true,
-      autoplay: true,
-      onloaderror: (_, error) => {
-        console.warn(error);
-      },
-      onplayerror: (_, error) => {
-        console.warn(error);
-      },
-    });
+    const applauseFile = this.settings.skin.sounds.applause;
+    if (applauseFile === CUSTOM_SOUND_OPTION) {
+      const customSound = await idb.getCustomSound("applause");
+      if (customSound) {
+        const url = createObjectURLWithExtension(customSound.file as File);
+
+        new Howl({
+          src: [url],
+          preload: true,
+          autoplay: true,
+          onloaderror: (_, error) => {
+            console.warn(error);
+            URL.revokeObjectURL(url);
+          },
+          onplayerror: (_, error) => {
+            console.warn(error);
+          },
+          onend: () => {
+            URL.revokeObjectURL(url);
+          },
+        });
+      }
+    } else if (applauseFile) {
+      new Howl({
+        src: [`${BASE_PATH}/skin/sounds/applause/${applauseFile}`],
+        preload: true,
+        autoplay: true,
+        onloaderror: (_, error) => {
+          console.warn(error);
+        },
+        onplayerror: (_, error) => {
+          console.warn(error);
+        },
+      });
+    }
 
     this.setResults();
   }
@@ -1104,18 +1136,41 @@ export class Game {
       this.replayRecorder?.record(i, false);
     }
 
-    new Howl({
-      src: [`${BASE_PATH}/skin/failsound.mp3`],
-      format: "mp3",
-      preload: true,
-      autoplay: true,
-      onloaderror: (_, error) => {
-        console.warn(error);
-      },
-      onplayerror: (_, error) => {
-        console.warn(error);
-      },
-    });
+    const failFile = this.settings.skin.sounds.fail;
+    if (failFile === CUSTOM_SOUND_OPTION) {
+      const customSound = await idb.getCustomSound("fail");
+      if (customSound) {
+        const url = createObjectURLWithExtension(customSound.file as File);
+
+        new Howl({
+          src: [url],
+          preload: true,
+          autoplay: true,
+          onloaderror: (_, error) => {
+            console.warn(error);
+            URL.revokeObjectURL(url);
+          },
+          onplayerror: (_, error) => {
+            console.warn(error);
+          },
+          onend: () => {
+            URL.revokeObjectURL(url);
+          },
+        });
+      }
+    } else if (failFile) {
+      new Howl({
+        src: [`${BASE_PATH}/skin/sounds/fail/${failFile}`],
+        preload: true,
+        autoplay: true,
+        onloaderror: (_, error) => {
+          console.warn(error);
+        },
+        onplayerror: (_, error) => {
+          console.warn(error);
+        },
+      });
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 

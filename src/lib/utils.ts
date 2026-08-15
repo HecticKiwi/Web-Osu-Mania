@@ -423,3 +423,9 @@ export function patchLaneColors(columnColors: ColumnColor[]): ColumnColor[] {
 
   return colors;
 }
+
+export function createObjectURLWithExtension(file: File) {
+  const format = file.name.split(".").pop();
+  const url = `${URL.createObjectURL(file)}#.${format}`;
+  return url;
+}
