@@ -70,7 +70,9 @@ class Idb {
             const value = JSON.stringify({
               state: {
                 collections: {
-                  Saved: data.state.savedBeatmapSets,
+                  Saved: Object.hasOwn(data, "state")
+                    ? data.state.savedBeatmapSets
+                    : data,
                 },
               },
               version: 0,
