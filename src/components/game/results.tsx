@@ -7,6 +7,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
+import DifficultyBadge from "../beatmapSet/difficultyBadge";
 import { JudgementChart } from "./judgementChart";
 import LetterGradeCard from "./letterGradeCard";
 import TimelineGraph from "./timelineGraph";
@@ -103,9 +104,10 @@ const Results = ({
 
           <div className="mt-3 flex flex-wrap gap-2">
             <div className="bg-card flex w-fit items-center gap-2 rounded border p-1.5">
-              <p className="text-yellow-400">
-                {beatmap?.difficulty_rating.toFixed(2)}★
-              </p>
+              <DifficultyBadge
+                difficultyRating={beatmap?.difficulty_rating ?? 0}
+              />
+
               {beatmapSet?.status === "local" && (
                 <span className="rounded bg-slate-500/20 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-cyan-300">
                   LOCAL

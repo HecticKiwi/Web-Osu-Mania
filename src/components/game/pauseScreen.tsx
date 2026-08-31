@@ -5,6 +5,7 @@ import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
+import DifficultyBadge from "../beatmapSet/difficultyBadge";
 import { Button } from "../ui/button";
 import { toast } from "../ui/use-toast";
 
@@ -75,9 +76,10 @@ const PauseScreen = ({
 
           <div className="mt-3 flex flex-wrap gap-2">
             <div className="bg-card flex w-fit items-center gap-2 rounded border p-1.5">
-              <p className="text-yellow-400">
-                {beatmap?.difficulty_rating.toFixed(2)}★
-              </p>
+              <DifficultyBadge
+                difficultyRating={beatmap?.difficulty_rating ?? 0}
+              />
+
               <p className="line-clamp-1">{beatmapData.metadata.version}</p>
             </div>
 
