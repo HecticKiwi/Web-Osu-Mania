@@ -1,4 +1,5 @@
-import type { BeatmapSet, Status } from "@/lib/osuApi";
+import { getDiffColour } from "@/lib/colors";
+import type { Beatmap, BeatmapSet, Status } from "@/lib/osuApi";
 import { cn, secondsToMMSS } from "@/lib/utils";
 import { Clock, Metronome } from "lucide-react";
 import {
@@ -25,7 +26,13 @@ const getStatusClass = (status: Status) => {
   }
 };
 
-const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
+const BeatmapSetCover = ({
+  beatmapSet,
+  filteredBeatmaps,
+}: {
+  beatmapSet: BeatmapSet;
+  filteredBeatmaps: Beatmap[];
+}) => {
   const beatmapCoverProvider = useSettingsStore.use.beatmapCoverProvider();
   const customBeatmapCoverProvider =
     useSettingsStore.use.customBeatmapCoverProvider();
@@ -73,16 +80,31 @@ const BeatmapSetCover = ({ beatmapSet }: { beatmapSet: BeatmapSet }) => {
 
       {/* Details */}
       <div className="mt-auto">
-        {beatmapSet.status && (
-          <div
-            className={cn(
-              "w-fit rounded-full px-1.5 text-xs font-bold",
-              getStatusClass(beatmapSet.status),
-            )}
-          >
-            {beatmapSet.status.toUpperCase()}
+        <div className="flex items-center gap-1.5">
+          {beatmapSet.status && (
+            <div
+              className={cn(
+                "w-fit rounded-full px-1.5 text-xs font-bold",
+                getStatusClass(beatmapSet.status),
+              )}
+            >
+              {beatmapSet.status.toUpperCase()}
+            </div>
+          )}
+
+          {/* Difficulty dots */}
+          <div className="flex gap-0.5">
+            {filteredBeatmaps.map((beatmap) => (
+              <div
+                key={beatmap.id}
+                className="h-3 w-1.5 rounded-full bg-red-400"
+                style={{
+                  backgroundColor: getDiffColour(beatmap.difficulty_rating),
+                }}
+              ></div>
+            ))}
           </div>
-        )}
+        </div>
         <div className="mt-0.5 w-full truncate text-xl" title={title}>
           {title}
         </div>

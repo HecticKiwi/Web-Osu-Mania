@@ -3,6 +3,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useFilteredBeatmaps } from "@/hooks/useFilteredBeatmaps";
 import { playAudioPreview, stopAudioPreview } from "@/lib/audio";
 import type { BeatmapSet as BeatmapSetData } from "@/lib/osuApi";
 import { getBeatmapSet } from "@/lib/osuApi";
@@ -29,6 +30,7 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
   const queryClient = useQueryClient();
   const [preview, setPreview] = useState<Howl | null>(null);
   const collection = search.collection;
+  const filteredBeatmaps = useFilteredBeatmaps(beatmapSet);
 
   const handleOpenChange = async (isOpen: boolean) => {
     if (isOpen) {
@@ -81,7 +83,10 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
     <Popover onOpenChange={handleOpenChange}>
       <div className="group relative">
         <PopoverTrigger className="group-hover:border-primary relative flex h-37.5 w-full flex-col overflow-hidden rounded-xl border p-4 text-start transition-colors duration-300">
-          <BeatmapSetCover beatmapSet={beatmapSet} />
+          <BeatmapSetCover
+            beatmapSet={beatmapSet}
+            filteredBeatmaps={filteredBeatmaps}
+          />
 
           {preview && (
             <div className="absolute inset-x-0 bottom-0">
@@ -103,7 +108,11 @@ const BeatmapSet = ({ beatmapSet }: { beatmapSet: BeatmapSetData }) => {
       </div>
 
       <PopoverContent className="p-0">
-        <BeatmapList beatmapSet={beatmapSet} stopPreview={stopPreview} />
+        <BeatmapList
+          beatmapSet={beatmapSet}
+          filteredBeatmaps={filteredBeatmaps}
+          stopPreview={stopPreview}
+        />
       </PopoverContent>
     </Popover>
   );
