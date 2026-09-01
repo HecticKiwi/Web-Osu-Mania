@@ -33,14 +33,6 @@ export async function downloadBackup(
     useSettingsStore.setState({ mods });
   }
 
-  if (selectedData.includes("highScoresAndReplays")) {
-    await addIdbUserDataToZip(zipWriter, "highScores");
-  }
-
-  if (selectedData.includes("storedBeatmapSets")) {
-    await addIdbUserDataToZip(zipWriter, "storedBeatmapSets");
-  }
-
   // IndexedDB
 
   if (selectedData.includes("settingsAndKeybinds")) {
@@ -55,6 +47,10 @@ export async function downloadBackup(
     await addIdbStoreToZip(zipWriter, "customSounds", getCustomSoundFilename);
   }
 
+  if (selectedData.includes("highScoresAndReplays")) {
+    await addIdbUserDataToZip(zipWriter, "highScores");
+  }
+
   if (selectedData.includes("collections")) {
     const data = useCollectionsStore.getState().collections;
 
@@ -64,6 +60,8 @@ export async function downloadBackup(
   }
 
   if (selectedData.includes("storedBeatmapSets")) {
+    await addIdbUserDataToZip(zipWriter, "storedBeatmapSets");
+
     const getFilename = (key: string) => {
       const beatmapSet = useStoredBeatmapSetsStore
         .getState()
@@ -181,19 +179,24 @@ export async function importBackup(zipBlob: File) {
         useCollectionsStore.setState((draft) => {
           draft.collections["Saved"] = savedBeatmapSets;
         });
-      } else {
-        localStorage.setItem(key, text);
       }
 
       if (filename === "settings.json") {
         const mods = useSettingsStore.getState().mods;
+        localStorage.setItem(key, text);
         useSettingsStore.persist.rehydrate();
         hasSettings = true;
         useSettingsStore.setState({ mods });
       } else if (filename === "highScores.json") {
+        const db = await idb.db;
+        await db.put("userData", text, "highScores");
+
         useHighScoresStore.persist.rehydrate();
         hasHighScores = true;
       } else if (filename === "storedBeatmapSets.json") {
+        const db = await idb.db;
+        await db.put("userData", text, "storedBeatmapSets");
+
         useStoredBeatmapSetsStore.persist.rehydrate();
         storedBeatmapCount =
           useStoredBeatmapSetsStore.getState().storedBeatmapSets.length;
