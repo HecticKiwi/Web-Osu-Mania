@@ -3,10 +3,14 @@ import { parseKeysParam } from "@/lib/searchParams/keysParam";
 import { parseStarsParam } from "@/lib/searchParams/starsParam";
 import { Route } from "@/routes";
 
-export const useFilteredBeatmaps = (beatmapSet: BeatmapSet) => {
+export const useFilteredBeatmaps = (beatmapSet?: BeatmapSet | null) => {
   const search = Route.useSearch();
   const { min, max } = parseStarsParam(search.stars);
   const keys = parseKeysParam(search.keys);
+
+  if (!beatmapSet) {
+    return [];
+  }
 
   const maniaBeatmaps = beatmapSet.beatmaps.filter(
     (beatmap) => beatmap.mode === "mania",

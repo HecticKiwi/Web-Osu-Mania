@@ -3,6 +3,7 @@ import BeatmapSetPageButton from "@/components/beatmapSet/beatmapPageButton";
 import BeatmapSetCover from "@/components/beatmapSet/beatmapSetCover";
 import PreviewProgressBar from "@/components/beatmapSet/previewProgressBar";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useFilteredBeatmaps } from "@/hooks/useFilteredBeatmaps";
 import {
   playAudioPreview,
   playAudioPreviewFromUrl,
@@ -20,6 +21,7 @@ const UploadDialog = () => {
   const replayData = useGameStore.use.replayData();
   const setUploadedBeatmapSet = useGameStore.use.setUploadedBeatmapSet();
   const musicVolume = useSettingsStore.use.musicVolume();
+  const filteredBeatmaps = useFilteredBeatmaps(beatmapSet);
   const [preview, setPreview] = useState<Howl | null>(null);
 
   const stopPreview = () => {
@@ -84,7 +86,10 @@ const UploadDialog = () => {
           {uploadedBeatmapSet && beatmapSet && !replayData && (
             <>
               <div className="group relative flex h-37.5 flex-col p-4 text-start">
-                <BeatmapSetCover beatmapSet={beatmapSet} />
+                <BeatmapSetCover
+                  beatmapSet={beatmapSet}
+                  filteredBeatmaps={filteredBeatmaps}
+                />
 
                 {preview && (
                   <div className="absolute inset-x-0 bottom-0">
@@ -99,7 +104,11 @@ const UploadDialog = () => {
                 </div>
               </div>
 
-              <BeatmapList beatmapSet={beatmapSet} stopPreview={stopPreview} />
+              <BeatmapList
+                beatmapSet={beatmapSet}
+                filteredBeatmaps={filteredBeatmaps}
+                stopPreview={stopPreview}
+              />
             </>
           )}
         </DialogContent>

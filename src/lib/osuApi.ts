@@ -82,7 +82,7 @@ export type BeatmapSet = {
   // spotlight: boolean;
   title: string;
   title_unicode: string;
-  user_id: number;
+  user_id?: number; // Undefined for local beatmap sets
   // video: boolean;
 
   play_count?: number;

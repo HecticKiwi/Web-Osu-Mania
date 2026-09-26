@@ -2,7 +2,7 @@
     "$schema": "node_modules/wrangler/config-schema.json",
     "main": "@tanstack/react-start/server-entry",
     "name": "webosumania",
-    "compatibility_date": "2025-05-18",
+    "compatibility_date": "2025-09-08",
     "compatibility_flags": [
         "nodejs_compat"
     ],
