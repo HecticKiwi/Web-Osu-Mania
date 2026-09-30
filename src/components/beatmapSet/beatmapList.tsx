@@ -10,6 +10,7 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_INDEXES,
 } from "@/lib/searchParams/languageParam";
+import { calculatePp } from "@/lib/utils";
 import { Heart, Languages, Play, Tag, UserStar } from "lucide-react";
 import { useGameStore } from "../../stores/gameStore";
 import { useHighScoresStore } from "../../stores/highScoresStore";
@@ -107,6 +108,24 @@ const BeatmapList = ({
                 ? []
                 : (highScores[beatmapSet.id]?.[beatmap.id] ?? []);
 
+            const maxCombo = beatmap.count_circles + beatmap.count_sliders * 2;
+            const maxPp = calculatePp(
+              beatmap.difficulty_rating,
+              {
+                "320": maxCombo,
+                "300": 0,
+                "200": 0,
+                "100": 0,
+                "50": 0,
+                "0": 0,
+              },
+              maxCombo,
+              {
+                noFail: false,
+                easy: false,
+              },
+            );
+
             return (
               <div key={beatmap.id}>
                 <div
@@ -126,10 +145,15 @@ const BeatmapList = ({
                         {beatmap.version}
                       </button>
 
-                      <DifficultyBadge
-                        difficultyRating={beatmap.difficulty_rating}
-                        className="mt-1"
-                      />
+                      <div className="mt-1 flex items-end gap-2">
+                        <DifficultyBadge
+                          difficultyRating={beatmap.difficulty_rating}
+                        />
+
+                        <span className="text-muted-foreground font-mono text-xs">
+                          Max PP: <span className="font-semibold">{maxPp}</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
 

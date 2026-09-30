@@ -322,7 +322,7 @@ export function getClassNamesForGrade(grade: Grade) {
 // https://github.com/ppy/osu/blob/master/osu.Game.Rulesets.Mania/Difficulty/ManiaPerformanceCalculator.cs#L58
 export function calculatePp(
   starRating: number,
-  results: Results,
+  results: Pick<Results, 320 | 300 | 200 | 100 | 50 | 0>,
   totalHits: number,
   mods: {
     noFail: boolean;
