@@ -3,6 +3,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 import { BlobReader, BlobWriter, TextWriter, ZipReader } from "@zip.js/zip.js";
 import { Howl } from "howler";
+import { toast } from "sonner";
 import { addDelay, createAudioPreviewClip } from "./audio";
 import { calculateManiaStarRating } from "./maniaDifficulty";
 import type { Beatmap, BeatmapSet } from "./osuApi";
@@ -193,33 +194,38 @@ export const parseOsz = async (
 
   // Song file
 
-  const songFilename = getLineValue(lines, "AudioFilename");
-  if (!songFilename) {
-    throw new Error("Could not find the song filename");
-  }
+  let songUrl: string | null = null;
 
-  const songFileExtension = songFilename.split(".").pop();
-
-  if (!songFileExtension) {
-    throw new Error("No song file extension");
-  }
-
-  let songUrl: string;
-  const songFile = findEntry(entries, songFilename);
   const totalDuration = endTime / 1000 + 2;
+  const songFilename = getLineValueOrDefault(lines, "AudioFilename", "");
+  if (songFilename) {
+    const songFileExtension = songFilename.split(".").pop();
 
-  if (songFile) {
-    const audioBlob = await songFile.getData(new BlobWriter());
-    const beforeDuration = delay / 1000;
+    if (!songFileExtension) {
+      throw new Error("No song file extension");
+    }
 
-    const delayedAudioBlob = await addDelay(
-      audioBlob,
-      beforeDuration,
-      totalDuration,
-    );
+    const songFile = findEntry(entries, songFilename);
+    if (songFile) {
+      const audioBlob = await songFile.getData(new BlobWriter());
+      const beforeDuration = delay / 1000;
 
-    songUrl = URL.createObjectURL(delayedAudioBlob);
+      const delayedAudioBlob = await addDelay(
+        audioBlob,
+        beforeDuration,
+        totalDuration,
+      );
+
+      songUrl = URL.createObjectURL(delayedAudioBlob);
+    }
   } else {
+  }
+
+  if (!songUrl) {
+    toast("Warning: audio file could not be found.", {
+      duration: 3000,
+    });
+
     // If no audioFile, create a silent audio blob
     // (this is likely a BMS map)
     const audioBlob = await addDelay(null, 0, totalDuration);
