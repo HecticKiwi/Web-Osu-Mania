@@ -1,7 +1,7 @@
 import type { HoldData } from "@/lib/beatmapParser";
 import { Container, Sprite, Texture } from "pixi.js";
 import type { Game } from "../../game";
-import { Tap } from "../tap/tap";
+import { CircleTap } from "../tap/circleTap";
 import { Hold } from "./hold";
 
 export class CircleHold extends Hold {
@@ -23,12 +23,12 @@ export class CircleHold extends Hold {
       game.scaledColumnWidth / 2;
     this.view.visible = false;
 
-    const tail = new Sprite(Tap.renderTexture!);
+    const tail = CircleTap.getSprite(game);
     tail.pivot.y = tail.height / 2;
     tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
 
-    this.head = new Sprite(Tap.renderTexture!);
+    this.head = CircleTap.getSprite(game);
     this.head.anchor.y = 0.5;
     this.head.tint = game.laneColors[holdData.column].holdHead;
 

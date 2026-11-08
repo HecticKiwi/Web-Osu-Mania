@@ -606,6 +606,10 @@ export class Game {
     this.app.ticker.add((time) => this.update(time));
   }
 
+  private setNoteTextures() {
+    this.tapClass.getSprite(this);
+  }
+
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
     this.inputSystem.updateGamepadInputs();

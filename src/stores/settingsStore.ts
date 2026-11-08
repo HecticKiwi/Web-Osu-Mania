@@ -117,7 +117,9 @@ export const COVER_TYPE_LABELS: Record<CoverType, string> = {
 
 export type ColumnColor = {
   tap: string;
+  tapBorder: string;
   holdHead: string;
+  holdHeadBorder: string;
   hold: string;
 };
 
@@ -282,6 +284,8 @@ export type Settings = {
       ["drum-finish"]: string | null;
       ["drum-clap"]: string | null;
     };
+    arrowThickness: number;
+    borderWidth: number;
   };
 };
 
@@ -623,6 +627,8 @@ export const defaultSettings: Settings = {
       ["drum-finish"]: null,
       ["drum-clap"]: null,
     },
+    arrowThickness: 1,
+    borderWidth: 0,
   },
 } as const;
 
@@ -705,6 +711,11 @@ function fillCallback(settings: Settings) {
   filledSettings.skin.colors.custom.forEach((colorSet) => {
     if (!colorSet[0].holdHead) {
       colorSet.forEach((color) => (color.holdHead = color.tap));
+    }
+
+    if (!colorSet[0].tapBorder) {
+      colorSet.forEach((color) => (color.tapBorder = "black"));
+      colorSet.forEach((color) => (color.holdHeadBorder = "black"));
     }
   });
 

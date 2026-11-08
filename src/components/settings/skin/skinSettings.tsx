@@ -81,6 +81,26 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
           ),
         },
         {
+          label: "Border Width",
+          render: ({ label }) => (
+            <>
+              <SliderInput
+                label={label}
+                settingPath="skin.borderWidth"
+                tooltip={(borderWidth) => `${borderWidth}px`}
+                onValueChange={([borderWidth]) =>
+                  setSettings((draft) => {
+                    draft.skin.borderWidth = borderWidth;
+                  })
+                }
+                min={0}
+                max={20}
+                step={1}
+              />
+            </>
+          ),
+        },
+        {
           label: "Color",
           searchTags: [
             "Simple",
