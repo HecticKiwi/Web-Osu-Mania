@@ -204,7 +204,11 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                               >
                                 <Button
                                   variant="outline"
-                                  style={{ backgroundColor: colorSet.tap }}
+                                  className="border-2"
+                                  style={{
+                                    backgroundColor: colorSet.tap,
+                                    borderColor: colorSet.tapBorder,
+                                  }}
                                 />
                               </PopoverTrigger>
                               <PopoverContent className="w-fit">

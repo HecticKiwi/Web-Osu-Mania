@@ -531,6 +531,8 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
+    this.tapClass.setRenderTextures(this);
+
     if (this.replayPlayer) {
       this.addReplayText();
     }
@@ -604,10 +606,6 @@ export class Game {
 
     // Game loop
     this.app.ticker.add((time) => this.update(time));
-  }
-
-  private setNoteTextures() {
-    this.tapClass.getSprite(this);
   }
 
   private update(time: Ticker) {

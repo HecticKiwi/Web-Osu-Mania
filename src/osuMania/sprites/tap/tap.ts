@@ -1,5 +1,5 @@
 import type { SampleSet, TapData } from "@/lib/beatmapParser";
-import type { Container, Sprite, Texture } from "pixi.js";
+import type { Container, Texture } from "pixi.js";
 import type { Game } from "../../game";
 import { Hold } from "../hold/hold";
 
@@ -15,10 +15,6 @@ export abstract class Tap {
   public additionSet: SampleSet;
   public sampleIndex: number;
   public volume: number;
-
-  static getSprite(game: Game): Sprite {
-    throw new Error("Subclass must implement static method getSprite()");
-  }
 
   constructor(game: Game, tapData: TapData) {
     this.game = game;
