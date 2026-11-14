@@ -11,8 +11,6 @@ export class CircleTap extends Tap {
   };
 
   static setRenderTextures(game: Game) {
-    console.log("wahoo");
-
     CircleTap.renderTextures = {
       tap: [],
       hold: [],
@@ -80,6 +78,7 @@ export class CircleTap extends Tap {
     const sprite = new Sprite(renderTextures[columnIndex]);
     sprite.width = width;
     sprite.height = height;
+    sprite.anchor = 0.5;
 
     return sprite;
   }
@@ -92,18 +91,12 @@ export class CircleTap extends Tap {
       tapData.column,
       tapData.isHoldHead,
     );
-    sprite.anchor = 0.5;
+
     this.view = sprite;
     this.view.x =
       tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
       game.scaledColumnWidth / 2;
     this.view.visible = false;
-
-    if (this.data.isHoldHead) {
-      this.view.tint = game.laneColors[tapData.column].holdHead;
-    } else {
-      this.view.tint = game.laneColors[tapData.column].tap;
-    }
 
     this.game.notesContainer.addChild(this.view);
   }

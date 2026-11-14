@@ -21,7 +21,6 @@ const ColorInput = ({
       <HslStringColorPicker
         color={colors[columnIndex][colorKey]}
         onChange={(color) => {
-          console.log(color);
           setSettings((draft) => {
             draft.skin.colors.custom[keyCount - 1][columnIndex][colorKey] =
               color;

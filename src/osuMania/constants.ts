@@ -48,9 +48,9 @@ export function getAllLaneColors(
 
     return {
       tap: color,
-      tapBorder: "red",
+      tapBorder: "hsl(294, 100%, 50%)",
       holdHead: color,
-      holdHeadBorder: "red",
+      holdHeadBorder: "hsl(294, 100%, 50%)",
       hold: holdColor,
     };
   }

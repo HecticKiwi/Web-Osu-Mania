@@ -38,7 +38,6 @@ export async function downloadBackup(
   if (selectedData.includes("settingsAndKeybinds")) {
     const getCustomSoundFilename = (key: string, blob: Blob) => {
       const file = blob as File;
-      console.log(file);
 
       const format = file.name.split(".").pop();
       return `${key}.${format}`;

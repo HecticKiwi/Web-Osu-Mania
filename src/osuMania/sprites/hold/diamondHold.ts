@@ -1,7 +1,7 @@
 import type { HoldData } from "@/lib/beatmapParser";
 import { Container, Graphics, GraphicsContext, Sprite, Texture } from "pixi.js";
 import type { Game } from "../../game";
-import { Tap } from "../tap/tap";
+import { DiamondTap } from "../tap/diamondTap";
 import { Hold } from "./hold";
 
 export class DiamondHold extends Hold {
@@ -38,10 +38,7 @@ export class DiamondHold extends Hold {
     tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
 
-    this.head = new Sprite(Tap.renderTexture!);
-    this.head.anchor.x = 0.5;
-    this.head.anchor.y = 0.5;
-    this.head.angle = 45;
+    this.head = DiamondTap.getSprite(game, holdData.column, true);
     this.head.x = this.body.width / 2;
     this.head.tint = game.laneColors[holdData.column].holdHead;
 

@@ -32,8 +32,6 @@ export class CircleHold extends Hold {
     this.view.addChild(tail);
 
     this.head = CircleTap.getSprite(game, holdData.column, true);
-    this.head.anchor.y = 0.5;
-
     this.view.addChild(this.head);
 
     this.game.notesContainer.addChild(this.view);

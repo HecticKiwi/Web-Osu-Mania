@@ -1,6 +1,7 @@
 import type { HoldData } from "@/lib/beatmapParser";
 import { Container, Sprite, Texture } from "pixi.js";
 import type { Game } from "../../game";
+import { BarTap } from "../tap/barTap";
 import { Hold } from "./hold";
 
 export class BarHold extends Hold {
@@ -35,11 +36,7 @@ export class BarHold extends Hold {
       tail.tint = game.laneColors[holdData.column].hold;
       this.view.addChild(tail);
 
-      this.head = Sprite.from(Texture.WHITE);
-      this.head.width = width;
-      this.head.height = height;
-      this.head.anchor.y = 1;
-      this.head.tint = game.laneColors[holdData.column].holdHead;
+      this.head = BarTap.getSprite(game, holdData.column, true);
       this.view.addChild(this.head);
     }
 
