@@ -39,8 +39,8 @@ export class DiamondTap extends Tap {
       graphics
         .clear()
         .roundRect(
-          strokeWidth / 2,
-          strokeWidth / 2,
+          -rectangleWidth / 2,
+          -rectangleHeight / 2,
           rectangleWidth,
           rectangleHeight,
           cornerRadius,
@@ -50,10 +50,13 @@ export class DiamondTap extends Tap {
           width: strokeWidth,
           color: strokeColor,
         });
+      graphics.x = (rectangleWidth / 2) * Math.sqrt(2);
+      graphics.y = (rectangleHeight / 2) * Math.sqrt(2);
+      graphics.angle = 45;
 
       const renderTexture = RenderTexture.create({
-        width: graphics.width,
-        height: graphics.height,
+        width: graphics.width * Math.sqrt(2),
+        height: graphics.height * Math.sqrt(2),
         antialias: true,
       });
 
@@ -74,10 +77,8 @@ export class DiamondTap extends Tap {
   }
 
   static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
-    const width =
-      (game.scaledColumnWidth * game.settings.noteScale) / Math.sqrt(2);
-    const height =
-      (game.scaledColumnWidth * game.settings.noteScale) / Math.sqrt(2);
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
 
     const renderTextures = isHoldHead
       ? DiamondTap.renderTextures.hold
@@ -85,10 +86,10 @@ export class DiamondTap extends Tap {
 
     const sprite = new Sprite(renderTextures[columnIndex]);
 
-    sprite.width = width;
-    sprite.height = height;
+    // sprite.width = width;
+    // sprite.height = height;
     sprite.anchor = 0.5;
-    sprite.angle = 90;
+    // sprite.angle = 90;
 
     return sprite;
   }
