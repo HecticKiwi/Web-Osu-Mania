@@ -19,13 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { isValidHsl } from "@/lib/utils";
+import { cn, isValidHsl } from "@/lib/utils";
 import type { SkinStyle } from "@/stores/settingsStore";
 import { skinStyleOptions, useSettingsStore } from "@/stores/settingsStore";
 import { useState } from "react";
 import { HslStringColorPicker } from "react-colorful";
 import FilterableList from "../filterableList";
 import type { SettingsSectionProps } from "../settingsTab";
+import ColorInput from "./colorInput";
 import JudgementSet, {
   judgementSetLabel,
   judgementSetOptionLabels,
@@ -34,12 +35,11 @@ import ResetColorsButton from "./resetColorsButton";
 
 const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const setSettings = useSettingsStore.use.setSettings();
-  const [keyCount, setKeyCount] = useState("4");
+  const [keyCount, setKeyCount] = useState(4);
 
-  const colors = useSettingsStore((s) => s.skin.colors.custom)[
-    Number(keyCount) - 1
-  ];
+  const colors = useSettingsStore((s) => s.skin.colors.custom)[keyCount - 1];
   const colorMode = useSettingsStore((s) => s.skin.colors.mode);
+  const borderWidth = useSettingsStore((s) => s.skin.borderWidth);
 
   return (
     <FilterableList
@@ -161,13 +161,16 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                     Mode
                   </div>
 
-                  <Select value={keyCount} onValueChange={setKeyCount}>
+                  <Select
+                    value={keyCount.toString()}
+                    onValueChange={(value) => setKeyCount(Number(value))}
+                  >
                     <SelectTrigger className="">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {keys.map((key) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} value={key.toString()}>
                           {key}K
                         </SelectItem>
                       ))}
@@ -200,48 +203,46 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                             <Popover>
                               <PopoverTrigger
                                 asChild
-                                className="block h-7 w-full border p-0"
+                                className={cn(
+                                  "block h-7 w-full border-0 p-0",
+                                  borderWidth > 0 && "border-2",
+                                )}
+                                style={{
+                                  backgroundColor: colorSet.tap,
+                                  borderColor: colorSet.tapBorder,
+                                }}
                               >
-                                <Button
-                                  variant="outline"
-                                  className="border-2"
-                                  style={{
-                                    backgroundColor: colorSet.tap,
-                                    borderColor: colorSet.tapBorder,
-                                  }}
-                                />
+                                <Button variant="outline" />
                               </PopoverTrigger>
                               <PopoverContent className="w-fit">
-                                <HslStringColorPicker
-                                  color={colors[i].tap}
-                                  onChange={(color) =>
-                                    setSettings((draft) => {
-                                      draft.skin.colors.custom[
-                                        Number(keyCount) - 1
-                                      ][i].tap = color;
-                                    })
-                                  }
-                                />
-                                <Input
-                                  className="mt-4"
-                                  value={colors[i].tap}
-                                  onChange={(e) => {
-                                    const newColor = e.target.value;
-                                    if (newColor.startsWith("hsl")) {
-                                      setSettings((draft) => {
-                                        draft.skin.colors.custom[
-                                          Number(keyCount) - 1
-                                        ][i].tap = newColor;
-                                      });
-                                    }
-                                  }}
-                                />
-                                {!isValidHsl(colors[i].tap) && (
-                                  <p className="mt-1 w-50 text-sm text-red-400">
-                                    Invalid color; white will be used as a
-                                    fallback.
-                                  </p>
-                                )}
+                                <Tabs defaultValue="fill">
+                                  <TabsList
+                                    className={cn(
+                                      "hidden",
+                                      borderWidth > 0 &&
+                                        "mb-4 grid grid-cols-2",
+                                    )}
+                                  >
+                                    <TabsTrigger value="fill">Fill</TabsTrigger>
+                                    <TabsTrigger value="stroke">
+                                      Stroke
+                                    </TabsTrigger>
+                                  </TabsList>
+                                  <TabsContent value="fill" className="mt-0">
+                                    <ColorInput
+                                      keyCount={keyCount}
+                                      columnIndex={i}
+                                      colorKey="tap"
+                                    />
+                                  </TabsContent>
+                                  <TabsContent value="stroke" className="mt-0">
+                                    <ColorInput
+                                      keyCount={keyCount}
+                                      columnIndex={i}
+                                      colorKey="tapBorder"
+                                    />
+                                  </TabsContent>
+                                </Tabs>
                               </PopoverContent>
                             </Popover>
                           </td>
@@ -249,46 +250,46 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                             <Popover>
                               <PopoverTrigger
                                 asChild
-                                className="block h-7 w-full border p-0"
+                                className={cn(
+                                  "block h-7 w-full border-0 p-0",
+                                  borderWidth > 0 && "border-2",
+                                )}
+                                style={{
+                                  backgroundColor: colorSet.holdHead,
+                                  borderColor: colorSet.holdHeadBorder,
+                                }}
                               >
-                                <Button
-                                  variant="outline"
-                                  style={{
-                                    backgroundColor: colorSet.holdHead,
-                                  }}
-                                />
+                                <Button variant="outline" />
                               </PopoverTrigger>
                               <PopoverContent className="w-fit">
-                                <HslStringColorPicker
-                                  color={colors[i].holdHead}
-                                  onChange={(color) =>
-                                    setSettings((draft) => {
-                                      draft.skin.colors.custom[
-                                        Number(keyCount) - 1
-                                      ][i].holdHead = color;
-                                    })
-                                  }
-                                />
-                                <Input
-                                  className="mt-4"
-                                  value={colors[i].holdHead}
-                                  onChange={(e) => {
-                                    const newColor = e.target.value;
-                                    if (newColor.startsWith("hsl")) {
-                                      setSettings((draft) => {
-                                        draft.skin.colors.custom[
-                                          Number(keyCount) - 1
-                                        ][i].holdHead = newColor;
-                                      });
-                                    }
-                                  }}
-                                />
-                                {!isValidHsl(colors[i].holdHead) && (
-                                  <p className="mt-1 w-50 text-sm text-red-400">
-                                    Invalid color; white will be used as a
-                                    fallback.
-                                  </p>
-                                )}
+                                <Tabs defaultValue="fill">
+                                  <TabsList
+                                    className={cn(
+                                      "mb-0 hidden",
+                                      borderWidth > 0 &&
+                                        "mb-4 grid grid-cols-2",
+                                    )}
+                                  >
+                                    <TabsTrigger value="fill">Fill</TabsTrigger>
+                                    <TabsTrigger value="stroke">
+                                      Stroke
+                                    </TabsTrigger>
+                                  </TabsList>
+                                  <TabsContent value="fill" className="mt-0">
+                                    <ColorInput
+                                      keyCount={keyCount}
+                                      columnIndex={i}
+                                      colorKey="holdHead"
+                                    />
+                                  </TabsContent>
+                                  <TabsContent value="stroke" className="mt-0">
+                                    <ColorInput
+                                      keyCount={keyCount}
+                                      columnIndex={i}
+                                      colorKey="holdHeadBorder"
+                                    />
+                                  </TabsContent>
+                                </Tabs>
                               </PopoverContent>
                             </Popover>
                           </td>
@@ -308,9 +309,9 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                   color={colors[i].hold}
                                   onChange={(color) =>
                                     setSettings((draft) => {
-                                      draft.skin.colors.custom[
-                                        Number(keyCount) - 1
-                                      ][i].hold = color;
+                                      draft.skin.colors.custom[keyCount - 1][
+                                        i
+                                      ].hold = color;
                                     })
                                   }
                                 />
@@ -321,9 +322,9 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                     const newColor = e.target.value;
                                     if (newColor.startsWith("hsl")) {
                                       setSettings((draft) => {
-                                        draft.skin.colors.custom[
-                                          Number(keyCount) - 1
-                                        ][i].hold = newColor;
+                                        draft.skin.colors.custom[keyCount - 1][
+                                          i
+                                        ].hold = newColor;
                                       });
                                     }
                                   }}
@@ -344,7 +345,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                 </div>
 
                 <ResetColorsButton
-                  keyCount={Number(keyCount) - 1}
+                  keyCount={keyCount - 1}
                   className="mt-4 w-full"
                 />
               </TabsContent>

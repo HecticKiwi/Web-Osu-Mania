@@ -48,9 +48,9 @@ export function getAllLaneColors(
 
     return {
       tap: color,
-      tapBorder: "black",
+      tapBorder: "red",
       holdHead: color,
-      holdHeadBorder: "black",
+      holdHeadBorder: "red",
       hold: holdColor,
     };
   }
