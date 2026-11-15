@@ -94,7 +94,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                   })
                 }
                 min={0}
-                max={20}
+                max={6}
                 step={1}
               />
             </>

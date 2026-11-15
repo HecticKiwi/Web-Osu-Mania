@@ -531,7 +531,7 @@ export class Game {
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
 
-    this.tapClass.setRenderTextures(this);
+    this.tapClass.setTextures(this);
 
     if (this.replayPlayer) {
       this.addReplayText();

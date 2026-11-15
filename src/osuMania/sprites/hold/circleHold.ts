@@ -31,7 +31,7 @@ export class CircleHold extends Hold {
     tail.pivot.y = tail.height / 2;
     this.view.addChild(tail);
 
-    this.head = CircleTap.getSprite(game, holdData.column, true);
+    this.head = CircleTap.getSprite(holdData.column, true);
     this.view.addChild(this.head);
 
     this.game.notesContainer.addChild(this.view);

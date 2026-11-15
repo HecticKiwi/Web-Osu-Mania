@@ -1,120 +1,164 @@
 import type { TapData } from "@/lib/beatmapParser";
-import { BASE_PATH } from "@/lib/utils";
 import type { Game } from "@/osuMania/game";
-import { Container, Graphics, Sprite, Texture } from "pixi.js";
+import type { Texture } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { Tap } from "./tap";
 
 export class ArrowTap extends Tap {
-  public static getArrowSprite(game: Game, column: number) {
-    if (!Tap.renderTexture) {
-      Tap.renderTexture = Texture.from(
-        game.settings.style === "arrows"
-          ? `${BASE_PATH}/skin/arrow.svg`
-          : `${BASE_PATH}/skin/arrowThick.svg`,
-      );
+  private static textures: {
+    tap: Texture[];
+    hold: Texture[];
+  };
+
+  static setTextures(game: Game) {
+    ArrowTap.textures = {
+      tap: [],
+      hold: [],
+    };
+
+    // const width = game.scaledColumnWidth * game.settings.noteScale;
+    // const height = game.scaledColumnWidth * game.settings.noteScale;
+
+    const strokeWidth = game.settings.skin.borderWidth;
+
+    const graphics = new Graphics();
+
+    const createTexture = (columnIndex: number, isHoldHead?: boolean) => {
+      const fillColor = isHoldHead
+        ? game.laneColors[columnIndex].holdHead
+        : game.laneColors[columnIndex].tap;
+      const strokeColor = isHoldHead
+        ? game.laneColors[columnIndex].holdHeadBorder
+        : game.laneColors[columnIndex].tapBorder;
+
+      ArrowTap.drawArrow(graphics);
+      graphics.fill(fillColor).stroke({
+        width: strokeWidth,
+        color: strokeColor,
+      });
+      graphics.angle = game.laneArrowDirections[columnIndex];
+
+      // generateTexture() doesn't use the local transforms of the arg,
+      // so put the rotated graphics in a container and pass it instead
+      const container = new Container();
+      container.addChild(graphics);
+
+      const texture = game.app.renderer.generateTexture(container);
+      return texture;
+    };
+
+    for (let i = 0; i < game.difficulty.keyCount; i++) {
+      ArrowTap.textures.tap.push(createTexture(i));
+      ArrowTap.textures.hold.push(createTexture(i, true));
     }
 
+    graphics.destroy();
+  }
+
+  // Draws an up arrow
+  private static drawArrow(graphics: Graphics, radiusPercent: number = 1) {
+    const size = 200;
+    const width = 50;
+    const halfWidth = width / 2;
+    const radius = halfWidth * radiusPercent;
+
+    graphics.clear();
+
+    // Start at base of left wing
+    graphics.moveTo(
+      -halfWidth,
+      halfWidth * Math.sqrt(2) + halfWidth * 2 - size / 2,
+    );
+
+    // Left wing arc
+    graphics.arc(
+      -size / 2 + halfWidth,
+      halfWidth * Math.sqrt(2) - radius * Math.sqrt(2),
+      radius,
+      Math.PI / 4,
+      (3 * Math.PI) / 4,
+    );
+    graphics.arc(
+      -size / 2 + halfWidth - (halfWidth - radius) * Math.sqrt(2),
+      0,
+      radius,
+      (3 * Math.PI) / 4,
+      (5 * Math.PI) / 4,
+    );
+
+    // Head arc (pointing upwards)
+    graphics.arc(
+      0,
+      -size / 2 + radius,
+      radius,
+      (5 * Math.PI) / 4,
+      (7 * Math.PI) / 4,
+    );
+
+    // Right wing arc
+    graphics.arc(
+      size / 2 - halfWidth + (halfWidth - radius) * Math.sqrt(2),
+      0,
+      radius,
+      -Math.PI / 4,
+      Math.PI / 4,
+    );
+    graphics.arc(
+      size / 2 - halfWidth,
+      halfWidth * Math.sqrt(2) - radius * Math.sqrt(2),
+      radius,
+      Math.PI / 4,
+      (3 * Math.PI) / 4,
+    );
+
+    // Go to base of right wing
+    graphics.lineTo(
+      halfWidth,
+      halfWidth * Math.sqrt(2) + halfWidth * 2 - size / 2,
+    );
+
+    // Tail arcs (at the bottom)
+    graphics.arc(width / 2 - radius, size / 2 - radius, radius, 0, Math.PI / 2);
+    graphics.arc(
+      -width / 2 + radius,
+      size / 2 - radius,
+      radius,
+      Math.PI / 2,
+      Math.PI,
+    );
+
+    graphics.closePath();
+
+    return graphics;
+  }
+
+  static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
     const width = game.scaledColumnWidth * game.settings.noteScale;
     const height = game.scaledColumnWidth * game.settings.noteScale;
 
-    const sprite = Sprite.from(Tap.renderTexture);
+    const renderTextures = isHoldHead
+      ? ArrowTap.textures.hold
+      : ArrowTap.textures.tap;
+
+    const sprite = new Sprite(renderTextures[columnIndex]);
     sprite.width = width;
-    sprite.height = height;
-    sprite.zIndex = 1;
-    sprite.anchor.set(0.5);
+    sprite.scale.y = sprite.scale.x;
+    // sprite.height = height;
+    sprite.anchor = 0.5;
 
-    sprite.angle = game.laneArrowDirections[column];
-
-    const container = new Container();
-    container.addChild(sprite);
-
-    if (game.settings.upscroll) {
-      container.scale.y = -container.scale.y;
-    }
-
-    return container;
-  }
-
-  private drawArrow(size = 200, radius = 30) {
-    // Draw a right arrow
-    const graphics = new Graphics();
-
-    // Start at base of top wing
-    graphics.moveTo(
-      size - radius * Math.sqrt(2) - radius * 2,
-      size / 2 - radius,
-    );
-
-    // Top wing arc
-    graphics.arc(
-      size / 2,
-      radius,
-      radius,
-      (Math.PI * 3) / 4,
-      (2 * (Math.PI * 7)) / 8,
-    );
-
-    // Head arc
-    graphics.arc(
-      size - radius,
-      size / 2,
-      radius,
-      (2 * (Math.PI * 7)) / 8,
-      (2 * Math.PI) / 8,
-    );
-
-    // Bottom wing arc
-    graphics.arc(
-      size / 2,
-      size - radius,
-      radius,
-      (2 * (Math.PI * 1)) / 8,
-      (2 * (Math.PI * 5)) / 8,
-    );
-
-    // Go to base of bottom wing
-    graphics.lineTo(
-      size - radius * Math.sqrt(2) - radius * 2,
-      size / 2 + radius,
-    );
-
-    // Tail arc
-    graphics.arc(radius, size / 2, radius, Math.PI / 2, (Math.PI * 3) / 2);
-    graphics.closePath();
-
-    graphics.fill("white");
-
-    graphics.stroke({
-      width: 4,
-      color: "blue",
-    });
-
-    graphics.x = 100;
-    graphics.y = 100;
-
-    this.game.app.stage.addChild(graphics);
-
-    return graphics;
+    return sprite;
   }
 
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    if (!ArrowTap.renderTexture) {
-      this.drawArrow();
-    }
+    const sprite = ArrowTap.getSprite(game, tapData.column, tapData.isHoldHead);
 
-    this.view = ArrowTap.getArrowSprite(game, tapData.column);
+    this.view = sprite;
     this.view.x =
       tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
       game.scaledColumnWidth / 2;
     this.view.visible = false;
-
-    if (this.data.isHoldHead) {
-      this.view.tint = game.laneColors[tapData.column].holdHead;
-    } else {
-      this.view.tint = game.laneColors[tapData.column].tap;
-    }
 
     this.game.notesContainer.addChild(this.view);
   }

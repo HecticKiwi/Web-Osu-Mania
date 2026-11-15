@@ -714,8 +714,10 @@ function fillCallback(settings: Settings) {
     }
 
     if (!colorSet[0].tapBorder) {
-      colorSet.forEach((color) => (color.tapBorder = "black"));
-      colorSet.forEach((color) => (color.holdHeadBorder = "black"));
+      colorSet.forEach((color) => (color.tapBorder = "hsl(212, 8%, 98.45%)"));
+      colorSet.forEach(
+        (color) => (color.holdHeadBorder = "hsl(212, 8%, 98.45%)"),
+      );
     }
   });
 

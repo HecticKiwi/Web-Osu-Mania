@@ -1,17 +1,17 @@
 import type { TapData } from "@/lib/beatmapParser";
 import type { Game } from "@/osuMania/game";
 import type { Texture } from "pixi.js";
-import { Graphics, RenderTexture, Sprite } from "pixi.js";
+import { Graphics, Sprite } from "pixi.js";
 import { Tap } from "./tap";
 
 export class BarTap extends Tap {
-  static renderTextures: {
+  static textures: {
     tap: Texture[];
     hold: Texture[];
   };
 
-  static setRenderTextures(game: Game) {
-    BarTap.renderTextures = {
+  static setTextures(game: Game) {
+    BarTap.textures = {
       tap: [],
       hold: [],
     };
@@ -23,40 +23,28 @@ export class BarTap extends Tap {
 
     const graphics = new Graphics();
 
-    const createRenderTexture = (columnIndex: number, isHoldHead?: boolean) => {
+    const createTexture = (columnIndex: number, isHoldHead?: boolean) => {
       const fillColor = isHoldHead
-        ? game.laneColors[columnIndex].tap
-        : game.laneColors[columnIndex].holdHead;
+        ? game.laneColors[columnIndex].holdHead
+        : game.laneColors[columnIndex].tap;
       const strokeColor = isHoldHead
-        ? game.laneColors[columnIndex].tapBorder
-        : game.laneColors[columnIndex].holdHeadBorder;
+        ? game.laneColors[columnIndex].holdHeadBorder
+        : game.laneColors[columnIndex].tapBorder;
 
-      graphics
-        .clear()
-        .rect(strokeWidth / 2, strokeWidth / 2, width, height)
-        .fill(fillColor)
-        .stroke({
-          width: strokeWidth,
-          color: strokeColor,
-        });
-
-      const renderTexture = RenderTexture.create({
-        width: graphics.width,
-        height: graphics.height,
-        antialias: true,
+      graphics.clear().rect(0, 0, width, height).fill(fillColor).stroke({
+        width: strokeWidth,
+        color: strokeColor,
       });
+      graphics.width = width;
+      graphics.height = height;
 
-      game.app.renderer.render({
-        container: graphics,
-        target: renderTexture,
-      });
-
-      return renderTexture;
+      const texture = game.app.renderer.generateTexture(graphics);
+      return texture;
     };
 
     for (let i = 0; i < game.difficulty.keyCount; i++) {
-      BarTap.renderTextures.tap.push(createRenderTexture(i));
-      BarTap.renderTextures.hold.push(createRenderTexture(i, true));
+      BarTap.textures.tap.push(createTexture(i));
+      BarTap.textures.hold.push(createTexture(i, true));
     }
 
     graphics.destroy();
@@ -67,8 +55,8 @@ export class BarTap extends Tap {
     const height = game.scaledColumnWidth * 0.4;
 
     const renderTextures = isHoldHead
-      ? BarTap.renderTextures.hold
-      : BarTap.renderTextures.tap;
+      ? BarTap.textures.hold
+      : BarTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
     sprite.width = width;

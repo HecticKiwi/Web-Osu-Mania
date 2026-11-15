@@ -38,9 +38,8 @@ export class DiamondHold extends Hold {
     tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
 
-    this.head = DiamondTap.getSprite(game, holdData.column, true);
+    this.head = DiamondTap.getSprite(holdData.column, true);
     this.head.x = this.body.width / 2;
-    this.head.tint = game.laneColors[holdData.column].holdHead;
 
     this.view.addChild(this.head);
 
