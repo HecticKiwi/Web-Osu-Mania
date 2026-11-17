@@ -18,7 +18,6 @@ export class BarTap extends Tap {
 
     const width = game.scaledColumnWidth;
     const height = game.scaledColumnWidth * 0.4;
-
     const strokeWidth = game.settings.skin.borderWidth;
 
     const graphics = new Graphics();
@@ -35,8 +34,6 @@ export class BarTap extends Tap {
         width: strokeWidth,
         color: strokeColor,
       });
-      graphics.width = width;
-      graphics.height = height;
 
       const texture = game.app.renderer.generateTexture(graphics);
       return texture;
@@ -59,8 +56,7 @@ export class BarTap extends Tap {
       : BarTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
-    sprite.width = width;
-    sprite.height = height;
+    sprite.setSize(width, height);
     sprite.anchor.y = 1;
 
     return sprite;

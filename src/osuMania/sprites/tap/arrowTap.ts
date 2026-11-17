@@ -16,9 +16,6 @@ export class ArrowTap extends Tap {
       hold: [],
     };
 
-    // const width = game.scaledColumnWidth * game.settings.noteScale;
-    // const height = game.scaledColumnWidth * game.settings.noteScale;
-
     const strokeWidth = game.settings.skin.borderWidth;
 
     const graphics = new Graphics();
@@ -31,7 +28,8 @@ export class ArrowTap extends Tap {
         ? game.laneColors[columnIndex].holdHeadBorder
         : game.laneColors[columnIndex].tapBorder;
 
-      ArrowTap.drawArrow(graphics);
+      const arrowSize = game.scaledColumnWidth * game.settings.noteScale;
+      ArrowTap.drawArrow(graphics, arrowSize, 0.1);
       graphics.fill(fillColor).stroke({
         width: strokeWidth,
         color: strokeColor,
@@ -56,9 +54,12 @@ export class ArrowTap extends Tap {
   }
 
   // Draws an up arrow
-  private static drawArrow(graphics: Graphics, radiusPercent: number = 1) {
-    const size = 200;
-    const width = 50;
+  private static drawArrow(
+    graphics: Graphics,
+    size: number,
+    radiusPercent: number = 1,
+  ) {
+    const width = 0.25 * size;
     const halfWidth = width / 2;
     const radius = halfWidth * radiusPercent;
 
@@ -134,16 +135,15 @@ export class ArrowTap extends Tap {
 
   static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
     const width = game.scaledColumnWidth * game.settings.noteScale;
-    const height = game.scaledColumnWidth * game.settings.noteScale;
 
     const renderTextures = isHoldHead
       ? ArrowTap.textures.hold
       : ArrowTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
-    sprite.width = width;
-    sprite.scale.y = sprite.scale.x;
-    // sprite.height = height;
+    sprite.setSize(width);
+    // const length = Math.max(sprite.width, sprite.height);
+    // sprite.scale = length / width;
     sprite.anchor = 0.5;
 
     return sprite;

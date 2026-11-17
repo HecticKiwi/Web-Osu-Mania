@@ -16,8 +16,6 @@ export class CircleTap extends Tap {
       hold: [],
     };
 
-    const width = game.scaledColumnWidth * game.settings.noteScale;
-    const height = game.scaledColumnWidth * game.settings.noteScale;
     const radius = (game.scaledColumnWidth * game.settings.noteScale) / 2;
     const strokeWidth = game.settings.skin.borderWidth;
 
@@ -36,8 +34,6 @@ export class CircleTap extends Tap {
         width: strokeWidth,
         color: strokeColor,
       });
-      graphics.width = width;
-      graphics.height = height;
 
       const texture = game.app.renderer.generateTexture(graphics);
       return texture;
@@ -51,13 +47,17 @@ export class CircleTap extends Tap {
     graphics.destroy();
   }
 
-  static getSprite(columnIndex: number, isHoldHead?: boolean) {
+  static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
+
     const renderTextures = isHoldHead
       ? CircleTap.textures.hold
       : CircleTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
-    sprite.anchor = 0.5;
+    sprite.setSize(width, height);
+    sprite.anchor.y = 0.5;
 
     return sprite;
   }
@@ -65,7 +65,12 @@ export class CircleTap extends Tap {
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    const sprite = CircleTap.getSprite(tapData.column, tapData.isHoldHead);
+    const sprite = CircleTap.getSprite(
+      game,
+      tapData.column,
+      tapData.isHoldHead,
+    );
+    sprite.anchor.x = 0.5;
 
     this.view = sprite;
     this.view.x =

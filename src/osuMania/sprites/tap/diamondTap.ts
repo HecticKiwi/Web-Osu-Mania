@@ -65,12 +65,16 @@ export class DiamondTap extends Tap {
     graphics.destroy();
   }
 
-  static getSprite(columnIndex: number, isHoldHead?: boolean) {
+  static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
+
     const renderTextures = isHoldHead
       ? DiamondTap.textures.hold
       : DiamondTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
+    sprite.setSize(width, height);
     sprite.anchor = 0.5;
 
     return sprite;
@@ -79,7 +83,11 @@ export class DiamondTap extends Tap {
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    const sprite = DiamondTap.getSprite(tapData.column, tapData.isHoldHead);
+    const sprite = DiamondTap.getSprite(
+      game,
+      tapData.column,
+      tapData.isHoldHead,
+    );
 
     this.view = new Container();
     this.view.addChild(sprite);
