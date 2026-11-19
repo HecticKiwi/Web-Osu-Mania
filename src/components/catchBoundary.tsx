@@ -11,7 +11,7 @@ const CatchBoundary = ({ error, reset }: ErrorComponentProps<any>) => {
         </h1>
 
         <p className="text-muted-foreground mt-1 text-balance">
-          {error.message}
+          {error instanceof Error ? error.message : String(error)}
         </p>
 
         <Button asChild className="mt-5">
