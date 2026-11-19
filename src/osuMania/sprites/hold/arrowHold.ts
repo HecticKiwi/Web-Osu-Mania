@@ -38,9 +38,8 @@ export class ArrowHold extends Hold {
     tail.tint = game.laneColors[holdData.column].hold;
     this.view.addChild(tail);
 
-    this.head = ArrowTap.getArrowSprite(game, holdData.column);
+    this.head = ArrowTap.getSprite(game, holdData.column, true);
     this.head.x = bodyWidth / 2;
-    this.head.tint = game.laneColors[holdData.column].holdHead;
     this.view.addChild(this.head);
 
     this.game.notesContainer.addChild(this.view);

@@ -26,10 +26,7 @@ export class StageCover {
     let position = this.game.hitPosition;
     if (this.game.settings.style === "circles") {
       position += (this.game.scaledColumnWidth * circleColumnRatio) / 2;
-    } else if (
-      this.game.settings.style === "arrows" ||
-      this.game.settings.style === "thickArrows"
-    ) {
+    } else if (this.game.settings.style === "arrows") {
       position += (this.game.scaledColumnWidth * arrowColumnRatio) / 2;
     } else if (this.game.settings.style === "diamonds") {
       position += (this.game.scaledColumnWidth * diamondColumnRatio) / 2;

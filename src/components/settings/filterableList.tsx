@@ -5,6 +5,7 @@ export type FilterableItem = {
   label: string;
   searchTags?: readonly string[];
   render: ({ label }: { label: string }) => React.ReactNode;
+  ifCondition?: boolean;
 };
 
 const FilterableList = ({
@@ -19,6 +20,10 @@ const FilterableList = ({
   className?: string;
 }) => {
   const visibleItems = items.filter((item) => {
+    if (item.ifCondition === false) {
+      return false;
+    }
+
     if (!searchQuery) {
       return true;
     }
