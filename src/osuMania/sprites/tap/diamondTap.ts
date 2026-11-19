@@ -1,56 +1,101 @@
 import type { TapData } from "@/lib/beatmapParser";
 import type { Game } from "@/osuMania/game";
-import { Container, Graphics, RenderTexture, Sprite } from "pixi.js";
+import type { Texture } from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { Tap } from "./tap";
 
 export class DiamondTap extends Tap {
-  constructor(game: Game, tapData: TapData) {
-    super(game, tapData);
+  static textures: {
+    tap: Texture[];
+    hold: Texture[];
+  };
 
-    const width = game.scaledColumnWidth * this.game.settings.noteScale;
-    const height = game.scaledColumnWidth * this.game.settings.noteScale;
+  static setTextures(game: Game) {
+    DiamondTap.textures = {
+      tap: [],
+      hold: [],
+    };
+
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
 
     const rectangleWidth = width / Math.sqrt(2);
     const rectangleHeight = height / Math.sqrt(2);
 
     const cornerRadius = 8;
 
-    if (!Tap.renderTexture) {
-      const graphic = new Graphics()
+    const strokeWidth = game.settings.skin.borderWidth;
+
+    const graphics = new Graphics();
+
+    const createTexture = (columnIndex: number, isHoldHead?: boolean) => {
+      const fillColor = isHoldHead
+        ? game.laneColors[columnIndex].holdHead
+        : game.laneColors[columnIndex].tap;
+      const strokeColor = isHoldHead
+        ? game.laneColors[columnIndex].holdHeadBorder
+        : game.laneColors[columnIndex].tapBorder;
+
+      graphics
+        .clear()
         .roundRect(0, 0, rectangleWidth, rectangleHeight, cornerRadius)
-        .fill("white");
+        .fill(fillColor)
+        .stroke({
+          width: strokeWidth,
+          color: strokeColor,
+        });
+      graphics.width = rectangleWidth;
+      graphics.height = rectangleHeight;
+      graphics.angle = 45;
 
-      Tap.renderTexture = RenderTexture.create({
-        width: rectangleWidth,
-        height: rectangleHeight,
-        antialias: true,
-      });
+      // generateTexture() doesn't use the local transforms of the arg,
+      // so put the rotated graphics in a container and pass it instead
+      const container = new Container();
+      container.addChild(graphics);
 
-      game.app.renderer.render({
-        container: graphic,
-        target: Tap.renderTexture,
-      });
+      const texture = game.app.renderer.generateTexture(container);
+      return texture;
+    };
 
-      graphic.destroy();
+    for (let i = 0; i < game.difficulty.keyCount; i++) {
+      DiamondTap.textures.tap.push(createTexture(i));
+      DiamondTap.textures.hold.push(createTexture(i, true));
     }
 
-    const sprite = Sprite.from(Tap.renderTexture);
-    sprite.angle = 45;
+    graphics.destroy();
+  }
+
+  static getSprite(game: Game, columnIndex: number, isHoldHead?: boolean) {
+    const width = game.scaledColumnWidth * game.settings.noteScale;
+    const height = game.scaledColumnWidth * game.settings.noteScale;
+
+    const renderTextures = isHoldHead
+      ? DiamondTap.textures.hold
+      : DiamondTap.textures.tap;
+
+    const sprite = new Sprite(renderTextures[columnIndex]);
+    sprite.setSize(width, height);
+    sprite.anchor = 0.5;
+
+    return sprite;
+  }
+
+  constructor(game: Game, tapData: TapData) {
+    super(game, tapData);
+
+    const sprite = DiamondTap.getSprite(
+      game,
+      tapData.column,
+      tapData.isHoldHead,
+    );
 
     this.view = new Container();
     this.view.addChild(sprite);
     this.view.zIndex = 1;
-    this.view.pivot.y = height / 2 / this.view.scale.y;
     this.view.x =
       tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
       game.scaledColumnWidth / 2;
     this.view.visible = false;
-
-    if (this.data.isHoldHead) {
-      this.view.tint = game.laneColors[tapData.column].holdHead;
-    } else {
-      this.view.tint = game.laneColors[tapData.column].tap;
-    }
 
     this.game.notesContainer.addChild(this.view);
   }

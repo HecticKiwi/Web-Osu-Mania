@@ -259,10 +259,7 @@ export class Game {
       this.tapClass = CircleTap;
       this.holdClass = CircleHold;
       this.keyClass = CircleKey;
-    } else if (
-      this.settings.style === "arrows" ||
-      this.settings.style === "thickArrows"
-    ) {
+    } else if (this.settings.style === "arrows") {
       this.tapClass = ArrowTap;
       this.holdClass = ArrowHold;
       this.keyClass = ArrowKey;
@@ -530,6 +527,8 @@ export class Game {
     DiamondHold.tailGraphicsContext = null;
     ArrowHold.tailGraphicsContext = null;
     StageLight.graphicsContext = null;
+
+    this.tapClass.setTextures(this);
 
     if (this.replayPlayer) {
       this.addReplayText();

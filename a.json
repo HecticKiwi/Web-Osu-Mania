@@ -1,0 +1,481 @@
+
+[
+  {
+    "date": "2026-11-18",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added Arrow Thickness and Arrow Rounding settings. The \"Thick Arrows\" has been removed in favor of using these new settings."
+      },
+      {
+        "type": "addition",
+        "text": "Added the Border Width setting."
+      },
+      {
+        "type": "improvement",
+        "text": "Changed the default note scale from 80% to 90%"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-29",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed a bug where timing windows were affected by the playback rate, which resulted in smaller windows at higher rates and larger windows at lower rates."
+      }
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added NSFW and Featured Artist indicators."
+      }
+    ]
+  },
+  {
+    "date": "2026-09-29",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added max PP information."
+      },
+      {
+        "type": "fix",
+        "text": "Beatmaps that don't have an audio file specified will no longer show an error."
+      }
+    ]
+  },
+  {
+    "date": "2026-09-20",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the mapper name to the beatmap list (name links to their osu profile page)."
+      },
+      {
+        "type": "addition",
+        "text": "Added the \"Lighten background during breaks\" effect, which can be disabled in the settings."
+      },
+      {
+        "type": "addition",
+        "text": "Added mobile icons."
+      }
+    ]
+  },
+  {
+    "date": "2026-08-30",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added diff previews and updated the star rating colors to match the official game."
+      }
+    ]
+  },
+  {
+    "date": "2026-08-15",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a jump-to-section button in the settings tab, besides the search bar."
+      },
+      {
+        "type": "addition",
+        "text": "Added a Sounds section to the settings where you can customize sounds that are played during gameplay. Currently these include applause, fail, and hitsounds. You can upload a skin file (.osk) to import all its sound files."
+      }
+    ]
+  },
+  {
+    "date": "2026-08-01",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a KPS/Total counter."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed a variety of replay control bugs."
+      }
+    ]
+  },
+  {
+    "date": "2026-07-26",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Beatmap sets now show the play count, favorite count, rating, genre, and language above the difficulty list. Stored and collection beatmaps can now be filtered on genre and language."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed a bug where hold notes may appear to be stuck on the receptors."
+      }
+    ]
+  },
+  {
+    "date": "2026-07-19",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed a bug where the \"Watch Replay\" button at the end of a beatmap behaved like the \"Retry\" button instead."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed (hopefully) highscores disappearing upon refreshing the page in specific circumstances."
+      }
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "items": [
+      {
+        "type": "announcement",
+        "text": "I'm disabling the webosumania.hectickiwi.workers.dev deployment for the time being since Cloudflare security rules don't work on the default *.workers.dev domains."
+      }
+    ]
+  },
+  {
+    "date": "2026-07-10",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a break countdown which appears when there is a long enough wait until the next note. The minimum time for the countdown to appear can be changed in the Gameplay settings."
+      },
+      {
+        "type": "addition",
+        "text": "Added search functionality to the settings tab."
+      },
+      {
+        "type": "addition",
+        "text": "Added a toggle for receptor lighting in the Display settings."
+      }
+    ]
+  },
+  {
+    "date": "2026-06-27",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a thick arrow skin style."
+      },
+      {
+        "type": "improvement",
+        "text": "Added a warning if a skin color is invalid (e.g. missing parentheses). White will be used as a fallback."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed certain default hold body colors being lighter than they should."
+      }
+    ]
+  },
+  {
+    "date": "2026-06-07",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Implemented proper fading transitions when using the Fade In/Out mods (previously the notes appeared abruptly with a simple binary mask)."
+      }
+    ]
+  },
+  {
+    "date": "2026-06-05",
+    "items": [
+      {
+        "type": "announcement",
+        "text": "The site has been getting rate-limited quite a lot lately, so I've set up a proxy for the backend to use. If I'm correct about the issue, this should greatly lower or eliminate the rate-limits 🤞"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-30",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Beatmap uploads now work for any arbitrary beatmap, including modified beatmaps and beatmaps that were never uploaded to the official osu beatmap listing. However, high scores will no longer be recorded for uploaded beatmaps as the chart data could differ from the official version. When uploading replays made on uploaded beatmaps, you will now be asked to also upload the original beatmap file to ensure the chart data is correct."
+      }
+    ]
+  },
+  {
+    "date": "2026-05-23",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added replay controls, which can be opened on the bottom-left of the screen. It will also be available when watching autoplay."
+      },
+      {
+        "type": "improvement",
+        "text": "Reworked the replay structure to be more accurate by correctly recording the order of key presses that happen in the same frame, as well as accounting for the system audio offset. This fix will only apply to replays made after this update."
+      }
+    ]
+  },
+  {
+    "date": "2026-05-09",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Optimized the timeline graph's performance."
+      }
+    ]
+  },
+  {
+    "date": "2026-05-04",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a timeline graph to the results screen, which shows health and judgement / hit errors over the course of the song."
+      }
+    ]
+  },
+  {
+    "date": "2026-05-02",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Changed the health bar to show even when the No Fail mod is enabled."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-20",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed the keybinds implementation to prevent lanes from getting stuck as pressed/unpressed."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-18",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a second set of keybinds for all key counts."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-15",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the Percy mod, which reduces the visual length of hold notes."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed the combo not breaking when releasing a hold early."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed arrow hold note heads having an offset double image."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-06",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the stage HUD vertical position setting, which determines the judgement and combo counter Y position."
+      },
+      {
+        "type": "improvement",
+        "text": "Added some guidance when rate-limiting occurs."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-04",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the pie progress display. In the settings, Show Progress Bar is replaced with Progress Display where you can choose Bar or Pie (or Off)."
+      }
+    ]
+  },
+  {
+    "date": "2026-04-03",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added note scale and lane spacing settings."
+      },
+      {
+        "type": "addition",
+        "text": "Added a button to revert individual settings to their default values."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-27",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed hit objects not displaying correctly in SV maps when an audio offset is applied."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-26",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Adjusted the audio offset by accounting for the system's reported browser-to-audio-output latency. If your browser supports this feature you'll see this number below the Audio Offset setting. This should reduce/fix the audio delay, but if you don't like the change then you can undo it by adding that number back into the Audio Offset setting."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-22",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed being unable to finish certain beatmaps due to hit objects lasting beyond the audio file's length."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-18",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed an error that occurred when trying to use the SFX slider under certain circumstances."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed an error that rarely occurred when starting a beatmap."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-15",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added collections, which replaces the Saved category. All existing Saved beatmaps will automatically be migrated to a \"Saved\" collection."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-08",
+    "items": [
+      {
+        "type": "fix",
+        "text": "Fixed the receptors being layered behind the stage background, where setting background opacity to 100% would completely hide the receptors. As a consequence of the fix, receptors will be brighter. To make them look the same as before, set the receptor opacity to its current value * the stage opacity / 100. For example, if the receptor opacity is 100% and the stage opacity is 50%, the new receptor opacity should be 100 * 50 / 100 = 50%."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed the judgement counter and touch control borders not moving with the stage position setting."
+      }
+    ]
+  },
+  {
+    "date": "2026-03-04",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added tap and hold note counts."
+      },
+      {
+        "type": "addition",
+        "text": "Added stage sides opacity to the settings."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-28",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added audio preview and cover image provider settings, useful in case your network blocks the official osu URLs. Created a new Sources section for these settings."
+      },
+      {
+        "type": "addition",
+        "text": "Added osu.direct and Nekoha as beatmap providers."
+      },
+      {
+        "type": "improvement",
+        "text": "Turned the breakdown section in the results screen into a horizontal bar chart to make it easier to visualize and compare ratios."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-20",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a few FAQ items."
+      },
+      {
+        "type": "improvement",
+        "text": "Redesigned the header as well as the FAQ and Updates pages."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-18",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added a setting to adjust the stage opacity."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-12",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added PP calculations. You'll see them when hovering over a high score badge or in the results screen. Note that PP can't be calculated for scores with speed change mods."
+      },
+      {
+        "type": "fix",
+        "text": "Fixed a bug where closing the game window sometimes caused an error."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-11",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Saved and Stored beatmaps will now automatically update when you click on them. If your Saved/Stored beatmaps were missing status badges or they were outdated, clicking on them should pull in the latest data 👍"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-07",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the ability to quickly turn the HUD on and off. This can be done with the new keybind or by clicking the show/hide HUD button on the pause screen."
+      }
+    ]
+  },
+  {
+    "date": "2026-02-06",
+    "items": [
+      {
+        "type": "announcement",
+        "text": "Web osu!mania finally has an updates page! Moving forward, this updates page will contain update information and announcements. Thank you for your interest in this project! (´｡• ᵕ •｡`)"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-29",
+    "items": [
+      {
+        "type": "addition",
+        "text": "Added the ability to delete individual high scores."
+      }
+    ]
+  },
+  {
+    "date": "2026-01-28",
+    "items": [
+      {
+        "type": "improvement",
+        "text": "Added a tooltip to beatmap titles and difficulty names. Useful if the text is long and cuts off."
+      }
+    ]
+  }
+]
