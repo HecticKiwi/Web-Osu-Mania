@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils";
 import { Route } from "@/routes";
 import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
-import { Loader } from "lucide-react";
+import { HardDrive, Loader } from "lucide-react";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
 import TextLink from "../textLink";
@@ -105,13 +106,11 @@ const BeatmapSetsInfiniteScroll = ({
 
   if (isError && !data) {
     return (
-      <div className="my-8">
-        <p className="text-muted-foreground text-center">
-          Failed to fetch beatmaps.
-        </p>
-        <p className="text-center">({error.message})</p>
+      <div className="my-8 flex flex-col items-center justify-center">
+        <p className="text-muted-foreground">Failed to fetch beatmaps.</p>
+        <p>({error.message})</p>
 
-        {error.message.includes("429") && (
+        {error.message.includes("429") ? (
           <Card className="mx-auto mt-6 max-w-xl">
             <CardContent className="text-muted-foreground space-y-4 pt-6 text-sm">
               <p>
@@ -130,6 +129,13 @@ const BeatmapSetsInfiniteScroll = ({
               </p>
             </CardContent>
           </Card>
+        ) : (
+          <Button className="mt-6 inline-flex items-center gap-2">
+            <HardDrive />
+            <Link to={"/"} params={{ category: "Stored" }}>
+              Browse stored beatmaps
+            </Link>
+          </Button>
         )}
       </div>
     );
