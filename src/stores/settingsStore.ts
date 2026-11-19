@@ -32,6 +32,9 @@ export const BEATMAP_COVER_PROVIDERS = {
 export type BeatmapCoverProvider =
   keyof typeof BEATMAP_COVER_PROVIDERS | "Custom";
 
+/**
+ * "thickArrows" is deprecated since arrow settings have been added (2026-11-18)
+ */
 export type SkinStyle =
   "bars" | "circles" | "arrows" | "thickArrows" | "diamonds";
 export const skinStyleOptions: {
@@ -41,8 +44,7 @@ export const skinStyleOptions: {
 }[] = [
   { id: "bars", label: "Bars", icon: "▬" },
   { id: "circles", label: "Circles", icon: "⬤" },
-  { id: "arrows", label: "Arrows", icon: "→" },
-  { id: "thickArrows", label: "Thick Arrows", icon: "➡" },
+  { id: "arrows", label: "Arrows", icon: "➡" },
   { id: "diamonds", label: "Diamonds", icon: "◆" },
 ] as const;
 
@@ -284,8 +286,11 @@ export type Settings = {
       ["drum-finish"]: string | null;
       ["drum-clap"]: string | null;
     };
-    arrowThickness: number;
     borderWidth: number;
+    arrows: {
+      rounding: number;
+      thickness: number;
+    };
   };
 };
 
@@ -310,7 +315,7 @@ export const defaultSettings: Settings = {
   darkerHoldNotes: true,
   hitPositionOffset: 130,
   noteOffset: 0,
-  noteScale: 0.8,
+  noteScale: 0.9,
   beatmapProvider: "Mino (catboy.best)",
   customBeatmapProvider: "",
   audioPreviewProvider: "Official osu!",
@@ -627,8 +632,11 @@ export const defaultSettings: Settings = {
       ["drum-finish"]: null,
       ["drum-clap"]: null,
     },
-    arrowThickness: 1,
     borderWidth: 0,
+    arrows: {
+      thickness: 0.9,
+      rounding: 0.65,
+    },
   },
 } as const;
 
@@ -738,6 +746,11 @@ function fillCallback(settings: Settings) {
         filledSettings.keybinds.keyModes[i][j] = [columnKeybind, null];
       }
     }
+  }
+
+  // Migrate from the deprecated "thickArrows" style
+  if (filledSettings.style === "thickArrows") {
+    filledSettings.style = "arrows";
   }
 
   return filledSettings;

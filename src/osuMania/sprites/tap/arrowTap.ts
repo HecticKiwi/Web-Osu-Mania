@@ -1,4 +1,5 @@
 import type { TapData } from "@/lib/beatmapParser";
+import { clamp } from "@/lib/math";
 import type { Game } from "@/osuMania/game";
 import type { Texture } from "pixi.js";
 import { Container, Graphics, Sprite } from "pixi.js";
@@ -29,7 +30,12 @@ export class ArrowTap extends Tap {
         : game.laneColors[columnIndex].tapBorder;
 
       const arrowSize = game.scaledColumnWidth * game.settings.noteScale;
-      ArrowTap.drawArrow(graphics, arrowSize, 0.1);
+      ArrowTap.drawArrow(
+        graphics,
+        arrowSize,
+        game.settings.skin.arrows.thickness,
+        game.settings.skin.arrows.rounding,
+      );
       graphics.fill(fillColor).stroke({
         width: strokeWidth,
         color: strokeColor,
@@ -57,11 +63,14 @@ export class ArrowTap extends Tap {
   private static drawArrow(
     graphics: Graphics,
     size: number,
+    thicknessPercent: number = 1,
     radiusPercent: number = 1,
   ) {
-    const width = 0.25 * size;
+    const width = 0.35 * size * thicknessPercent;
     const halfWidth = width / 2;
-    const radius = halfWidth * radiusPercent;
+
+    // A radiusPercent of 0 or 1 will cause rendering issues, so clamp
+    const radius = halfWidth * clamp(radiusPercent, 0.01, 0.99);
 
     graphics.clear();
 
@@ -74,7 +83,7 @@ export class ArrowTap extends Tap {
     // Left wing arc
     graphics.arc(
       -size / 2 + halfWidth,
-      halfWidth * Math.sqrt(2) - radius * Math.sqrt(2),
+      (halfWidth - radius) * Math.sqrt(2),
       radius,
       Math.PI / 4,
       (3 * Math.PI) / 4,
@@ -90,7 +99,7 @@ export class ArrowTap extends Tap {
     // Head arc (pointing upwards)
     graphics.arc(
       0,
-      -size / 2 + radius,
+      -size / 2 + halfWidth - (halfWidth - radius) * Math.sqrt(2),
       radius,
       (5 * Math.PI) / 4,
       (7 * Math.PI) / 4,
@@ -106,7 +115,7 @@ export class ArrowTap extends Tap {
     );
     graphics.arc(
       size / 2 - halfWidth,
-      halfWidth * Math.sqrt(2) - radius * Math.sqrt(2),
+      (halfWidth - radius) * Math.sqrt(2),
       radius,
       Math.PI / 4,
       (3 * Math.PI) / 4,
@@ -141,20 +150,57 @@ export class ArrowTap extends Tap {
       : ArrowTap.textures.tap;
 
     const sprite = new Sprite(renderTextures[columnIndex]);
-    sprite.setSize(width);
-    // const length = Math.max(sprite.width, sprite.height);
-    // sprite.scale = length / width;
+
+    // Scaling is based on the first arrow, which should point orthogonally
+    // Diagonal rotation would mess with scaling
+    const defaultTexture = renderTextures[0];
+    const length = Math.max(defaultTexture.width, defaultTexture.height);
+    sprite.scale = width / length;
     sprite.anchor = 0.5;
 
     return sprite;
   }
 
+  static getKeyGraphics(game: Game, columnIndex: number, fill?: true) {
+    const graphics = new Graphics();
+
+    const arrowSize = game.scaledColumnWidth * game.settings.noteScale;
+    const keyBorderWidth = 4;
+    ArrowTap.drawArrow(
+      graphics,
+      arrowSize,
+      game.settings.skin.arrows.thickness,
+      game.settings.skin.arrows.rounding,
+    );
+
+    if (fill) {
+      graphics.fill("white").stroke({
+        width: 4,
+        color: "transparent",
+      });
+    } else {
+      graphics.stroke({
+        width: 4,
+        color: "hsl(0,0%,70%)",
+      });
+    }
+
+    const bounds = graphics.getLocalBounds();
+    graphics.pivot.y = (bounds.maxY + bounds.minY) / 2 - graphics.y;
+    graphics.angle = game.laneArrowDirections[columnIndex];
+
+    const width =
+      game.scaledColumnWidth * game.settings.noteScale + keyBorderWidth;
+    const length = Math.max(graphics.width, graphics.height);
+    graphics.scale = width / length;
+
+    return graphics;
+  }
+
   constructor(game: Game, tapData: TapData) {
     super(game, tapData);
 
-    const sprite = ArrowTap.getSprite(game, tapData.column, tapData.isHoldHead);
-
-    this.view = sprite;
+    this.view = ArrowTap.getSprite(game, tapData.column, tapData.isHoldHead);
     this.view.x =
       tapData.column * (game.scaledColumnWidth + game.settings.laneSpacing) +
       game.scaledColumnWidth / 2;

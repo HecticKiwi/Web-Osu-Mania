@@ -40,6 +40,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
   const colors = useSettingsStore((s) => s.skin.colors.custom)[keyCount - 1];
   const colorMode = useSettingsStore((s) => s.skin.colors.mode);
   const borderWidth = useSettingsStore((s) => s.skin.borderWidth);
+  const skinStyle = useSettingsStore((s) => s.style);
 
   return (
     <FilterableList
@@ -81,16 +82,58 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
           ),
         },
         {
+          ifCondition: skinStyle === "arrows",
+          label: "Arrow Thickness",
+          render: ({ label }) => (
+            <SliderInput
+              label={label}
+              settingPath="skin.arrows.thickness"
+              tooltip={(thickness) => {
+                return `${Math.round(thickness * 100)}%`;
+              }}
+              onValueChange={([thickness]) =>
+                setSettings((draft) => {
+                  draft.skin.arrows.thickness = thickness;
+                })
+              }
+              min={0.6}
+              max={1}
+              step={0.01}
+            />
+          ),
+        },
+        {
+          ifCondition: skinStyle === "arrows",
+          label: "Arrow Rounding",
+          render: ({ label }) => (
+            <SliderInput
+              label={label}
+              settingPath="skin.arrows.rounding"
+              tooltip={(rounding) => {
+                return `${Math.round(rounding * 100)}%`;
+              }}
+              onValueChange={([rounding]) =>
+                setSettings((draft) => {
+                  draft.skin.arrows.rounding = rounding;
+                })
+              }
+              min={0}
+              max={1}
+              step={0.01}
+            />
+          ),
+        },
+        {
           label: "Border Width",
           render: ({ label }) => (
             <>
               <SliderInput
                 label={label}
                 settingPath="skin.borderWidth"
-                tooltip={(borderWidth) => `${borderWidth}px`}
-                onValueChange={([borderWidth]) =>
+                tooltip={(value) => `${value}px`}
+                onValueChange={([value]) =>
                   setSettings((draft) => {
-                    draft.skin.borderWidth = borderWidth;
+                    draft.skin.borderWidth = value;
                   })
                 }
                 min={0}
@@ -204,12 +247,12 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                               <PopoverTrigger
                                 asChild
                                 className={cn(
-                                  "block h-7 w-full border-0 p-0",
-                                  borderWidth > 0 && "border-2",
+                                  "block h-7 w-full border-0",
+                                  borderWidth > 0 && "outline-2",
                                 )}
                                 style={{
                                   backgroundColor: colorSet.tap,
-                                  borderColor: colorSet.tapBorder,
+                                  outlineColor: colorSet.tapBorder,
                                 }}
                               >
                                 <Button variant="outline" />
@@ -224,8 +267,8 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                     )}
                                   >
                                     <TabsTrigger value="fill">Fill</TabsTrigger>
-                                    <TabsTrigger value="stroke">
-                                      Stroke
+                                    <TabsTrigger value="border">
+                                      Border
                                     </TabsTrigger>
                                   </TabsList>
                                   <TabsContent value="fill" className="mt-0">
@@ -235,7 +278,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                       colorKey="tap"
                                     />
                                   </TabsContent>
-                                  <TabsContent value="stroke" className="mt-0">
+                                  <TabsContent value="border" className="mt-0">
                                     <ColorInput
                                       keyCount={keyCount}
                                       columnIndex={i}
@@ -251,12 +294,12 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                               <PopoverTrigger
                                 asChild
                                 className={cn(
-                                  "block h-7 w-full border-0 p-0",
-                                  borderWidth > 0 && "border-2",
+                                  "block h-7 w-full border-0",
+                                  borderWidth > 0 && "outline-2",
                                 )}
                                 style={{
                                   backgroundColor: colorSet.holdHead,
-                                  borderColor: colorSet.holdHeadBorder,
+                                  outlineColor: colorSet.holdHeadBorder,
                                 }}
                               >
                                 <Button variant="outline" />
@@ -271,8 +314,8 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                     )}
                                   >
                                     <TabsTrigger value="fill">Fill</TabsTrigger>
-                                    <TabsTrigger value="stroke">
-                                      Stroke
+                                    <TabsTrigger value="border">
+                                      Border
                                     </TabsTrigger>
                                   </TabsList>
                                   <TabsContent value="fill" className="mt-0">
@@ -282,7 +325,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                                       colorKey="holdHead"
                                     />
                                   </TabsContent>
-                                  <TabsContent value="stroke" className="mt-0">
+                                  <TabsContent value="border" className="mt-0">
                                     <ColorInput
                                       keyCount={keyCount}
                                       columnIndex={i}
@@ -297,7 +340,7 @@ const SkinSettings = ({ title, searchQuery }: SettingsSectionProps) => {
                             <Popover>
                               <PopoverTrigger
                                 asChild
-                                className="block h-7 w-full border p-0"
+                                className="block h-7 w-full border"
                               >
                                 <Button
                                   variant="outline"

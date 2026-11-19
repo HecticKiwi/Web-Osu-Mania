@@ -59,9 +59,9 @@ export class CircleKey extends Key {
     }
 
     if (pressed) {
-      // this.marker.alpha = 0.7;
+      this.marker.alpha = 0.7;
     } else {
-      // this.marker.alpha = 0.0;
+      this.marker.alpha = 0.0;
     }
   }
 }
