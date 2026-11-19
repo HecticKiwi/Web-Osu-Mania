@@ -9,6 +9,7 @@ import { build } from "vite";
 
 interface PluginOptions {
   globPatterns: string[];
+  additionalPrecacheEntries: { url: string; revision: string }[];
   maximumFileSizeToCacheInBytes: number;
 }
 
