@@ -17,14 +17,34 @@ import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
-import { HardDrive, Loader } from "lucide-react";
+import { GlobeOff, HardDrive, Loader } from "lucide-react";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
 import TextLink from "../textLink";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import { useOnline } from "@/hooks/useOnline";
 
-const BeatmapSetsInfiniteScroll = ({
+const OfflineCard = () => (
+  <Card className="mx-auto mt-6 max-w-xl">
+    <CardContent className="flex flex-col items-center space-y-4 pt-6 text-sm">
+      <GlobeOff className="size-6" />
+      <h2 className="text-xl font-semibold">You're offline.</h2>
+
+      <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-2">
+        <Button className="inline-flex items-center gap-2">
+          <HardDrive />
+          <Link to={"/"} search={{ category: "Stored" }}>
+            Stored beatmaps
+          </Link>
+        </Button>
+        <p>Or selection a collection...</p>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const BaseBeatmapSetsInfiniteScroll = ({
   initialData,
   className,
 }: {
@@ -130,12 +150,7 @@ const BeatmapSetsInfiniteScroll = ({
             </CardContent>
           </Card>
         ) : (
-          <Button className="mt-6 inline-flex items-center gap-2">
-            <HardDrive />
-            <Link to={"/"} params={{ category: "Stored" }}>
-              Browse stored beatmaps
-            </Link>
-          </Button>
+          <OfflineCard />
         )}
       </div>
     );
@@ -203,6 +218,17 @@ const BeatmapSetsInfiniteScroll = ({
         )}
       </div>
     </>
+  );
+};
+
+const BeatmapSetsInfiniteScroll: typeof BaseBeatmapSetsInfiniteScroll = (
+  props,
+) => {
+  const isOnline = useOnline();
+  return isOnline ? (
+    <BaseBeatmapSetsInfiniteScroll {...props} />
+  ) : (
+    <OfflineCard />
   );
 };
 

@@ -3,8 +3,12 @@ import ManiaIcon from "./maniaIcon";
 import MobileSidebar from "./mobileSidebar";
 import NavLink from "./navLink";
 import SocialButtons from "./socialButtons";
+import { useOnline } from "@/hooks/useOnline";
+import { GlobeOff } from "lucide-react";
 
 const Header = () => {
+  const isOnline = useOnline();
+
   return (
     <header className="bg-card/80 outline-border sticky top-0 z-20 outline backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-475 items-center justify-between px-2 sm:px-4 lg:px-8">
@@ -31,7 +35,14 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {!isOnline && (
+            <div className="bg-muted inline-flex items-center gap-1 rounded-lg px-2.5 py-2">
+              <GlobeOff className="size-4" />
+              <span className="font-small text-sm">Offline</span>
+            </div>
+          )}
+
           <SocialButtons className="hidden lg:block" />
 
           <MobileSidebar />
