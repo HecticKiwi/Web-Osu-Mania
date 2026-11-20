@@ -1,34 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const PreviewProgressBar = ({ preview }: { preview: Howl }) => {
-  const [progress, setProgress] = useState<number>(0);
+  const barRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
+    const currentBarRef = barRef.current;
+
+    if (!preview) {
+      currentBarRef.style.transform = "scaleX(0)";
+      return;
+    }
+
     let animationFrame: number;
-
     const updateProgress = () => {
-      if (preview) {
-        const currentProgress = preview.seek() / preview.duration();
-
-        setProgress(currentProgress);
-        animationFrame = requestAnimationFrame(updateProgress);
-      }
+      const currentProgress = preview.seek() / preview.duration();
+      currentBarRef.style.transform = `scaleX(${currentProgress})`;
+      animationFrame = requestAnimationFrame(updateProgress);
     };
 
-    if (preview) {
-      updateProgress();
-    }
+    updateProgress();
 
     return () => {
       cancelAnimationFrame(animationFrame);
-      setProgress(0);
+      currentBarRef.style.transform = "scaleX(0)";
     };
   }, [preview]);
 
   return (
     <div
-      className="h-1 origin-left bg-primary"
-      style={{ transform: `scaleX(${progress})` }}
+      ref={barRef}
+      className="bg-primary h-1 origin-left"
+      style={{ transform: "scaleX(0)" }}
     />
   );
 };

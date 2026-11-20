@@ -70,7 +70,7 @@ export function playAudioPreview(beatmapSetId: number, volume: number) {
   const audio = new Howl({
     src: [audioUrl],
     format: "mp3",
-    html5: true, // To prevent XHR errors
+    html5: true, // To prevent CORS errors
     autoplay: true,
     volume: 0,
     onplay: () => {

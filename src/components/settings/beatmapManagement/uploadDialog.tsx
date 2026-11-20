@@ -43,10 +43,9 @@ const UploadDialog = () => {
       audio = playAudioPreview(beatmapSet.id, musicVolume);
     }
 
-    if (audio) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    audio?.on("play", () => {
       setPreview(audio);
-    }
+    });
   }, [beatmapSet, musicVolume, replayData, uploadedBeatmapSet]);
 
   return (

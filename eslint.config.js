@@ -1,9 +1,9 @@
-//  @ts-check
-
+// @ts-check
+import eslintReact from "@eslint-react/eslint-plugin";
 import { tanstackConfig } from "@tanstack/eslint-config";
-import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
@@ -19,23 +19,29 @@ export default defineConfig([
   },
   ...tanstackConfig,
   reactHooks.configs.flat.recommended,
-  react.configs.flat.recommended,
-  react.configs.flat["jsx-runtime"],
   {
+    files: ["**/*.{ts,tsx}"],
+    extends: [eslintReact.configs["recommended-typescript"]],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: null,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
     rules: {
       "import/order": "off", // Use VS Code "Organize Imports" command instead
       "@typescript-eslint/array-type": ["error", { default: "array" }],
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "off",
-      "react/no-unescaped-entities": "off",
-      "react/prop-types": "off",
-    },
-  },
-  {
-    settings: {
-      react: {
-        version: "detect",
-      },
+      "@eslint-react/no-array-index-key": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ]);

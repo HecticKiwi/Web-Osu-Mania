@@ -4,7 +4,6 @@ import Main from "@/components/main";
 import UploadDialog from "@/components/settings/beatmapManagement/uploadDialog";
 import SidebarContent from "@/components/sidebar";
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { Suspense } from "react";
 import { z } from "zod";
 
@@ -23,7 +22,7 @@ const indexSearchSchema = z.object({
 
 export const Route = createFileRoute("/")({
   component: Home,
-  validateSearch: zodValidator(indexSearchSchema),
+  validateSearch: indexSearchSchema,
   head: () => ({
     links: [
       {

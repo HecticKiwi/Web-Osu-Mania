@@ -56,7 +56,7 @@ const ReplayControls = ({ game }: { game: Game }) => {
       animationFrame = requestAnimationFrame(updateProgress);
     };
 
-    updateProgress();
+    animationFrame = requestAnimationFrame(updateProgress);
 
     return () => {
       cancelAnimationFrame(animationFrame);

@@ -1,29 +1,24 @@
-import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import { cn } from "@/lib/utils";
 import { Route } from "@/routes";
 import { useNavigate } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
-import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const SearchFilter = ({ className }: { className?: string }) => {
-  const { q } = Route.useSearch();
-  // const searchParams = useSearchParams();
-  const queryParam = parseQueryParam(q);
+const SearchFilter = ({
+  initialQuery,
+  className,
+}: {
+  initialQuery: string;
+  className?: string;
+}) => {
   const navigate = useNavigate({ from: Route.fullPath });
+  const [query, setQuery] = useState(initialQuery);
 
-  // const router = useRouter();
-  const [query, setQuery] = useState(queryParam);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setQuery(queryParam);
-  }, [queryParam]);
-
-  const search = (e?: FormEvent) => {
+  const search = (e?: ChangeEvent) => {
     e?.preventDefault();
 
     navigate({

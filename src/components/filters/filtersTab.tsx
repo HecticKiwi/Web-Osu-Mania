@@ -1,4 +1,4 @@
-import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
+import { parseQueryParam } from "@/lib/searchParams/queryParam";
 import { Route } from "@/routes";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -15,13 +15,12 @@ import DifficultyFilter from "./starsFilter";
 
 const FiltersTab = () => {
   const search = Route.useSearch();
-
-  const category = parseCategoryParam(search.category);
+  const queryParam = parseQueryParam(search.q);
 
   return (
     <>
       <div className="flex flex-col gap-4">
-        <SearchFilter />
+        <SearchFilter key={queryParam} initialQuery={queryParam} />
         <KeysFilter />
         <DifficultyFilter />
         {!search.collection && <CategoryFilter />}

@@ -40,7 +40,7 @@ const GameScreens = ({
   const [results, setResults] = useState<PlayResults | null>(null);
   const [hideCursor, setHideCursor] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null!);
-  const initialShowHud = useRef(showHud);
+  const initialShowHudRef = useRef(showHud);
 
   const toggleHud = useCallback(() => {
     setShowHud((prev) => {
@@ -72,7 +72,7 @@ const GameScreens = ({
       videoEl,
     );
     gameInstance
-      .main(containerRef.current, initialShowHud.current)
+      .main(containerRef.current, initialShowHudRef.current)
       .then(() => setGame(gameInstance));
 
     return () => {

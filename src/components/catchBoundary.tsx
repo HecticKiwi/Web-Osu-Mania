@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 
-const CatchBoundary = ({ error, reset }: ErrorComponentProps) => {
+const CatchBoundary = ({ error, reset }: ErrorComponentProps<any>) => {
   return (
     <>
       <div className="p-6 text-center">

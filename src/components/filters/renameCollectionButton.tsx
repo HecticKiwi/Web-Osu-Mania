@@ -33,7 +33,7 @@ const RenameCollectionButton = () => {
   const collections = useCollectionsStore((state) => state.collections);
   const setCollections = useCollectionsStore((state) => state.setCollections);
   const collection = search.collection;
-  const [isOpen, setisOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const schema = z.object({
     name: z
@@ -58,7 +58,7 @@ const RenameCollectionButton = () => {
       form.reset({ name: collection || "" });
     }
 
-    setisOpen(newValue);
+    setIsOpen(newValue);
   };
 
   const onSubmit = (data: { name: string }) => {
@@ -72,7 +72,7 @@ const RenameCollectionButton = () => {
     });
 
     navigate({ to: "/", search: { ...search, collection: data.name } });
-    setisOpen(false);
+    setIsOpen(false);
   };
 
   return (
