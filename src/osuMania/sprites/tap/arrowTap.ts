@@ -158,6 +158,10 @@ export class ArrowTap extends Tap {
     sprite.scale = width / length;
     sprite.anchor = 0.5;
 
+    if (game.settings.upscroll) {
+      sprite.scale.y = -sprite.scale.y;
+    }
+
     return sprite;
   }
 
