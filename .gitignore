@@ -7,6 +7,9 @@
 # production
 /dist
 
+# Serwist
+public/sw*
+
 # misc
 .DS_Store
 *.pem

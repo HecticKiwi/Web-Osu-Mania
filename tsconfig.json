@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "types": [],
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,12 +14,11 @@
     "jsx": "react-jsx",
     "incremental": true,
     "strictPropertyInitialization": false,
+    "allowImportingTsExtensions": true,
     "plugins": [],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "**/*.ts",
@@ -31,10 +26,7 @@
     "worker-configuration.d.ts",
     "tailwind.config.ts",
     "eslint.config.js",
-    "prettier.config.js",
+    "prettier.config.js"
   ],
-  "exclude": [
-    "node_modules",
-    "workers"
-  ]
+  "exclude": ["node_modules", "workers"]
 }
