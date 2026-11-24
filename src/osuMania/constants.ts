@@ -1,6 +1,9 @@
 import type { ColumnColor } from "@/stores/settingsStore";
 import type { Judgement } from "@/types";
 
+export const BASE_API_URL = import.meta.env.VITE_BASE_API_URL ?? "";
+export const BASE_ASSETS_URL = import.meta.env.VITE_BASE_ASSETS_URL ?? "";
+
 export const JUDGEMENTS = [320, 300, 200, 100, 50, 0] as const;
 
 export const JUDGEMENT_COLORS: Record<Judgement, string> = {

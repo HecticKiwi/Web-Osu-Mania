@@ -2,7 +2,7 @@ import SelectInput, { NULL_OPTION } from "@/components/inputs/selectInput";
 import { Button } from "@/components/ui/button";
 import { SelectItem, SelectSeparator } from "@/components/ui/select";
 import { idb } from "@/lib/idb";
-import { BASE_PATH } from "@/lib/utils";
+import { BASE_ASSETS_URL } from "@/osuMania/constants";
 import type { Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Howl } from "howler";
@@ -68,7 +68,7 @@ const CustomSoundSelect = ({
       const format = file.name.split(".").pop();
       url = `${URL.createObjectURL(customSound.file)}#.${format}`;
     } else {
-      url = `${BASE_PATH}/skin/sounds/${soundGroup}/${value}`;
+      url = `${BASE_ASSETS_URL}/skin/sounds/${soundGroup}/${value}`;
     }
 
     const revokeUrl = () => {

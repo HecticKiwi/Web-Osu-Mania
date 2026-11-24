@@ -1,3 +1,4 @@
+import { BASE_API_URL } from "@/osuMania/constants";
 import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import queryString from "query-string";
 import type { Category } from "./searchParams/categoryParam";
@@ -12,7 +13,6 @@ import {
   DEFAULT_SORT_DIRECTION,
 } from "./searchParams/sortParam";
 import type { Stars } from "./searchParams/starsParam";
-import { BASE_PATH } from "./utils";
 
 const RULESETS = ["fruits", "mania", "osu", "taiko"] as const;
 export type Ruleset = (typeof RULESETS)[number];
@@ -134,7 +134,7 @@ export async function getBeatmapSets({
     .join(" ");
 
   const url = queryString.stringifyUrl({
-    url: `${BASE_PATH}/api/getBeatmaps`,
+    url: `${BASE_API_URL}/api/getBeatmaps`,
     query: {
       q: q || undefined,
       m: 3, // 3 = mania mode
@@ -170,7 +170,7 @@ export async function getBeatmapSets({
 
 export async function getBeatmapSet(beatmapSetId: number) {
   const url = queryString.stringifyUrl({
-    url: `${BASE_PATH}/api/getBeatmap`,
+    url: `${BASE_API_URL}/api/getBeatmap`,
     query: { beatmapSetId },
   });
 

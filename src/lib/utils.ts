@@ -1,4 +1,4 @@
-import { OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
+import { BASE_ASSETS_URL, OSU_HEIGHT, OSU_WIDTH } from "@/osuMania/constants";
 import type {
   ColumnColor,
   JudgementSetId,
@@ -11,8 +11,6 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { EncodedMods } from "./replay";
 import { decodeMods } from "./replay";
-
-export const BASE_PATH = import.meta.env.VITE_BASE_URL ?? "";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -297,7 +295,7 @@ export function getJudgementUrl(
   judgement: Judgement,
   judgementSet: JudgementSetId,
 ) {
-  return `${BASE_PATH}/skin/judgements-${judgementSet}/mania-hit${judgement === 320 ? "300g" : judgement}.png`;
+  return `${BASE_ASSETS_URL}/skin/judgements-${judgementSet}/mania-hit${judgement === 320 ? "300g" : judgement}.png`;
 }
 
 export function getClassNamesForGrade(grade: Grade) {

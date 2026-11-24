@@ -2,8 +2,9 @@ import { CUSTOM_SOUND_OPTION } from "@/components/settings/sounds/customSoundSel
 import type { SampleSet, SoundDictionary } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
 import { hitsoundSampleSets, hitsoundSamples } from "@/lib/skinParser";
-import { BASE_PATH, createObjectURLWithExtension } from "@/lib/utils";
+import { createObjectURLWithExtension } from "@/lib/utils";
 import { Howl } from "howler";
+import { BASE_ASSETS_URL } from "../constants";
 import type { Game } from "../game";
 import type { Tap } from "../sprites/tap/tap";
 
@@ -53,7 +54,7 @@ export class AudioSystem {
 
           this.load(key, url);
         } else if (sound) {
-          const url = `${BASE_PATH}/skin/sounds/hitsounds/${sound}`;
+          const url = `${BASE_ASSETS_URL}/skin/sounds/hitsounds/${sound}`;
           this.load(key, url);
         }
       }),
