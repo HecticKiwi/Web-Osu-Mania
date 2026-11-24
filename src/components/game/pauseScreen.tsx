@@ -1,13 +1,13 @@
 import type { BeatmapData } from "@/lib/beatmapParser";
 import { getModStrings } from "@/lib/utils";
 import { Eye, EyeOff, Fullscreen } from "lucide-react";
+import { toast } from "sonner";
 import { useGameStore } from "../../stores/gameStore";
 import { useSettingsStore } from "../../stores/settingsStore";
 import BeatmapSetPageButton from "../beatmapSet/beatmapPageButton";
 import CollectionsDropdown from "../beatmapSet/collectionsDropdown";
 import DifficultyBadge from "../beatmapSet/difficultyBadge";
 import { Button } from "../ui/button";
-import { toast } from "../ui/use-toast";
 
 const PauseScreen = ({
   beatmapData,
@@ -41,8 +41,7 @@ const PauseScreen = ({
 
     if (!document.fullscreenElement && gameDiv) {
       gameDiv.requestFullscreen().catch((err) => {
-        toast({
-          title: "Fullscreen Error",
+        toast("Fullscreen Error", {
           description: `Failed to enable fullscreen mode: ${err.message}`,
         });
       });
