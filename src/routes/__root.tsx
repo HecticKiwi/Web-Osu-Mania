@@ -6,15 +6,15 @@ import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { seo } from "@/lib/seo";
+import { Serwist } from "@serwist/window";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
-import appCss from "../styles/globals.css?url";
 import { useEffect } from "react";
-import { Serwist } from "@serwist/window";
+import appCss from "../styles/globals.css?url";
 
 const title = "Web osu!mania";
 const description = "Play osu!mania beatmaps in your web browser.";

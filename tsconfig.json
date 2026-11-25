@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
     "types": [],
-    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "webworker"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -17,7 +22,9 @@
     "allowImportingTsExtensions": true,
     "plugins": [],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -28,5 +35,8 @@
     "eslint.config.js",
     "prettier.config.js"
   ],
-  "exclude": ["node_modules", "workers"]
+  "exclude": [
+    "node_modules",
+    "workers"
+  ]
 }
