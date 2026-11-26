@@ -17,6 +17,7 @@ export default defineConfig({
     tanstackStart({
       prerender: {
         enabled: true,
+        autoStaticPathsDiscovery: !!env.VITE_PRERENDER,
         crawlLinks: false,
       },
       pages: [
