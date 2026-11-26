@@ -71,11 +71,18 @@ const GameScreens = ({
       retry,
       videoEl,
     );
+    let cancelled = false;
+
     gameInstance
       .main(containerRef.current, initialShowHudRef.current)
-      .then(() => setGame(gameInstance));
+      .then(() => {
+        if (!cancelled) {
+          setGame(gameInstance);
+        }
+      });
 
     return () => {
+      cancelled = true;
       Howler.stop();
 
       gameInstance.dispose();
