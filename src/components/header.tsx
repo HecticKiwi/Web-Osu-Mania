@@ -1,13 +1,13 @@
+import { useIsOnline } from "@/hooks/useIsOnline";
 import { Link } from "@tanstack/react-router";
+import { GlobeOff } from "lucide-react";
 import ManiaIcon from "./maniaIcon";
 import MobileSidebar from "./mobileSidebar";
 import NavLink from "./navLink";
 import SocialButtons from "./socialButtons";
-import { useOnline } from "@/hooks/useOnline";
-import { GlobeOff } from "lucide-react";
 
 const Header = () => {
-  const isOnline = useOnline();
+  const isOnline = useIsOnline();
 
   return (
     <header className="bg-card/80 outline-border sticky top-0 z-20 outline backdrop-blur-xl">
@@ -37,9 +37,8 @@ const Header = () => {
 
         <div className="flex items-center gap-3">
           {!isOnline && (
-            <div className="bg-muted inline-flex items-center gap-1 rounded-lg px-2.5 py-2">
-              <GlobeOff className="size-4" />
-              <span className="font-small text-sm">Offline</span>
+            <div title="You're offline.">
+              <GlobeOff className="text-muted-foreground size-4" />
             </div>
           )}
 

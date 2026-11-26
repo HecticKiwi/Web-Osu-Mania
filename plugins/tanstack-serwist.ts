@@ -2,8 +2,8 @@
  * Source: https://github.com/TanStack/router/discussions/4770#discussioncomment-15274878
  */
 
-import path from "node:path";
 import { injectManifest } from "@serwist/build";
+import path from "node:path";
 import type { Plugin } from "vite";
 import { build } from "vite";
 
@@ -20,7 +20,7 @@ interface PluginOptions {
 export function tanstackSerwist(opts: PluginOptions): Plugin {
   let rootDir: string;
   let isProduction: boolean;
-  let hasRun = false; // make sure it only runs once during the built process
+  let hasRun = false; // Make sure it only runs once during the build process
 
   return {
     name: "tanstack-serwist",
@@ -102,7 +102,7 @@ async function buildServiceWorker(
         `[SERWIST] Precached ${result.count} files (${cacheSize} MB)`,
       );
     } else {
-      console.log("�[SERWIST] Dev service worker built");
+      console.log("[SERWIST] Dev service worker built");
     }
   } catch (error) {
     console.error("[SERWIST] Failed to build service worker:", error);

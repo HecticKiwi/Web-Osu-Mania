@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.8",
+    "@serwist/window": "^9.6.0",
     "@tanstack/react-query": "^5.108.2",
     "@tanstack/react-router": "^1.170.46",
     "@tanstack/react-start": "^1.169.7",
@@ -53,7 +54,6 @@
     "@cloudflare/vite-plugin": "^1.70.1",
     "@eslint-react/eslint-plugin": "^5.30.5",
     "@serwist/build": "^9.5.15",
-    "@serwist/window": "^9.5.15",
     "@tailwindcss/postcss": "^4.3.5",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.5",

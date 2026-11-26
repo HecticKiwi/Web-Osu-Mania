@@ -80,12 +80,7 @@ function RootLayout() {
     if ("serviceWorker" in navigator) {
       const serwist = new Serwist("/sw.js", { scope: "/", type: "module" });
       if (serwist) {
-        const logInstall = () => console.log("Serwist installed!");
-        serwist.addEventListener("installed", logInstall);
-
         void serwist.register();
-
-        return () => serwist.removeEventListener("installed", logInstall);
       }
     }
   }, []);

@@ -1,3 +1,4 @@
+import { useIsOnline } from "@/hooks/useIsOnline";
 import { getBeatmapSets } from "@/lib/osuApi";
 import type { Category } from "@/lib/searchParams/categoryParam";
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
@@ -15,31 +16,33 @@ import { cn } from "@/lib/utils";
 import { Route } from "@/routes";
 import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
 import { GlobeOff, HardDrive, Loader } from "lucide-react";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
+import BeatmapSetUpload from "../settings/beatmapManagement/beatmapSetUpload";
 import TextLink from "../textLink";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { useOnline } from "@/hooks/useOnline";
 
 const OfflineCard = () => (
   <Card className="mx-auto mt-6 max-w-xl">
     <CardContent className="flex flex-col items-center space-y-4 pt-6 text-sm">
-      <GlobeOff className="size-6" />
+      <GlobeOff className="text-muted-foreground size-6" />
       <h2 className="text-xl font-semibold">You're offline.</h2>
 
-      <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-2">
-        <Button className="inline-flex items-center gap-2">
-          <HardDrive />
-          <Link to={"/"} search={{ category: "Stored" }}>
-            Stored beatmaps
-          </Link>
-        </Button>
-        <p>Or selection a collection...</p>
-      </div>
+      <p className="text-muted-foreground">
+        To store beatmaps and play them offline, the IndexedDB Cache must be
+        enabled in the settings. Downloaded beatmaps can be played from the{" "}
+        <HardDrive className="inline size-5" /> Stored category or your
+        collections.
+      </p>
+
+      <p className="text-muted-foreground text-sm">
+        Or, if you have beatmap files (.osz format), you can load them directly.
+        Click the dashed box or drag a beatmap file into it.
+      </p>
+      <BeatmapSetUpload />
     </CardContent>
   </Card>
 );
@@ -224,7 +227,7 @@ const BaseBeatmapSetsInfiniteScroll = ({
 const BeatmapSetsInfiniteScroll: typeof BaseBeatmapSetsInfiniteScroll = (
   props,
 ) => {
-  const isOnline = useOnline();
+  const isOnline = useIsOnline();
   return isOnline ? (
     <BaseBeatmapSetsInfiniteScroll {...props} />
   ) : (
