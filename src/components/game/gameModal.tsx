@@ -23,7 +23,6 @@ const GameModal = () => {
   const backgroundDim = useSettingsStore.use.backgroundDim();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const getBeatmapSet = useBeatmapSetCacheStore.use.getBeatmapSet();
-  const storedBeatmapSets = useStoredBeatmapSetsStore.use.storedBeatmapSets();
   const setStoredBeatmapSets =
     useStoredBeatmapSetsStore.use.setStoredBeatmapSets();
   const replayData = useGameStore.use.replayData();
@@ -52,6 +51,10 @@ const GameModal = () => {
       return;
     }
 
+    // Set when the effect re-runs or unmounts, so a stale load can't
+    // overwrite a newer one with its own beatmapData
+    let cancelled = false;
+
     const loadBeatmap = async () => {
       let beatmapSetFile: Blob;
 
@@ -70,6 +73,15 @@ const GameModal = () => {
             setDownloadPercent,
           );
 
+          if (cancelled) {
+            return;
+          }
+
+          // Read the store directly instead of subscribing to it. Adding the
+          // set below would otherwise re-run this effect and load the beatmap
+          // a second time.
+          const { storedBeatmapSets } = useStoredBeatmapSetsStore.getState();
+
           if (
             storeDownloadedBeatmaps &&
             !storedBeatmapSets.some(
@@ -81,6 +93,10 @@ const GameModal = () => {
             });
           }
         } catch (error: any) {
+          if (cancelled) {
+            return;
+          }
+
           toast("Download Error", {
             description: error.message,
             duration: 10000,
@@ -114,6 +130,10 @@ const GameModal = () => {
           beatmapSet.status === "local",
         );
 
+        if (cancelled) {
+          return;
+        }
+
         // If autoplay is enabled and we're not already watching a replay, use a perfect replay
         if (!replay && mods.autoplay) {
           const autoReplay = generateAutoReplay(
@@ -127,8 +147,16 @@ const GameModal = () => {
 
         await loadAssets();
 
+        if (cancelled) {
+          return;
+        }
+
         setBeatmapData(parsedBeatmapData);
       } catch (error: any) {
+        if (cancelled) {
+          return;
+        }
+
         toast("Parsing Error", {
           description: error.message,
           duration: 10000,
@@ -140,6 +168,10 @@ const GameModal = () => {
     };
 
     loadBeatmap();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     beatmapId,
     closeGame,
@@ -147,7 +179,6 @@ const GameModal = () => {
     uploadedBeatmapSet,
     localReplayBeatmapSet,
     beatmapSet,
-    storedBeatmapSets,
     setStoredBeatmapSets,
     storeDownloadedBeatmaps,
     setReplayData,
