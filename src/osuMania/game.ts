@@ -80,6 +80,8 @@ PixiPlugin.registerPIXI(PIXI);
 
 export class Game {
   public app = new Application();
+  private appInitialized = false;
+  private disposed = false;
   public state: GameState = "WAIT";
   public showHud: boolean;
 
@@ -302,6 +304,8 @@ export class Game {
   }
 
   public dispose() {
+    this.disposed = true;
+
     this.inputSystem.dispose();
     this.audioSystem.dispose();
 
@@ -310,6 +314,13 @@ export class Game {
     gsap.killTweensOf("*");
     gsap.globalTimeline.clear();
 
+    // If app.init() is still pending, main() destroys the app once it resolves
+    if (this.appInitialized) {
+      this.destroyApp();
+    }
+  }
+
+  private destroyApp() {
     this.app.destroy(
       { removeView: true },
       {
@@ -503,8 +514,20 @@ export class Game {
         wheel: false,
       },
     });
+    this.appInitialized = true;
+
+    // The game can be disposed while init is pending (e.g. the component
+    // unmounted). Stop here instead of building on a destroyed app.
+    if (this.disposed) {
+      this.destroyApp();
+      return;
+    }
 
     await this.audioSystem.loadHitsounds();
+
+    if (this.disposed) {
+      return;
+    }
 
     // Remove pointer cursor default so it can be hidden on keypress
     this.app.renderer.events.cursorStyles.pointer = "inherit";
