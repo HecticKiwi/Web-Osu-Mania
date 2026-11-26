@@ -9,6 +9,7 @@ export default defineConfig([
   {
     ignores: [
       "dist/**",
+      "public/**",
       "wrangler/**",
       "node_modules/**",
       "src/components/ui/**",

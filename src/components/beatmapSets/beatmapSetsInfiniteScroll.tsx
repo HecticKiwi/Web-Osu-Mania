@@ -1,3 +1,4 @@
+import { useIsOnline } from "@/hooks/useIsOnline";
 import { getBeatmapSets } from "@/lib/osuApi";
 import type { Category } from "@/lib/searchParams/categoryParam";
 import { parseCategoryParam } from "@/lib/searchParams/categoryParam";
@@ -16,14 +17,37 @@ import { Route } from "@/routes";
 import type { GetBeatmapsResponse } from "@/routes/api/getBeatmaps";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@uidotdev/usehooks";
-import { Loader } from "lucide-react";
+import { GlobeOff, HardDrive, Loader } from "lucide-react";
 import { Fragment, useEffect } from "react";
 import BeatmapSet from "../beatmapSet/beatmapSet";
+import BeatmapSetUpload from "../settings/beatmapManagement/beatmapSetUpload";
 import TextLink from "../textLink";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 
-const BeatmapSetsInfiniteScroll = ({
+const OfflineCard = () => (
+  <Card className="mx-auto mt-6 max-w-xl">
+    <CardContent className="flex flex-col items-center space-y-4 pt-6 text-sm">
+      <GlobeOff className="text-muted-foreground size-6" />
+      <h2 className="text-xl font-semibold">You're offline.</h2>
+
+      <p className="text-muted-foreground">
+        To store beatmaps and play them offline, the IndexedDB Cache must be
+        enabled in the settings. Downloaded beatmaps can be played from the{" "}
+        <HardDrive className="inline size-5" /> Stored category or your
+        collections.
+      </p>
+
+      <p className="text-muted-foreground text-sm">
+        Or, if you have beatmap files (.osz format), you can load them directly.
+        Click the dashed box or drag a beatmap file into it.
+      </p>
+      <BeatmapSetUpload />
+    </CardContent>
+  </Card>
+);
+
+const BaseBeatmapSetsInfiniteScroll = ({
   initialData,
   className,
 }: {
@@ -105,13 +129,11 @@ const BeatmapSetsInfiniteScroll = ({
 
   if (isError && !data) {
     return (
-      <div className="my-8">
-        <p className="text-muted-foreground text-center">
-          Failed to fetch beatmaps.
-        </p>
-        <p className="text-center">({error.message})</p>
+      <div className="my-8 flex flex-col items-center justify-center">
+        <p className="text-muted-foreground">Failed to fetch beatmaps.</p>
+        <p>({error.message})</p>
 
-        {error.message.includes("429") && (
+        {error.message.includes("429") ? (
           <Card className="mx-auto mt-6 max-w-xl">
             <CardContent className="text-muted-foreground space-y-4 pt-6 text-sm">
               <p>
@@ -130,6 +152,8 @@ const BeatmapSetsInfiniteScroll = ({
               </p>
             </CardContent>
           </Card>
+        ) : (
+          <OfflineCard />
         )}
       </div>
     );
@@ -197,6 +221,17 @@ const BeatmapSetsInfiniteScroll = ({
         )}
       </div>
     </>
+  );
+};
+
+const BeatmapSetsInfiniteScroll: typeof BaseBeatmapSetsInfiniteScroll = (
+  props,
+) => {
+  const isOnline = useIsOnline();
+  return isOnline ? (
+    <BaseBeatmapSetsInfiniteScroll {...props} />
+  ) : (
+    <OfflineCard />
   );
 };
 

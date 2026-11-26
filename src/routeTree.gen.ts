@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShellRouteImport } from './routes/[_]shell'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as ApiDownloadBeatmapRouteImport } from './routes/api/downloadBeatmap'
@@ -19,6 +20,11 @@ import { Route as ApiGetBeatmapsRouteImport } from './routes/api/getBeatmaps'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShellRoute = ShellRouteImport.update({
+  id: '/_shell',
+  path: '/_shell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -49,6 +55,7 @@ const ApiGetBeatmapsRoute = ApiGetBeatmapsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/_shell': typeof ShellRoute
   '/faq': typeof FaqRoute
   '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/_shell': typeof ShellRoute
   '/faq': typeof FaqRoute
   '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_shell': typeof ShellRoute
   '/faq': typeof FaqRoute
   '/updates': typeof UpdatesRoute
   '/api/downloadBeatmap': typeof ApiDownloadBeatmapRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/_shell'
     | '/faq'
     | '/updates'
     | '/api/downloadBeatmap'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/_shell'
     | '/faq'
     | '/updates'
     | '/api/downloadBeatmap'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_shell'
     | '/faq'
     | '/updates'
     | '/api/downloadBeatmap'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ShellRoute: typeof ShellRoute
   FaqRoute: typeof FaqRoute
   UpdatesRoute: typeof UpdatesRoute
   ApiDownloadBeatmapRoute: typeof ApiDownloadBeatmapRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shell': {
+      id: '/_shell'
+      path: '/_shell'
+      fullPath: '/_shell'
+      preLoaderRoute: typeof ShellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ShellRoute: ShellRoute,
   FaqRoute: FaqRoute,
   UpdatesRoute: UpdatesRoute,
   ApiDownloadBeatmapRoute: ApiDownloadBeatmapRoute,

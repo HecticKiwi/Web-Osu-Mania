@@ -6,12 +6,14 @@ import ReactQueryProvider from "@/components/providers/reactQueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { seo } from "@/lib/seo";
+import { Serwist } from "@serwist/window";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import appCss from "../styles/globals.css?url";
 
 const title = "Web osu!mania";
@@ -22,6 +24,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      { name: "theme-color", content: "#070e16" },
       {
         name: "viewport",
         content: "width=device-width, initial-scale=1",
@@ -73,6 +76,15 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      const serwist = new Serwist("/sw.js", { scope: "/", type: "module" });
+      if (serwist) {
+        void serwist.register();
+      }
+    }
+  }, []);
+
   return (
     <Html>
       <head>

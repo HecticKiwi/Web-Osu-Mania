@@ -18,6 +18,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "strictPropertyInitialization": false,
+    "allowImportingTsExtensions": true,
     "plugins": [],
     "paths": {
       "@/*": [
