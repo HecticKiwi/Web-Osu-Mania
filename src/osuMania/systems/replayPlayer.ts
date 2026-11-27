@@ -70,9 +70,9 @@ export class ReplayPlayer {
       const event = this.events[this.currentEventIndex];
 
       if (event.type === "down") {
-        this.game.inputSystem.hit(event.column, event.time, isAfterSeek);
+        this.game.systems.input.hit(event.column, event.time, isAfterSeek);
       } else {
-        this.game.inputSystem.release(event.column, event.time);
+        this.game.systems.input.release(event.column, event.time);
       }
 
       this.currentEventIndex++;

@@ -62,7 +62,7 @@ export class InputSystem {
     this.tappedColumns[column] = true;
     this.pressedColumns[column] = true;
 
-    if (!this.game.replayPlayer && this.game.state !== "PLAY") {
+    if (!this.game.systems.replayPlayer && this.game.state !== "PLAY") {
       return;
     }
 
@@ -73,10 +73,10 @@ export class InputSystem {
     this.checkLateMisses(timeElapsed ?? this.game.timeElapsed);
 
     if (this.game.state === "PLAY" && !isAfterSeek) {
-      this.game.audioSystem.playNextHitsounds(column);
+      this.game.systems.audio.playNextHitsounds(column);
     }
 
-    this.game.replayRecorder?.record(column, true);
+    this.game.systems.replayRecorder?.record(column, true);
     this.game.columns[column][this.game.currentColumnIndices[column]]?.hit(
       timeElapsed,
     );
@@ -91,7 +91,7 @@ export class InputSystem {
     this.pressedColumns[column] = false;
     this.releasedColumns[column] = true;
 
-    if (!this.game.replayPlayer && this.game.state !== "PLAY") {
+    if (!this.game.systems.replayPlayer && this.game.state !== "PLAY") {
       return;
     }
 
@@ -101,7 +101,7 @@ export class InputSystem {
 
     this.checkLateMisses(timeElapsed ?? this.game.timeElapsed);
 
-    this.game.replayRecorder?.record(column, false);
+    this.game.systems.replayRecorder?.record(column, false);
     this.game.columns[column][this.game.currentColumnIndices[column]]?.release(
       timeElapsed,
     );
@@ -156,7 +156,7 @@ export class InputSystem {
         this.pauseTapped = true;
       }
 
-      if (this.game.replayPlayer) {
+      if (this.game.systems.replayPlayer) {
         return;
       }
 
@@ -194,7 +194,7 @@ export class InputSystem {
       return;
     }
 
-    if (this.game.replayPlayer && event.code === "Space") {
+    if (this.game.systems.replayPlayer && event.code === "Space") {
       if (this.game.song.playing()) {
         this.game.pause();
       } else {
@@ -223,7 +223,7 @@ export class InputSystem {
       return;
     }
 
-    if (this.game.replayPlayer) {
+    if (this.game.systems.replayPlayer) {
       return;
     }
 
@@ -235,7 +235,7 @@ export class InputSystem {
   }
 
   private handleKeyUp(event: KeyboardEvent) {
-    if (this.game.replayPlayer) {
+    if (this.game.systems.replayPlayer) {
       return;
     }
 

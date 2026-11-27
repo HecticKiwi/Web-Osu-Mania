@@ -53,12 +53,12 @@ export abstract class Tap {
     if (
       !this.game.settings.ignoreBeatmapHitsounds &&
       hitSoundFile &&
-      this.game.audioSystem.sounds[hitSoundFile]
+      this.game.systems.audio.sounds[hitSoundFile]
     ) {
-      this.game.audioSystem.play(hitSoundFile, this.game.settings.sfxVolume);
+      this.game.systems.audio.play(hitSoundFile, this.game.settings.sfxVolume);
     } else {
       if (this.data.hitSound.normal) {
-        this.game.audioSystem.playHitSound(
+        this.game.systems.audio.playHitSound(
           this.sampleSet,
           this.sampleIndex,
           "normal",
@@ -67,7 +67,7 @@ export abstract class Tap {
       }
 
       if (this.data.hitSound.whistle) {
-        this.game.audioSystem.playHitSound(
+        this.game.systems.audio.playHitSound(
           this.additionSet,
           this.sampleIndex,
           "whistle",
@@ -76,7 +76,7 @@ export abstract class Tap {
       }
 
       if (this.data.hitSound.clap) {
-        this.game.audioSystem.playHitSound(
+        this.game.systems.audio.playHitSound(
           this.additionSet,
           this.sampleIndex,
           "clap",
@@ -85,7 +85,7 @@ export abstract class Tap {
       }
 
       if (this.data.hitSound.finish) {
-        this.game.audioSystem.playHitSound(
+        this.game.systems.audio.playHitSound(
           this.additionSet,
           this.sampleIndex,
           "finish",
@@ -103,21 +103,26 @@ export abstract class Tap {
     this.view.y =
       this.game.hitPosition +
       this.game.settings.noteOffset -
-      this.game.getHitObjectOffset(timeElapsed, this.data.time);
+      this.game.systems.hitObject.getHitObjectOffset(
+        timeElapsed,
+        this.data.time,
+      );
 
     // If this has passed the late miss point
     if (delta < -this.game.hitWindows[0]) {
-      this.game.scoreSystem.hit(0, "late", this.data.isHoldHead);
+      this.game.systems.score.hit(0, "late", this.data.isHoldHead);
       this.game.timelineData.push({
         time: this.data.time + this.game.hitWindows[0],
         error: -this.game.hitWindows[0],
         judgement: 0,
-        health: this.game.healthSystem.health,
+        health: this.game.systems.health.health,
       });
 
       // Since hold ends have a 1.5x hit window, there can possibly be
       // an active hold note at the same time as a tap note miss. If so, just hide it.
-      const currentHitObject = this.game.getNextHitObject(this.data.column);
+      const currentHitObject = this.game.systems.hitObject.getNextHitObject(
+        this.data.column,
+      );
       if (currentHitObject !== this) {
         currentHitObject.view.visible = false;
       }
@@ -126,7 +131,9 @@ export abstract class Tap {
       this.game.countdown.startBreakIfNeeded(timeElapsed);
       this.view.visible = false;
 
-      const nextHitObject = this.game.getNextHitObject(this.data.column);
+      const nextHitObject = this.game.systems.hitObject.getNextHitObject(
+        this.data.column,
+      );
       if (nextHitObject && nextHitObject instanceof Hold) {
         nextHitObject.break();
       }
@@ -159,13 +166,13 @@ export abstract class Tap {
 
     const earlyOrLate = delta > 0 ? "early" : "late";
 
-    this.game.scoreSystem.hitErrors.push({ error: delta, judgement });
-    this.game.scoreSystem.hit(judgement, earlyOrLate, this.data.isHoldHead);
+    this.game.systems.score.hitErrors.push({ error: delta, judgement });
+    this.game.systems.score.hit(judgement, earlyOrLate, this.data.isHoldHead);
     this.game.timelineData.push({
       time: timeElapsed,
       error: delta,
       judgement,
-      health: this.game.healthSystem.health,
+      health: this.game.systems.health.health,
     });
 
     this.game.currentColumnIndices[this.data.column]++;

@@ -47,7 +47,7 @@ const GameScreens = ({
       const newValue = !prev;
 
       if (game) {
-        game.setShowHud(newValue);
+        game.systems.ui.setShowHud(newValue);
       }
 
       return newValue;

@@ -33,7 +33,7 @@ export abstract class Key {
   }
 
   public update() {
-    this.setPressed(this.game.inputSystem.pressedColumns[this.columnId]);
+    this.setPressed(this.game.systems.input.pressedColumns[this.columnId]);
   }
 
   public resize() {

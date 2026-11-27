@@ -23,17 +23,17 @@ export class TouchHitboxes {
       hitArea.cursor = "pointer";
 
       hitArea.on("pointerdown", () => {
-        this.game.inputSystem.hit(i);
+        this.game.systems.input.hit(i);
         hitArea.alpha = Math.min(this.game.settings.touch.borderOpacity * 3, 1);
       });
 
       hitArea.on("pointerup", () => {
-        this.game.inputSystem.release(i);
+        this.game.systems.input.release(i);
         hitArea.alpha = this.game.settings.touch.borderOpacity;
       });
 
       hitArea.on("pointerupoutside", () => {
-        this.game.inputSystem.release(i);
+        this.game.systems.input.release(i);
         hitArea.alpha = this.game.settings.touch.borderOpacity;
       });
 

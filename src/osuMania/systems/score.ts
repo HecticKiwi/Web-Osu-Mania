@@ -60,7 +60,7 @@ export class ScoreSystem {
   ) {
     // Ignore if health is at 0
     if (
-      this.game.healthSystem?.health === MIN_HEALTH &&
+      this.game.systems.health?.health === MIN_HEALTH &&
       !this.game.mods.noFail
     ) {
       return;
@@ -68,15 +68,18 @@ export class ScoreSystem {
 
     this.score += this.getScoreToAdd(judgement);
 
-    const oldHealth = this.game.healthSystem?.health ?? 0;
-    this.game.healthSystem?.hit(judgement, isForHold);
+    const oldHealth = this.game.systems.health?.health ?? 0;
+    this.game.systems.health?.hit(judgement, isForHold);
     if (
-      this.game.healthSystem &&
+      this.game.systems.health &&
       this.game.healthBar &&
-      this.game.healthSystem.health !== oldHealth
+      this.game.systems.health.health !== oldHealth
     ) {
-      const lostHealth = this.game.healthSystem.health < oldHealth;
-      this.game.healthBar.setHealth(this.game.healthSystem.health, lostHealth);
+      const lostHealth = this.game.systems.health.health < oldHealth;
+      this.game.healthBar.setHealth(
+        this.game.systems.health.health,
+        lostHealth,
+      );
     }
 
     this[judgement]++;
@@ -132,11 +135,11 @@ export class ScoreSystem {
     this.accuracy = accuracyWeight / highestPossibleAccuracyWeight;
 
     if (
-      this.game.healthSystem &&
+      this.game.systems.health &&
       this.game.mods.accuracyChallenge?.mode === "standard" &&
       this.accuracy < this.game.mods.accuracyChallenge.minAccuracy
     ) {
-      this.game.healthSystem.health = MIN_HEALTH; // Instant fail
+      this.game.systems.health.health = MIN_HEALTH; // Instant fail
     }
 
     if (this.game.accuracyText) {

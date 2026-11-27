@@ -148,7 +148,9 @@ export class Countdown {
 
     const nextHitObjectTime = Math.min(
       ...this.game.columns.map((_, i) => {
-        return this.game.getNextHitObject(i)?.data.time ?? Infinity;
+        return (
+          this.game.systems.hitObject.getNextHitObject(i)?.data.time ?? Infinity
+        );
       }),
     );
 

@@ -58,12 +58,12 @@ export class StageLight {
       return;
     }
 
-    if (this.game.inputSystem.pressedColumns[this.columnId]) {
+    if (this.game.systems.input.pressedColumns[this.columnId]) {
       gsap.killTweensOf(this.view);
       this.view.alpha = 0.5 * this.game.settings.ui.receptorOpacity;
     }
 
-    if (this.game.inputSystem.releasedColumns[this.columnId]) {
+    if (this.game.systems.input.releasedColumns[this.columnId]) {
       this.light();
     }
   }

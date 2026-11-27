@@ -10,71 +10,58 @@ import type {
 } from "@/lib/beatmapParser";
 import { idb } from "@/lib/idb";
 import { decodeMods } from "@/lib/replay";
-import {
-  createObjectURLWithExtension,
-  patchLaneColors,
-  scaleWidth,
-} from "@/lib/utils";
+import { createObjectURLWithExtension, patchLaneColors } from "@/lib/utils";
 import type { ColumnColor, Settings } from "@/stores/settingsStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { Column, GameState, PlayResults } from "@/types";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 import { Howl } from "howler";
-import type { Ticker } from "pixi.js";
+import type { BitmapText, Graphics, Ticker } from "pixi.js";
 import * as PIXI from "pixi.js";
-import {
-  Application,
-  BitmapText,
-  Container,
-  FillGradient,
-  Graphics,
-  ResizePlugin,
-  TextStyle,
-  extensions,
-} from "pixi.js";
+import { Application, Container, ResizePlugin, extensions } from "pixi.js";
 import type { Dispatch, SetStateAction } from "react";
 import {
   BASE_ASSETS_URL,
-  MAX_TIME_RANGE,
   getAllLaneColors,
   laneArrowDirections,
-  laneWidths,
 } from "./constants";
-import { Countdown } from "./sprites/countdown";
-import { ErrorBar } from "./sprites/errorBar";
-import { Fps } from "./sprites/fps";
-import { HealthBar } from "./sprites/healthBar";
+import type { Countdown } from "./sprites/countdown";
+import type { ErrorBar } from "./sprites/errorBar";
+import type { Fps } from "./sprites/fps";
+import type { HealthBar } from "./sprites/healthBar";
 import { ArrowHold } from "./sprites/hold/arrowHold";
 import { BarHold } from "./sprites/hold/barHold";
 import { CircleHold } from "./sprites/hold/circleHold";
 import { DiamondHold } from "./sprites/hold/diamondHold";
-import { Judgement } from "./sprites/judgement";
-import { JudgementCounter } from "./sprites/judgementCounter";
+import type { Judgement } from "./sprites/judgement";
+import type { JudgementCounter } from "./sprites/judgementCounter";
 import { ArrowKey } from "./sprites/key/arrowKey";
 import { BarKey } from "./sprites/key/barKey";
 import { CircleKey } from "./sprites/key/circleKey";
 import { DiamondKey } from "./sprites/key/diamondKey";
 import type { Key } from "./sprites/key/key";
-import { KpsCounter } from "./sprites/kpsCounter";
-import { ProgressBar } from "./sprites/progressBar";
-import { ProgressPie } from "./sprites/progressPie";
-import { StageCover } from "./sprites/stageCover";
-import { StageHint } from "./sprites/stageHint";
+import type { KpsCounter } from "./sprites/kpsCounter";
+import type { ProgressBar } from "./sprites/progressBar";
+import type { ProgressPie } from "./sprites/progressPie";
+import type { StageCover } from "./sprites/stageCover";
+import type { StageHint } from "./sprites/stageHint";
 import { StageLight } from "./sprites/stageLight";
 import { ArrowTap } from "./sprites/tap/arrowTap";
 import { BarTap } from "./sprites/tap/barTap";
 import { CircleTap } from "./sprites/tap/circleTap";
 import { DiamondTap } from "./sprites/tap/diamondTap";
 import { Tap } from "./sprites/tap/tap";
-import { TouchHitboxes } from "./sprites/touchHitboxes";
+import type { TouchHitboxes } from "./sprites/touchHitboxes";
 import { AudioSystem } from "./systems/audio";
 import { HealthSystem, MIN_HEALTH } from "./systems/health";
+import { HitObjectSystem } from "./systems/hitobject";
 import { InputSystem } from "./systems/input";
 import { ReplayPlayer } from "./systems/replayPlayer";
 import type { ReplayData } from "./systems/replayRecorder";
 import { ReplayRecorder } from "./systems/replayRecorder";
 import { ScoreSystem } from "./systems/score";
+import { UISystem } from "./systems/ui";
 
 PixiPlugin.registerPIXI(PIXI);
 
@@ -100,15 +87,16 @@ export class Game {
   public scaledColumnWidth: number;
   public notesContainerWidth: number;
 
-  // Systems
-  public healthSystem: HealthSystem;
-  public scoreSystem: ScoreSystem;
-  public inputSystem: InputSystem;
-  public audioSystem: AudioSystem;
-
-  // Replay Systems
-  public replayRecorder?: ReplayRecorder;
-  public replayPlayer?: ReplayPlayer;
+  public systems: {
+    health: HealthSystem;
+    score: ScoreSystem;
+    input: InputSystem;
+    audio: AudioSystem;
+    hitObject: HitObjectSystem;
+    ui: UISystem;
+    replayRecorder?: ReplayRecorder;
+    replayPlayer?: ReplayPlayer;
+  };
 
   // Classes for skin elements
   public tapClass:
@@ -125,7 +113,7 @@ export class Game {
 
   // UI Components
   public replayText?: BitmapText;
-  private startMessage: BitmapText;
+  public startMessage: BitmapText;
   public scoreText?: BitmapText;
   public comboText?: BitmapText;
   public accuracyText?: BitmapText;
@@ -143,10 +131,10 @@ export class Game {
   public judgement?: Judgement;
   public judgementCounter?: JudgementCounter;
   public kpsCounter?: KpsCounter;
-  private progress?: ProgressBar | ProgressPie;
+  public progress?: ProgressBar | ProgressPie;
   public healthBar?: HealthBar;
   public errorBar?: ErrorBar;
-  private fps?: Fps;
+  public fps?: Fps;
   public countdown: Countdown;
 
   public song: Howl;
@@ -185,7 +173,6 @@ export class Game {
   ) {
     gsap.registerPlugin(PixiPlugin);
 
-    this.resize = this.resize.bind(this);
     this.hitObjects = beatmapData.hitObjects;
     this.startTime = beatmapData.startTime;
     this.endTime = beatmapData.endTime;
@@ -205,7 +192,7 @@ export class Game {
       this.settings.unpauseDelay = 0;
     }
 
-    this.mods = this.settings.mods; // Replays will override this
+    this.mods = replayData ? decodeMods(replayData.mods) : this.settings.mods;
 
     if (this.settings.skin.colors.mode === "simple") {
       this.laneColors = getAllLaneColors(
@@ -222,28 +209,28 @@ export class Game {
       laneArrowDirections[this.difficulty.keyCount - 1];
 
     this.setResults = (failed?: boolean) => {
-      if (this.replayRecorder) {
-        this.replayRecorder.replayData.timestamp = Date.now();
+      if (this.systems.replayRecorder) {
+        this.systems.replayRecorder.replayData.timestamp = Date.now();
       }
 
       // The data points should already be in order, but just in case
       this.timelineData.sort((a, b) => a.time - b.time);
 
       setResults({
-        320: this.scoreSystem[320],
-        300: this.scoreSystem[300],
-        200: this.scoreSystem[200],
-        100: this.scoreSystem[100],
-        50: this.scoreSystem[50],
-        0: this.scoreSystem[0],
-        score: this.scoreSystem.score,
-        accuracy: this.scoreSystem.accuracy,
-        maxCombo: this.scoreSystem.maxCombo,
+        320: this.systems.score[320],
+        300: this.systems.score[300],
+        200: this.systems.score[200],
+        100: this.systems.score[100],
+        50: this.systems.score[50],
+        0: this.systems.score[0],
+        score: this.systems.score.score,
+        accuracy: this.systems.score.accuracy,
+        maxCombo: this.systems.score.maxCombo,
         failed,
-        viewingReplay: !!this.replayPlayer,
-        replayData: (this.replayRecorder?.replayData ??
-          this.replayPlayer?.replayData)!,
-        hitErrors: this.scoreSystem.hitErrors,
+        viewingReplay: !!this.systems.replayPlayer,
+        replayData: (this.systems.replayRecorder?.replayData ??
+          this.systems.replayPlayer?.replayData)!,
+        hitErrors: this.systems.score.hitErrors,
         timelineData: this.timelineData,
       });
     };
@@ -274,19 +261,6 @@ export class Game {
     this.columnKeybinds =
       this.settings.keybinds.keyModes[this.difficulty.keyCount - 1];
 
-    if (replayData) {
-      this.mods = decodeMods(replayData.mods);
-
-      this.replayPlayer = new ReplayPlayer(this, replayData);
-    } else {
-      this.replayRecorder = new ReplayRecorder(this, beatmapData);
-    }
-
-    this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
-    this.inputSystem = new InputSystem(this);
-    this.audioSystem = new AudioSystem(this, beatmapData.sounds);
-    this.healthSystem = new HealthSystem(this);
-
     this.song = beatmapData.song.howl;
     this.song.volume(this.settings.musicVolume);
     this.song.rate(this.mods.playbackRate);
@@ -301,15 +275,34 @@ export class Game {
     }
 
     this.delay = beatmapData.delay;
+
+    this.initSystems(beatmapData, replayData);
+  }
+
+  private initSystems(beatmapData: BeatmapData, replayData: ReplayData | null) {
+    this.systems = {
+      score: new ScoreSystem(this, this.hitObjects.length),
+      input: new InputSystem(this),
+      audio: new AudioSystem(this, beatmapData.sounds),
+      health: new HealthSystem(this),
+      hitObject: new HitObjectSystem(this),
+      ui: new UISystem(this),
+    };
+
+    if (replayData) {
+      this.systems.replayPlayer = new ReplayPlayer(this, replayData);
+    } else {
+      this.systems.replayRecorder = new ReplayRecorder(this, beatmapData);
+    }
   }
 
   public dispose() {
     this.disposed = true;
 
-    this.inputSystem.dispose();
-    this.audioSystem.dispose();
+    this.systems.input.dispose();
+    this.systems.audio.dispose();
 
-    window.removeEventListener("resize", this.resize);
+    window.removeEventListener("resize", this.systems.ui.resize);
 
     gsap.killTweensOf("*");
     gsap.globalTimeline.clear();
@@ -332,163 +325,6 @@ export class Game {
     );
 
     window.__PIXI_APP__ = null;
-  }
-
-  private resize() {
-    this.app.renderer.resize(window.innerWidth, window.innerHeight);
-
-    this.recalculateLayout();
-
-    this.startMessage.x = this.app.screen.width / 2 + this.stagePositionOffset;
-    this.startMessage.y = this.app.screen.height / 2;
-
-    this.stageHint?.resize();
-    this.stageLights.forEach((stageLight) => stageLight.resize());
-
-    this.keys.forEach((key) => key.resize());
-
-    const fillGradient = new FillGradient({
-      start: {
-        x: 0,
-        y: 1,
-      },
-      end: {
-        x: 0,
-        y: 0,
-      },
-      colorStops: [
-        {
-          offset: 0.4,
-          color: "gray",
-        },
-        {
-          offset: 1,
-          color: "transparent",
-        },
-      ],
-    });
-
-    this.stageContainer.removeChild(this.stageSides);
-    this.stageSides
-      .clear()
-      .rect(0, 0, this.stageSideWidth, this.app.screen.height)
-      .rect(
-        this.stageSideWidth + this.notesContainerWidth,
-        0,
-        this.stageSideWidth,
-        this.app.screen.height,
-      )
-      .fill(fillGradient);
-
-    this.stageContainer.addChild(this.stageSides);
-    this.stageBackground.height = this.app.screen.height;
-
-    this.stageContainer.pivot.x = this.stageContainer.width / 2;
-    this.stageContainer.pivot.y = this.app.screen.height / 2;
-
-    this.stageContainer.x =
-      this.app.screen.width / 2 + this.stagePositionOffset;
-    this.stageContainer.y = this.app.screen.height / 2;
-
-    this.stageCover?.resize();
-
-    this.touchHitboxes?.resize();
-
-    this.judgement?.resize();
-
-    this.judgementCounter?.resize();
-
-    this.kpsCounter?.resize();
-
-    if (this.comboText) {
-      this.comboText.x = this.app.screen.width / 2 + this.stagePositionOffset;
-
-      if (this.settings.upscroll) {
-        this.comboText.y =
-          this.app.screen.height * this.settings.ui.stageHudYPosition;
-      } else {
-        this.comboText.y =
-          this.app.screen.height * (1 - this.settings.ui.stageHudYPosition) +
-          50;
-      }
-    }
-
-    if (this.errorBar) {
-      this.errorBar.resize();
-    }
-
-    // Hud section
-    if (this.scoreText) {
-      this.scoreText.x = this.app.screen.width - 30;
-      this.scoreText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
-    }
-    this.progress?.resize();
-    this.healthBar?.resize();
-    if (this.accuracyText) {
-      this.accuracyText.x = this.app.screen.width - 30;
-      this.accuracyText.scale = Math.min((this.app.screen.width - 60) / 400, 1);
-    }
-
-    if (this.replayText) {
-      this.replayText.x = this.app.screen.width / 2;
-
-      if (this.settings.upscroll) {
-        this.replayText.y = this.app.screen.height - 75;
-      }
-    }
-  }
-
-  public setShowHud(showHud: boolean) {
-    this.showHud = showHud;
-
-    [
-      this.scoreText,
-      this.comboText,
-      this.accuracyText,
-      this.judgementCounter,
-      this.kpsCounter,
-      this.progress,
-      this.healthBar,
-      this.errorBar,
-      this.fps,
-    ]
-      .filter((item) => !!item)
-      .map((item) => {
-        if (item instanceof Container) {
-          item.visible = showHud;
-        } else {
-          item.view.visible = showHud;
-        }
-      });
-  }
-
-  private recalculateLayout() {
-    this.stagePositionOffset =
-      (this.settings.stagePosition *
-        (this.app.screen.width - this.stageContainer.width)) /
-      2;
-
-    this.hitPosition = this.app.screen.height - this.hitPositionOffset;
-
-    this.scaledColumnWidth = scaleWidth(
-      laneWidths[this.difficulty.keyCount - 1] +
-        this.settings.laneWidthAdjustment,
-      this.app.screen.width,
-    );
-
-    // Cap column width on small screen widths
-    if (
-      this.scaledColumnWidth * this.difficulty.keyCount >
-      this.app.screen.width
-    ) {
-      this.scaledColumnWidth = this.app.screen.width / this.difficulty.keyCount;
-    }
-
-    this.notesContainerWidth = Math.min(
-      this.difficulty.keyCount * this.scaledColumnWidth +
-        this.settings.laneSpacing * (this.difficulty.keyCount - 1),
-      this.app.screen.width,
-    );
   }
 
   async main(ref: HTMLDivElement, showHud: boolean) {
@@ -523,7 +359,7 @@ export class Game {
       return;
     }
 
-    await this.audioSystem.loadHitsounds();
+    await this.systems.audio.loadHitsounds();
 
     if (this.disposed) {
       return;
@@ -539,7 +375,7 @@ export class Game {
     // For the debugger extension to detect the app
     window.__PIXI_APP__ = this.app;
 
-    this.recalculateLayout();
+    this.systems.ui.recalculateLayout();
 
     Tap.renderTexture = null;
     BarKey.markerGraphicsContext = null;
@@ -553,76 +389,15 @@ export class Game {
 
     this.tapClass.setTextures(this);
 
-    if (this.replayPlayer) {
-      this.addReplayText();
-    }
-
-    if (this.settings.ui.showScore) {
-      this.addScoreText();
-    }
-    this.addStageContainer();
-
-    if (this.settings.ui.showCombo) {
-      this.addComboText();
-    }
-
-    if (this.settings.ui.showAccuracy) {
-      this.addAccuracyText();
-    }
-    if (this.settings.style === "bars") {
-      this.addStageHint();
-
-      if (!this.settings.performanceMode) {
-        this.addStageLights();
-      }
-    }
-
-    this.addKeys();
-
-    if (!this.replayPlayer && this.settings.touch.enabled) {
-      this.addTouchHitboxes();
-    }
-
-    if (this.settings.ui.showJudgement) {
-      this.addJudgement();
-    }
-
-    if (this.settings.ui.judgementCounter !== null) {
-      this.addJudgementCounter();
-    }
-
-    if (this.settings.ui.kpsCounter !== null) {
-      this.addKpsCounter();
-    }
-
-    this.addHitObjects();
-
-    if (this.settings.ui.progressDisplay !== null) {
-      this.addProgressBar();
-    }
-    this.addStartMessage();
-
-    this.addCountdown();
-
-    if (this.settings.showFpsCounter) {
-      this.addFpsCounter();
-    }
-
-    if (this.settings.showErrorBar) {
-      this.addHitError();
-    }
-
-    if (this.settings.ui.showHealthBar) {
-      this.addHealthBar();
-    }
+    this.systems.ui.addUi();
 
     // Set initial Y positions
-    this.updateHitObjects();
+    this.systems.hitObject.updateHitObjects();
 
-    this.resize();
-    this.setShowHud(showHud);
+    this.systems.ui.resize();
+    this.systems.ui.setShowHud(showHud);
 
-    window.addEventListener("resize", this.resize);
+    window.addEventListener("resize", this.systems.ui.resize);
 
     // Game loop
     this.app.ticker.add((time) => this.update(time));
@@ -630,15 +405,15 @@ export class Game {
 
   private update(time: Ticker) {
     this.fps?.update(time.FPS);
-    this.inputSystem.updateGamepadInputs();
+    this.systems.input.updateGamepadInputs();
 
-    if (this.inputSystem.pauseTapped && !this.finished) {
+    if (this.systems.input.pauseTapped && !this.finished) {
       this.setIsPaused((prev) => !prev);
     }
 
     switch (this.state) {
       case "WAIT":
-        if (this.replayPlayer || this.inputSystem.anyColumnTapped()) {
+        if (this.systems.replayPlayer || this.systems.input.anyColumnTapped()) {
           this.app.stage.removeChild(this.startMessage);
 
           if (this.startTime > 3000) {
@@ -679,8 +454,8 @@ export class Game {
         break;
     }
 
-    this.inputSystem.clearInputs();
-    this.audioSystem.playedSounds.clear();
+    this.systems.input.clearInputs();
+    this.systems.audio.playedSounds.clear();
   }
 
   private playUpdate(isAfterSeek?: boolean) {
@@ -696,7 +471,7 @@ export class Game {
       this.videoEl.play();
     }
 
-    this.replayPlayer?.update(this.timeElapsed, isAfterSeek);
+    this.systems.replayPlayer?.update(this.timeElapsed, isAfterSeek);
 
     this.kpsCounter?.update();
 
@@ -724,282 +499,22 @@ export class Game {
       this.finish();
     }
 
-    const oldHealth = this.healthSystem.health;
+    const oldHealth = this.systems.health.health;
 
-    this.updateHitObjects();
+    this.systems.hitObject.updateHitObjects();
 
-    if (this.healthBar && this.healthSystem.health !== oldHealth) {
-      const lostHealth = this.healthSystem.health < oldHealth;
-      this.healthBar.setHealth(this.healthSystem.health, lostHealth);
+    if (this.healthBar && this.systems.health.health !== oldHealth) {
+      const lostHealth = this.systems.health.health < oldHealth;
+      this.healthBar.setHealth(this.systems.health.health, lostHealth);
     }
 
-    if (this.healthSystem.health <= MIN_HEALTH && !this.mods.noFail) {
+    if (this.systems.health.health <= MIN_HEALTH && !this.mods.noFail) {
       this.state = "FAIL";
     }
 
     if (!isAfterSeek) {
       this.judgement?.showJudgement();
     }
-  }
-
-  public getNextHitObject(columnId: number) {
-    return this.columns[columnId][this.currentColumnIndices[columnId]];
-  }
-
-  private addReplayText() {
-    const style = new TextStyle({
-      fill: "transparent",
-      stroke: 0xffffff,
-      fontFamily: "RobotoMono",
-      fontSize: 80,
-      dropShadow: {
-        alpha: 0.1,
-        angle: 0,
-        blur: 5,
-        color: 0x000000,
-        distance: 0,
-      },
-    });
-
-    this.replayText = new BitmapText({
-      text: "Replay",
-      style,
-    });
-
-    this.replayText.anchor.set(0.5, 0.5);
-    this.replayText.y = 50;
-    this.replayText.x = this.app.screen.width / 2;
-    this.replayText.alpha = 0.35;
-
-    this.app.stage.addChild(this.replayText);
-  }
-
-  private addProgressBar() {
-    if (this.settings.ui.progressDisplay === "bar") {
-      this.progress = new ProgressBar(this);
-    } else {
-      this.progress = new ProgressPie(this);
-    }
-
-    this.app.stage.addChild(this.progress.view);
-  }
-
-  private addHealthBar() {
-    this.healthBar = new HealthBar(this);
-
-    this.app.stage.addChild(this.healthBar.view);
-  }
-
-  private addHitError() {
-    this.errorBar = new ErrorBar(this);
-
-    this.app.stage.addChild(this.errorBar.view);
-  }
-
-  private addScoreText() {
-    const style = new TextStyle({
-      fill: 0xdddddd,
-      fontFamily: "RobotoMono",
-      fontSize: 50,
-      fontWeight: "400",
-      dropShadow: {
-        alpha: 0.8,
-        angle: 0,
-        blur: 5,
-        color: 0x000000,
-        distance: 0,
-      },
-    });
-
-    this.scoreText = new BitmapText({
-      text: "00000000",
-      style,
-    });
-
-    this.scoreText.anchor.set(1, 0);
-    this.scoreText.y = 30;
-    this.scoreText.zIndex = 99;
-
-    this.app.stage.addChild(this.scoreText);
-  }
-
-  private addComboText() {
-    this.comboText = new BitmapText({
-      text: "",
-      style: {
-        fill: 0xdddddd,
-        fontFamily: "RobotoMono",
-        fontSize: 30,
-        fontWeight: "800",
-      },
-    });
-
-    this.comboText.anchor.set(0.5);
-    this.comboText.zIndex = 99;
-
-    this.app.stage.addChild(this.comboText);
-  }
-
-  private addAccuracyText() {
-    const style = new TextStyle({
-      fill: 0xdddddd,
-      fontFamily: "Courier New",
-      fontSize: 30,
-      fontWeight: "700",
-      dropShadow: {
-        alpha: 0.8,
-        angle: 0,
-        blur: 5,
-        color: 0x000000,
-        distance: 0,
-      },
-    });
-
-    this.accuracyText = new BitmapText({
-      text: "100.00%",
-      style,
-    });
-
-    this.accuracyText.anchor.set(1, 0);
-    this.accuracyText.y = 105;
-
-    this.app.stage.addChild(this.accuracyText);
-  }
-
-  private addStageContainer() {
-    this.stageBackground = new Graphics()
-      .rect(0, 0, this.notesContainerWidth, this.app.screen.height)
-      .fill(0x111111);
-    this.stageBackground.alpha = this.settings.stageOpacity;
-    this.notesContainer.addChild(this.stageBackground);
-
-    this.stageSides = new Graphics();
-    this.stageSides.alpha = this.settings.stageSidesOpacity;
-    this.stageContainer.addChild(this.stageSides);
-
-    this.notesContainer.x = this.stageSideWidth;
-    this.notesContainer.interactiveChildren = false;
-
-    this.stageContainer.eventMode = "passive";
-    this.stageContainer.addChild(this.notesContainer);
-
-    if (this.settings.upscroll) {
-      this.stageContainer.scale.y = -1;
-    }
-
-    if (this.mods.cover) {
-      this.stageCover = new StageCover(this);
-      this.notesContainer.addChild(this.stageCover.view);
-    }
-
-    this.app.stage.addChild(this.stageContainer);
-  }
-
-  private addStageLights() {
-    for (let i = 0; i < this.difficulty.keyCount; i++) {
-      const stageLight = new StageLight(this, i);
-
-      this.notesContainer.addChild(stageLight.view);
-
-      this.stageLights.push(stageLight);
-    }
-  }
-
-  private addStageHint() {
-    this.stageHint = new StageHint(this);
-
-    this.notesContainer.addChild(this.stageHint.view);
-  }
-
-  private addKeys() {
-    for (let i = 0; i < this.difficulty.keyCount; i++) {
-      const key = new this.keyClass(this, i);
-
-      this.keysContainer.addChild(key.view);
-      this.keysContainer.eventMode = "static";
-
-      this.notesContainer.addChild(this.keysContainer);
-      this.keys.push(key);
-    }
-
-    this.keys.forEach((key) => key.resize());
-  }
-
-  private addHitObjects() {
-    const hitObjects = this.hitObjects.map((hitObjectData) => {
-      if (hitObjectData.type === "tap") {
-        return new this.tapClass(this, hitObjectData);
-      } else {
-        return new this.holdClass(this, hitObjectData);
-      }
-    });
-
-    if (this.stageCover) {
-      hitObjects.forEach((hitObject) => {
-        hitObject.view.mask = this.stageCover.view;
-      });
-    }
-
-    for (let i = 0; i < this.difficulty.keyCount; i++) {
-      this.columns.push(
-        hitObjects.filter((hitObject) => hitObject.data.column === i),
-      );
-      this.currentColumnIndices.push(0);
-    }
-  }
-
-  private addTouchHitboxes() {
-    this.touchHitboxes = new TouchHitboxes(this);
-    this.app.stage.addChild(this.touchHitboxes.view);
-  }
-
-  private addJudgement() {
-    this.judgement = new Judgement(this);
-
-    this.app.stage.addChild(this.judgement.view);
-  }
-
-  private addJudgementCounter() {
-    this.judgementCounter = new JudgementCounter(this);
-    this.app.stage.addChild(this.judgementCounter.view);
-  }
-
-  private addKpsCounter() {
-    this.kpsCounter = new KpsCounter(this);
-    this.app.stage.addChild(this.kpsCounter.view);
-  }
-
-  private addFpsCounter() {
-    this.fps = new Fps(this);
-    this.app.stage.addChild(this.fps.view);
-  }
-
-  private addStartMessage() {
-    this.startMessage = new BitmapText({
-      text: "Press any key to Start",
-      style: {
-        fill: 0xdddddd,
-        fontFamily: "VarelaRound",
-        fontSize: 30,
-        fontWeight: "400",
-        lineHeight: 0,
-      },
-    });
-
-    this.startMessage.pivot.set(
-      this.startMessage.width / 2,
-      this.startMessage.height / 2,
-    );
-
-    this.startMessage.x = this.app.screen.width / 2;
-    this.startMessage.y = this.app.screen.height / 2;
-
-    this.app.stage.addChild(this.startMessage);
-  }
-
-  private addCountdown() {
-    this.countdown = new Countdown(this);
-    this.app.stage.addChild(this.countdown.view);
   }
 
   public setSfxVolume(volume: number) {
@@ -1056,18 +571,18 @@ export class Game {
     this.currentColumnIndices = this.columns.map(() => 0);
 
     // Reset systems
-    this.scoreSystem = new ScoreSystem(this, this.hitObjects.length);
-    this.healthSystem = new HealthSystem(this);
-    this.inputSystem.dispose();
-    this.inputSystem = new InputSystem(this);
+    this.systems.score = new ScoreSystem(this, this.hitObjects.length);
+    this.systems.health = new HealthSystem(this);
+    this.systems.input.dispose();
+    this.systems.input = new InputSystem(this);
 
     this.currentTimingPoint = this.timingPoints[0];
     this.nextTimingPoint = this.timingPoints[1];
 
     this.timelineData = [];
 
-    if (this.replayPlayer) {
-      this.replayPlayer.currentEventIndex = 0;
+    if (this.systems.replayPlayer) {
+      this.systems.replayPlayer.currentEventIndex = 0;
     }
 
     this.countdown.break = null;
@@ -1094,7 +609,7 @@ export class Game {
   private async finish() {
     if (
       this.mods.accuracyChallenge?.mode === "maxAchievable" &&
-      this.scoreSystem.accuracy < this.mods.accuracyChallenge.minAccuracy
+      this.systems.score.accuracy < this.mods.accuracyChallenge.minAccuracy
     ) {
       this.fail();
       return;
@@ -1102,11 +617,11 @@ export class Game {
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    this.scoreSystem.score = Math.round(this.scoreSystem.score);
+    this.systems.score.score = Math.round(this.systems.score.score);
 
     // Record remaining release inputs
     for (let i = 0; i < this.difficulty.keyCount; i++) {
-      this.replayRecorder?.record(i, false);
+      this.systems.replayRecorder?.record(i, false);
     }
 
     const applauseFile = this.settings.skin.sounds.applause;
@@ -1157,11 +672,11 @@ export class Game {
       return;
     }
 
-    this.scoreSystem.score = Math.round(this.scoreSystem.score);
+    this.systems.score.score = Math.round(this.systems.score.score);
 
     // Record remaining release inputs
     for (let i = 0; i < this.difficulty.keyCount; i++) {
-      this.replayRecorder?.record(i, false);
+      this.systems.replayRecorder?.record(i, false);
     }
 
     const failFile = this.settings.skin.sounds.fail;
@@ -1203,72 +718,5 @@ export class Game {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     this.setResults(true);
-  }
-
-  // Returns the px offset of the hit object from the judgement line based on
-  // how long it should take to reach the line
-  public getHitObjectOffset(startTime: number, endTime: number) {
-    if (this.mods.constantSpeed) {
-      const speed =
-        this.hitPosition / (MAX_TIME_RANGE / this.settings.scrollSpeed);
-
-      const offset = ((endTime - startTime) * speed) / this.mods.playbackRate;
-
-      return offset;
-    }
-
-    const flipped = startTime > endTime;
-    if (flipped) {
-      [startTime, endTime] = [endTime, startTime];
-    }
-
-    const currentTimingPointIndex = this.timingPoints.findIndex(
-      (timingPoint) => startTime >= timingPoint.time,
-    );
-
-    let totalOffset = 0;
-    for (let i = currentTimingPointIndex; i < this.timingPoints.length; i++) {
-      const currentTimingPoint = this.timingPoints[i];
-      const nextTimingPoint = this.timingPoints[i + 1];
-
-      const intervalStart = Math.max(currentTimingPoint.time, startTime);
-      const intervalEnd = nextTimingPoint
-        ? Math.min(nextTimingPoint.time, endTime)
-        : endTime;
-
-      if (intervalStart < intervalEnd) {
-        const duration = intervalEnd - intervalStart;
-        const speed =
-          this.hitPosition / (MAX_TIME_RANGE / currentTimingPoint.scrollSpeed);
-
-        totalOffset += (duration * speed) / this.mods.playbackRate;
-      }
-    }
-
-    return flipped ? -totalOffset : totalOffset;
-  }
-
-  public updateHitObjects() {
-    this.columns.forEach((column, columnIndex) => {
-      let i = this.currentColumnIndices[columnIndex];
-
-      while (i < column.length) {
-        const hitObject = column[i];
-
-        hitObject.update();
-
-        // If you failed, you're done - no need to update any more hit objects
-        if (this.healthSystem?.health === MIN_HEALTH && !this.mods.noFail) {
-          return;
-        }
-
-        // If this hit object is above the top screen edge, there's no need to update the rest
-        if (hitObject.view.y < 0) {
-          break;
-        }
-
-        i++;
-      }
-    });
   }
 }

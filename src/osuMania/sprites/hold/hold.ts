@@ -27,7 +27,7 @@ export abstract class Hold {
     this.view.y =
       this.game.hitPosition +
       this.game.settings.noteOffset -
-      this.game.getHitObjectOffset(
+      this.game.systems.hitObject.getHitObjectOffset(
         this.game.timeElapsed,
         this.getVisualEndTime(),
       );
@@ -36,12 +36,12 @@ export abstract class Hold {
 
     // If this has passed the late miss point
     if (endTimeDelta < -this.game.hitWindows[0] * 1.5) {
-      this.game.scoreSystem.hit(0, "late", true);
+      this.game.systems.score.hit(0, "late", true);
       this.game.timelineData.push({
         time: this.data.endTime + this.game.hitWindows[0],
         error: -this.game.hitWindows[0],
         judgement: 0,
-        health: this.game.healthSystem.health,
+        health: this.game.systems.health.health,
       });
 
       this.game.currentColumnIndices[this.data.column]++;
@@ -54,7 +54,7 @@ export abstract class Hold {
     if (!this.broken) {
       if (this.game.timeElapsed >= this.data.time) {
         height = Math.max(
-          this.game.getHitObjectOffset(
+          this.game.systems.hitObject.getHitObjectOffset(
             this.game.timeElapsed,
             this.getVisualEndTime(),
           ),
@@ -67,7 +67,7 @@ export abstract class Hold {
       }
     }
 
-    height ??= this.game.getHitObjectOffset(
+    height ??= this.game.systems.hitObject.getHitObjectOffset(
       this.data.time,
       this.getVisualEndTime(),
     );
@@ -105,16 +105,16 @@ export abstract class Hold {
                     : 0;
       }
 
-      this.game.scoreSystem.hitErrors.push({
+      this.game.systems.score.hitErrors.push({
         error: endTimeDelta,
         judgement,
       });
-      this.game.scoreSystem.hit(judgement, earlyOrLate, true);
+      this.game.systems.score.hit(judgement, earlyOrLate, true);
       this.game.timelineData.push({
         time: timeElapsed,
         error: endTimeDelta,
         judgement,
-        health: this.game.healthSystem.health,
+        health: this.game.systems.health.health,
       });
       this.game.countdown.startBreakIfNeeded(timeElapsed);
 
@@ -133,7 +133,7 @@ export abstract class Hold {
     if (!this.broken) {
       this.broken = true;
 
-      this.game.scoreSystem.combo = 0;
+      this.game.systems.score.combo = 0;
       if (this.game.comboText) {
         this.game.comboText.text = 0;
         this.game.comboText.visible = false;
