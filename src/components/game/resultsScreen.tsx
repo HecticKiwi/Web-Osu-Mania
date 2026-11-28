@@ -9,7 +9,7 @@ import { idb } from "@/lib/idb";
 import { downloadReplay } from "@/lib/replay";
 import { downloadResults, getReplayFilename } from "@/lib/results";
 import { getModStrings } from "@/lib/utils";
-import type { PlayResults } from "@/types";
+import type { PlayResults, Results as ResultsData } from "@/types";
 import { Camera, MoveLeft, Play, Repeat, Save } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../../stores/gameStore";
@@ -77,16 +77,24 @@ const ResultsScreen = ({
 
         await idb.saveReplay(playResults.replayData, replayId);
 
-        // Trim out properties that don't need to be saved
-        const { failed, viewingReplay, replayData, hitErrors, ...results } =
-          playResults;
+        const results: ResultsData = {
+          "0": playResults["0"],
+          "50": playResults["50"],
+          "100": playResults["100"],
+          "200": playResults["200"],
+          "300": playResults["300"],
+          "320": playResults["320"],
+          score: playResults["score"],
+          accuracy: playResults["accuracy"],
+          maxCombo: playResults["maxCombo"],
+        };
 
         setHighScores((draft) => {
           draft[beatmapSetId] ??= {};
           draft[beatmapSetId][beatmapId] ??= [];
 
           draft[beatmapSetId][beatmapId].splice(position, 0, {
-            timestamp: replayData.timestamp!,
+            timestamp: playResults.replayData!.timestamp!,
             mods: getModStrings(mods),
             results,
             replayId,

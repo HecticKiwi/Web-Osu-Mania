@@ -43,14 +43,29 @@ const useHighScoresStoreBase = create<HighScoresState>()(
     {
       name: "highScores",
       storage: createIdbStorage(),
-      version: 1,
-      migrate(persistedState: any, version) {
+      version: 2,
+      migrate(persistedState: any, version: number) {
         if (version === 0) {
           // V1 stores beatmap scores in arrays to allow multiple scores per beatmap
           Object.values(persistedState.highScores).forEach(
             (beatmapSet: any) => {
               Object.keys(beatmapSet).forEach((beatmapSetId) => {
                 beatmapSet[beatmapSetId] = [beatmapSet[beatmapSetId]];
+              });
+            },
+          );
+        }
+
+        if (version === 1) {
+          // V2 deletes the mistakenly persisted timelineData from scores
+          Object.values(persistedState.highScores).forEach(
+            (beatmapSet: any) => {
+              Object.values(beatmapSet).forEach((beatmap: any) => {
+                beatmap.forEach((highScore: any) => {
+                  if (Object.hasOwn(highScore.results, "timelineData")) {
+                    delete highScore.results.timelineData;
+                  }
+                });
               });
             },
           );
